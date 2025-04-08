@@ -28,7 +28,7 @@ class Thrive_Dash_List_Connection_ConstantContact extends Thrive_Dash_List_Conne
 	 * @return string the API connection title
 	 */
 	public function get_title() {
-		return 'Constant Contact';
+		return 'Constant Contact (Archived)';
 	}
 
 	/**

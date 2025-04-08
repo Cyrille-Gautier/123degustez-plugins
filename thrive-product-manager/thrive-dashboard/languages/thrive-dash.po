@@ -1,4 +1,4 @@
-# Copyright (C) 2024 Thrive Dashboard
+# Copyright (C) 2025 Thrive Dashboard
 # This file is distributed under the same license as the Thrive Dashboard package.
 msgid ""
 msgstr ""
@@ -6,7 +6,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-12-14 16:17+0000\n"
+"POT-Creation-Date: 2025-04-02 09:08+0000\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Changing capability failed"
 msgstr ""
 
-#: ../classes/AjaxController.php:493, ../inc/hooks.php:454
+#: ../classes/AjaxController.php:493, ../inc/hooks.php:493
 msgid "You are not allowed to remove this capability!"
 msgstr ""
 
@@ -138,7 +138,7 @@ msgstr ""
 msgid "Manage Connections"
 msgstr ""
 
-#: ../inc/functions.php:242, ../inc/hooks.php:196, ../inc/hooks.php:197, ../inc/growth-tools/classes/Tve_Dash_Growth_Tools_Config.php:33, ../inc/growth-tools/classes/Tve_Dash_Growth_Tools_Config.php:34
+#: ../inc/functions.php:242, ../inc/hooks.php:234, ../inc/hooks.php:235, ../inc/growth-tools/classes/Tve_Dash_Growth_Tools_Config.php:33, ../inc/growth-tools/classes/Tve_Dash_Growth_Tools_Config.php:34
 msgid "About Us"
 msgstr ""
 
@@ -174,7 +174,7 @@ msgstr ""
 msgid "Manage Icons"
 msgstr ""
 
-#: ../inc/functions.php:263, ../inc/hooks.php:163, ../templates/settings/general_settings.phtml:37
+#: ../inc/functions.php:263, ../inc/hooks.php:192, ../templates/settings/general_settings.phtml:37
 msgid "General Settings"
 msgstr ""
 
@@ -198,131 +198,147 @@ msgstr ""
 msgid "Manage Scripts"
 msgstr ""
 
-#: ../inc/functions.php:508, ../inc/functions.php:516, ../inc/automator/class-tap-facebook.php:196, ../inc/auto-responder/classes/Connection/Abstract.php:1038, ../inc/auto-responder/classes/Connection/Email.php:483, ../inc/auto-responder/views/setup/awsses.php:21, ../inc/auto-responder/views/setup/gotowebinar.php:33, ../inc/auto-responder/views/setup/madmimi.php:13, ../inc/auto-responder/lib/vendor/Html/Renderer.php:41, ../inc/auto-responder/lib/vendor/Html/Renderer.php:416
+#: ../inc/functions.php:280
+msgid "Font library"
+msgstr ""
+
+#: ../inc/functions.php:281
+msgid "Manage and Upload fonts"
+msgstr ""
+
+#: ../inc/functions.php:283
+msgid "Manage fonts"
+msgstr ""
+
+#: ../inc/functions.php:520, ../inc/functions.php:528, ../inc/automator/class-tap-facebook.php:196, ../inc/auto-responder/classes/Connection/Abstract.php:1038, ../inc/auto-responder/classes/Connection/Email.php:483, ../inc/auto-responder/views/setup/awsses.php:21, ../inc/auto-responder/views/setup/gotowebinar.php:33, ../inc/auto-responder/views/setup/madmimi.php:13, ../inc/auto-responder/lib/vendor/Html/Renderer.php:41, ../inc/auto-responder/lib/vendor/Html/Renderer.php:416
 msgid "Email"
 msgstr ""
 
-#: ../inc/functions.php:524
+#: ../inc/functions.php:536
 msgid "Status"
 msgstr ""
 
-#: ../inc/functions.php:532, ../inc/functions.php:541, ../inc/functions.php:553
+#: ../inc/functions.php:544, ../inc/functions.php:553, ../inc/functions.php:565
 msgid "Custom fields"
 msgstr ""
 
-#: ../inc/functions.php:566, ../inc/automator/action-fields/class-api-fields.php:50, ../inc/font-import-manager/views/main.php:48, ../inc/auto-responder/classes/Connection/Abstract.php:717, ../inc/auto-responder/classes/Connection/Abstract.php:1045, ../inc/auto-responder/classes/Connection/Email.php:490, ../inc/auto-responder/lib/vendor/Html/Renderer.php:34
+#: ../inc/functions.php:578, ../inc/automator/action-fields/class-api-fields.php:50, ../inc/font-import-manager/views/main.php:48, ../inc/auto-responder/classes/Connection/Abstract.php:717, ../inc/auto-responder/classes/Connection/Abstract.php:1045, ../inc/auto-responder/classes/Connection/Email.php:490, ../inc/auto-responder/lib/vendor/Html/Renderer.php:34
 msgid "Name"
 msgstr ""
 
-#: ../inc/functions.php:574, ../inc/automator/class-tap-facebook.php:200, ../inc/automator/action-fields/class-api-fields.php:54, ../inc/auto-responder/classes/Connection/Abstract.php:718, ../inc/auto-responder/classes/Connection/Abstract.php:1051, ../inc/auto-responder/classes/Connection/Email.php:496
+#: ../inc/functions.php:586, ../inc/automator/class-tap-facebook.php:200, ../inc/automator/action-fields/class-api-fields.php:54, ../inc/auto-responder/classes/Connection/Abstract.php:718, ../inc/auto-responder/classes/Connection/Abstract.php:1051, ../inc/auto-responder/classes/Connection/Email.php:496
 msgid "Phone"
 msgstr ""
 
-#: ../inc/hooks.php:55, ../inc/hooks.php:56
+#: ../inc/hooks.php:84, ../inc/hooks.php:85
 msgid "Access Manager"
 msgstr ""
 
-#: ../inc/hooks.php:67, ../inc/hooks.php:68
+#: ../inc/hooks.php:96, ../inc/hooks.php:97
 msgid "System Info"
 msgstr ""
 
-#: ../inc/hooks.php:79, ../inc/hooks.php:80, ../inc/hooks.php:90, ../inc/hooks.php:91
+#: ../inc/hooks.php:108, ../inc/hooks.php:109, ../inc/hooks.php:119, ../inc/hooks.php:120
 msgid "Update Info"
 msgstr ""
 
-#: ../inc/hooks.php:154
+#: ../inc/hooks.php:183
 msgid "Thrive License Manager"
 msgstr ""
 
-#: ../inc/hooks.php:155
+#: ../inc/hooks.php:184
 msgid "License Manager"
 msgstr ""
 
-#: ../inc/hooks.php:162
+#: ../inc/hooks.php:191
 msgid "Thrive General Settings"
 msgstr ""
 
-#: ../inc/hooks.php:171, ../inc/hooks.php:172
+#: ../inc/hooks.php:200, ../inc/hooks.php:201
+msgid "Font Library"
+msgstr ""
+
+#: ../inc/hooks.php:209, ../inc/hooks.php:210
 msgid "Thrive Font Manager"
 msgstr ""
 
-#: ../inc/hooks.php:180, ../inc/hooks.php:181
+#: ../inc/hooks.php:218, ../inc/hooks.php:219
 msgid "Thrive Font Import Manager"
 msgstr ""
 
-#: ../inc/hooks.php:188, ../inc/hooks.php:189
+#: ../inc/hooks.php:226, ../inc/hooks.php:227
 msgid "Icon Manager"
 msgstr ""
 
-#: ../inc/hooks.php:251
+#: ../inc/hooks.php:289
 msgid "Switch to stable version"
 msgstr ""
 
-#: ../inc/hooks.php:447
+#: ../inc/hooks.php:486
 msgid "Unknown error"
 msgstr ""
 
-#: ../inc/hooks.php:448
+#: ../inc/hooks.php:487
 msgid "Deleting..."
 msgstr ""
 
-#: ../inc/hooks.php:449
+#: ../inc/hooks.php:488
 msgid "Testing..."
 msgstr ""
 
-#: ../inc/hooks.php:450
+#: ../inc/hooks.php:489
 msgid "Loading..."
 msgstr ""
 
-#: ../inc/hooks.php:451
+#: ../inc/hooks.php:490
 msgid "Connection works!"
 msgstr ""
 
-#: ../inc/hooks.php:452
+#: ../inc/hooks.php:491
 msgid "Connection failed!"
 msgstr ""
 
-#: ../inc/hooks.php:453
+#: ../inc/hooks.php:492
 msgid "Unlimited"
 msgstr ""
 
-#: ../inc/hooks.php:457
+#: ../inc/hooks.php:496
 msgid "Kit successfully imported"
 msgstr ""
 
-#: ../inc/hooks.php:458
+#: ../inc/hooks.php:497
 msgid "Kit removed"
 msgstr ""
 
-#: ../inc/hooks.php:467
+#: ../inc/hooks.php:506
 msgid "Individual product"
 msgstr ""
 
-#: ../inc/hooks.php:468
+#: ../inc/hooks.php:507
 msgid "Full membership"
 msgstr ""
 
-#: ../inc/hooks.php:1163, ../inc/coming-soon/views/admin.php:20, ../inc/login-editor/views/admin.php:36, ../inc/auto-responder/views/setup/awsses.php:48, ../inc/auto-responder/views/setup/hubspot.php:36, ../inc/auto-responder/views/setup/mailchimp.php:48, ../inc/auto-responder/views/setup/mailgun.php:41, ../inc/auto-responder/views/setup/mandrill.php:46, ../inc/auto-responder/views/setup/postmark.php:36, ../inc/auto-responder/views/setup/sendinblueemail.php:19, ../inc/auto-responder/views/setup/sparkpost.php:36, ../inc/ttw-account/templates/licences/multiple-message.phtml:15, ../inc/ttw-account/templates/licences/suite-message.phtml:16, ../templates/backbone/license-modal.phtml:33, ../templates/settings/general_settings.phtml:77
+#: ../inc/hooks.php:1202, ../inc/coming-soon/views/admin.php:20, ../inc/font-library/templates/font-library.php:38, ../inc/login-editor/views/admin.php:36, ../inc/auto-responder/views/setup/awsses.php:48, ../inc/auto-responder/views/setup/hubspot.php:36, ../inc/auto-responder/views/setup/mailchimp.php:48, ../inc/auto-responder/views/setup/mailgun.php:41, ../inc/auto-responder/views/setup/mandrill.php:46, ../inc/auto-responder/views/setup/postmark.php:36, ../inc/auto-responder/views/setup/sendinblueemail.php:19, ../inc/auto-responder/views/setup/sparkpost.php:36, ../inc/ttw-account/templates/licences/multiple-message.phtml:15, ../inc/ttw-account/templates/licences/suite-message.phtml:16, ../templates/backbone/license-modal.phtml:33, ../templates/settings/general_settings.phtml:77
 msgid "Learn more"
 msgstr ""
 
-#: ../inc/hooks.php:1164, ../inc/ttw-account/templates/licences/multiple-message.phtml:17, ../inc/ttw-account/templates/licences/suite-message.phtml:18, ../templates/backbone/license-modal.phtml:35
+#: ../inc/hooks.php:1203, ../inc/ttw-account/templates/licences/multiple-message.phtml:17, ../inc/ttw-account/templates/licences/suite-message.phtml:18, ../templates/backbone/license-modal.phtml:35
 msgid "Renew now"
 msgstr ""
 
-#: ../inc/hooks.php:1166, ../inc/ttw-account/templates/licences/multiple-message.phtml:10, ../inc/ttw-account/templates/licences/suite-message.phtml:10, ../templates/backbone/license-modal.phtml:26
+#: ../inc/hooks.php:1205, ../inc/ttw-account/templates/licences/multiple-message.phtml:10, ../inc/ttw-account/templates/licences/suite-message.phtml:10, ../templates/backbone/license-modal.phtml:26
 msgid "Click here to refresh your license now."
 msgstr ""
 
-#: ../inc/hooks.php:1246
+#: ../inc/hooks.php:1285
 msgid "Manage plugins"
 msgstr ""
 
-#: ../inc/util.php:491
+#: ../inc/util.php:492
 msgid "updates"
 msgstr ""
 
-#: ../inc/util.php:493
+#: ../inc/util.php:494
 msgid "%s requires at least WordPress version %s. Your WordPress version is %s. Update WordPress by visiting the %s page"
 msgstr ""
 
@@ -330,7 +346,7 @@ msgstr ""
 msgid "Admin Bar Visibility"
 msgstr ""
 
-#: ../inc/app-notification/i18n.php:13, ../inc/notification-inbox/i18n.php:13, ../inc/app-notification/classes/App_Notification.php:235, ../inc/notification-inbox/views/templates/backbone/notification-header.phtml:1, ../inc/notification-manager/includes/admin/views/backbone/dashboard.phtml:4, ../inc/notification-manager/includes/admin/views/backbone/unavailable.phtml:7
+#: ../inc/app-notification/i18n.php:13, ../inc/notification-inbox/i18n.php:13, ../inc/app-notification/classes/App_Notification.php:241, ../inc/notification-inbox/views/templates/backbone/notification-header.phtml:1, ../inc/notification-manager/includes/admin/views/backbone/dashboard.phtml:4, ../inc/notification-manager/includes/admin/views/backbone/unavailable.phtml:7
 msgid "Notifications"
 msgstr ""
 
@@ -358,27 +374,27 @@ msgstr ""
 msgid "API Connections Error Log"
 msgstr ""
 
-#: ../inc/auto-responder/admin.php:162, ../inc/auto-responder/admin.php:233
+#: ../inc/auto-responder/admin.php:168, ../inc/auto-responder/admin.php:239
 msgid "Unknown error occurred"
 msgstr ""
 
-#: ../inc/auto-responder/admin.php:185, ../inc/notification-manager/i18n.php:50
+#: ../inc/auto-responder/admin.php:191, ../inc/notification-manager/i18n.php:50
 msgid "Connection established"
 msgstr ""
 
-#: ../inc/auto-responder/admin.php:180, ../inc/auto-responder/classes/Connection/FileUpload/Dropbox.php:93, ../inc/auto-responder/classes/Connection/FileUpload/GoogleDrive.php:94
+#: ../inc/auto-responder/admin.php:186, ../inc/auto-responder/classes/Connection/ConstantContactV3.php:103, ../inc/auto-responder/classes/Connection/FileUpload/Dropbox.php:93, ../inc/auto-responder/classes/Connection/FileUpload/GoogleDrive.php:94
 msgid "Connection works"
 msgstr ""
 
-#: ../inc/auto-responder/admin.php:180
+#: ../inc/auto-responder/admin.php:186
 msgid "Connection Error"
 msgstr ""
 
-#: ../inc/auto-responder/admin.php:165
+#: ../inc/auto-responder/admin.php:171
 msgid "is now disconnected"
 msgstr ""
 
-#: ../inc/auto-responder/admin.php:173
+#: ../inc/auto-responder/admin.php:179
 msgid "Service disconnected"
 msgstr ""
 
@@ -664,7 +680,7 @@ msgstr ""
 msgid "Hyperlink that links to Quiz Dashboard."
 msgstr ""
 
-#: ../inc/notification-manager/i18n.php:13, ../inc/smart-site/i18n.php:13, ../inc/coming-soon/views/admin.php:5, ../inc/login-editor/views/admin.php:15, ../inc/script-manager/includes/i18n.php:12, ../inc/access-manager/includes/templates/access-manager.php:14, ../inc/script-manager/includes/admin/views/templates/breadcrumbs.phtml:3, ../inc/script-manager/includes/admin/views/templates/header.phtml:8, ../templates/header.phtml:7
+#: ../inc/notification-manager/i18n.php:13, ../inc/smart-site/i18n.php:13, ../inc/coming-soon/views/admin.php:5, ../inc/font-library/templates/font-library.php:25, ../inc/login-editor/views/admin.php:15, ../inc/script-manager/includes/i18n.php:12, ../inc/access-manager/includes/templates/access-manager.php:14, ../inc/script-manager/includes/admin/views/templates/breadcrumbs.phtml:3, ../inc/script-manager/includes/admin/views/templates/header.phtml:8, ../templates/header.phtml:7
 msgid "Thrive Dashboard"
 msgstr ""
 
@@ -943,7 +959,7 @@ msgstr ""
 msgid "No fields in this group. Click the Add Field button to add a new field"
 msgstr ""
 
-#: ../inc/app-notification/classes/App_Notification.php:234
+#: ../inc/app-notification/classes/App_Notification.php:240
 msgid "App Notification"
 msgstr ""
 
@@ -1047,7 +1063,7 @@ msgstr ""
 msgid "Error message:"
 msgstr ""
 
-#: ../inc/auto-responder/views/admin-list.php:145, ../inc/coming-soon/views/create.php:13, ../inc/login-editor/views/reset-login-design-modal.php:22, ../inc/auto-responder/views/editor/add-api.php:14, ../inc/auto-responder/views/editor/autoresponder-code-fields.php:16, ../inc/auto-responder/views/editor/dashboard-api.php:194, ../inc/auto-responder/views/setup/activecampaign.php:21, ../inc/auto-responder/views/setup/aweber.php:22, ../inc/auto-responder/views/setup/awsses.php:55, ../inc/auto-responder/views/setup/campaignmonitor.php:60, ../inc/auto-responder/views/setup/campaignmonitoremail.php:36, ../inc/auto-responder/views/setup/constant-contact.php:57, ../inc/auto-responder/views/setup/convertkit.php:15, ../inc/auto-responder/views/setup/drip.php:21, ../inc/auto-responder/views/setup/dropbox.php:21, ../inc/auto-responder/views/setup/everwebinar.php:19, ../inc/auto-responder/views/setup/facebook.php:23, ../inc/auto-responder/views/setup/facebookpixel.php:25, ../inc/auto-responder/views/setup/fluentcrm.php:32, ../inc/auto-responder/views/setup/fluentcrm.php:18, ../inc/auto-responder/views/setup/get-response.php:44, ../inc/auto-responder/views/setup/google-drive.php:21, ../inc/auto-responder/views/setup/google.php:28, ../inc/auto-responder/views/setup/gotowebinar.php:58, ../inc/auto-responder/views/setup/hubspot.php:44, ../inc/auto-responder/views/setup/iContact.php:26, ../inc/auto-responder/views/setup/infusionsoft.php:21, ../inc/auto-responder/views/setup/klicktipp.php:21, ../inc/auto-responder/views/setup/madmimi.php:21, ../inc/auto-responder/views/setup/mailchimp.php:58, ../inc/auto-responder/views/setup/mailerlite.php:35, ../inc/auto-responder/views/setup/mailgun.php:48, ../inc/auto-responder/views/setup/mailpoet.php:54, ../inc/auto-responder/views/setup/mailpoet.php:40, ../inc/auto-responder/views/setup/mailrelay.php:39, ../inc/auto-responder/views/setup/mailrelayemail.php:30, ../inc/auto-responder/views/setup/mailster.php:35, ../inc/auto-responder/views/setup/mailster.php:17, ../inc/auto-responder/views/setup/mandrill.php:53, ../inc/auto-responder/views/setup/ontraport.php:21, ../inc/auto-responder/views/setup/ovation.php:29, ../inc/auto-responder/views/setup/ovation.php:15, ../inc/auto-responder/views/setup/postmark.php:43, ../inc/auto-responder/views/setup/recaptcha.php:63, ../inc/auto-responder/views/setup/sendfox.php:16, ../inc/auto-responder/views/setup/sendgrid.php:52, ../inc/auto-responder/views/setup/sendgridemail.php:21, ../inc/auto-responder/views/setup/sendinblue-v3.php:45, ../inc/auto-responder/views/setup/sendinblue.php:45, ../inc/auto-responder/views/setup/sendinblueemail.php:38, ../inc/auto-responder/views/setup/sendlane.php:26, ../inc/auto-responder/views/setup/sendlayer.php:34, ../inc/auto-responder/views/setup/sendowl.php:26, ../inc/auto-responder/views/setup/sendy.php:75, ../inc/auto-responder/views/setup/sg-autorepondeur.php:24, ../inc/auto-responder/views/setup/slack.php:24, ../inc/auto-responder/views/setup/sparkpost.php:43, ../inc/auto-responder/views/setup/turnstile.php:80, ../inc/auto-responder/views/setup/twitter.php:33, ../inc/auto-responder/views/setup/webinarjamstudio.php:51, ../inc/auto-responder/views/setup/zapier.php:79, ../inc/auto-responder/views/setup/zoho.php:41, ../inc/notification-manager/includes/admin/views/backbone/modals/add-action.phtml:13, ../inc/notification-manager/includes/admin/views/backbone/modals/create-notification.phtml:13, ../inc/notification-manager/includes/admin/views/backbone/modals/edit-action.phtml:12, ../inc/notification-manager/includes/admin/views/backbone/modals/edit-trigger.phtml:11, ../inc/notification-manager/includes/admin/views/backbone/modals/email-services.phtml:47, ../inc/smart-site/views/admin/templates/global-fields/modals/delete.phtml:25, ../inc/smart-site/views/admin/templates/global-fields/modals/edit-group.phtml:34, ../inc/smart-site/views/admin/templates/global-fields/modals/field.phtml:83, ../templates/product/inactive.phtml:51, ../templates/product/inactive.phtml:87
+#: ../inc/auto-responder/views/admin-list.php:145, ../inc/coming-soon/views/create.php:13, ../inc/login-editor/views/reset-login-design-modal.php:22, ../inc/auto-responder/views/editor/add-api.php:14, ../inc/auto-responder/views/editor/autoresponder-code-fields.php:16, ../inc/auto-responder/views/editor/dashboard-api.php:194, ../inc/auto-responder/views/setup/activecampaign.php:21, ../inc/auto-responder/views/setup/aweber.php:22, ../inc/auto-responder/views/setup/awsses.php:55, ../inc/auto-responder/views/setup/campaignmonitor.php:60, ../inc/auto-responder/views/setup/campaignmonitoremail.php:36, ../inc/auto-responder/views/setup/constant-contact-v3.php:27, ../inc/auto-responder/views/setup/constant-contact.php:57, ../inc/auto-responder/views/setup/convertkit.php:15, ../inc/auto-responder/views/setup/drip.php:21, ../inc/auto-responder/views/setup/dropbox.php:21, ../inc/auto-responder/views/setup/everwebinar.php:19, ../inc/auto-responder/views/setup/facebook.php:23, ../inc/auto-responder/views/setup/facebookpixel.php:25, ../inc/auto-responder/views/setup/fluentcrm.php:32, ../inc/auto-responder/views/setup/fluentcrm.php:18, ../inc/auto-responder/views/setup/get-response.php:44, ../inc/auto-responder/views/setup/google-drive.php:21, ../inc/auto-responder/views/setup/google.php:28, ../inc/auto-responder/views/setup/gotowebinar.php:58, ../inc/auto-responder/views/setup/hubspot.php:44, ../inc/auto-responder/views/setup/iContact.php:26, ../inc/auto-responder/views/setup/infusionsoft.php:21, ../inc/auto-responder/views/setup/klicktipp.php:21, ../inc/auto-responder/views/setup/madmimi.php:21, ../inc/auto-responder/views/setup/mailchimp.php:58, ../inc/auto-responder/views/setup/mailerlite.php:35, ../inc/auto-responder/views/setup/mailgun.php:48, ../inc/auto-responder/views/setup/mailpoet.php:54, ../inc/auto-responder/views/setup/mailpoet.php:40, ../inc/auto-responder/views/setup/mailrelay.php:39, ../inc/auto-responder/views/setup/mailrelayemail.php:30, ../inc/auto-responder/views/setup/mailster.php:35, ../inc/auto-responder/views/setup/mailster.php:17, ../inc/auto-responder/views/setup/mandrill.php:53, ../inc/auto-responder/views/setup/ontraport.php:21, ../inc/auto-responder/views/setup/ovation.php:29, ../inc/auto-responder/views/setup/ovation.php:15, ../inc/auto-responder/views/setup/postmark.php:43, ../inc/auto-responder/views/setup/recaptcha.php:63, ../inc/auto-responder/views/setup/sendfox.php:16, ../inc/auto-responder/views/setup/sendgrid.php:52, ../inc/auto-responder/views/setup/sendgridemail.php:21, ../inc/auto-responder/views/setup/sendinblue-v3.php:45, ../inc/auto-responder/views/setup/sendinblue.php:45, ../inc/auto-responder/views/setup/sendinblueemail.php:38, ../inc/auto-responder/views/setup/sendlane.php:26, ../inc/auto-responder/views/setup/sendlayer.php:34, ../inc/auto-responder/views/setup/sendowl.php:26, ../inc/auto-responder/views/setup/sendy.php:75, ../inc/auto-responder/views/setup/sg-autorepondeur.php:24, ../inc/auto-responder/views/setup/slack.php:24, ../inc/auto-responder/views/setup/sparkpost.php:43, ../inc/auto-responder/views/setup/turnstile.php:80, ../inc/auto-responder/views/setup/twitter.php:33, ../inc/auto-responder/views/setup/webinarjamstudio.php:51, ../inc/auto-responder/views/setup/zapier.php:79, ../inc/auto-responder/views/setup/zoho.php:41, ../inc/notification-manager/includes/admin/views/backbone/modals/add-action.phtml:13, ../inc/notification-manager/includes/admin/views/backbone/modals/create-notification.phtml:13, ../inc/notification-manager/includes/admin/views/backbone/modals/edit-action.phtml:12, ../inc/notification-manager/includes/admin/views/backbone/modals/edit-trigger.phtml:11, ../inc/notification-manager/includes/admin/views/backbone/modals/email-services.phtml:47, ../inc/smart-site/views/admin/templates/global-fields/modals/delete.phtml:25, ../inc/smart-site/views/admin/templates/global-fields/modals/edit-group.phtml:34, ../inc/smart-site/views/admin/templates/global-fields/modals/field.phtml:83, ../templates/product/inactive.phtml:51, ../templates/product/inactive.phtml:87
 msgid "Cancel"
 msgstr ""
 
@@ -1413,6 +1429,18 @@ msgstr ""
 
 #: ../inc/font-import-manager/views/main.php:65
 msgid "Return to Font Manager"
+msgstr ""
+
+#: ../inc/font-library/templates/font-library.php:28
+msgid "Thrive Font Library"
+msgstr ""
+
+#: ../inc/font-library/templates/font-library.php:37
+msgid "The Font Library requires WordPress version 6.5 or higher. Please upgrade your WordPress version to continue."
+msgstr ""
+
+#: ../inc/font-library/templates/font-library.php:46
+msgid "Back to Dashboard"
 msgstr ""
 
 #: ../inc/font-manager/views/admin-font-manager.php:14
@@ -1895,11 +1923,11 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-#: ../inc/smart-site/classes/class-tvd-smart-db.php:491
+#: ../inc/smart-site/classes/class-tvd-smart-db.php:523
 msgid "This global variable hasn't been set.  Define your global variables in the"
 msgstr ""
 
-#: ../inc/smart-site/classes/class-tvd-smart-db.php:493
+#: ../inc/smart-site/classes/class-tvd-smart-db.php:525
 msgid " Global Fields dashboard"
 msgstr ""
 
@@ -3084,7 +3112,7 @@ msgstr ""
 msgid "Device Settings:"
 msgstr ""
 
-#: ../inc/auto-responder/views/includes/video-link.php:16, ../inc/auto-responder/views/setup/facebookpixel.php:18, ../inc/auto-responder/views/setup/sendlayer.php:27, ../inc/auto-responder/views/setup/turnstile.php:66
+#: ../inc/auto-responder/views/includes/video-link.php:16, ../inc/auto-responder/views/setup/constant-contact-v3.php:19, ../inc/auto-responder/views/setup/facebookpixel.php:18, ../inc/auto-responder/views/setup/sendlayer.php:27, ../inc/auto-responder/views/setup/turnstile.php:66
 msgid "I need help with this"
 msgstr ""
 
@@ -3096,7 +3124,7 @@ msgstr ""
 msgid "API key"
 msgstr ""
 
-#: ../inc/auto-responder/views/setup/activecampaign.php:24, ../inc/auto-responder/views/setup/aweber.php:26, ../inc/auto-responder/views/setup/awsses.php:58, ../inc/auto-responder/views/setup/campaignmonitor.php:63, ../inc/auto-responder/views/setup/campaignmonitoremail.php:39, ../inc/auto-responder/views/setup/constant-contact.php:60, ../inc/auto-responder/views/setup/convertkit.php:18, ../inc/auto-responder/views/setup/drip.php:24, ../inc/auto-responder/views/setup/dropbox.php:24, ../inc/auto-responder/views/setup/everwebinar.php:24, ../inc/auto-responder/views/setup/facebook.php:26, ../inc/auto-responder/views/setup/facebookpixel.php:28, ../inc/auto-responder/views/setup/fluentcrm.php:22, ../inc/auto-responder/views/setup/get-response.php:47, ../inc/auto-responder/views/setup/google-drive.php:24, ../inc/auto-responder/views/setup/google.php:31, ../inc/auto-responder/views/setup/gotowebinar.php:61, ../inc/auto-responder/views/setup/hubspot.php:47, ../inc/auto-responder/views/setup/iContact.php:29, ../inc/auto-responder/views/setup/infusionsoft.php:24, ../inc/auto-responder/views/setup/klicktipp.php:24, ../inc/auto-responder/views/setup/madmimi.php:24, ../inc/auto-responder/views/setup/mailchimp.php:61, ../inc/auto-responder/views/setup/mailerlite.php:38, ../inc/auto-responder/views/setup/mailgun.php:51, ../inc/auto-responder/views/setup/mailpoet.php:44, ../inc/auto-responder/views/setup/mailrelay.php:42, ../inc/auto-responder/views/setup/mailrelayemail.php:33, ../inc/auto-responder/views/setup/mailster.php:22, ../inc/auto-responder/views/setup/mandrill.php:56, ../inc/auto-responder/views/setup/ontraport.php:24, ../inc/auto-responder/views/setup/ovation.php:19, ../inc/auto-responder/views/setup/postmark.php:46, ../inc/auto-responder/views/setup/recaptcha.php:66, ../inc/auto-responder/views/setup/sendfox.php:19, ../inc/auto-responder/views/setup/sendgrid.php:57, ../inc/auto-responder/views/setup/sendgridemail.php:24, ../inc/auto-responder/views/setup/sendinblue-v3.php:48, ../inc/auto-responder/views/setup/sendinblue.php:48, ../inc/auto-responder/views/setup/sendinblueemail.php:41, ../inc/auto-responder/views/setup/sendlane.php:29, ../inc/auto-responder/views/setup/sendlayer.php:37, ../inc/auto-responder/views/setup/sendowl.php:29, ../inc/auto-responder/views/setup/sendy.php:78, ../inc/auto-responder/views/setup/sg-autorepondeur.php:27, ../inc/auto-responder/views/setup/slack.php:28, ../inc/auto-responder/views/setup/sparkpost.php:46, ../inc/auto-responder/views/setup/turnstile.php:83, ../inc/auto-responder/views/setup/twitter.php:36, ../inc/auto-responder/views/setup/webinarjamstudio.php:54, ../inc/auto-responder/views/setup/zapier.php:82, ../inc/auto-responder/views/setup/zoho.php:44, ../inc/notification-manager/includes/admin/views/backbone/modals/email-services.phtml:53
+#: ../inc/auto-responder/views/setup/activecampaign.php:24, ../inc/auto-responder/views/setup/aweber.php:26, ../inc/auto-responder/views/setup/awsses.php:58, ../inc/auto-responder/views/setup/campaignmonitor.php:63, ../inc/auto-responder/views/setup/campaignmonitoremail.php:39, ../inc/auto-responder/views/setup/constant-contact-v3.php:30, ../inc/auto-responder/views/setup/constant-contact.php:60, ../inc/auto-responder/views/setup/convertkit.php:18, ../inc/auto-responder/views/setup/drip.php:24, ../inc/auto-responder/views/setup/dropbox.php:24, ../inc/auto-responder/views/setup/everwebinar.php:24, ../inc/auto-responder/views/setup/facebook.php:26, ../inc/auto-responder/views/setup/facebookpixel.php:28, ../inc/auto-responder/views/setup/fluentcrm.php:22, ../inc/auto-responder/views/setup/get-response.php:47, ../inc/auto-responder/views/setup/google-drive.php:24, ../inc/auto-responder/views/setup/google.php:31, ../inc/auto-responder/views/setup/gotowebinar.php:61, ../inc/auto-responder/views/setup/hubspot.php:47, ../inc/auto-responder/views/setup/iContact.php:29, ../inc/auto-responder/views/setup/infusionsoft.php:24, ../inc/auto-responder/views/setup/klicktipp.php:24, ../inc/auto-responder/views/setup/madmimi.php:24, ../inc/auto-responder/views/setup/mailchimp.php:61, ../inc/auto-responder/views/setup/mailerlite.php:38, ../inc/auto-responder/views/setup/mailgun.php:51, ../inc/auto-responder/views/setup/mailpoet.php:44, ../inc/auto-responder/views/setup/mailrelay.php:42, ../inc/auto-responder/views/setup/mailrelayemail.php:33, ../inc/auto-responder/views/setup/mailster.php:22, ../inc/auto-responder/views/setup/mandrill.php:56, ../inc/auto-responder/views/setup/ontraport.php:24, ../inc/auto-responder/views/setup/ovation.php:19, ../inc/auto-responder/views/setup/postmark.php:46, ../inc/auto-responder/views/setup/recaptcha.php:66, ../inc/auto-responder/views/setup/sendfox.php:19, ../inc/auto-responder/views/setup/sendgrid.php:57, ../inc/auto-responder/views/setup/sendgridemail.php:24, ../inc/auto-responder/views/setup/sendinblue-v3.php:48, ../inc/auto-responder/views/setup/sendinblue.php:48, ../inc/auto-responder/views/setup/sendinblueemail.php:41, ../inc/auto-responder/views/setup/sendlane.php:29, ../inc/auto-responder/views/setup/sendlayer.php:37, ../inc/auto-responder/views/setup/sendowl.php:29, ../inc/auto-responder/views/setup/sendy.php:78, ../inc/auto-responder/views/setup/sg-autorepondeur.php:27, ../inc/auto-responder/views/setup/slack.php:28, ../inc/auto-responder/views/setup/sparkpost.php:46, ../inc/auto-responder/views/setup/turnstile.php:83, ../inc/auto-responder/views/setup/twitter.php:36, ../inc/auto-responder/views/setup/webinarjamstudio.php:54, ../inc/auto-responder/views/setup/zapier.php:82, ../inc/auto-responder/views/setup/zoho.php:44, ../inc/notification-manager/includes/admin/views/backbone/modals/email-services.phtml:53
 msgid "Connect"
 msgstr ""
 
@@ -3156,6 +3184,14 @@ msgstr ""
 msgid "Connecting to Campaign Monitor Email Service will also connect to Campaign Monitor autoresponder."
 msgstr ""
 
+#: ../inc/auto-responder/views/setup/constant-contact-v3.php:8, ../inc/auto-responder/views/setup/drip.php:8, ../inc/auto-responder/views/setup/google-drive.php:8, ../inc/auto-responder/views/setup/google.php:10, ../inc/auto-responder/views/setup/infusionsoft.php:8
+msgid "Client ID"
+msgstr ""
+
+#: ../inc/auto-responder/views/setup/constant-contact-v3.php:13, ../inc/auto-responder/views/setup/google-drive.php:13, ../inc/auto-responder/views/setup/google.php:15
+msgid "Client Secret"
+msgstr ""
+
 #: ../inc/auto-responder/views/setup/constant-contact.php:21
 msgid "To get an API Key you have to follow these steps:"
 msgstr ""
@@ -3202,10 +3238,6 @@ msgstr ""
 
 #: ../inc/auto-responder/views/setup/constant-contact.php:75
 msgid "Please enter the API Key in order to get the token !"
-msgstr ""
-
-#: ../inc/auto-responder/views/setup/drip.php:8, ../inc/auto-responder/views/setup/google-drive.php:8, ../inc/auto-responder/views/setup/google.php:10, ../inc/auto-responder/views/setup/infusionsoft.php:8
-msgid "Client ID"
 msgstr ""
 
 #: ../inc/auto-responder/views/setup/dropbox.php:8
@@ -3266,10 +3298,6 @@ msgstr ""
 
 #: ../inc/auto-responder/views/setup/get-response.php:34, ../inc/auto-responder/views/setup/mailpoet.php:28
 msgid "Version 3"
-msgstr ""
-
-#: ../inc/auto-responder/views/setup/google-drive.php:13, ../inc/auto-responder/views/setup/google.php:15
-msgid "Client Secret"
 msgstr ""
 
 #: ../inc/auto-responder/views/setup/google.php:20

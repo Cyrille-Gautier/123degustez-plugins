@@ -30,7 +30,7 @@ defined( 'TVE_SECRET' ) || define( 'TVE_SECRET', 'tve_secret' );
  * Dashboard Database Version
  * Meanwhile the 1.0.4 migration was deleted, so the next file should be 1.0.5
  */
-defined( 'TVE_DASH_DB_VERSION' ) || define( 'TVE_DASH_DB_VERSION', '1.0.4' );
+defined( 'TVE_DASH_DB_VERSION' ) || define( 'TVE_DASH_DB_VERSION', '1.0.5' );
 
 /**
  * REQUIRED FILES
@@ -86,6 +86,9 @@ require_once TVE_DASH_PATH . '/inc/app-notification/classes/App_Notification.php
  * AUTO-LOADERS
  */
 spl_autoload_register( 'tve_dash_autoloader' );
+
+// Include composer autoloader.
+include TVE_DASH_PATH . '/vendor/autoload.php';
 
 /**
  * Allow other products to hook in after the main dashboard files have been loaded

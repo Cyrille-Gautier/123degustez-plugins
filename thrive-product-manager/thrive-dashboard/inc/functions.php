@@ -274,6 +274,16 @@ function tve_dash_get_features() {
 		),
 	);
 
+	if ( current_user_can( 'manage_options' ) ) {
+		$thrive_features['font_library'] = array(
+			'icon'        => 'tvd-icon-font',
+			'title'       => __( 'Font library', 'thrive-dash' ),
+			'description' => __( 'Manage and Upload fonts', 'thrive-dash' ),
+			'btn_link'    => add_query_arg( 'page', 'tve_dash_font_library', admin_url( 'admin.php' ) ),
+			'btn_text'    => __( "Manage fonts", 'thrive-dash' ),
+		);
+	}
+
 	/**
 	 * For now, the font manager is available only for the users who have a custom font loaded.
 	 */
@@ -290,6 +300,8 @@ function tve_dash_get_features() {
 	 */
 	$enabled['general_settings'] = true;
     $enabled['about_us'] = true;
+    $enabled['font_library'] = true;
+
 	/**
 	 * Thrive dashboard admin feature is only enabled for super admins
 	 */

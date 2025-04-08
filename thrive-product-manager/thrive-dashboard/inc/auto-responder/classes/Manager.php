@@ -39,7 +39,7 @@ class Thrive_Dash_List_Manager {
 		'activecampaign'       => 'Thrive_Dash_List_Connection_ActiveCampaign',
 		'aweber'               => 'Thrive_Dash_List_Connection_AWeber',
 		'campaignmonitor'      => 'Thrive_Dash_List_Connection_CampaignMonitor',
-		'constantcontact'      => 'Thrive_Dash_List_Connection_ConstantContact',
+		'constantcontact_v3'   => 'Thrive_Dash_List_Connection_ConstantContactV3',
 		'convertkit'           => 'Thrive_Dash_List_Connection_ConvertKit',
 		'drip'                 => 'Thrive_Dash_List_Connection_Drip',
 		'facebook'             => 'Thrive_Dash_List_Connection_Facebook',

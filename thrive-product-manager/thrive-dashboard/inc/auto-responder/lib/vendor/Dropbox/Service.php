@@ -232,18 +232,30 @@ class Thrive_Dash_Api_Dropbox_Service {
 			'Content-Type' => 'application/json',
 		) );
 
-		/* create a sharing link to the file */
-		$sharing     = $this->post( static::BASE_API_URI . '2/sharing/create_shared_link_with_settings', array(
-			'path'     => $file_id,
-			'settings' => array(
-				'requested_visibility' => 'public',
-				'audience'             => 'public',
-				'access'               => 'viewer',
-			),
+		// Check if shared link exists already.
+		$shared_links = $this->post( static::BASE_API_URI . '2/sharing/list_shared_links', array(
+			'path' => $file_id,
 		), array(
 			'Content-Type' => 'application/json',
 		) );
-		$data['url'] = $sharing['url'];
+
+		if ( ! empty( $shared_links['links'] ) && is_array( $shared_links['links'] ) && ! empty( $shared_links['links'][0]['url'] ) ) {
+			$data['url'] = $shared_links['links'][0]['url'];
+		} else {
+			/* create a sharing link to the file */
+			$sharing     = $this->post( static::BASE_API_URI . '2/sharing/create_shared_link_with_settings', array(
+				'path'     => $file_id,
+				'settings' => array(
+					'requested_visibility' => 'public',
+					'audience'             => 'public',
+					'access'               => 'viewer',
+				),
+			), array(
+				'Content-Type' => 'application/json',
+			) );
+			
+			$data['url'] = $sharing['url'];
+		}
 
 		return $data;
 	}

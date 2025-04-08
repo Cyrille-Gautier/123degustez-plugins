@@ -5,6 +5,10 @@
  *
  * @package thrive-dashboard
  */
+
+use Thrive_Dashboard\Font_Library\Main as Font_Library;
+use Thrive_Dashboard\Font_Library\Admin as Font_Library_Admin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -18,6 +22,25 @@ function tve_dash_set_dash_url() {
 }
 
 /**
+ * Load the font library module.
+ * 
+ * @return Font_Library
+ */
+function tve_font_library() {
+	static $font_library = null;
+
+	if ( $font_library !== null ) {
+		return $font_library;
+	}
+
+	$font_library = new Font_Library();
+
+	$font_library->init();
+
+	return $font_library;
+}
+
+/**
  * Hook for "init" wp action
  */
 function tve_dash_init_action() {
@@ -27,6 +50,12 @@ function tve_dash_init_action() {
 
 	require_once( TVE_DASH_PATH . '/inc/font-import-manager/classes/Tve_Dash_Font_Import_Manager.php' );
 	require_once( TVE_DASH_PATH . '/inc/font-manager/font-manager.php' );
+
+	/**
+	 * Load the Font Library module.
+	 * This is a separate module from the Font Manager.
+	 */
+	tve_font_library();
 
 	/**
 	 * Run any database migrations
@@ -165,6 +194,15 @@ function tve_dash_admin_menu() {
 			'menu_slug'   => 'tve_dash_general_settings_section',
 			'function'    => 'tve_dash_general_settings_section',
 		),
+		/* Font Library Page */
+		'font_library'        => array(
+			'parent_slug' => '',
+			'page_title'  => __( 'Font Library', 'thrive-dash' ),
+			'menu_title'  => __( 'Font Library', 'thrive-dash' ),
+			'capability'  => 'manage_options',
+			'menu_slug'   => Font_Library_Admin::SLUG,
+			'function'    => [ Font_Library_Admin::class, 'get_template' ],
+		),
 		/* Font Manager Page */
 		'font_manager'        => array(
 			'parent_slug' => '',
@@ -283,6 +321,7 @@ function tve_dash_needs_enqueue( $hook ) {
 		'admin_page_tve_dash_api_connect',
 		'thrive-dashboard_page_tve_dash_access_manager',
 		'admin_page_tve-updates',
+		Font_Library_Admin::SCREEN,
 	);
 
 	$accepted_hooks = apply_filters( 'tve_dash_include_ui', $accepted_hooks, $hook );

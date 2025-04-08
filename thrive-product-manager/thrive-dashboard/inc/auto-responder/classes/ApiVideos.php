@@ -75,48 +75,48 @@ class ApiVideos {
 	 */
 	private $_fallback_urls
 		= array(
-			'mailchimp'        => 'ndkVpoJCffU',
-			'aweber'           => 'lBybVnifWw4',
-			'getresponse'      => 'G0IMbKP1Otw',
-			'mailpoet'         => 'bkVO6nqyClA',
-			'wordpress'        => 'KMqwr6OT3DA',
-			'ontraport'        => '6AwBXF8w85o',
-			'everwebinar'      => 'Oy7AutRjWHE',
-			'icontact'         => 'sjWGb3UdvN4',
-			'convertkit'       => 'nPDX_a7_pAM',
-			'activecampaign'   => 'z27CqJQtrvQ',
-			'sendy'            => 'jHP6u3rqoF0',
-			'drip'             => 'MnujttxYH-M',
-			'constantcontact'  => 'a1y_GJcUwO4',
-			'madmimi'          => 'OXQzK9uSzsA',
-			'webinarjamstudio' => 'y7Rz0l794DE',
-			'gotowebinar'      => '2NkRXez97p0',
-			'hubspot'          => 'gqjp4-hTJdc',
-			'postmark'         => 'k8l-KeObrwk',
-			'infusionsoft'     => 'Ak4tLh29aC4',
-			'recaptcha'        => '4LM0cIIhOVA',
-			'sparkpost'        => 'HCsuzWcYq4I',
-			'mailgun'          => 'DBNW6hGWYyc',
-			'awsses'           => 'eC35eUXqlHw',
-			'mailerlite'       => 'OKigVCbG0YE',
-			'campaignmonitor'  => 'wbPX2bXUNxA',
-			'facebook'         => 'jR4tBDEuwE4',
-			'google'           => 'YZ2eeWBJQ5w',
-			'twitter'          => '9_pkwfTrTPc',
-			'mailrelay'        => 'gLlRZ1wdIjM',
-			'sendgrid'         => 'sLfWAgEE_fo',
-			'sendinblue'       => 'tZ8Pp7WJnzk',
-			'sgautorepondeur'  => 'N3zqX5dprUc',
-			'sendlane'         => 'aqtKcGSJaog',
-			'google_drive'     => 'LNCiLKxo7V4',
-			'dropbox'          => '-zYbSNvp2JQ',
-			'fluentcrm'        => 'AFfuQrv--S4',
-			'slack'            => 'IeRaTyBLu9s',
-			'sendowl'          => 'cN1UGZ3Vblo',
-			'zapier'           => 'iD2-RsTflPU',
-			'sendfox'          => 'VOQCwapziqs',
-			'zoho'             => '50j3THWW7sQ',
-			'klicktipp'        => 'MBzZNteFSz4',
+			'mailchimp'          => 'ndkVpoJCffU',
+			'aweber'             => 'lBybVnifWw4',
+			'getresponse'        => 'G0IMbKP1Otw',
+			'mailpoet'           => 'bkVO6nqyClA',
+			'wordpress'          => 'KMqwr6OT3DA',
+			'ontraport'          => '6AwBXF8w85o',
+			'everwebinar'        => 'Oy7AutRjWHE',
+			'icontact'           => 'sjWGb3UdvN4',
+			'convertkit'         => 'nPDX_a7_pAM',
+			'activecampaign'     => 'z27CqJQtrvQ',
+			'sendy'              => 'jHP6u3rqoF0',
+			'drip'               => 'MnujttxYH-M',
+			'constantcontact'    => 'a1y_GJcUwO4',
+			'madmimi'            => 'OXQzK9uSzsA',
+			'webinarjamstudio'   => 'y7Rz0l794DE',
+			'gotowebinar'        => '2NkRXez97p0',
+			'hubspot'            => 'gqjp4-hTJdc',
+			'postmark'           => 'k8l-KeObrwk',
+			'infusionsoft'       => 'Ak4tLh29aC4',
+			'recaptcha'          => '4LM0cIIhOVA',
+			'sparkpost'          => 'HCsuzWcYq4I',
+			'mailgun'            => 'DBNW6hGWYyc',
+			'awsses'             => 'eC35eUXqlHw',
+			'mailerlite'         => 'OKigVCbG0YE',
+			'campaignmonitor'    => 'wbPX2bXUNxA',
+			'facebook'           => 'jR4tBDEuwE4',
+			'google'             => 'YZ2eeWBJQ5w',
+			'twitter'            => '9_pkwfTrTPc',
+			'mailrelay'          => 'gLlRZ1wdIjM',
+			'sendgrid'           => 'sLfWAgEE_fo',
+			'sendinblue'         => 'tZ8Pp7WJnzk',
+			'sgautorepondeur'    => 'N3zqX5dprUc',
+			'sendlane'           => 'aqtKcGSJaog',
+			'google_drive'       => 'LNCiLKxo7V4',
+			'dropbox'            => '-zYbSNvp2JQ',
+			'fluentcrm'          => 'AFfuQrv--S4',
+			'slack'              => 'IeRaTyBLu9s',
+			'sendowl'            => 'cN1UGZ3Vblo',
+			'zapier'             => 'iD2-RsTflPU',
+			'sendfox'            => 'VOQCwapziqs',
+			'zoho'               => '50j3THWW7sQ',
+			'klicktipp'          => 'MBzZNteFSz4',
 		);
 
 	/**
@@ -143,7 +143,7 @@ class ApiVideos {
 	 * Obfuscation
 	 *
 	 * @param      $string
-	 * @param bool $flip
+	 * @param bool   $flip
 	 *
 	 * @return string
 	 */
@@ -192,11 +192,6 @@ class ApiVideos {
 
 		$request = wp_remote_get( $this->_ttw_url . '/api/v1/public/api_videos', $args );
 		$body    = json_decode( wp_remote_retrieve_body( $request ) );
-
-		if ( $body && ! empty( $body->urls ) ) {
-			/* TODO re-add this back before relase */
-//			return set_transient( $this->_ttw_api_url_transient, (array) $body->urls, $this->_cache_life_time );
-		}
 
 		return set_transient( $this->_ttw_api_url_transient, (array) $this->_fallback_urls, $this->_cache_life_time );
 	}

@@ -222,6 +222,12 @@ class TVD_Smart_DB {
 					'type'       => static::$types['link'],
 					'identifier' => 'tiktok',
 				),
+				array(
+					'name'       => 'Bluesky',
+					'icon'       => 'bluesky-brands-new',
+					'type'       => static::$types['link'],
+					'identifier' => 'bluesky',
+				),
 			),
 		);
 	}
@@ -296,6 +302,13 @@ class TVD_Smart_DB {
 			if ( empty( $tiktok_row ) ) {
 				$this->add_tiktok_field();
 			}
+
+			$bluesky_row = $this->wpdb->get_row( "SELECT * FROM $this->fields_table_name WHERE `identifier`='bluesky' LIMIT 0,1", ARRAY_A );
+
+			/* only continue if bluesky isn't inserted */
+			if ( empty( $bluesky_row ) ) {
+				$this->add_bluesky_field();
+			}
 		}
 	}
 
@@ -311,6 +324,25 @@ class TVD_Smart_DB {
 				'name'       => 'TikTok',
 				'type'       => static::$types['link'],
 				'identifier' => 'tiktok',
+				'is_default' => 1,
+				'group_id'   => 3,
+			),
+			$format
+		);
+	}
+
+	public function add_bluesky_field() {
+		$format = array(
+			'%s',
+			'%d',
+		);
+
+		$this->wpdb->insert(
+			$this->fields_table_name,
+			array(
+				'name'       => 'Bluesky',
+				'type'       => static::$types['link'],
+				'identifier' => 'bluesky',
 				'is_default' => 1,
 				'group_id'   => 3,
 			),

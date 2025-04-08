@@ -309,6 +309,7 @@ function tve_dash_get_menu_products_order() {
 		130 => 'font_import_manager',
 		140 => 'icon_manager',
 		150 => 'access_manager',
+		155 => 'font_library',
 		160 => 'tcb',
 		170 => 'tcm_sub_menu',
 		/*For Thrive Themes*/
@@ -771,4 +772,41 @@ function is_TPM_installed() {
     }
     // Not installed
     return false;
+}
+
+/**
+ * Make a request to the WordPress REST API internally.
+ * 
+ * @param string $url The URL to make the request to.
+ * @param array $data The data to send in the request.
+ * @param string $method The HTTP method to use.
+ * 
+ * @return array The response data.
+ */
+function tve_send_wp_rest_request( $url, $data = [], $method = 'GET' ) {
+	if ( ! function_exists( 'rest_do_request' ) ) {
+		return [];
+	}
+
+	$rest_url = rtrim( get_rest_url(), '/' );
+	$url      = str_replace( $rest_url, '', $url );
+
+	$server = rest_get_server();
+	$request = new WP_REST_Request( $method, $url );
+
+	if ( ! empty( $data ) ) {
+		if ( $method === 'GET' ) {
+			$request->set_query_params( $data );
+		} else {
+			$request->set_body_params( $data );
+		}
+	}
+
+	$response = rest_do_request( $request );
+
+	if ( $response->is_error() ) {
+		return $response->as_error();
+	}
+
+	return $server->response_to_data( $response, false );
 }
