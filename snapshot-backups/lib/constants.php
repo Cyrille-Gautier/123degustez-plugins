@@ -26,8 +26,12 @@ if ( ! defined( 'SNAPSHOT4_SERVICE_API_URL' ) ) {
 	define( 'SNAPSHOT4_SERVICE_API_URL', 'https://bbna4i2zbe.execute-api.us-east-1.amazonaws.com/prod/' );
 }
 
+if ( ! defined( 'SNAPSHOT_GOOGLE_DRIVE_CLIENT_ID' ) ) {
+	define( 'SNAPSHOT_GOOGLE_DRIVE_CLIENT_ID', '632110916777-rc8t4tn0jf4heaiv4ln0ml3b87clmhod.apps.googleusercontent.com' );
+}
+
 if ( ! defined( 'SNAPSHOT_DROPBOX_APP_ID' ) ) {
-	define( 'SNAPSHOT_DROPBOX_APP_ID', 'uh4tk1uxdft1ik3' );
+	define( 'SNAPSHOT_DROPBOX_APP_ID', 'a6rvnpw1fgey5nu' );
 }
 
 if ( ! defined( 'SNAPSHOT_DROPBOX_APP_FOLDER_NAME' ) ) {

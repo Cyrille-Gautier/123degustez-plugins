@@ -4,6 +4,9 @@ Tested up to: 6.7
 
 Change Log:
 ----------------------------------------------------------------------
+= 4.32.2 ( 2025-04-07 ) =
+- Fix: Compatibility issue with Dropbox API
+
 = 4.32.1 ( 2025-03-07 ) =
 - Fix: Compatibility issues with PHP 7.4
 
@@ -579,4 +582,4 @@ Change Log:
 - New: Incremental backups
 
 
-805140-1741363309-au
+805140-1744112797-au

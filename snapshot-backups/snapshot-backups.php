@@ -8,7 +8,7 @@
  * Plugin Name:  Snapshot Pro
  * Plugin URI:   https://wpmudev.com/project/snapshot/
  * Description:  Make and schedule incremental backups of your WordPress websites and store them on secure cloud storage. Snapshot Backups are logged and can be restored with a click or manually with the included installer. Snapshot gives you simple, faster, managed backups that take up less space.
- * Version:      4.32.1
+ * Version:      4.32.2
  * Network:      true
  * Text Domain:  snapshot
  * Author:       WPMU DEV
@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'SNAPSHOT_BACKUPS_VERSION' ) ) {
-	define( 'SNAPSHOT_BACKUPS_VERSION', '4.32.1' );
+	define( 'SNAPSHOT_BACKUPS_VERSION', '4.32.2' );
 }
 
 if ( ! defined( 'SNAPSHOT_DIR_PATH' ) ) {

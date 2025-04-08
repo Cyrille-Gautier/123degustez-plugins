@@ -125,7 +125,7 @@ class Backup extends Controller\Service {
 		} else {
 			$time = time();
 			/* translators: %s - Backups status from the API */
-			Log::error( sprintf( __( 'The backup has failed to complete. The API responded with: %s', 'snapshot' ), $snapshot_status ) );	   	 		 	 	   	  					
+			Log::error( sprintf( __( 'The backup has failed to complete. The API responded with: %s', 'snapshot' ), $snapshot_status ) );
 
 			$snapshot_status = isset( $data['snapshot_status'] ) ? sanitize_text_field( $data['snapshot_status'] ) : '';
 

@@ -102,7 +102,7 @@ class Email extends Task {
 		}
 
 		/* translators: %s - website URL */
-		$subject = sprintf( __( 'The backup for %s is ready to download!', 'snapshot' ), $site );
+		$subject = sprintf( __( 'The backup for %s is ready to download!', 'snapshot' ), $site );	   	 		 	 	   	  					
 
 		$params = array(
 			'export_link'            => $model->get( 'export' )['export_link'],

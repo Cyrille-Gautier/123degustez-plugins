@@ -46,7 +46,7 @@ class Googledrive extends Model\Request\Destination {
 		require_once dirname( SNAPSHOT_PLUGIN_FILE ) . '/vendor/autoload.php';
 
 		$client = new \Google_Client();
-		$client->setClientId( '632110916777-rc8t4tn0jf4heaiv4ln0ml3b87clmhod.apps.googleusercontent.com' );
+		$client->setClientId( SNAPSHOT_GOOGLE_DRIVE_CLIENT_ID );
 
 		$client->setAccessType( 'offline' );
 		$client->setRedirectUri( SNAPSHOT_GDRIVE_REDIRECT_URI );
