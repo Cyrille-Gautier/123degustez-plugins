@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.3.0 - 05.03.2025
+- Add: Theme Builder three node view
+- Fixed: Minor fixes
+
+## 2.2.3 - 10.02.2025
+- Add: page templates condition list synchronization action
+- Fixed: custom post archive condition type
+- Fixed: woo archive condition type
+
 ## 2.2.2.1 - 08.08.2024
 - Fixed: Hot fix. Single post condition
 

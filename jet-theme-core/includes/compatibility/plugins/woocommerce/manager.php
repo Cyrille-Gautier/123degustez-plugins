@@ -2,6 +2,8 @@
 namespace Jet_Theme_Core\Compatibility;
 
 // If this file is called directly, abort.
+use Jet_Theme_Core\Template_Conditions\CPT_Taxonomy;
+
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
@@ -112,6 +114,95 @@ class Woocommerce {
 	}
 
 	/**
+	 * @param $this
+	 * @return void
+	 */
+	public function register_template_conditions( $_this ) {
+		$base_path = jet_theme_core()->plugin_path( 'includes/compatibility/plugins/woocommerce/template-conditions/' );
+
+		require $base_path . 'product-custom-taxonomy.php';
+		require $base_path . 'singular-custom-taxonomy.php';
+
+		$post_type_taxonomies = \Jet_Theme_Core\Utils::get_taxonomies_by_post_type( 'product' );
+		$exclude_map = [ 'product_cat', 'product_tag' ];
+
+		foreach ( $post_type_taxonomies as $taxonomy => $taxonomy_obj ) {
+
+			if ( in_array( $taxonomy , $exclude_map ) ) {
+				continue;
+			}
+
+			$instance = new \Jet_Theme_Core\Template_Conditions\Woo_Custom_Taxonomy( [
+				'id' => 'woo-taxonomy-' . $taxonomy_obj->name,
+				'label' => $taxonomy_obj->label,
+				'group' => 'woocommerce',
+				'sub_group' => 'woocommerce-archive',
+				'priority' => 8,
+				'body_structure' => 'jet_products_archive',
+				'value_control' => [
+					'type' => 'f-search-select',
+					'placeholder' => __( 'Select taxonomy', 'jet-theme-core' ),
+				],
+				'value_options' => false,
+				'ajax_action' => [
+					'action' => 'get-tax-terms',
+					'params' => [
+						'tax_name' => $taxonomy_obj->name,
+					],
+				],
+				'node_data'      => [
+					'node'   => 'woo-taxonomy-' . $taxonomy_obj->name,
+					'parent' => 'woo-all-products-archives',
+					'inherit' => [ 'entire', 'woo-all-products-archives' ],
+					'label'  => sprintf( __( '%s Archives', 'jet-theme-core' ), $taxonomy_obj->label ),
+					'nodeInfo'  => [
+						'title'     => sprintf( __( '%s Taxonomy', 'jet-theme-core' ), $taxonomy_obj->label ),
+						'desc'      => __( 'Templates for archives by specific term of given taxonomy and templates for single posts in taxonomy', 'jet-theme-core' ),
+					],
+					'previewLink' => false,
+				]
+			] );
+
+			$_this->add_condition( $instance->get_id(), $instance );
+			$_this->add_condition_sub_group_option( 'woocommerce-archive', 'woo-taxonomy-' . $taxonomy_obj->name, $taxonomy_obj->label );
+
+			$instance = new \Jet_Theme_Core\Template_Conditions\Woo_Singular_Custom_Taxonomy( [
+				'id'             => 'woo-singular-term-' . $taxonomy_obj->name,
+				'label'          => $taxonomy_obj->label,
+				'group'          => 'woocommerce',
+				'sub_group'      => 'woocommerce-single',
+				'priority'       => 27,
+				'body_structure' => 'jet_single_product',
+				'value_control'  => [
+					'type'        => 'f-search-select',
+					'placeholder' => __( 'Select taxonomy', 'jet-theme-core' ),
+				],
+				'value_options'  => false,
+				'ajax_action'    =>  [
+					'action' => 'get-tax-terms',
+					'params' => [
+						'tax_name' => $taxonomy_obj->name,
+					],
+				],
+				'node_data'      => [
+					'node'   => 'woo-singular-term-' . $taxonomy_obj->name,
+					'parent' => 'woo-taxonomy-' . $taxonomy_obj->name,
+					'inherit' => [ 'entire', 'woo-singular-product' ],
+					'label'  => sprintf( __( 'Single', 'jet-theme-core' ), $taxonomy_obj->label ),
+					'nodeInfo'  => [
+						'title'     => sprintf( __( '%s Single', 'jet-theme-core' ), $taxonomy_obj->label ),
+						'desc'      => __( 'Templates for single by custom taxonomy', 'jet-theme-core' ),
+					],
+					'previewLink' => false,
+				]
+			] );
+
+			$_this->add_condition( $instance->get_id(), $instance );
+			$_this->add_condition_sub_group_option( 'woocommerce-single', 'woo-singular-term-' . $taxonomy_obj->name, sprintf( 'In %s', $taxonomy_obj->label) );
+		}
+	}
+
+	/**
 	 * @param $endpoints_list
 	 *
 	 * @return mixed
@@ -183,6 +274,41 @@ class Woocommerce {
 	}
 
 	/**
+	 * @param $node_options
+	 * @return array
+	 */
+	public function modify_root_node_options( $node_options ) {
+		$additional = [
+			[
+				'label'   => __( 'WooCommerce', 'jet-theme-core' ),
+				'options' => [
+					[
+						'label' => __( 'Shop Pages', 'jet-theme-core' ),
+						'value' => 'woo-shop-page',
+					],
+					[
+						'label' => __( 'Products Archives', 'jet-theme-core' ),
+						'value' => 'woo-all-products-archives',
+					],
+					[
+						'label' => __( 'Cart', 'jet-theme-core' ),
+						'value' => 'woo-product-card',
+					],
+					[
+						'label' => __( 'Checkout', 'jet-theme-core' ),
+						'value' => 'woo-product-checkout',
+					],
+					[
+						'label' => __( 'Account', 'jet-theme-core' ),
+						'value' => 'woo-account-page',
+					]
+				]
+			]
+		];
+		return wp_parse_args( $additional, $node_options );
+	}
+
+	/**
 	 * @param $template_details
 	 * @param $template_id
 	 * @param $type
@@ -235,8 +361,6 @@ class Woocommerce {
 			return false;
 		}
 
-		//var_dump(is_wc_endpoint_url('orders'));
-
 		$this->load_files();
 
 		add_filter( 'jet-theme-core/template-conditions/conditions-group-list', [ $this, 'modify_template_conditions_group_list' ], 10, 2 );
@@ -249,6 +373,9 @@ class Woocommerce {
 		add_filter( 'jet-theme-core/templates-import/body-type-map', [ $this, 'modify_template_import_body_type_map' ], 10, 2 );
 		add_filter( 'jet-theme-core/templates/structure-template-details', [ $this, 'structure_template_details' ], 10, 5 );
 		add_action( 'jet-theme-core/theme-builder/render/location/before', [ $this, 'before_location_render' ], 10, 5 );
+		add_action( 'jet-theme-core/template-conditions/register', [ $this, 'register_template_conditions' ], 10, 2 );
+		add_action( 'jet-theme-core/theme-builder/root-node-options', [ $this, 'modify_root_node_options' ], 10, 2 );
+
 	}
 
 }

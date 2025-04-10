@@ -81,6 +81,7 @@ Vue.component( 'jet-theme-core-general-settings', {
 		return {
 			ajaxSyncHandler: null,
 			syncTemplatesProcessing: false,
+			syncConditionsProcessing: false,
 		};
 	},
 
@@ -132,6 +133,43 @@ Vue.component( 'jet-theme-core-general-settings', {
 			} );
 
 			
+		},
+		syncConditionsOption: function() {
+			var self = this;
+
+			self.syncConditionsProcessing = true;
+
+			wp.apiFetch( {
+				method: 'post',
+				path: window.jetThemeCoreSettingsConfig.syncConditionsApiUrl,
+				data: {}
+			} ).then( function( response ) {
+
+				self.syncConditionsProcessing = false;
+
+				if ( 'success' === response.status ) {
+					self.$CXNotice.add( {
+						message: response.message,
+						type: 'success',
+						duration: 3000,
+					} );
+				}
+
+				if ( 'error' === response.status ) {
+					self.$CXNotice.add( {
+						message: response.message,
+						type: 'error',
+						duration: 3000,
+					} );
+				}
+
+			} ).catch( function( response ) {
+				self.$CXNotice.add( {
+					message: response.message,
+					type: 'error',
+					duration: 3000,
+				} );
+			} );
 		}
 	}
 } );

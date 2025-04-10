@@ -23,7 +23,7 @@ class Woo_Singular_Product_Tags extends Base {
 	 * @return string
 	 */
 	public function get_label() {
-		return __( 'Product from Tag', 'jet-theme-core' );
+		return __( 'In Product tags', 'jet-theme-core' );
 	}
 
 	/**
@@ -54,6 +54,18 @@ class Woo_Singular_Product_Tags extends Base {
 	 */
 	public function get_body_structure() {
 		return 'jet_single_product';
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'woo-product-tags',
+			'inherit' => [ 'entire', 'woo-singular-product' ],
+			'label' => $this->get_label(),
+		];
 	}
 
 	/**

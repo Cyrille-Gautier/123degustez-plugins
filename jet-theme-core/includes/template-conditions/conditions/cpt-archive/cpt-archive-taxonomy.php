@@ -23,7 +23,7 @@ class CPT_Archive_Taxonomy extends Base {
 	 * @return string
 	 */
 	public function get_label() {
-		return __( 'CPT Taxonomy', 'jet-theme-core' );
+		return __( 'CPT Taxonomy(legacy)', 'jet-theme-core' );
 	}
 
 	/**
@@ -39,7 +39,7 @@ class CPT_Archive_Taxonomy extends Base {
 	 * @return int
 	 */
 	public  function get_priority() {
-		return 45;
+		return 8;
 	}
 
 	/**
@@ -47,6 +47,22 @@ class CPT_Archive_Taxonomy extends Base {
 	 */
 	public function get_body_structure() {
 		return 'jet_archive';
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'archive-all',
+			'label' => __( 'CPT Taxonomy(legacy)', 'jet-theme-core' ),
+			'subNode' => true,
+			'nodeInfo'  => [
+				'title'     => __( 'CPT Taxonomy(legacy)', 'jet-theme-core' ),
+				'desc'      => __( 'Templates for CPT archives(legacy)', 'jet-theme-core' ),
+			]
+		];
 	}
 
 	/**

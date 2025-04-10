@@ -57,6 +57,18 @@ class Woo_Singular_Product_Category_Child extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'woo-product-categories',
+			'inherit' => [ 'entire', 'woo-singular-product' ],
+			'label' => $this->get_label(),
+		];
+	}
+
+	/**
 	 * [get_control description]
 	 * @return [type] [description]
 	 */

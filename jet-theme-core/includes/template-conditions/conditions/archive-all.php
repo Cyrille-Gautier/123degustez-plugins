@@ -50,6 +50,22 @@ class Archive_All extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'      => $this->get_id(),
+			'parent'    => 'entire',
+			'inherit' => [ 'entire' ],
+			'label' => __( 'All Archives', 'jet-theme-core' ),
+			'nodeInfo'  => [
+				'title' => __( 'All Archives', 'jet-theme-core' ),
+				'desc'  => __( 'Templates for all site archives', 'jet-theme-core' ),
+			]
+		];
+	}
+
+	/**
 	 * Condition check callback
 	 *
 	 * @return bool

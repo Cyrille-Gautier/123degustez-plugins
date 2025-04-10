@@ -148,7 +148,6 @@ class Notice_Manager
 			],
 		] );
 
-
 	}
 
 	/**

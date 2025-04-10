@@ -57,6 +57,18 @@ class Woo_Product_Empty_Card extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'woo-product-card',
+			'inherit' => [ 'entire' ],
+			'label'  => __( 'Empty Cart', 'jet-theme-core' ),
+		];
+	}
+
+	/**
 	 * Condition check callback
 	 *
 	 * @return bool

@@ -143,12 +143,14 @@ class Page_Templates_Manager {
 
 		if ( empty( $template_name ) ) {
 			$post_title = $post_title . 'Page Template #' . $template_id;
-
-			wp_update_post( [
-				'ID'         => $template_id,
-				'post_title' => $post_title,
-			] );
+		} else {
+			$post_title = $post_title . ' #' . $template_id;
 		}
+
+		wp_update_post( [
+			'ID'         => $template_id,
+			'post_title' => $post_title,
+		] );
 
 		if ( $template_id ) {
 
@@ -362,6 +364,7 @@ class Page_Templates_Manager {
 					'conditions'   => $this->get_page_template_conditions( $template_id ),
 					'relationType' => $this->get_page_template_relation_type( $template_id ),
 					'layout'       => $this->get_page_template_layout( $template_id ),
+					'node'         => $this->get_page_template_node( $template_id ),
 					'exportLink'   => \Jet_Theme_Core\Theme_Builder\Page_Templates_Export_Import::get_instance()->get_page_template_export_link( $template_id )
 				];
 			}
@@ -401,6 +404,10 @@ class Page_Templates_Manager {
 
 		if ( isset( $data['type'] ) ) {
 			$this->update_page_template_type( $id, $data['type'] );
+		}
+
+		if ( isset( $data['node'] ) ) {
+			$this->update_page_template_node( $id, $data['node'] );
 		}
 
 		if ( isset( $data['templateName'] ) ) {
@@ -506,6 +513,33 @@ class Page_Templates_Manager {
 		}
 
 		return update_post_meta( $id, '_type', $type );
+	}
+
+	/**
+	 * @param $template_id
+	 * @return false|mixed
+	 */
+	public function get_page_template_node( $template_id ) {
+		$node = get_post_meta( $template_id, '_node', true );
+
+		if ( empty( $node ) ) {
+			return false;
+		}
+
+		return $node;
+	}
+
+	/**
+	 * @param false $id
+	 * @param array $layout
+	 */
+	public function update_page_template_node( $id = false, $node = false ) {
+
+		if ( ! $id || ! $node ) {
+			return false;
+		}
+
+		return update_post_meta( $id, '_node', $node );
 	}
 
 	/**
@@ -698,10 +732,278 @@ class Page_Templates_Manager {
 	}
 
 	/**
+	 * @return mixed
+	 */
+	public function get_nodes_structure() {
+		$conditions = jet_theme_core()->template_conditions_manager->get_conditions();
+		$nodes = [];
+
+		foreach ( $conditions as $cid => $instance ) {
+			$node_data = $instance->get_node_data();
+
+			if ( ! $node_data ) {
+				continue;
+			}
+
+			$nodes[] = [
+				'id'            => $instance->get_id(),
+				'label'         => $instance->get_label(),
+				'node'          => $node_data['node'],
+				'parentNode'    => $node_data['parent'],
+				'nodeLabel'     => $node_data['label'],
+				'bodyStructure' => $instance->get_body_structure(),
+				'priority'      => $instance->get_priority(),
+				'pageTemplates' => [],
+				'nodes'         => [],
+				'nodesVisible'  => true,
+				'nodeInfo'      => isset( $node_data['nodeInfo'] ) ? $node_data['nodeInfo'] : false,
+				'inherit'       => isset( $node_data['inherit'] ) ? $node_data['inherit'] : false,
+				'previewLink'   => isset( $node_data['previewLink'] ) ? $node_data['previewLink'] : false,
+				'subNode'       => isset( $node_data['subNode'] ) ? $node_data['subNode'] : false,
+			];
+		}
+
+		$node_tree = $this->buildNodeHierarchy( $nodes );
+
+		return $nodes;
+	}
+
+	/**
+	 * @return mixed|null
+	 */
+	public function get_root_node_options() {
+		$post_types = \Jet_Theme_Core\Utils::get_custom_post_types_options();
+		$post_type_options = array_map( function ( $type ) {
+			return [
+				'label' => $type['label'],
+				'value' => 'cpt-archive-' . $type['value'],
+			];
+		}, $post_types );
+
+		$post_type_options = array_merge( [ [
+			'label' => __( 'Post', 'jet-theme-core' ),
+			'value' => 'archive-all-post',
+		] ], $post_type_options );
+
+		return apply_filters( 'jet-theme-core/theme-builder/root-node-options', [
+			[
+				'label' => __( 'Entire Site', 'jet-theme-core' ),
+				'value' => 'entire',
+			],
+			[
+				'label' => __( 'All Archives', 'jet-theme-core' ),
+				'value' => 'archive-all',
+			],
+			[
+				'label' => __( 'Post Types', 'jet-theme-core' ),
+				'options' => $post_type_options
+			]
+		] );
+	}
+
+	/**
+	 * @param array $nodes
+	 * @return array
+	 */
+	public function buildNodeHierarchy( array $nodes ): array {
+		$tree = [];
+		$references = [];
+
+		foreach ( $nodes as $node ) {
+			$node['nodes'] = [];
+			$references[ $node['node'] ] = $node;
+		}
+
+		foreach ( $nodes as $node ) {
+
+			if ( ! $node['parentNode'] ) {
+				$tree[] = &$references[ $node['node'] ];
+			} else {
+				$references[ $node['parentNode'] ]['nodes'][] = &$references[ $node['node'] ];
+			}
+		}
+
+		return $tree;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function print_admin_notices() {
+
+		if ( ! isset( $_GET['page'] ) || 'jet-theme-builder' !== $_GET['page'] ) {
+			return false;
+		}
+
+		$page_templates = $this->findLegacyConditionsPageTemplates( [ 'archive-post-type', 'archive-tax', 'singular-post-type' ] );
+
+		if ( empty( $page_templates ) ) {
+			return false;
+		}
+
+		\Jet_Dashboard\Dashboard::get_instance()->notice_manager->print_admin_notice( [
+			'id' => 'convert-legacy-conditions',
+			'icon' => '<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 8.985L29.295 28.5H6.705L18 8.985ZM18 3L1.5 31.5H34.5L18 3ZM19.5 24H16.5V27H19.5V24ZM19.5 15H16.5V21H19.5V15Z" fill="url(#paint0_linear_101_2)"/><defs><linearGradient id="paint0_linear_101_2" x1="18" y1="3" x2="18" y2="31.5" gradientUnits="userSpaceOnUse"><stop stop-color="#FFA901"/><stop offset="1" stop-color="#FEDB22"/></linearGradient></defs></svg>',
+			'title' => esc_html__( 'Found page templates with legacy type of conditions', 'jet-theme-core' ),
+			'description' => esc_html__( 'You can convert legacy conditions to new ones. You can then find these page templates in the template hierarchy tree.', 'jet-theme-core' ),
+			'type' => 'warning',
+			'button' => [
+				'text' => esc_html__( 'Convert Now', 'jet-dashboard' ),
+				'url' => add_query_arg(
+					[
+						'action'           => 'convert_legacy_conditions',
+						'nonce'            => wp_create_nonce( 'jet-theme-core-builder-nonce' ),
+					],
+					admin_url( 'admin-ajax.php' )
+				),
+				'classes' => [ 'cx-vui-button', 'cx-vui-button--style-accent-border', 'cx-vui-button--size-mini' ],
+			],
+		] );
+	}
+
+	/**
+	 * @param $array
+	 * @param $subGroup
+	 * @return bool
+	 */
+	public function findLegacyConditionsPageTemplates( $subGroups ) {
+		$params = [
+			'post_type'           => $this->get_slug(),
+			'ignore_sticky_posts' => true,
+			'posts_per_page'      => -1,
+			'suppress_filters'     => false,
+		];
+
+		$page_templates_data = get_posts( $params );
+
+		if ( empty( $page_templates_data ) ) {
+			return false;
+		}
+
+		$page_templates = [];
+
+		foreach ( $page_templates_data as $item ) {
+			$conditions = $this->get_page_template_conditions( $item->ID );
+
+			if ( isset( $conditions ) && is_array( $conditions ) ) {
+				foreach ( $conditions as $condition ) {
+
+					if ( isset( $condition['subGroup'] ) && in_array( $condition['subGroup'], $subGroups ) ) {
+						$page_templates[] = [
+							'id'         => $item->ID,
+							'conditions' => $conditions,
+						];
+					}
+				}
+			}
+		}
+
+		if ( empty( $page_templates ) ) {
+			return false;
+		}
+
+		return $page_templates;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function convert_legacy_conditions() {
+
+		if ( ! isset( $_GET['action'] ) ) {
+			return;
+		}
+
+		if ( 'convert_legacy_conditions' !== $_GET['action']  ) {
+			return;
+		}
+
+		if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], 'jet-theme-core-builder-nonce' ) ) {
+			wp_send_json_error( __( 'Page has expired. Please reload this page.', 'jet-theme-core' ) );
+		}
+
+		$page_templates = $this->findLegacyConditionsPageTemplates( [ 'archive-post-type', 'archive-tax', 'singular-post-type' ] );
+
+		foreach ( $page_templates as $page_template ) {
+			$id = $page_template['id'];
+			$conditions = $page_template['conditions'];
+			$new_conditions = [];
+
+			foreach ( $conditions as $key => &$condition ) {
+				$sub_group = $condition['subGroup'];
+
+				switch ( $sub_group ) {
+					case 'archive-post-type':
+						$new_conditions[] = [
+							'id'                   => uniqid( '_' ),
+							'include'              => 'true',
+							'group'                => 'archive',
+							'subGroup'             => 'cpt-archive-' . $condition['subGroupValue'],
+							'subGroupValue'        => '',
+							'subGroupValueVerbose' => '',
+							'priority'             => 45
+						];
+
+						unset( $conditions[ $key ] );
+						break;
+					case 'archive-tax':
+
+						if ( is_array( $condition['subGroupValue'] ) ) {
+
+							foreach ( $condition['subGroupValue'] as $value ) {
+								$new_conditions[] = [
+									'id'                   => uniqid( '_' ),
+									'include'              => 'true',
+									'group'                => 'archive',
+									'subGroup'             => 'cpt-taxonomy-' . $value,
+									'subGroupValue'        => [ 'all' ],
+									'subGroupValueVerbose' => [ 'All' ],
+									'priority'             => 45
+								];
+							}
+						}
+
+						unset( $conditions[ $key ] );
+
+						break;
+
+					case 'singular-post-type':
+						$new_conditions[] = [
+							'id'                   => uniqid( '_' ),
+							'include'              => 'true',
+							'group'                => 'singular',
+							'subGroup'             => 'cpt-single-' . $condition['subGroupValue'],
+							'subGroupValue'        => [ 'all' ],
+							'subGroupValueVerbose' => [ 'All' ],
+							'priority'             => 28
+						];
+
+						unset( $conditions[ $key ] );
+						break;
+				}
+			}
+
+			$conditions = array_merge( $conditions, $new_conditions );
+			$this->update_page_template_conditions( $id, $conditions );
+		}
+
+		$referer = wp_get_referer();
+
+		if ( $referer ) {
+			wp_safe_redirect( $referer );
+		} else {
+			wp_safe_redirect(home_url());
+		}
+
+		exit;
+	}
+
+	/**
 	 * Constructor for the class
 	 */
 	public function __construct() {
-		//$this->delete_page_template( 3789 );
+		add_action( 'admin_init', [ $this, 'convert_legacy_conditions' ] );
+		add_action( 'admin_notices', [ $this, 'print_admin_notices' ] );
 	}
 
 }

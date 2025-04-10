@@ -182,4 +182,22 @@ class Structures {
 
 	}
 
+	/**
+	 * @return string[]
+	 */
+	public function get_structure_colors() {
+		return [
+			'jet_page' => '#6AAC1E',
+			'jet_archive' => '#EE7B16',
+			'jet_single' => '#4272F9',
+			'jet_products_archive' => '#565FAD',
+			'jet_single_product' => '#7956AD',
+			'jet_products_card' => '#A456AD',
+			'jet_products_checkout' => '#A456AD',
+			'jet_products_checkout_endpoint' => '#A456AD',
+			'jet_account_page' => '#A456AD',
+			'jet_legacy_type' => '#CACBCD',
+		];
+	}
+
 }

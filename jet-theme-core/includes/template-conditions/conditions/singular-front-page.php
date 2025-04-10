@@ -57,6 +57,20 @@ class Front_Page extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'    => $this->get_id(),
+			'parent'  => 'entire',
+			'inherit' => [ 'entire' ],
+			'subNode' => true,
+			'label'   => $this->get_label(),
+			'previewLink' => get_home_url(),
+		];
+	}
+
+	/**
 	 * Condition check callback
 	 *
 	 * @return bool

@@ -154,7 +154,7 @@ class Templates {
 
 		if ( ! isset( $_GET[ $this->type_tax ] ) || ! in_array( $_GET[ $this->type_tax ], $exclude_structures ) ) {
 			$icon = \Jet_Theme_Core\Utils::get_admin_ui_icon( 'info' );
-			$columns['conditions'] = sprintf('<div class="jet-template-library__theme-location-info-label"><span>%2$s</span>%1$s</div>', $icon, __( 'Theme Location', 'jet-theme-core' ) );
+			$columns['conditions'] = sprintf('<div class="jet-template-library__theme-location-info-label"><span>%2$s</span>%1$s</div>', $icon, __( 'Display Conditions', 'jet-theme-core' ) );
 		}
 
 		$columns['date'] = __( 'Date', 'jet-theme-core' );
@@ -744,6 +744,29 @@ class Templates {
 
 			exit;
 		}
+	}
+
+	/**
+	 * @return void
+	 */
+	public function sync_conditions_option() {
+		$raw_templates = $this->get_raw_template_list();
+		$templates = [];
+
+		if ( empty( $raw_templates ) ) {
+			return false;
+		}
+
+		foreach ( $raw_templates as $template_obj ) {
+			$template_id  = $template_obj->ID;
+			$type         = $this->get_template_type( $template_id );
+			$conditions   = jet_theme_core()->template_conditions_manager->get_template_conditions( $template_id );
+			$templates[ $type ][ $template_id ] = $conditions;
+		}
+
+		update_option( jet_theme_core()->template_conditions_manager->conditions_key, $templates, true );
+
+		return true;
 	}
 
 	/**

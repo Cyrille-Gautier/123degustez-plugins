@@ -15,4 +15,4 @@ $layout = jet_theme_core()->theme_builder->frontend_manager->get_matched_page_te
 <body <?php body_class(); ?>><?php
 	wp_body_open();
 
-	jet_theme_core()->theme_builder->frontend_manager->render_location( $layout['header']['id'] );?>
+	jet_theme_core()->theme_builder->frontend_manager->render_location( $layout['header'] );?>

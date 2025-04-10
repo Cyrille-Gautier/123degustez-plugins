@@ -57,6 +57,30 @@ class Woo_Shop_Page extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'entire',
+			'inherit' => [ 'entire' ],
+			'label' => $this->get_label(),
+			'nodeInfo'  => [
+				'title' => __( 'Shop Pages', 'jet-theme-core' ),
+				'desc'  => __( 'Woocommerce pages', 'jet-theme-core' ),
+			],
+			'previewLink' => $this->get_preview_link(),
+		];
+	}
+
+	/**
+	 * @return void
+	 */
+	public function get_preview_link() {
+		return get_permalink( wc_get_page_id( 'shop' ) );
+	}
+
+	/**
 	 * Condition check callback
 	 *
 	 * @return bool

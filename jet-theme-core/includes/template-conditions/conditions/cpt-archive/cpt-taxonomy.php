@@ -62,6 +62,13 @@ class CPT_Taxonomy {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return $this->args['node_data'];
+	}
+
+	/**
 	 * [get_control description]
 	 * @return [type] [description]
 	 */
@@ -119,10 +126,9 @@ class CPT_Taxonomy {
 	 * @return bool
 	 */
 	public function check( $arg = '', $subgroup = false ) {
-
 		$taxonomy = str_replace( 'cpt-taxonomy-', '', $subgroup );
 
-		if ( in_array( 'all', $arg ) || empty( $arg ) ) {
+		if ( empty( $arg ) || in_array( 'all', $arg ) ) {
 			return is_tax( $taxonomy, '' );
 		}
 
@@ -160,6 +166,7 @@ class CPT_Taxonomy {
 			'value_options'  => false,
 			'ajax_action'    => false,
 			'arg_control'    => false,
+			'node_data'      => false,
 		];
 
 		$this->args = wp_parse_args( $arg, $default_args );

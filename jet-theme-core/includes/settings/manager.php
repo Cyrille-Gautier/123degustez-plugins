@@ -164,6 +164,7 @@ class Settings {
 			'childThemeData'         => $this->get_child_theme_data(),
 			'settingsApiUrl'         => '/jet-theme-core-api/v2/plugin-settings',
 			'syncTemplatesApiUrl'    => '/jet-theme-core-api/v2/sync-templates',
+			'syncConditionsApiUrl'   => '/jet-theme-core-api/v2/sync-conditions-option',
 			'appearanceThemePageUrl' => admin_url( 'themes.php' ),
 			'backupList'             => $this->get_theme_backup_list(),
 			'hasElementor'           => filter_var( \Jet_Theme_Core\Utils::has_elementor(), FILTER_VALIDATE_BOOLEAN ) ? 'true' : 'false',

@@ -57,6 +57,18 @@ class Woo_Account_Endpoints extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'woo-account-page',
+			'inherit' => [ 'entire', 'woo-account-page' ],
+			'label' => $this->get_label(),
+		];
+	}
+
+	/**
 	 * [get_control description]
 	 * @return [type] [description]
 	 */

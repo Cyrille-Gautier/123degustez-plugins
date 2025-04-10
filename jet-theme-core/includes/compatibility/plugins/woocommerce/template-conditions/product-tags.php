@@ -57,6 +57,23 @@ class Woo_Product_Tags extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'woo-all-products-archives',
+			'label' => $this->get_label(),
+			'inherit' => [ 'entire', 'archive-all', 'woo-all-products-archives' ],
+			'nodeInfo'  => [
+				'title' => __( 'Tags taxonomy', 'jet-theme-core' ),
+				'desc'  => __( 'Product tag taxonomy archive and single post', 'jet-theme-core' ),
+			],
+			'previewLink' => $this->get_preview_link(),
+		];
+	}
+
+	/**
 	 * [get_control description]
 	 * @return [type] [description]
 	 */
@@ -94,6 +111,26 @@ class Woo_Product_Tags extends Base {
 		}
 
 		return implode( ', ', $result );
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function get_preview_link() {
+
+		$categories = get_terms( [
+			'taxonomy'   => 'product_tag',
+			'hide_empty' => false,
+		] );
+
+		if ( ! empty( $categories ) ) {
+			$first_category = $categories[0];
+			$first_category_link = get_category_link( $first_category->term_id );
+
+			return esc_url( $first_category_link );
+		}
+
+		return false;
 	}
 
 	/**

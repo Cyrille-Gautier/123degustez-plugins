@@ -75,6 +75,7 @@ class Rest_Api {
 		$default_endpoints = apply_filters( 'jet-theme-core/rest-api/endpoint-list', [
 			'\Jet_Theme_Core\Endpoints\Plugin_Settings'            => $base_path . 'plugin-settings.php',
 			'\Jet_Theme_Core\Endpoints\Sync_Templates'             => $base_path . 'sync-templates.php',
+			'\Jet_Theme_Core\Endpoints\Sync_Conditions_Option'     => $base_path . 'sync-conditions-option.php',
 			'\Jet_Theme_Core\Endpoints\Get_Page_Templates'         => $base_path . 'get-page-templates.php',
 			'\Jet_Theme_Core\Endpoints\Get_Post_Categories'        => $base_path . 'get-post-categories.php',
 			'\Jet_Theme_Core\Endpoints\Get_Posts'                  => $base_path . 'get-posts.php',

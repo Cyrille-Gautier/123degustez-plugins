@@ -57,6 +57,29 @@ class Woo_Account_Login_Page extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'woo-account-page',
+			'inherit' => [ 'entire', 'woo-account-page' ],
+			'label'  => __( 'Login Page', 'jet-theme-core' ),
+			'previewLink' => $this->get_preview_link(),
+		];
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function get_preview_link() {
+		$checkout_page_id = get_option( 'woocommerce_myaccount_page_id' );
+		$checkout_url = get_permalink( $checkout_page_id );
+
+		return esc_url( $checkout_url );
+	}
+
+	/**
 	 * Condition check callback
 	 *
 	 * @return bool

@@ -57,6 +57,20 @@ class Post_From_Tag extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'archive-tag',
+			'inherit' => [ 'entire', 'singular-post' ],
+			'label' => __( 'Post tags Single', 'jet-theme-core' ),
+			'previewLink' => $this->get_preview_link(),
+		];
+	}
+
+
+	/**
 	 * [get_control description]
 	 * @return [type] [description]
 	 */
@@ -100,6 +114,37 @@ class Post_From_Tag extends Base {
 		}
 
 		return $label;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_preview_link() {
+		$tags = get_terms( array(
+			'taxonomy'   => 'post_tag',
+			'hide_empty' => false,
+		) );
+
+		if ( empty( $tags ) ) {
+			return false;
+		}
+
+		$first_tag = $tags[0];
+
+		$tag_query = new \WP_Query( [
+			'tag_id'         => $first_tag->term_id,
+			'posts_per_page' => 1,
+			'orderby'     => 'date',
+			'order'       => 'ASC',
+		] );
+
+		$first_post = $tag_query->posts;
+
+		if ( ! empty( $first_post ) ) {
+			return esc_url( get_permalink( $first_post[0]->ID ) );
+		}
+
+		return false;
 	}
 
 	/**

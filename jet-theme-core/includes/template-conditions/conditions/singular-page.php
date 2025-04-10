@@ -57,6 +57,22 @@ class Page extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'entire',
+			'inherit' => [ 'entire' ],
+			'label' => __( 'Page', 'jet-theme-core' ),
+			'nodeInfo'  => [
+				'title' => __( 'Singular Page', 'jet-theme-core' ),
+				'desc' => __( 'Description Singular Page', 'jet-theme-core' ),
+			]
+		];
+	}
+
+	/**
 	 * [get_control description]
 	 * @return [type] [description]
 	 */

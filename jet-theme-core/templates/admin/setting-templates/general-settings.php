@@ -46,4 +46,21 @@
     >
 	</cx-vui-select>
 
+    <div class="cx-vui-component cx-vui-component--equalwidth">
+        <div class="cx-vui-component__meta">
+            <label class="cx-vui-component__label" for="cx_pro_relations"><?php _e( 'Site Conditions Synchronization', 'jet-theme-core' ); ?></label>
+            <div class="cx-vui-component__desc"><?php _e( 'MagicButton templates synchronization', 'jet-theme-core' ); ?></div>
+        </div>
+        <div class="cx-vui-component__control">
+            <cx-vui-button
+                button-style="accent-border"
+                size="mini"
+                :loading="syncConditionsProcessing"
+                @click="syncConditionsOption"
+            >
+                <span slot="label"><?php _e( 'Sync Site Conditions', 'jet-theme-core' ); ?></span>
+            </cx-vui-button>
+        </div>
+    </div>
+
 </div>

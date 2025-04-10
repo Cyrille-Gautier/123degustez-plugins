@@ -57,6 +57,33 @@ class Woo_Account_Page extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'woo-shop-page',
+			'inherit' => [ 'entire' ],
+			'label' => $this->get_label(),
+			'nodeInfo'  => [
+				'title' => __( 'Account Pages', 'jet-theme-core' ),
+				'desc'  => __( 'Account Pages templates', 'jet-theme-core' ),
+			],
+			'previewLink' => $this->get_preview_link(),
+		];
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function get_preview_link() {
+		$checkout_page_id = get_option( 'woocommerce_myaccount_page_id' );
+		$checkout_url = get_permalink( $checkout_page_id );
+
+		return esc_url( $checkout_url );
+	}
+
+	/**
 	 * Condition check callback
 	 *
 	 * @return bool

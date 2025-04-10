@@ -62,6 +62,13 @@ class CPT_Archive {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return $this->args['node_data'];
+	}
+
+	/**
 	 * [get_control description]
 	 * @return [type] [description]
 	 */
@@ -146,6 +153,7 @@ class CPT_Archive {
 			'value_options'  => false,
 			'ajax_action'    => false,
 			'arg_control'    => false,
+			'node_data'      => false,
 		];
 
 		$this->args = wp_parse_args( $arg, $default_args );

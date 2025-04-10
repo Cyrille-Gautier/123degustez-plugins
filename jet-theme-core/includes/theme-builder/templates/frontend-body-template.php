@@ -3,6 +3,6 @@ $layout = jet_theme_core()->theme_builder->frontend_manager->get_matched_page_te
 
 get_header();
 
-jet_theme_core()->theme_builder->frontend_manager->render_location( $layout['body']['id'] );
+jet_theme_core()->theme_builder->frontend_manager->render_location( $layout['body'] );
 
 get_footer();

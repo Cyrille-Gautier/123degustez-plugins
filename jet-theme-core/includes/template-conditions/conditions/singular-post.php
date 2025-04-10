@@ -57,6 +57,24 @@ class Post extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'archive-all-post',
+			'inherit' => [ 'entire' ],
+			'subNode' => false,
+			'label' => __( 'Single', 'jet-theme-core' ),
+			'nodeInfo'  => [
+				'title'     => __( 'Single Post', 'jet-theme-core' ),
+				'desc'      => __( 'Templates for single post', 'jet-theme-core' ),
+			],
+			'previewLink' => $this->get_preview_link(),
+		];
+	}
+
+	/**
 	 * [get_control description]
 	 * @return [type] [description]
 	 */
@@ -89,6 +107,23 @@ class Post extends Base {
 	 */
 	public function get_label_by_value( $value = '' ) {
 		return get_the_title( $value );
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_preview_link() {
+		$first_post = get_posts( [
+			'numberposts' => 1,
+			'orderby'     => 'date',
+			'order'       => 'ASC',
+		] );
+
+		if ( ! empty( $first_post ) ) {
+			return esc_url( get_permalink( $first_post[0]->ID ) );
+		}
+
+		return false;
 	}
 
 	/**

@@ -57,6 +57,20 @@ class Page_404 extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'entire',
+			'inherit' => [ 'entire' ],
+			'subNode' => true,
+			'label' => $this->get_label(),
+			'previewLink' => home_url('/404/'),
+		];
+	}
+
+	/**
 	 * Condition check callback
 	 *
 	 * @return bool

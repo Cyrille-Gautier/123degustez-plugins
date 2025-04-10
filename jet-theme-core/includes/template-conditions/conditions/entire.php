@@ -50,6 +50,22 @@ class Entire extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node' => $this->get_id(),
+			'parent' => false,
+			'label' => __( 'Entire', 'jet-theme-core' ),
+			'nodeInfo'  => [
+				'title' => __( 'Entire Site', 'jet-theme-core' ),
+				'desc' => __( 'Description Entire Site', 'jet-theme-core' ),
+			],
+			'previewLink' => get_home_url(),
+		];
+	}
+
+	/**
 	 * Condition check callback
 	 *
 	 * @return bool

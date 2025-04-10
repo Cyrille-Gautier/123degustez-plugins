@@ -57,6 +57,30 @@ class Woo_Product_Card extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'woo-shop-page',
+			'inherit' => [ 'entire' ],
+			'label'  => __( 'Cart', 'jet-theme-core' ),
+			'nodeInfo'  => [
+				'title' => __( 'Product Cart Pages', 'jet-theme-core' ),
+				'desc'  => __( 'Product Cart templates', 'jet-theme-core' ),
+			],
+			'previewLink' => $this->get_preview_link(),
+		];
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function get_preview_link() {
+		return esc_url( wc_get_cart_url() );
+	}
+
+	/**
 	 * Condition check callback
 	 *
 	 * @return bool

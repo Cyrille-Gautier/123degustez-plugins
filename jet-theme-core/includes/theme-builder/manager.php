@@ -43,6 +43,11 @@ class Theme_Builder {
 	public $frontend_manager = false;
 
 	/**
+	 * @var bool
+	 */
+	public $admin_bar = false;
+
+	/**
 	 * A reference to an instance of this class.
 	 *
 	 * @since  1.0.0
@@ -75,6 +80,7 @@ class Theme_Builder {
 		require jet_theme_core()->plugin_path( 'includes/theme-builder/includes/page-templates-manager.php' );
 		require jet_theme_core()->plugin_path( 'includes/theme-builder/includes/page-templates-export-import.php' );
 		require jet_theme_core()->plugin_path( 'includes/theme-builder/includes/frontend-manager.php' );
+		require jet_theme_core()->plugin_path( 'includes/theme-builder/includes/admin-bar.php' );
 	}
 
 	/**
@@ -84,6 +90,7 @@ class Theme_Builder {
 		$this->page_templates_manager = new Theme_Builder\Page_Templates_Manager();
 		$this->page_templates_export_import = new Theme_Builder\Page_Templates_Export_Import();
 		$this->frontend_manager = new Theme_Builder\Frontend_Manager();
+		$this->admin_bar = new Theme_Builder\Admin_Bar();
 	}
 
 	/**
@@ -197,7 +204,10 @@ class Theme_Builder {
 				'templateContentTypeOptions'       => jet_theme_core()->templates->get_template_content_type_options(),
 				'templateContentTypeIcons'         => jet_theme_core()->templates->get_template_content_type_icons(),
 				'templateDetailsData'              => jet_theme_core()->templates->get_template_source_type_details(),
+				'nodeData'                         => $this->page_templates_manager->get_nodes_structure(),
+				'rootNodeOptions'                  => $this->page_templates_manager->get_root_node_options(),
 				'themeBuilderNonce'                => wp_create_nonce( 'jet-theme-core-builder-nonce' ),
+				'structureColors'                  => jet_theme_core()->structures->get_structure_colors(),
 			)
 		);
 

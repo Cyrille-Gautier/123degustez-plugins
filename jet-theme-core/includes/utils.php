@@ -103,6 +103,7 @@ class Utils {
 				'attachment',
 				'elementor_library',
 				'jet-theme-core',
+				'jet-block-template',
 			]
 		);
 
@@ -162,6 +163,7 @@ class Utils {
 			[
 				'post',
 				'jet-menu',
+				'e-floating-buttons',
 			]
 		);
 
@@ -502,5 +504,97 @@ class Utils {
 
 		return false;
 	}
+
+	/**
+	 * @param $taxonomy
+	 * @return void
+	 */
+	public static function get_cpt_archive_link( $post_type_slug ) {
+		return get_post_type_archive_link( $post_type_slug );
+	}
+
+	/**
+	 * @param $taxonomy
+	 * @return void
+	 */
+	public static function get_taxonomy_archive_link( $taxonomy ) {
+		$terms = get_terms( array(
+			'taxonomy'   => $taxonomy,
+			'hide_empty' => false,
+			'orderby'    => 'term_id',
+			'order'      => 'ASC',
+			'number'     => 1,
+		) );
+
+		if ( empty( $terms ) ||  is_wp_error( $terms ) ) {
+			return false;
+		}
+
+		$first_term = $terms[0];
+
+		return esc_url( get_term_link( $first_term ) );
+	}
+
+	/**
+	 * @param $post_type
+	 * @return false|string
+	 */
+	public static function get_cpt_single_post_link( $post_type ) {
+		$first_post = get_posts( [
+			'post_type' => $post_type,
+			'numberposts' => 1,
+			'orderby'     => 'date',
+			'order'       => 'ASC',
+		] );
+
+		if ( ! empty( $first_post ) ) {
+			return esc_url( get_permalink( $first_post[0]->ID ) );
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param $post_type
+	 * @return false|string
+	 */
+	public static function get_cpt_term_single_post_link( $post_type, $taxonomy ) {
+		$terms = get_terms( array(
+			'taxonomy'   => $taxonomy,
+			'hide_empty' => false,
+		) );
+
+		if ( empty( $terms ) ) {
+			return false;
+		}
+
+		$first_term = $terms[0];
+		$first_post = new \WP_Query([
+			'post_type'      => $post_type,
+			'tax_query'      => [
+				[
+					'taxonomy' => $taxonomy,
+					'field'    => 'slug',
+					'terms'    => $first_term->slug,
+				]
+			],
+			'posts_per_page' => 1,
+			'orderby'        => 'date',
+			'order'          => 'ASC', // Самый первый (старый) пост
+		] );
+
+		$first_post = $first_post->posts;
+
+		if ( empty( $first_post ) ) {
+			return false;
+		}
+
+		if ( ! empty( $first_post ) ) {
+			return esc_url( get_permalink( $first_post[0]->ID ) );
+		}
+
+		return false;
+	}
+
 
 }

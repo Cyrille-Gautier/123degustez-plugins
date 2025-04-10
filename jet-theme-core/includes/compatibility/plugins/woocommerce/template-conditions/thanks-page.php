@@ -57,6 +57,40 @@ class Woo_Thanks_Page extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'woo-product-checkout',
+			'inherit' => [ 'entire', 'woo-product-checkout' ],
+			'label' => $this->get_label(),
+			'previewLink' => $this->get_preview_link(),
+		];
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function get_preview_link() {
+		$customer_orders = wc_get_orders( [
+			'limit'    => 1,
+			'customer' => get_current_user_id(),
+			'orderby'  => 'date',
+			'order'    => 'DESC',
+		] );
+
+		if ( ! empty( $customer_orders ) ) {
+			$order = reset( $customer_orders );
+			$thank_you_url = wc_get_endpoint_url( 'order-received', $order->get_id(), wc_get_checkout_url() );
+
+			return esc_url( $thank_you_url );
+		}
+
+		return false;
+	}
+
+	/**
 	 * Condition check callback
 	 *
 	 * @return bool

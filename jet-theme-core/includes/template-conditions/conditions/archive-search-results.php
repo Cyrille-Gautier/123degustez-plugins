@@ -50,6 +50,20 @@ class Archive_Search extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'archive-all',
+			'inherit' => [ 'entire', 'archive-all' ],
+			'subNode' => true,
+			'label' => $this->get_label(),
+			'previewLink' => get_home_url( null, '?s=' )
+		];
+	}
+
+	/**
 	 * Condition check callback
 	 *
 	 * @return bool

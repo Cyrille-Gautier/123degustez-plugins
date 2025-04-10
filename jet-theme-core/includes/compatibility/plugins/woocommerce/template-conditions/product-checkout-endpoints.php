@@ -57,6 +57,18 @@ class Woo_Product_Checkout_Endpoints extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'woo-product-checkout',
+			'inherit' => [ 'entire', 'woo-product-checkout' ],
+			'label' => __( 'Checkout Endpoints', 'jet-theme-core' ),
+		];
+	}
+
+	/**
 	 * [get_control description]
 	 * @return [type] [description]
 	 */

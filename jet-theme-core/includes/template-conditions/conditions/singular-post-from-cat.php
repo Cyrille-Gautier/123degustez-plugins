@@ -57,6 +57,19 @@ class Post_From_Category extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'archive-category',
+			'inherit' => [ 'entire', 'singular-post' ],
+			'label'  => __( 'Post categories Single', 'jet-theme-core' ),
+			'previewLink' => $this->get_preview_link(),
+		];
+	}
+
+	/**
 	 * [get_control description]
 	 * @return [type] [description]
 	 */
@@ -100,6 +113,35 @@ class Post_From_Category extends Base {
 		}
 
 		return $label;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_preview_link() {
+
+		$categories = get_terms( [
+			'taxonomy'   => 'category',
+			'hide_empty' => false,
+		] );
+
+		if ( empty( $categories ) ) {
+			return false;
+		}
+
+		$first_category = $categories[0];
+		$first_post = get_posts( [
+			'category' => $first_category->term_id,
+			'numberposts' => 1,
+			'orderby'     => 'date',
+			'order'       => 'ASC',
+		] );
+
+		if ( ! empty( $first_post ) ) {
+			return esc_url( get_permalink( $first_post[0]->ID ) );
+		}
+
+		return false;
 	}
 
 	/**

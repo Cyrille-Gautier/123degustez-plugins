@@ -106,15 +106,13 @@ class Frontend_Manager {
 			return $template;
 		}
 
-		$override_header   = $layout['header']['override'] && $layout['header']['id'] ? true : false;
-		$override_body     = $layout['body']['override'] && $layout['body']['id'] ? true : false;
-		$override_footer   = $layout['footer']['override'] && $layout['footer']['id'] ? true : false;
-		$page_template     = locate_template( 'page.php' );
+		$override_header = ( $layout['header']['override'] && $layout['header']['id'] ) || ! $layout['header']['enabled'] ? true : false;
+		$override_body   = ( $layout['body']['override'] && $layout['body']['id'] ) || ! $layout['body']['enabled'] ? true : false;
+		$override_footer = ( $layout['footer']['override'] && $layout['footer']['id'] ) || ! $layout['footer']['enabled'] ? true : false;
 
 		if ( $override_header ) {
 			// wp-version >= 5.2
 			remove_action( 'wp_body_open', 'wp_admin_bar_render', 0 );
-
 			add_action( 'get_header', [ $this, 'get_override_header' ] );
 		}
 
@@ -126,8 +124,8 @@ class Frontend_Manager {
 			return jet_theme_core()->plugin_path( 'includes/theme-builder/templates/frontend-body-template.php' );
 		}
 
-		if ( $override_body && !is_home() ) {
-			return $page_template;
+		if ( $override_body && ! is_home() ) {
+			return locate_template( 'page.php' );
 		}
 
 		return $template;
@@ -222,9 +220,11 @@ class Frontend_Manager {
 	 *
 	 * @return false
 	 */
-	public function render_location( $template_id = false ) {
+	public function render_location( $location_data = false ) {
+		$template_id = $location_data['id'];
+		$enabled     = $location_data['enabled'];
 
-		if ( ! $template_id ) {
+		if ( ! $template_id || ! $enabled ) {
 			return false;
 		}
 

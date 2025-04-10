@@ -81,6 +81,13 @@ class Manager {
 		$default_conditions = apply_filters( 'jet-theme-core/template-conditions/conditions-list', [
 			'\Jet_Theme_Core\Template_Conditions\Entire'                 => $base_path . 'entire.php',
 
+			// Archive conditions
+			'\Jet_Theme_Core\Template_Conditions\Archive_All'            => $base_path . 'archive-all.php',
+			'\Jet_Theme_Core\Template_Conditions\Archive_All_Post'       => $base_path . 'archive-all-post.php',
+			'\Jet_Theme_Core\Template_Conditions\Archive_Category'       => $base_path . 'archive-category.php',
+			'\Jet_Theme_Core\Template_Conditions\Archive_Tag'            => $base_path . 'archive-tag.php',
+			'\Jet_Theme_Core\Template_Conditions\Archive_Search'         => $base_path . 'archive-search-results.php',
+
 			// Singular conditions
 			'\Jet_Theme_Core\Template_Conditions\Front_Page'             => $base_path . 'singular-front-page.php',
 			'\Jet_Theme_Core\Template_Conditions\Page'                   => $base_path . 'singular-page.php',
@@ -90,12 +97,6 @@ class Manager {
 			'\Jet_Theme_Core\Template_Conditions\Post'                   => $base_path . 'singular-post.php',
 			'\Jet_Theme_Core\Template_Conditions\Post_From_Category'     => $base_path . 'singular-post-from-cat.php',
 			'\Jet_Theme_Core\Template_Conditions\Post_From_Tag'          => $base_path . 'singular-post-from-tag.php',
-
-			// Archive conditions
-			'\Jet_Theme_Core\Template_Conditions\Archive_All'            => $base_path . 'archive-all.php',
-			'\Jet_Theme_Core\Template_Conditions\Archive_Category'       => $base_path . 'archive-category.php',
-			'\Jet_Theme_Core\Template_Conditions\Archive_Tag'            => $base_path . 'archive-tag.php',
-			'\Jet_Theme_Core\Template_Conditions\Archive_Search'         => $base_path . 'archive-search-results.php',
 
 			// Custom Post Type
 			'\Jet_Theme_Core\Template_Conditions\CPT_Singular_Post_Type' => $base_path . 'cpt-singular/cpt-singular-post-type.php',
@@ -119,8 +120,7 @@ class Manager {
 			$label = $instance->get_label();
 			$sub_group = $instance->get_sub_group();
 
-			$this->_conditions[ $id ] = $instance;
-
+			$this->add_condition( $id, $instance );
 			$this->add_condition_sub_group_option( $sub_group, $id, $label );
 		}
 
@@ -155,30 +155,6 @@ class Manager {
 			$single_sub_group = $post_type_slug . '-single-post';
 			$this->register_condition_sub_group( $single_sub_group, $post_type_label );
 
-			$instance = new CPT_Single_Post( [
-				'id'             => 'cpt-single-' . $post_type_slug,
-				'label'          => sprintf( __( '%s Single', 'jet-theme-core' ), $post_type_obj->labels->singular_name ),
-				'group'          => 'singular',
-				'sub_group'      => $single_sub_group,
-				'priority'       => 28,
-				'body_structure' => 'jet_single',
-				'value_control'  => [
-					'type'        => 'f-search-select',
-					'placeholder' => __( 'Select', 'jet-theme-core' ),
-				],
-				'value_options'  => false,
-				'ajax_action'    =>  [
-					'action' => 'get-posts',
-					'params' => [
-						'post_type' => $post_type_slug,
-						'query'     => '',
-					],
-				],
-			] );
-
-			$this->_conditions[ $instance->get_id() ] = $instance;
-			$this->add_condition_sub_group_option( $single_sub_group, 'cpt-single-' . $post_type_slug, $post_type_label );
-
 			$instance = new CPT_Archive( [
 				'id'             => 'cpt-archive-' . $post_type_slug,
 				'label'          =>  sprintf( __( 'All %s Archives', 'jet-theme-core' ), $post_type_label ),
@@ -186,6 +162,17 @@ class Manager {
 				'sub_group'      => $archive_sub_group,
 				'priority'       => 9,
 				'body_structure' => 'jet_archive',
+				'node_data'      => [
+					'node'   => 'cpt-archive-' . $post_type_slug,
+					'parent' => 'archive-all',
+					'inherit' => [ 'entire', 'archive-all' ],
+					'label' => __( 'All Archives', 'jet-theme-core' ),
+					'nodeInfo'  => [
+						'title'     => sprintf( __( '%s CPT', 'jet-theme-core' ), $post_type_label ),
+						'desc'      => sprintf( __( 'Templates for all taxonomy archives %s CPT taxonomy', 'jet-theme-core' ), $post_type_label ),
+					],
+					'previewLink' => \Jet_Theme_Core\Utils::get_cpt_archive_link( $post_type_slug ),
+				]
 			] );
 
 			$this->_conditions[ $instance->get_id() ] = $instance;
@@ -198,7 +185,7 @@ class Manager {
 					'label'          => $taxonomy_obj->label,
 					'group'          => 'archive',
 					'sub_group'      => $archive_sub_group,
-					'priority'       => 45,
+					'priority'       => 8,
 					'body_structure' => 'jet_archive',
 					'value_control'  => [
 						'type'        => 'f-search-select',
@@ -211,6 +198,17 @@ class Manager {
 							'tax_name' => $taxonomy_obj->name,
 						],
 					],
+					'node_data'      => [
+						'node'   => 'cpt-taxonomy-' . $taxonomy_obj->name,
+						'parent' => 'cpt-archive-' . $post_type_slug,
+						'inherit' => [ 'entire', 'archive-all', 'cpt-archive-' . $post_type_slug ],
+						'label'  => sprintf( __( '%s Archives', 'jet-theme-core' ), $taxonomy_obj->label ),
+						'nodeInfo'  => [
+							'title'     => sprintf( __( '%s Taxonomy', 'jet-theme-core' ), $taxonomy_obj->label ),
+							'desc'      => __( 'Templates for archives by specific term of given taxonomy and templates for single posts in taxonomy', 'jet-theme-core' ),
+						],
+						'previewLink' => \Jet_Theme_Core\Utils::get_taxonomy_archive_link( $taxonomy_obj->name ),
+					]
 				] );
 
 				$this->_conditions[ $instance->get_id() ] = $instance;
@@ -234,11 +232,58 @@ class Manager {
 							'tax_name' => $taxonomy_obj->name,
 						],
 					],
+					'node_data'      => [
+						'node'   => 'cpt-post-term-' . $taxonomy_obj->name,
+						'parent' => 'cpt-taxonomy-' . $taxonomy_obj->name,
+						'inherit' => [ 'entire', 'cpt-single-' . $post_type_slug ],
+						'label'  => sprintf( __( 'Single', 'jet-theme-core' ), $taxonomy_obj->label ),
+						'nodeInfo'  => [
+							'title'     => sprintf( __( '%s Single', 'jet-theme-core' ), $taxonomy_obj->label ),
+							'desc'      => __( 'Templates for single by specific term of given taxonomy and templates for single posts in taxonomy', 'jet-theme-core' ),
+						],
+						'previewLink' => \Jet_Theme_Core\Utils::get_cpt_term_single_post_link( $post_type_slug, $taxonomy_obj->name ),
+					]
 				] );
 
 				$this->_conditions[ $instance->get_id() ] = $instance;
 				$this->add_condition_sub_group_option( $single_sub_group, 'cpt-post-term-' . $taxonomy_obj->name, sprintf( 'In %s', $taxonomy_obj->label) );
 			}
+
+			$instance = new CPT_Single_Post( [
+				'id'             => 'cpt-single-' . $post_type_slug,
+				'label'          => sprintf( __( '%s Single', 'jet-theme-core' ), $post_type_obj->labels->singular_name ),
+				'group'          => 'singular',
+				'sub_group'      => $single_sub_group,
+				'priority'       => 28,
+				'body_structure' => 'jet_single',
+				'value_control'  => [
+					'type'        => 'f-search-select',
+					'placeholder' => __( 'Select', 'jet-theme-core' ),
+				],
+				'value_options'  => false,
+				'ajax_action'    =>  [
+					'action' => 'get-posts',
+					'params' => [
+						'post_type' => $post_type_slug,
+						'query'     => '',
+					],
+				],
+				'node_data'      => [
+					'node'   => 'cpt-single-' . $post_type_slug,
+					'parent' => 'cpt-archive-' . $post_type_slug,
+					'inherit' => [ 'entire' ],
+					'subNode' => false,
+					'label'  => __( 'Single', 'jet-theme-core' ),
+					'nodeInfo'  => [
+						'title'     => sprintf( __( '%s Single', 'jet-theme-core' ), $post_type_label ),
+						'desc'      => __( 'Templates for single by specific custom post type', 'jet-theme-core' ),
+					],
+					'previewLink' => \Jet_Theme_Core\Utils::get_cpt_single_post_link( $post_type_slug ),
+				]
+			] );
+
+			$this->_conditions[ $instance->get_id() ] = $instance;
+			$this->add_condition_sub_group_option( $single_sub_group, 'cpt-single-' . $post_type_slug, $post_type_label );
 		}
 
 	}
@@ -349,6 +394,29 @@ class Manager {
 	}
 
 	/**
+	 * [get_condition description]
+	 * @param  [type] $condition_id [description]
+	 * @return [type]               [description]
+	 */
+	public function add_condition( $condition_id, $instance ) {
+
+		if ( isset( $this->_conditions[ $condition_id ] ) ) {
+			return false;
+		}
+
+		$this->_conditions[ $condition_id ] = $instance;
+
+		return true;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_conditions() {
+		return $this->_conditions;
+	}
+
+	/**
 	 * [get_template_id description]
 	 * @return [type] [description]
 	 */
@@ -433,7 +501,6 @@ class Manager {
 	 * @return int|bool
 	 */
 	public function find_matched_conditions( $type, $single = false ) {
-
 		$conditions = get_option( $this->conditions_key, [] );
 
 		if ( empty( $conditions[ $type ] ) ) {
@@ -709,6 +776,7 @@ class Manager {
 
 			$current = [
 				'label'         => $instance->get_label(),
+				'group'         => $instance->get_group(),
 				'priority'      => $instance->get_priority(),
 				'control'       => $instance->get_control(),
 				'options'       => $instance->get_avaliable_options(),

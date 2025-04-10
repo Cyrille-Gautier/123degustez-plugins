@@ -51,8 +51,8 @@ abstract class Base {
 	 *
 	 * @return array
 	 */
-	public function get_childs() {
-		return [];
+	public function get_node_data() {
+		return false;
 	}
 
 	/**
@@ -107,6 +107,16 @@ abstract class Base {
 	 */
 	public function get_label_by_value( $value ) {
 		return '';
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_base_condition() {
+		return [
+			'group' => $this->get_group(),
+			'subGroup' => $this->get_sub_group(),
+		];
 	}
 
 	/**

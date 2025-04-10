@@ -23,7 +23,7 @@ class CPT_Singular_Post_Type extends Base {
 	 * @return string
 	 */
 	public function get_label() {
-		return __( 'CPT Single', 'jet-theme-core' );
+		return __( 'CPT Single(legacy)', 'jet-theme-core' );
 	}
 
 	/**
@@ -47,6 +47,22 @@ class CPT_Singular_Post_Type extends Base {
 	 */
 	public function get_body_structure() {
 		return 'jet_single';
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'archive-all',
+			'label' => __( 'CPT Taxonomy(legacy)', 'jet-theme-core' ),
+			'subNode' => true,
+			'nodeInfo'  => [
+				'title'     => __( 'CPT Single(legacy)', 'jet-theme-core' ),
+				'desc'      => __( 'Templates for CPT single(legacy)', 'jet-theme-core' ),
+			]
+		];
 	}
 
 	/**

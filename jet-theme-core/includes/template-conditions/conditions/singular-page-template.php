@@ -57,6 +57,18 @@ class Page_Template extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'singular-page',
+			'inherit' => [ 'entire', 'singular-page' ],
+			'label' => $this->get_label(),
+		];
+	}
+
+	/**
 	 * [get_control description]
 	 * @return [type] [description]
 	 */

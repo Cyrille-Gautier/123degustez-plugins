@@ -57,6 +57,23 @@ class Archive_Tag extends Base {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_node_data() {
+		return [
+			'node'   => $this->get_id(),
+			'parent' => 'archive-all-post',
+			'inherit' => [ 'entire', 'archive-all', 'archive-all-post' ],
+			'label'  => __( 'Tags Archives', 'jet-theme-core' ),
+			'nodeInfo'  => [
+				'title' => __( 'Tags Taxonomy', 'jet-theme-core' ),
+				'desc' => __( 'Blog tags archives', 'jet-theme-core' ),
+			],
+			'previewLink' => $this->get_preview_link(),
+		];
+	}
+
+	/**
 	 * [get_control description]
 	 * @return [type] [description]
 	 */
@@ -100,6 +117,25 @@ class Archive_Tag extends Base {
 		}
 
 		return $label;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_preview_link() {
+		$tags = get_terms( array(
+			'taxonomy'   => 'post_tag',
+			'hide_empty' => false,
+		) );
+
+		if ( ! empty( $tags ) ) {
+			$first_tag = $tags[0];
+			$first_tag_link = get_tag_link( $first_tag->term_id );
+
+			return esc_url( $first_tag_link );
+		}
+
+		return false;
 	}
 
 	/**

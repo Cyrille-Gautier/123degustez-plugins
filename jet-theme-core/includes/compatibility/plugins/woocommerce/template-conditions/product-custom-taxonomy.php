@@ -6,7 +6,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class CPT_Single_Post {
+class Woo_Custom_Taxonomy {
 
 	/**
 	 * @var array|object
@@ -105,13 +105,19 @@ class CPT_Single_Post {
 	 */
 	public function get_label_by_value( $value = '' ) {
 
-		if ( in_array( 'all', $value ) ) {
-			return __( 'All', 'jet-theme-core' );
+		$result = [];
+
+		if ( in_array( 'all', $value )) {
+			$result[] = __( 'All', 'jet-theme-core' );
 		}
 
-		$obj = get_post( $value );
+		foreach ( $value as $term_id ) {
+			$obj = get_term( $term_id );
 
-		return $obj->post_title;
+			$result[] = $obj->name;
+		}
+
+		return implode( ', ', $result );
 	}
 
 	/**
@@ -119,23 +125,24 @@ class CPT_Single_Post {
 	 *
 	 * @return bool
 	 */
-	public function check( $arg = '', $sub_group = false ) {
+	public function check( $arg = '', $subgroup = false ) {
 
-		$post_type = get_post_type();
-		$custom_post_type = str_replace('cpt-single-', '', $sub_group );
+		$taxonomy = str_replace( 'woo-taxonomy-', '', $subgroup );
 
-		if ( empty( $arg ) ) {
-			return is_singular( [ $post_type ] );
-		}
-
-		if ( in_array( 'all', $arg ) ) {
-			return is_singular( [ $post_type ] ) && $post_type === $custom_post_type;
+		if ( in_array( 'all', $arg ) || empty( $arg ) ) {
+			return is_tax( $taxonomy, '' );
 		}
 
 		foreach ( $arg as $id ) {
-			$is_single = is_single( $id );
+			$category_obj = get_term_by( 'id', $id, $taxonomy );
 
-			if ( $is_single ) {
+			if ( ! $category_obj ) {
+				continue;
+			}
+
+			$is_category = is_tax( $taxonomy, $category_obj->slug );
+
+			if ( $is_category ) {
 				return true;
 			}
 		}

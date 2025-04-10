@@ -6,7 +6,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class CPT_Single_Post {
+class Woo_Singular_Custom_Taxonomy {
 
 	/**
 	 * @var array|object
@@ -92,6 +92,17 @@ class CPT_Single_Post {
 	}
 
 	/**
+	 * [get_label_by_value description]
+	 * @param  string $value [description]
+	 * @return [type]        [description]
+	 */
+	public function get_label_by_value( $value = '' ) {
+		$obj = get_post( $value );
+
+		return $obj->post_title;
+	}
+
+	/**
 	 * @return mixed
 	 */
 	public function get_arg_control() {
@@ -99,43 +110,30 @@ class CPT_Single_Post {
 	}
 
 	/**
-	 * [get_label_by_value description]
-	 * @param  string $value [description]
-	 * @return [type]        [description]
-	 */
-	public function get_label_by_value( $value = '' ) {
-
-		if ( in_array( 'all', $value ) ) {
-			return __( 'All', 'jet-theme-core' );
-		}
-
-		$obj = get_post( $value );
-
-		return $obj->post_title;
-	}
-
-	/**
 	 * Condition check callback
 	 *
 	 * @return bool
 	 */
-	public function check( $arg = '', $sub_group = false ) {
+	public function check( $arg = '' ) {
 
-		$post_type = get_post_type();
-		$custom_post_type = str_replace('cpt-single-', '', $sub_group );
-
-		if ( empty( $arg ) ) {
-			return is_singular( [ $post_type ] );
+		if ( ! is_single() ) {
+			return false;
 		}
 
+		global $post;
+
+		$taxonomy = str_replace('woo-singular-term-', '', $this->args['id'] );
+
 		if ( in_array( 'all', $arg ) ) {
-			return is_singular( [ $post_type ] ) && $post_type === $custom_post_type;
+			return has_term( [], $taxonomy, $post );
 		}
 
 		foreach ( $arg as $id ) {
-			$is_single = is_single( $id );
+			$term_obj = get_term( $id );
 
-			if ( $is_single ) {
+			$is_term = has_term( $term_obj->slug, $term_obj->taxonomy, $post );
+
+			if ( $is_term ) {
 				return true;
 			}
 		}
