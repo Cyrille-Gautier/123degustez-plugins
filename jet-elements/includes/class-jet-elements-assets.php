@@ -175,9 +175,7 @@ if ( ! class_exists( 'Jet_Elements_Assets' ) ) {
 				$map_query_arg = apply_filters(  
 					'jet-elements/advanced-map/query-arg',  
 					array(  
-						'key' => jet_elements_settings()->get('api_key'),  
-						'libraries' => 'marker',
-						'loading'   => 'async',
+						'key' => jet_elements_settings()->get('api_key'),
 					)  
 				);
 

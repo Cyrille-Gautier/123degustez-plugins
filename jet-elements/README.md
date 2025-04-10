@@ -4,6 +4,16 @@ Brand new addon for Elementor Page builder. It provides the set of modules to cr
 
 # ChangeLog
 
+## [2.7.5.1](https://github.com/ZemezLab/jet-elements/archive/2.7.5.1.zip) - 08.04.2025
+* Fixed: background setting in the Audio Player widget
+
+## [2.7.5](https://github.com/ZemezLab/jet-elements/archive/2.7.5.zip) - 31.04.2025
+* Update: compatibility with Elementor 3.26
+* Added: optimized Google Maps loading with defer
+* Fixed: compatibility Elementor Loop Carousel with Audio Player widget
+* Fixed: switch scratch type in the Animated Box widget for Jet Popup
+* Fixed: minor issue
+
 ## [2.7.4.2](https://github.com/ZemezLab/jet-elements/archive/2.7.4.2.zip) - 14.03.2025
 * Added: validation for widget_id: ensuring it's a string with a valid format
 * Fixed: prevent unauthorized access to templates in REST API.

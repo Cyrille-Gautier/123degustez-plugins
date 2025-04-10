@@ -60,6 +60,46 @@
 					JetElements.initWidgetsHandlers( $content );
 				}
 			);
+
+			elementorFrontend.hooks.addAction( 'frontend/element_ready/loop-carousel.post', function( $scope, $ ) {
+				$( window ).on( 'load', function() {
+					var loopCarousel = $scope.find( '.swiper' ),
+					swiperInstance = loopCarousel.data( 'swiper' ),
+					audioPlayProgress = $scope.find( '.mejs-time-slider, .mejs-horizontal-volume-slider, .mejs-volume-button' );
+			
+					if ( !loopCarousel.length || !audioPlayProgress.length ) {
+						console.warn( "Swiper or audioPlayProgress not found!" );
+						return;
+					}
+					
+					// Disable swipe when interacting with the audio progress
+					audioPlayProgress.on( 'pointerdown', function( event ) {
+
+						if ( event.button !== 0 ) {
+							return;
+						}
+
+						if ( swiperInstance ) {
+							swiperInstance.allowTouchMove = false;
+						}
+						event.stopPropagation();
+					});
+			
+					// Re-enable swipe after interaction ends
+					audioPlayProgress.on( 'pointerup', function( event ) {
+
+						if ( event.button !== 0 ) {
+							return;
+						}
+						if ( swiperInstance ) {
+							setTimeout( function() {
+								swiperInstance.allowTouchMove = true;
+							}, 300 );
+						}
+						event.stopPropagation();
+					});
+				});
+			});
 		},
 
 		reinitSlickSlider: function( $scope ) {
@@ -842,7 +882,7 @@
 					break;
 
 				case 'scratch':
-					scratchSwitchType();
+					scratchSwitchTypeFunc();
 					break;
 
 				case 'fold':
@@ -1028,6 +1068,24 @@
 				backButton.on( 'focusout', function() {
 					$target.removeClass( 'flipped' )
 				} );
+			}
+
+			function scratchSwitchTypeFunc() {
+
+				var settings = $( $target ).closest( '.jet-popup' ).data( 'settings' );
+
+				// Check if the target element is inside a `.jet-popup`
+				if ( $( $target ).closest( '.jet-popup' ).length && ( settings && settings[ 'use-ajax' ] === false )) {
+				
+					// If inside a popup, trigger `scratchSwitchType` only once when the popup opens
+					$( window ).one( 'jet-popup-open-trigger', function( event ) {
+						scratchSwitchType();
+					});
+					
+				} else {
+					// If not inside a popup, call `scratchSwitchType` directly
+					scratchSwitchType();
+				}
 			}
 
 			function scratchSwitchType() {
@@ -2459,8 +2517,9 @@
 						hideVolumeOnTouchDevices: settings['hideVolumeOnTouchDevices'],
 						enableProgressTooltip: false,
 						success: function( media ) {
+
 							var muteBtn = $scope.find( '.mejs-button button' );
-		
+
 							media.addEventListener( 'timeupdate', function( event ) {
 								var $currentTime = $scope.find( '.mejs-time-current' ),
 									inlineStyle  = $currentTime.attr( 'style' );

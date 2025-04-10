@@ -341,7 +341,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 					),
 				),
 				'selectors' => array(
-					'{{WRAPPER}} .elementor-widget-container' => 'max-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-jet-audio' => 'max-width: {{SIZE}}{{UNIT}};',
 				),
 			),
 			25
