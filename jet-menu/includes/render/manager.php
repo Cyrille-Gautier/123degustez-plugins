@@ -1,6 +1,7 @@
 <?php
 namespace Jet_Menu\Render;
 
+use Jet_Menu\Endpoints\Get_Elementor_Template_Content;
 class Manager {
 
 	/**
@@ -77,6 +78,7 @@ class Manager {
 				$item_id = $item->ID;
 				$item_settings = jet_menu()->settings_manager->get_item_settings( $item_id );
 				$item_content_type = isset( $item_settings['content_type'] ) ? $item_settings['content_type'] : 'default';
+				$signature = '';
 	
 				switch ( $item_content_type ) {
 					case 'default':
@@ -158,7 +160,12 @@ class Manager {
 	
 						break;
 				}
-	
+
+				if ( $template_id ) {
+					$api_instance = new Get_Elementor_Template_Content();
+					$signature    = $api_instance->generate_signature( $template_id );
+				}
+
 				$items[] = array (
 					'id'              => 'item-' . $item_id,
 					'name'            => $item->title,
@@ -177,6 +184,7 @@ class Manager {
 					'itemIcon'        => $item_icon,
 					'hideItemText'    => $hide_item_text,
 					'classes'         => $item->classes,
+					'signature'       => $signature,
 				);
 			}
 		}

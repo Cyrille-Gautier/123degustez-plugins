@@ -339,17 +339,19 @@
 
 						if ( $customSelector[0] ) {
 							let selectorWidth = $customSelector.width(),
-							    selectorOffset = $customSelector.offset();
+							    selectorOffset = Math.round( $customSelector.offset().left );
 
-							$megaMenuList.each( ( index, element ) => {
-								let $element           = $( element ),
-								    $elementPosition   = $element.data( 'position' ),
-								    elementOffset      = $element.offset(),
-								    elementDeltaOffset = 'default' === $elementPosition ? Math.ceil( selectorOffset.left - elementOffset.left ) : 0;
+							document.fonts.ready.then( () => {
+								$megaMenuList.each( ( index, element ) => {
+									let $element           = $( element ),
+										$elementPosition   = $element.data( 'position' ),
+										elementOffset      = Math.round( $element.offset().left ),
+										elementDeltaOffset = 'default' === $elementPosition ? Math.round( selectorOffset - elementOffset ) : 0;
 
-								$element.css( {
-									'--jmm-submenu-width': `${ selectorWidth }px`,
-									'--jmm-submenu-delta-x-offset': `${ elementDeltaOffset }px`
+									$element.css( {
+										'--jmm-submenu-width': `${ selectorWidth }px`,
+										'--jmm-submenu-delta-x-offset': `${ elementDeltaOffset }px`
+									} );
 								} );
 							} );
 
@@ -509,13 +511,21 @@
 
 			let getMegaContentUrl = 'default' === templateContent ? window.jetMenuPublicSettings.getBlocksTemplateApiUrl : window.jetMenuPublicSettings.getElementorTemplateApiUrl;
 
+			let signatures = this.settings['signatures'];
+			let signature = '';
+
+			if ( signatures.hasOwnProperty(`template_${templateId}`) ) {
+				signature = signatures[`template_${templateId}`].signature;
+			}
+
 			$.ajax( {
 				type: 'GET',
 				url: getMegaContentUrl,
 				dataType: 'json',
 				data: {
 					'id': templateId,
-					'dev': window.jetMenuPublicSettings.devMode
+					'dev': window.jetMenuPublicSettings.devMode,
+					'signature': signature
 				},
 				beforeSend: function( jqXHR, ajaxSettings ) {
 					jqXHR.setRequestHeader( 'X-WP-Nonce', window.jetMenuPublicSettings.restNonce );
@@ -793,6 +803,10 @@
 						return this.itemDataObject.megaContentType;
 					},
 
+					isAjaxLoadingEnabled: function() {
+						return this.$root.menuOptions.megaAjaxLoad === true;
+					},
+
 					getTemplateUrl: function() {
 						return 'default' === this.megaContentType ? window.jetMenuPublicSettings.getBlocksTemplateApiUrl : window.jetMenuPublicSettings.getElementorTemplateApiUrl;
 					},
@@ -909,7 +923,7 @@
 								children: this.itemDataObject.children || false
 							} );
 						} else {
-							if ( ! this.itemDataObject.megaContent ) {
+							if ( this.isAjaxLoadingEnabled && ! this.itemDataObject.megaContentLoaded ) {
 								this.getMegaTemplate();
 							} else {
 								jetMenu.eventBus.$emit( 'showTemplateContent', {
@@ -926,13 +940,20 @@
 					getMegaTemplate: function() {
 						var vueInstance = this;
 
+						if ( ! this.isAjaxLoadingEnabled ) {
+							return;
+						}
+
+						var signature = vueInstance.itemDataObject.signature || '';
+
 						vueInstance.ajaxRequest = $.ajax( {
 							type: 'GET',
 							url: vueInstance.getTemplateUrl,
 							dataType: 'json',
 							data: {
 								'id': vueInstance.itemDataObject.megaTemplateId,
-								'dev': window.jetMenuPublicSettings.devMode
+								'dev': window.jetMenuPublicSettings.devMode,
+								'signature': signature
 							},
 							beforeSend: function( jqXHR, ajaxSettings ) {
 
@@ -950,6 +971,7 @@
 
 								vueInstance.templateLoadStatus = false;
 								vueInstance.itemDataObject.megaContent = templateContent;
+								vueInstance.itemDataObject.megaContentLoaded = true;
 
 								jetMenu.eventBus.$emit( 'showTemplateContent', {
 									menuUniqId: vueInstance.$root.menuOptions.menuUniqId,
@@ -1210,7 +1232,9 @@
 						vueInstance.animation = 'items-next-animation';
 
 						const templateData = {
-							content: payLoad.megaContent.content,
+							content: payLoad.megaContent.content !== undefined
+								? payLoad.megaContent.content
+								: payLoad.megaContent,
 							contentElements: payLoad.megaContent.contentElements,
 							contentType: payLoad.megaContentType,
 						}
@@ -1256,7 +1280,7 @@
 
 				computed: {
 					instanceClass: function() {
-						console.log(this.$root.menuOptions)
+
 						let classes = [
 							'jet-mobile-menu__instance',
 							'jet-mobile-menu__instance--' + this.$root.menuOptions.menuLayout + '-layout',

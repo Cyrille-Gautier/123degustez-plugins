@@ -75,44 +75,44 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 		$css_scheme = apply_filters(
 			'jet-menu/custom-menu/css-scheme',
 			array(
-				'instance'                 => '> .elementor-widget-container > div > .jet-custom-nav',
-				'main_items'               => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item',
-				'main_items_hover'         => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item.hover-state',
-				'main_items_active'        => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item.current-menu-item',
-				'main_items_link'          => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > a',
-				'main_items_link_hover'    => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item.hover-state > a',
-				'main_items_link_active'   => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item.current-menu-item > a',
-				'mega_menu'                => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__mega-sub',
-				'mega_menu_right_pos'      => '> .elementor-widget-container > div > .jet-custom-nav--dropdown-right-side > .jet-custom-nav__item > .jet-custom-nav__mega-sub',
-				'mega_menu_left_pos'       => '> .elementor-widget-container > div > .jet-custom-nav--dropdown-left-side > .jet-custom-nav__item > .jet-custom-nav__mega-sub',
-				'sub_menu'                 => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub',
-				'sub_menu_right_pos'       => '> .elementor-widget-container > div > .jet-custom-nav--dropdown-right-side > .jet-custom-nav__item > .jet-custom-nav__sub',
-				'sub_menu_left_pos'        => '> .elementor-widget-container > div > .jet-custom-nav--dropdown-left-side > .jet-custom-nav__item > .jet-custom-nav__sub',
-				'sub_menu_level'           => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__sub',
-				'sub_menu_level_right_pos' => '> .elementor-widget-container > div > .jet-custom-nav--dropdown-right-side > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__sub',
-				'sub_menu_level_left_pos'  => '> .elementor-widget-container > div > .jet-custom-nav--dropdown-left-side > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__sub',
-				'sub_items'                => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item',
-				'sub_items_hover'          => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.hover-state',
-				'sub_items_active'         => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.current-menu-item',
-				'sub_items_link'           => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item > a',
-				'sub_items_link_hover'     => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.hover-state > a',
-				'sub_items_link_active'    => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.current-menu-item > a',
-				'badge'                    => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > a .jet-menu-badge',
-				'badge_sub'                => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub a .jet-menu-badge',
-				'icon'                     => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > a .jet-menu-icon',
-				'icon_sub'                 => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub a .jet-menu-icon',
-				'icon_hover'               => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item.hover-state > a .jet-menu-icon',
-				'icon_sub_hover'           => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.hover-state > a .jet-menu-icon',
-				'icon_active'              => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item.current-menu-item > a .jet-menu-icon',
-				'icon_sub_active'          => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.current-menu-item > a .jet-menu-icon',
-				'dropdown_icon'            => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > a .jet-dropdown-arrow',
-				'dropdown_icon_left'       => '> .elementor-widget-container > div > .jet-custom-nav--dropdown-left-side > .jet-custom-nav__item > a .jet-dropdown-arrow',
-				'dropdown_icon_sub'        => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub a .jet-dropdown-arrow',
-				'dropdown_icon_sub_left'   => '> .elementor-widget-container > div > .jet-custom-nav--dropdown-left-side > .jet-custom-nav__item > .jet-custom-nav__sub a .jet-dropdown-arrow',
-				'dropdown_icon_hover'      => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item.hover-state > a .jet-dropdown-arrow',
-				'dropdown_icon_sub_hover'  => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.hover-state > a .jet-dropdown-arrow',
-				'dropdown_icon_active'     => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item.current-menu-item > a .jet-dropdown-arrow',
-				'dropdown_icon_sub_active' => '> .elementor-widget-container > div > .jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.current-menu-item > a .jet-dropdown-arrow',
+				'instance'                 => '.jet-custom-nav',
+				'main_items'               => '.jet-custom-nav > .jet-custom-nav__item',
+				'main_items_hover'         => '.jet-custom-nav > .jet-custom-nav__item.hover-state',
+				'main_items_active'        => '.jet-custom-nav > .jet-custom-nav__item.current-menu-item',
+				'main_items_link'          => '.jet-custom-nav > .jet-custom-nav__item > a',
+				'main_items_link_hover'    => '.jet-custom-nav > .jet-custom-nav__item.hover-state > a',
+				'main_items_link_active'   => '.jet-custom-nav > .jet-custom-nav__item.current-menu-item > a',
+				'mega_menu'                => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__mega-sub',
+				'mega_menu_right_pos'      => '.jet-custom-nav--dropdown-right-side > .jet-custom-nav__item > .jet-custom-nav__mega-sub',
+				'mega_menu_left_pos'       => '.jet-custom-nav--dropdown-left-side > .jet-custom-nav__item > .jet-custom-nav__mega-sub',
+				'sub_menu'                 => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub',
+				'sub_menu_right_pos'       => '.jet-custom-nav--dropdown-right-side > .jet-custom-nav__item > .jet-custom-nav__sub',
+				'sub_menu_left_pos'        => '.jet-custom-nav--dropdown-left-side > .jet-custom-nav__item > .jet-custom-nav__sub',
+				'sub_menu_level'           => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__sub',
+				'sub_menu_level_right_pos' => '.jet-custom-nav--dropdown-right-side > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__sub',
+				'sub_menu_level_left_pos'  => '.jet-custom-nav--dropdown-left-side > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__sub',
+				'sub_items'                => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item',
+				'sub_items_hover'          => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.hover-state',
+				'sub_items_active'         => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.current-menu-item',
+				'sub_items_link'           => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item > a',
+				'sub_items_link_hover'     => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.hover-state > a',
+				'sub_items_link_active'    => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.current-menu-item > a',
+				'badge'                    => '.jet-custom-nav > .jet-custom-nav__item > a .jet-menu-badge',
+				'badge_sub'                => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub a .jet-menu-badge',
+				'icon'                     => '.jet-custom-nav > .jet-custom-nav__item > a .jet-menu-icon',
+				'icon_sub'                 => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub a .jet-menu-icon',
+				'icon_hover'               => '.jet-custom-nav > .jet-custom-nav__item.hover-state > a .jet-menu-icon',
+				'icon_sub_hover'           => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.hover-state > a .jet-menu-icon',
+				'icon_active'              => '.jet-custom-nav > .jet-custom-nav__item.current-menu-item > a .jet-menu-icon',
+				'icon_sub_active'          => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.current-menu-item > a .jet-menu-icon',
+				'dropdown_icon'            => '.jet-custom-nav > .jet-custom-nav__item > a .jet-dropdown-arrow',
+				'dropdown_icon_left'       => '.jet-custom-nav--dropdown-left-side > .jet-custom-nav__item > a .jet-dropdown-arrow',
+				'dropdown_icon_sub'        => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub a .jet-dropdown-arrow',
+				'dropdown_icon_sub_left'   => '.jet-custom-nav--dropdown-left-side > .jet-custom-nav__item > .jet-custom-nav__sub a .jet-dropdown-arrow',
+				'dropdown_icon_hover'      => '.jet-custom-nav > .jet-custom-nav__item.hover-state > a .jet-dropdown-arrow',
+				'dropdown_icon_sub_hover'  => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.hover-state > a .jet-dropdown-arrow',
+				'dropdown_icon_active'     => '.jet-custom-nav > .jet-custom-nav__item.current-menu-item > a .jet-dropdown-arrow',
+				'dropdown_icon_sub_active' => '.jet-custom-nav > .jet-custom-nav__item > .jet-custom-nav__sub .jet-custom-nav__item.current-menu-item > a .jet-dropdown-arrow',
 			)
 		);
 
@@ -152,6 +152,35 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'options' => array(
 					'right-side' => esc_html__( 'Right Side', 'jet-menu' ),
 					'left-side'  => esc_html__( 'Left Side', 'jet-menu' ),
+				),
+			)
+		);
+
+		$this->add_control(
+			'submenu_trigger',
+			array(
+				'label'   => esc_html__( 'Sub Menu Trigger', 'jet-menu' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'hover',
+				'options' => array(
+					'hover' => esc_html__( 'Hover', 'jet-menu' ),
+					'click' => esc_html__( 'Click', 'jet-menu' ),
+				),
+			)
+		);
+
+		$this->add_control(
+			'submenu_target',
+			array(
+				'label'   => esc_html__( 'Sub Menu Target', 'jet-menu' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'item',
+				'options' => array(
+					'item'      => esc_html__( 'Item', 'jet-menu' ),
+					'sub_icon'  => esc_html__( 'Sub Icon', 'jet-menu' ),
+				),
+				'condition' => array(
+					'submenu_trigger' => 'click',
 				),
 			)
 		);
@@ -2517,6 +2546,12 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 
 		if ( isset( $settings['animation_type'] ) ) {
 			$this->add_render_attribute( 'nav-wrapper', 'class', sprintf( 'jet-custom-nav--animation-%s', $settings['animation_type'] ) );
+		}
+
+		$this->add_render_attribute( 'nav-wrapper', 'data-trigger', $settings['submenu_trigger'] );
+
+		if ( 'click' === $settings['submenu_trigger'] ) {
+			$this->add_render_attribute( 'nav-wrapper', 'data-target', $settings['submenu_target'] );
 		}
 
 		$args = array(

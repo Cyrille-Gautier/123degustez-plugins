@@ -93,7 +93,8 @@ class Mobile_Menu_Render extends Base_Render {
 			'subTrigger'         => $this->get( 'sub-menu-trigger', 'item' ),
 			'subOpenLayout'      => $this->get( 'sub-open-layout', 'slide-in' ),
 			'closeAfterNavigate' => $this->get( 'close-after-navigate', false ),
-			'fillSvgIcon'         => $this->get( 'fill-svg-icon', true ),
+			'fillSvgIcon'        => $this->get( 'fill-svg-icon', true ),
+			'megaAjaxLoad'       => $this->get( 'ajax-loading', false )
 		);
 
 		$toggle_closed_icon_html = $this->get( 'toggle-closed-icon-html', '' );

@@ -169,6 +169,18 @@ class Jet_Widget_Mobile_Menu extends Widget_Base {
 		);
 
 		$this->add_control(
+			'ajax-loading',
+			array(
+				'label'        => esc_html__( 'Mega Content Ajax Loading', 'jet-menu' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-menu' ),
+				'label_off'    => esc_html__( 'No', 'jet-menu' ),
+				'return_value' => 'yes',
+				'default'      => 'false',
+			)
+		);
+
+		$this->add_control(
 			'close-after-navigate',
 			array(
 				'label'        => esc_html__( 'Close After Navigation', 'jet-menu' ),
@@ -1020,7 +1032,8 @@ class Jet_Widget_Mobile_Menu extends Widget_Base {
 					),
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} ' . $css_scheme['item'] . ' .jet-menu-icon'     => 'font-size: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} ' . $css_scheme['item'] . ' .jet-menu-icon img' => 'width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} ' . $css_scheme['item'] . ' .jet-menu-icon svg' => 'width: {{SIZE}}{{UNIT}}',
 				),
 				'condition' => array(
 					'is_item_icon' => 'yes',
@@ -1724,7 +1737,8 @@ class Jet_Widget_Mobile_Menu extends Widget_Base {
 			'dropdown-icon-html'        => $this->get_icon_html( $settings[ 'dropdown_icon' ] ),
 			'dropdown-opened-icon-html' => $this->get_icon_html( $settings[ 'dropdown_opened_icon' ] ),
 			'breadcrumb-icon-html'      => $this->get_icon_html( $settings[ 'breadcrumb_icon' ] ),
-			'fill-svg-icon'              => filter_var( $settings[ 'fill_svg_icon' ], FILTER_VALIDATE_BOOLEAN ),
+			'fill-svg-icon'             => filter_var( $settings[ 'fill_svg_icon' ], FILTER_VALIDATE_BOOLEAN ),
+			'ajax-loading'              => filter_var( $settings[ 'ajax-loading' ], FILTER_VALIDATE_BOOLEAN ),
 		) );
 
 		$render_widget_instance->render();

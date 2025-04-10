@@ -66,11 +66,12 @@ class Block_Editor_Content_Render extends Base_Render {
 		}
 
 		$template_obj = get_post( $template_id );
-		$raw_template_content = $template_obj->post_content;
 
-		if ( empty( $raw_template_content ) ) {
+		if ( ! $template_obj || empty( $template_obj->post_content ) ) {
 			return false;
 		}
+
+		$raw_template_content = $template_obj->post_content;
 
 		$before_styles_queue  = wp_styles()->queue;
 		$before_scripts_queue = wp_scripts()->queue;
@@ -235,11 +236,12 @@ class Block_Editor_Content_Render extends Base_Render {
 		}
 
 		$template_obj = get_post( $template_id );
-		$raw_content = $template_obj->post_content;
 
-		if ( empty( $raw_content ) ) {
+		if ( ! $template_obj || empty( $template_obj->post_content ) ) {
 			return [];
 		}
+
+		$raw_content = $template_obj->post_content;
 
 		$blocks_list = parse_blocks( $raw_content );
 		$rendered_blocks = [];

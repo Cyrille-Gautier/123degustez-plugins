@@ -203,7 +203,7 @@ class Options_Manager {
 
 		$current_options = $this->get_option();
 
-		if ( ! $current_options || ! isset( $current_options['plugin-nextgen-edition'] ) ) {
+		if ( ! $current_options ) {
 			return false;
 		}
 

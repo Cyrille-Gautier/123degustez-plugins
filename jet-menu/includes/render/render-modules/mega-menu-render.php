@@ -45,6 +45,26 @@ class Mega_Menu_Render extends Base_Render {
     }
 
 	/**
+	 * Extracts signatures recursively from menu items.
+	 */
+	private function extract_signatures_recursive( $items, &$signatures ) {
+		foreach ( $items as $item ) {
+
+			if ( ! empty( $item['megaTemplateId'] ) && !empty( $item['signature'] ) ) {
+				$signatures['template_' . $item['megaTemplateId']] = [
+					'id'        => $item['megaTemplateId'],
+					'signature' => $item['signature']
+				];
+			}
+
+			if ( isset ( $item['children'] ) && is_array( $item['children'] ) ) {
+				$this->extract_signatures_recursive( $item['children'], $signatures );
+			}
+
+		}
+	}
+
+	/**
 	 * [render description]
 	 * @return [type] [description]
 	 */
@@ -111,6 +131,14 @@ class Mega_Menu_Render extends Base_Render {
 			)
 		);
 
+		$menu_raw_data = jet_menu()->render_manager->generate_menu_raw_data( $menu_id );
+
+		$signatures = [];
+
+		if ( isset( $menu_raw_data['items'] ) && is_array( $menu_raw_data['items'] ) ) {
+			$this->extract_signatures_recursive( $menu_raw_data['items'], $signatures );
+		}
+
 		$front_settings = array(
 			'menuId'            => $menu_id,
 			'menuUniqId'        => $menu_uniqid,
@@ -124,6 +152,7 @@ class Mega_Menu_Render extends Base_Render {
 			'megaWidthType'     => $this->get( 'mega-width-type', 'container' ),
 			'megaWidthSelector' => $this->get( 'mega-width-selector', '' ),
 			'breakpoint'        => $this->get( 'breakpoint', 768 ),
+			'signatures'        => $signatures,
         );
 
 		$settings_attr = sprintf( 'data-settings=\'%1$s\'', json_encode( $front_settings ) );

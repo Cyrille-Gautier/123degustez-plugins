@@ -75,7 +75,7 @@ class Get_Menu_Items extends Base {
 	 *
 	 * @return bool
 	 */
-	public function permission_callback() {
+	public function permission_callback( $request ) {
 		return true;
 	}
 

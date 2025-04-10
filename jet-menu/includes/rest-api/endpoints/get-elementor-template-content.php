@@ -41,6 +41,10 @@ class Get_Elementor_Template_Content extends Base {
 				'default'    => 'false',
 				'required'   => false,
 			),
+			'signature' => array(
+				'default'  => '',
+				'required' => true,
+			),
 		);
 	}
 
@@ -79,15 +83,6 @@ class Get_Elementor_Template_Content extends Base {
 		set_transient( $transient_key, $template_data, 12 * HOUR_IN_SECONDS );
 
 		return rest_ensure_response( $template_data );
-	}
-
-	/**
-	 * Is public end-point
-	 *
-	 * @return bool
-	 */
-	public function permission_callback() {
-		return true;
 	}
 
 }

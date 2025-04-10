@@ -37,6 +37,7 @@
 					megaWidthType: settings.megaWidthType,
 					megaWidthSelector: settings.megaWidthSelector,
 					megaAjaxLoad: settings.megaAjaxLoad,
+					signatures: settings.signatures,
 					classes: {
 						instance: 'jet-mega-menu',
 						menuContainer: 'jet-mega-menu-container',
@@ -62,7 +63,12 @@
 		widgetCustomMenu: function( $scope ) {
 			var $target = $scope.find( '.jet-custom-nav' ),
 				instance = null,
-				menuItem = null;
+				trigger = $target.data( 'trigger' ),
+				targetType = trigger === 'click' ? $target.data( 'target' ) || 'item' : null,
+				menuItem = null,
+				menuItemSelector = trigger === 'click' && targetType === 'sub_icon'
+					? '.jet-dropdown-arrow'
+					: '.jet-custom-nav__item > a';
 
 			if ( ! $target.length ) {
 				return;
@@ -72,8 +78,32 @@
 				$scope.on( 'touchstart', '.jet-custom-nav__item > a, .jet-custom-nav__item > a .jet-dropdown-arrow', touchStartItem );
 				$scope.on( 'touchend', '.jet-custom-nav__item > a, .jet-custom-nav__item > a .jet-dropdown-arrow', touchEndItem );
 			} else {
-				$scope.on( 'mouseenter mouseover', '.jet-custom-nav__item', mouseEnterHandler );
-				$scope.on( 'mouseleave', '.jet-custom-nav__item', mouseLeaveHandler );
+				if ( trigger === 'click' ) {
+					$scope.on( 'click', menuItemSelector, toggleSubMenu );
+					$scope.on( 'mouseleave', '.jet-custom-nav__item', mouseLeaveHandler );
+				} else {
+					$scope.on( 'mouseenter mouseover', '.jet-custom-nav__item', mouseEnterHandler );
+					$scope.on( 'mouseleave', '.jet-custom-nav__item', mouseLeaveHandler );
+				}
+			}
+
+			function toggleSubMenu( event ) {
+				const $this = $( event.currentTarget ).closest( '.jet-custom-nav__item' );
+
+				if ( ! $this.hasClass( 'menu-item-has-children' ) ) {
+					return;
+				}
+
+				event.preventDefault();
+				event.stopPropagation();
+
+				if ( $this.hasClass( 'hover-state' ) ) {
+					$this.removeClass( 'hover-state' );
+				} else {
+					$this.addClass( 'hover-state' );
+					$this.siblings().removeClass( 'hover-state' );
+				}
+
 			}
 
 			function mouseEnterHandler( event ) {
@@ -82,7 +112,14 @@
 			}
 
 			function mouseLeaveHandler( event ) {
-				menuItem = $( event.target ).parents( '.jet-custom-nav__item' );
+				const $this = $( event.currentTarget ).closest( '.jet-custom-nav__item' );
+				const relatedTarget = event.relatedTarget;
+
+				if ( $this.has( relatedTarget ).length > 0 ) {
+					return;
+				}
+
+				menuItem = $this;
 				menuItem.removeClass( 'hover-state' );
 			}
 

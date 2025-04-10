@@ -68,6 +68,10 @@ class Mobile_Menu extends Base {
 				'type'    => 'string',
 				'default' => 'slide-in',
 			],
+			'megaAjaxLoad' => [
+				'type'    => 'boolean',
+				'default' => false,
+			],
 			'closeAfterNavigate' => [
 				'type'    => 'boolean',
 				'default' => false,
@@ -184,6 +188,7 @@ class Mobile_Menu extends Base {
 			'container-position'        => $settings[ 'containerPosition' ],
 			'sub-menu-trigger'          => $settings[ 'subMenuTrigger' ],
 			'sub-open-layout'           => $settings[ 'subOpenLayout' ],
+			'ajax-loading'              => $settings[ 'megaAjaxLoad' ],
 			'close-after-navigate'      => $settings[ 'closeAfterNavigate' ],
 			'is-item-icon'              => $settings[ 'isItemIcon' ],
 			'is-item-badge'             => $settings[ 'isItemBadge' ],
