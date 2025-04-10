@@ -4,6 +4,14 @@ Enjoy adding animation on the fly without coding skills
 
 # ChangeLog
 
+## 1.5.1.1
+* Fixed: prevent unauthorized access to templates in REST API;
+
+## 1.5.1
+* Added: excluded the JetProductGallery's GallerySlider and Elementor's Accordion widgets from initialization;
+* Fixed: animation glitch in Chrome when revealing sections in Read More widget;
+* Fixed: correct behavior of Unfold widget inside Loop Carousel.
+
 ## 1.5.0
 * Added: `Sticky Behavior` option to container for Sticky Columns;
 * Added: Template selection functionality for Hotspots Widget;

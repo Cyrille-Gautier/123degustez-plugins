@@ -28,9 +28,9 @@
 
 					const $content = $( content );
 
-					var $button  = $content.find( '.jet-unfold__button');
+					var $button  = $content.find( '.jet-unfold__button' );
 
-					$button.off('click.jetUnfold');
+					$button.off( 'click.jetUnfold' );
 
 					JetTricks.initWidgetsHandlers( $content );
 					JetTricks.elementorSection( $content );
@@ -39,22 +39,33 @@
 			);
 
 			// Add an action when the Swiper Loop Carousel widget is ready on the frontend
-			elementorFrontend.hooks.addAction('frontend/element_ready/loop-carousel.post', function($scope, $) {
-
-				$(window).on('load', function() {
-
-					var loopCarousel = $scope.find('.swiper'),
-					swiperInstance = loopCarousel.data( 'swiper' ),
-					$button  = $scope.find( '.jet-unfold__button');
-
-					if( swiperInstance && $button ) {
-
-						swiperInstance.on('slideChange', function () {
-							$button.off('click.jetUnfold');
+			var loopCarouselTypes = [
+				'loop-carousel.post',
+				'loop-carousel.product',
+				'loop-carousel.post_taxonomy',
+				'loop-carousel.product_taxonomy'
+			];
+			
+			loopCarouselTypes.forEach( function( carouselType ) {
+				elementorFrontend.hooks.addAction( 'frontend/element_ready/' + carouselType, function( $scope, $ ) {
+					
+					$( window ).on( 'load', function() {
+						var loopCarousel = $scope.find( '.swiper' ),
+							swiperInstance = loopCarousel.data( 'swiper' ),
+							$button = $scope.find( '.jet-unfold__button' );
+						
+						if ( swiperInstance && $button ) {
+				
+							$button.off( 'click.jetUnfold' );
 							JetTricks.initLoopCarouselHandlers( $scope );
-						});
-					}
-				});	
+				
+							swiperInstance.on( 'slideChange', function() {
+								$button.off( 'click.jetUnfold' );
+								JetTricks.initLoopCarouselHandlers( $scope );
+							});
+						}
+					});
+				});
 			});
 		},
 
@@ -85,6 +96,11 @@
 
 				$selector.find( '[data-element_type]' ).each( function() {
 
+					var excludeWidgets = [
+						'jet-woo-product-gallery-slider.default',
+						'accordion.default' 
+					];
+
 					var $this  = $( this ),
 
 					elementType = $this.data( 'element_type' );
@@ -94,7 +110,13 @@
 					}
 
 					if ( 'widget' === elementType ) {
+
 						elementType = $this.data( 'widget_type' );
+						
+						if ( excludeWidgets.includes( elementType ) ) {
+							return;
+						}
+						
 						window.elementorFrontend.hooks.doAction( 'frontend/element_ready/widget', $this, $ );
 					}
 
@@ -832,6 +854,7 @@
 					if ( ! settings.showall ) {
 						if ( ! sectionsData[ section ]['visible'] ) {
 							sectionsData[ section ]['visible'] = true;
+							$section.css('height', $section[0].scrollHeight + 'px');
 							$section.addClass( 'view-more-visible' );
 							$section.addClass( 'jet-tricks-' + settings['effect'] + '-effect' );
 
@@ -839,6 +862,7 @@
 						}
 					} else {
 						sectionsData[ section ]['visible'] = true;
+						$section.css('height', $section[0].scrollHeight + 'px');
 						$section.addClass( 'view-more-visible' );
 						$section.addClass( 'jet-tricks-' + settings['effect'] + '-effect' );
 					}
@@ -869,6 +893,7 @@
 							if ( ! settings.showall ) {
 								if ( ! sectionsData[ section ]['visible'] ) {
 									sectionsData[ section ]['visible'] = true;
+									$section.css('height', $section[0].scrollHeight + 'px');
 									$section.addClass( 'view-more-visible' );
 									$section.addClass( 'jet-tricks-' + settings['effect'] + '-effect' );
 
@@ -876,6 +901,7 @@
 								}
 							} else {
 								sectionsData[ section ]['visible'] = true;
+								$section.css('height', $section[0].scrollHeight + 'px');
 								$section.addClass( 'view-more-visible' );
 								$section.addClass( 'jet-tricks-' + settings['effect'] + '-effect' );
 							}

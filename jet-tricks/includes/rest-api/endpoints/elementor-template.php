@@ -224,7 +224,19 @@ class Elementor_Template extends Base {
 	 *
 	 * @return bool
 	 */
-	public function permission_callback() {
+	public function permission_callback( $request ) {
+		$args = $request->get_params();
+		$template_id = $args['id'] ?? '';
+		$widget_id = $args['widget_id'] ?? '';
+		$received_signature = $args['signature'] ?? '';
+		
+		$secret = defined( 'NONCE_KEY' ) ? NONCE_KEY : '';
+		$expected_signature = md5( $template_id . $widget_id . $secret );
+		
+		if ( $received_signature !== $expected_signature ) {
+			return false;
+		}
+	
 		return true;
 	}
 
