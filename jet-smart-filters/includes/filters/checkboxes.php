@@ -163,8 +163,14 @@ if ( ! class_exists( 'Jet_Smart_Filters_Checkboxes_Filter' ) ) {
 							'source'    => get_post_meta( $filter_id, '_custom_field_source_plugin', true ),
 						) );
 					} else {
+
 						$options = get_post_meta( get_the_ID(), $custom_field, true );
-						$options = jet_smart_filters()->data->maybe_parse_repeater_options( $options );
+
+						if ( ! is_array( $options ) ) {
+							$options = jet_smart_filters()->data->get_options_by_field_key( $custom_field );
+						} else {
+							$options = jet_smart_filters()->data->maybe_parse_repeater_options( $options );
+						}
 					}
 
 					$query_type    = 'meta_query';

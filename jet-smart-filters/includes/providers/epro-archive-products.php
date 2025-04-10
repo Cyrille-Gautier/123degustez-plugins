@@ -277,7 +277,9 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_EPro_Archive_Products' ) ) {
 		 */
 		public function get_wrapper_selector() {
 
-			return '.elementor-widget-wc-archive-products .elementor-widget-container';
+			return Elementor\Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' )
+				? '.elementor-widget-wc-archive-products'
+				: '.elementor-widget-wc-archive-products .elementor-widget-container';
 		}
 
 		/**
@@ -301,7 +303,9 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_EPro_Archive_Products' ) ) {
 		 */
 		public function get_wrapper_action() {
 
-			return 'replace';
+			return Elementor\Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' )
+				? 'insert'
+				: 'replace';
 		}
 
 		/**

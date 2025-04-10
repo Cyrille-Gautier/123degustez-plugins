@@ -2,6 +2,62 @@
 
 # ChangeLog
 
+## 3.6.4
+
+- FIX: sorting filter with meta key containing date
+- FIX: Active button state with Radio filter
+- FIX: other filters changed indexer
+- FIX: Bricks infinite scroll/load more after filtering
+- FIX: Add validation for Bricks to check if selected filters are published
+- FIX: Override the main WordPress query when the 'Is main query' option is enabled for Bricks query loop
+
+## 3.6.3.1
+
+- FIX: rating filter icon esc_attr (XSS)
+
+## 3.6.3
+
+- ADD: date range filter apply on enter
+- ADD: disabling Rank Math SEO integration if there are SEO filter rules on the page
+- FIX: filter styles with grouped items in popup
+- FIX: search filter with _plain_query
+- FIX: options from the postmeta table indexer
+- FIX: Elementor Pro Archive Products provider with experimental optionOptimized Markup
+- FIX: Uncaught TypeError: i.filterGroup.isCurrentProvider is not a function
+- FIX: hierarchical toggle enabled after switching to another filter type
+- FIX: Fatal errors in some cases
+- FIX: indexer in some cases
+- FIX: Added detail object to the bricks/ajax/query_result/displayed event to prevent TypeError on queryId
+- FIX: Add check for window.JetSmartFilters object to prevent console errors
+
+## 3.6.2
+
+- FIX: filters with Elementor Portfolio widget
+- FIX: if taxonomy does not exist
+- FIX: canonical ref link with Yoast SEO
+- FIX: Visual filter labels
+- FIX: missing jQuery dependency in script enqueue
+- FIX: ensured compatibility with Bricks query loop by forcing useQueryFilter to true for correct filtering with JetSmartFilters
+- FIX: resolved issue where taxonomy filter didn't work with Bricks query loop when a parent term was selected in 'Terms (Include)'
+
+## 3.6.1
+
+- ADD: hidden filter
+- ADD: custom URL symbols options
+- ADD: allow to get options from the postmeta table
+- FIX: exclude taxonomy terms options
+- FIX: default filter value with JetEngine Lazy Load 
+- FIX: Sanitize the incoming settings using a dedicated method
+- FIX: Disable 'Fixed position' option for Provider Preloader in Bricks query loop
+- FIX: Vertical alignment for Preloader provider in Bricks query loop
+- FIX: Initialize plugin in Bricks popup after JSF filtering
+- FIX: Move inline JS for Bricks query loop and filters to external file
+- FIX: Add '_query_type' property to ensure indexer works correctly
+- FIX: Add updated_query property to AJAX filtering response
+- FIX: Prepare queryUpdatePayload for passing to the handle method
+- FIX: refactor method for updating filtering results using bricks method
+- FIX: Handle auto-scroll option after refactoring for Bricks provider integration
+
 ## 3.6.0.1
 
 - FIX: prevent system notices appearing

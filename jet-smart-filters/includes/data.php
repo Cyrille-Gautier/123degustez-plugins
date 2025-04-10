@@ -15,6 +15,48 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 	 */
 	class Jet_Smart_Filters_Data {
 
+		public $url_symbol = array(
+			'provider_id'     => ':',
+			'items_separator' => ';',
+			'key_value'       => ':',
+			'value_separator' => ',',
+			'var_suffix'      => '!',
+		);
+
+		public function __construct() {
+
+			// set custom url symbols
+			if ( jet_smart_filters()->settings->use_url_custom_symbols ) {
+				if ( jet_smart_filters()->settings->url_provider_id_delimiter ) {
+					$this->url_symbol['provider_id'] = jet_smart_filters()->settings->url_provider_id_delimiter;
+				}
+				if ( jet_smart_filters()->settings->url_items_separator ) {
+					$this->url_symbol['items_separator'] = jet_smart_filters()->settings->url_items_separator;
+				}
+				if ( jet_smart_filters()->settings->url_key_value_delimiter ) {
+					$this->url_symbol['key_value'] = jet_smart_filters()->settings->url_key_value_delimiter;
+				}
+				if ( jet_smart_filters()->settings->url_value_separator ) {
+					$this->url_symbol['value_separator'] = jet_smart_filters()->settings->url_value_separator;
+				}
+				if ( jet_smart_filters()->settings->url_var_suffix_separator ) {
+					$this->url_symbol['var_suffix'] = jet_smart_filters()->settings->url_var_suffix_separator;
+				}
+			}
+		}
+
+		/**
+		 * Get URL symbol
+		 */
+		public function get_url_symbol( $name ) {
+
+			$use_tabindex = filter_var( jet_smart_filters()->settings->get( 'use_tabindex', false ), FILTER_VALIDATE_BOOLEAN );
+
+			return $use_tabindex
+				? 'tabindex="0"'
+				: '';
+		}
+
 		/**
 		 * Allowed filter types.
 		 */
@@ -249,6 +291,35 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 		}
 
 		/**
+		 * get raw options list from the DB by field key
+		 *
+		 * @param  string $field_key Field key to get options by.
+		 * @return array
+		 */
+		public function get_options_by_field_key( $field_key = '' ) {
+
+			global $wpdb;
+
+			$options = array();
+
+			$raw_results = $wpdb->get_results( $wpdb->prepare(
+				"SELECT DISTINCT `meta_value` FROM {$wpdb->postmeta} WHERE `meta_key` = '%s';",
+				sanitize_text_field( $field_key )
+			) );
+
+			if ( ! empty( $raw_results ) ) {
+				foreach ( $raw_results as $row ) {
+					$value = maybe_unserialize( $row->meta_value );
+					if ( $value && ! is_array( $value ) && ! is_object( $value ) ) {
+						$options[ $value ] = $value;
+					}
+				}
+			}
+
+			return $options;
+		}
+
+		/**
 		 * Find choices for filter from custom content types
 		 */
 		public function get_choices_from_cct_data( $field_key ) {
@@ -353,6 +424,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 			}
 
 			$terms = get_terms( $args );
+
+			if ( is_wp_error( $terms ) ) {
+				$terms = array();
+			}
 
 			return apply_filters(
 				'jet-smart-filters/data/terms-objects',
@@ -460,6 +535,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 
 						if ( is_object( $value ) ){
 							$search_key = $value->term_id;
+						}
+
+						if ( is_array( $value ) && isset( $value['value'] ) ) {
+							$search_key = $value['value'];
 						}
 
 						if ( in_array( $search_key, $exclude_include_options ) ){

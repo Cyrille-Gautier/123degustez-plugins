@@ -2,6 +2,7 @@
 /**
  * Bricks views manager
  */
+
 namespace Jet_Smart_Filters\Bricks_Views;
 
 define( 'BRICKS_QUERY_LOOP_PROVIDER_ID', 'bricks-query-loop' );
@@ -37,18 +38,19 @@ class Manager {
 		}
 
 		add_action( 'init', [ $this, 'register_elements' ], 11 );
+		add_action( 'init', [ $this, 'add_control_to_elements' ], 40 );
 		add_action( 'init', [ $this, 'enqueue_styles_for_builder' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 9);
 		add_action( 'jet-smart-filters/render/ajax/before', [ $this, 'register_bricks_dynamic_data_on_ajax' ] );
 		add_action( 'init', array( $this, 'register_dynamic_tags' ), 90 );
 
-		add_filter( 'bricks/builder/i18n', function( $i18n ) {
+		add_filter( 'bricks/builder/i18n', function ( $i18n ) {
 			$i18n['jetsmartfilters'] = esc_html__( 'JetSmartFilters', 'jet-smart-filters' );
+
 			return $i18n;
 		} );
 
-		add_action( 'init', [ $this, 'add_control_to_elements' ], 40 );
 		add_action( 'jet-smart-filters/providers/register', [ $this, 'register_provider_for_filters' ] );
-		add_filter( 'jet-smart-filters/filters/localized-data', [ $this, 'add_script' ] );
 		add_filter( 'jet-engine/query-builder/filters/allowed-providers', [ $this, 'add_provider_to_query_builder' ] );
 	}
 
@@ -92,6 +94,7 @@ class Manager {
 			$this->component_path( 'elements/select.php' ),
 			$this->component_path( 'elements/search.php' ),
 			$this->component_path( 'elements/sorting.php' ),
+			$this->component_path( 'elements/hidden.php' ),
 		);
 
 		foreach ( $element_files as $file ) {
@@ -115,12 +118,22 @@ class Manager {
 		}
 	}
 
+	public function enqueue_scripts() {
+		wp_enqueue_script(
+			'jet-smart-filters-bricks',
+			jet_smart_filters()->plugin_url( 'assets/js/bricks.js' ),
+			['jquery'],
+			jet_smart_filters()->get_version(),
+			true
+		);
+	}
+
 	public function register_bricks_dynamic_data_on_ajax() {
 		if ( ! function_exists( 'jet_engine' ) ) {
 			// Backup if JetEngine is not installed
 			global $wp_filter;
 			if ( isset( $wp_filter['wp'][8] ) ) {
-				foreach( $wp_filter['wp'][8] as $callback ) {
+				foreach ( $wp_filter['wp'][8] as $callback ) {
 					if ( is_array( $callback['function'] ) && is_object( $callback['function'][0] ) ) {
 						if ( 'Bricks\Integrations\Dynamic_Data\Providers' === get_class( $callback['function'][0] ) ) {
 							call_user_func( $callback['function'] );
@@ -144,7 +157,7 @@ class Manager {
 
 	public static function get_allowed_providers() {
 		$provider_allowed = [
-			'bricks-query-loop'   => true,
+			'bricks-query-loop' => true,
 		];
 
 		if ( function_exists( 'jet_engine' ) ) {
@@ -152,8 +165,8 @@ class Manager {
 				$provider_allowed,
 				[
 					'jet-engine'          => true,
-					'jet-engine-maps'     => jet_engine()->modules->is_module_active('maps-listings'),
-					'jet-engine-calendar' => jet_engine()->modules->is_module_active('calendar'),
+					'jet-engine-maps'     => jet_engine()->modules->is_module_active( 'maps-listings' ),
+					'jet-engine-calendar' => jet_engine()->modules->is_module_active( 'calendar' ),
 				]
 			);
 		}
@@ -170,7 +183,7 @@ class Manager {
 
 	public function add_control_to_elements() {
 		// Only container, block and div element have query controls
-		$elements = [ 'section', 'container', 'block', 'div' ];
+		$elements = [ 'container', 'block', 'div' ];
 
 		foreach ( $elements as $name ) {
 			add_filter( "bricks/elements/{$name}/controls", [ $this, 'add_jet_smart_filters_controls' ], 40 );
@@ -213,125 +226,5 @@ class Manager {
 		$providers[] = BRICKS_QUERY_LOOP_PROVIDER_ID;
 
 		return $providers;
-	}
-
-	public function add_script( $data ) {
-		wp_add_inline_script( 'jet-smart-filters', '
-			const filtersStack = {};
-
-			document.addEventListener( "jet-smart-filters/inited", () => {
-				window.JetSmartFilters.events.subscribe( "ajaxFilters/start-loading", (provider, queryID) => {
-					if ( "bricks-query-loop" === provider && filtersStack[queryID] ) {
-						delete filtersStack[queryID];
-					}
-				} );
-			} );
-			
-			window.JetSmartFilters.events.subscribe("ajaxFilters/updated", (provider, queryId, response, props) => {
-				if ("bricks-query-loop" !== provider) {
-					return;
-				}
-
-				let filterGroup = window.JetSmartFilters.filterGroups[provider + "/" + queryId];
-				
-				if (!filterGroup || !filterGroup.$provider.length) {
-					return;
-				}
-				
-				const {
-					$provider: nodes,
-					providerSelector
-				} = filterGroup;
-								
-				const {
-					rendered_content: renderedContent,
-					element_id: elementId,
-					pagination,
-					styles: styleElement,
-					popups,
-				} = response;
-				
-				const {
-					append,
-					autoscroll,
-				} = props;
-				
-				const selector = `jsfb-query--${queryId}`;
-				
-				if (nodes[0].classList.contains(selector) && !filtersStack[queryId]) {
-					filtersStack[queryId] = true;					
-					let replaced = false;
-					
-					const replaceContent = () => {
-						if (replaced) {
-							return "";
-						} else {
-							replaced = true;
-							return renderedContent;
-						}
-					}
-					
-					// Replace content
-					if ( append ) {
-						jQuery(providerSelector).last().after(renderedContent);
-					} else {
-						jQuery(providerSelector).replaceWith(() => replaceContent());
-					}
-					
-					document.body.insertAdjacentHTML("beforeend", styleElement);
-					
-					// Delete old popups
-					document.querySelectorAll(`.brx-popup[data-popup-loop="${elementId}"]`).forEach(e => e.remove());
-					
-					// Insert new popups
-					if ( popups !== "" ) {
-						document.body.insertAdjacentHTML("beforeend", popups)
-					}
-					
-					// Initializing a plugin
-					const filteredNodes = jQuery(providerSelector);
-					
-					window.JetPlugins && window.JetPlugins.init(filteredNodes.closest("*"));
-					
-					// Re-init Bricks scripts after filtering
-					const events = [
-					    "bricks/ajax/query_result/displayed",
-					    "bricks/ajax/load_page/completed"
-					];
-					
-					events.forEach(event => document.dispatchEvent(new CustomEvent(event)));
-															
-					const interactions = document.querySelectorAll("[data-interactions]");
-					
-					// Manage the visibility of "Load More" buttons
-					if (interactions.length) {
-						interactions.forEach(el => {
-							const {loadMoreQuery} = JSON.parse(el.dataset.interactions)[0];
-							const {max_num_pages: maxPages, page} = pagination;
-								
-							if (elementId === loadMoreQuery) {
-								if (page >= maxPages) {
-									el.classList.add("brx-load-more-hidden");
-								} else {
-									el.classList.remove("brx-load-more-hidden");
-								}
-							}
-						});	
-					}
-				}
-				
-				if (autoscroll || autoscroll === 0) {
-					const scrollOffset = typeof autoscroll === "number"
-						? autoscroll
-						: 0;
-
-					jQuery("html, body").stop().animate({
-						scrollTop: nodes.offset().top + nodes.outerHeight(true) - scrollOffset
-					}, 500);
-				}
-			});
-		' );
-
-		return $data;
 	}
 }

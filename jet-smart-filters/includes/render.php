@@ -163,7 +163,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 			$_REQUEST['jsf'] = strtok( $jsf_query_str, '/' );
 
 			foreach ( $this->get_request_query_vars() as $query_var ) {
-				preg_match_all( "/$query_var\/(.*?)(\/|$)/", $jsf_query_str, $matches );
+				preg_match_all( "/\/$query_var\/([^\/]*)/", $jsf_query_str, $matches );
 
 				if ( empty( $matches[1][0] ) ) {
 					continue;

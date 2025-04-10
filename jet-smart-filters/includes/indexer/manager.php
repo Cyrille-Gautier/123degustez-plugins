@@ -656,21 +656,30 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 						break;
 
 					case 'custom_fields':
-						$query_var           = $data['_query_var'];
-						$get_from_field_data = isset( $data['_source_get_from_field_data'] ) ? filter_var( $data['_source_get_from_field_data'], FILTER_VALIDATE_BOOLEAN ) : false;
+						$query_var    = $data['_query_var'];
+						$custom_field = $data['_source_custom_field'];
 
-						if ( ! $query_var || ! $get_from_field_data ) {
+						if ( ! $query_var || ! $custom_field ) {
 							break;
 						}
 
-						$is_serialized_data   = filter_var( $data['_is_custom_checkbox'], FILTER_VALIDATE_BOOLEAN );
-						$data_type            = $is_serialized_data ? 'serialized' : 'normal';
-						$custom_field         =  $data['_source_custom_field'];
-						$custom_field_source  =  $data['_custom_field_source_plugin'];
-						$custom_field_options = jet_smart_filters()->data->get_choices_from_field_data( array(
-							'field_key' => $custom_field,
-							'source'    => $custom_field_source,
-						) );
+						$get_from_field_data = isset( $data['_source_get_from_field_data'] ) ? filter_var( $data['_source_get_from_field_data'], FILTER_VALIDATE_BOOLEAN ) : false;
+						$is_serialized_data  = filter_var( $data['_is_custom_checkbox'], FILTER_VALIDATE_BOOLEAN );
+						$data_type           = $is_serialized_data ? 'serialized' : 'normal';
+						$custom_field_source = $data['_custom_field_source_plugin'];
+
+						if ( $get_from_field_data ) {
+							$custom_field_options = jet_smart_filters()->data->get_choices_from_field_data( array(
+								'field_key' => $custom_field,
+								'source'    => $custom_field_source,
+							) );
+						} else {
+							$custom_field_options = jet_smart_filters()->data->get_options_by_field_key( $custom_field );
+						}
+
+						if ( empty( $custom_field_options ) ) {
+							break;
+						}
 
 						if ( ! isset( $filters_data['meta_query'][$data_type][$query_var] ) ) {
 							$filters_data['meta_query'][$data_type][$query_var] = array();

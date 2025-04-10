@@ -168,6 +168,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Blocks_Manager' ) ) {
 			require $types_dir . 'apply-button.php';
 			require $types_dir . 'remove-filters.php';
 			require $types_dir . 'pagination.php';
+			require $types_dir . 'hidden.php';
 
 			new Jet_Smart_Filters_Block_Checkboxes();
 			new Jet_Smart_Filters_Block_Select();
@@ -186,6 +187,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Blocks_Manager' ) ) {
 			new Jet_Smart_Filters_Block_Apply_Button();
 			new Jet_Smart_Filters_Block_Remove_Filters();
 			new Jet_Smart_Filters_Block_Pagination();
+			new Jet_Smart_Filters_Block_Hidden();
 		}
 	}
 }

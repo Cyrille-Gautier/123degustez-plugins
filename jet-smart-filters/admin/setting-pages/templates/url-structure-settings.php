@@ -39,9 +39,50 @@
 			<cx-vui-select
 				label="<?php _e( 'Taxonomy term name type in URL', 'jet-smart-filters' ); ?>"
 				:optionsList="data.url_taxonomy_term_name_options"
-				size="fullwidth"
+				:wrapper-css="[ 'equalwidth' ]"
 				v-model="settings.url_taxonomy_term_name"
 			/>
+		</div>
+		<div class="url-custom-symbols">
+			<cx-vui-switcher
+				class="url-custom-symbols-switcher"
+				label="<?php _e( 'Use Custom URL Symbols', 'jet-smart-filters' ); ?>"
+				:wrapper-css="[ 'equalwidth' ]"
+				v-model="settings.use_url_custom_symbols">
+			</cx-vui-switcher>
+			<div v-if="settings.use_url_custom_symbols"
+				 class="url-custom-symbols-list">
+				<cx-vui-input
+					label="<?php _e( 'Provider/Query ID delimiter', 'jet-smart-filters' ); ?>"
+					placeholder=":"
+					:wrapper-css="[ 'equalwidth' ]"
+					v-model="settings.url_provider_id_delimiter"
+				></cx-vui-input>
+				<cx-vui-input
+					label="<?php _e( 'Terms & Meta items separator', 'jet-smart-filters' ); ?>"
+					placeholder=";"
+					:wrapper-css="[ 'equalwidth' ]"
+					v-model="settings.url_items_separator"
+				></cx-vui-input>
+				<cx-vui-input
+					label="<?php _e( 'Key/Value delimiter', 'jet-smart-filters' ); ?>"
+					placeholder=":"
+					:wrapper-css="[ 'equalwidth' ]"
+					v-model="settings.url_key_value_delimiter"
+				></cx-vui-input>
+				<cx-vui-input
+					label="<?php _e( 'Value elements separator', 'jet-smart-filters' ); ?>"
+					placeholder=","
+					:wrapper-css="[ 'equalwidth' ]"
+					v-model="settings.url_value_separator"
+				></cx-vui-input>
+				<cx-vui-input
+					label="<?php _e( 'Query var suffix separator', 'jet-smart-filters' ); ?>"
+					placeholder="!"
+					:wrapper-css="[ 'equalwidth' ]"
+					v-model="settings.url_var_suffix_separator"
+				></cx-vui-input>
+			</div>
 		</div>
 		<div class="url-aliases-section">
 			<cx-vui-switcher

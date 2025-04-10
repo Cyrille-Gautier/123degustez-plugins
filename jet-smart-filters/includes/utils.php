@@ -570,14 +570,19 @@ if ( ! class_exists( 'Jet_Smart_Filters_Utils' ) ) {
 
 			$resultArray = [];
 		
-			foreach ($firstArray as $key => $item) {
-				foreach ($secondArray as $secondItem) {
-					if (!isset($secondItem[$valueKey]) || $secondItem[$valueKey] != $key) {
+			foreach ( $firstArray as $key => $item ) {
+				foreach ( $secondArray as $secondItem ) {
+					if ( ! isset( $secondItem[$valueKey] ) || $secondItem[$valueKey] != $key ) {
 						continue;
 					}
-		
-					$mergedItem = array_merge($item, $secondItem);
-					$resultArray[] = $mergedItem;
+
+					foreach ( $secondItem as $secondKey => $secondValue ) {
+						if ( ! array_key_exists( $secondKey, $item ) || ( ! empty( $secondValue ) && empty( $item[$secondKey] ) ) ) {
+							$item[$secondKey] = $secondValue;
+						}
+					}
+
+					$resultArray[] = $item;
 
 					break;
 				}

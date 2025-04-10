@@ -95,6 +95,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Widgets_Manager' ) ) {
 				jet_smart_filters()->plugin_path( 'includes/widgets/pagination.php' ),
 				jet_smart_filters()->plugin_path( 'includes/widgets/apply-button.php' ),
 				jet_smart_filters()->plugin_path( 'includes/widgets/remove-filters.php' ),
+				jet_smart_filters()->plugin_path( 'includes/widgets/hidden.php' ),
 			);
 
 			foreach ( $additional_widgets as $widget ) {

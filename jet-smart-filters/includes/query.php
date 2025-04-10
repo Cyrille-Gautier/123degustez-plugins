@@ -314,8 +314,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 		 */
 		public function set_provider_from_request( $provider = '' ) {
 
-			if ( preg_match( '/[\/:]/', $provider ) ) {
-				$delimiter = strpos( $provider, '/' ) !== false ? '/' : ':';
+			if ( preg_match( '/[\/' . jet_smart_filters()->data->url_symbol['provider_id'] . ']/', $provider ) ) {
+				$delimiter = strpos( $provider, '/' ) !== false ? '/' : jet_smart_filters()->data->url_symbol['provider_id'];
 				$provider_data = explode( $delimiter, $provider, 2 );
 				$provider_name = $provider_data[0];
 				$provider_id   = $provider_data[1];
@@ -378,16 +378,18 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 			switch ( $query_var ) {
 				case 'tax':
 				case 'meta':
-					foreach ( explode( ';', $query_var_value ) as $data ) {
-						preg_match( '/(.+?):(.+)/', $data, $key_value );
+					foreach ( explode( jet_smart_filters()->data->url_symbol['items_separator'], $query_var_value ) as $data ) {
+						preg_match( '/(.+?)' . preg_quote( jet_smart_filters()->data->url_symbol['key_value'], '/' ) . '(.+)/', $data, $key_value );
 						array_shift( $key_value );
 
 						if ( count( $key_value ) < 2 ) {
 							continue;
 						}
 
-						$key   = str_replace( '!', '|', $key_value[0] ); // replace query var suffix separator
-						$value = strpos( $key_value[1], ',' ) ? explode( ',', $key_value[1] ) : $key_value[1];
+						$key   = str_replace( jet_smart_filters()->data->url_symbol['var_suffix'], '|', $key_value[0] ); // replace query var suffix separator
+						$value = strpos( $key_value[1], jet_smart_filters()->data->url_symbol['value_separator'] ) 
+							? explode( jet_smart_filters()->data->url_symbol['value_separator'], $key_value[1] )
+							: $key_value[1];
 
 						$_REQUEST[ '_' . $query_var . '_query_' . $key ] = $value;
 					}
@@ -413,8 +415,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				case 'sort':
 					$sort_props = array();
 
-					foreach ( explode( ';', $query_var_value ) as $data) {
-						$sort_data = explode( ':', $data );
+					foreach ( explode( jet_smart_filters()->data->url_symbol['items_separator'], $query_var_value ) as $data) {
+						$sort_data = explode( jet_smart_filters()->data->url_symbol['key_value'], $data );
 
 						if ( count( $sort_data ) < 2 ) {
 							continue;
@@ -438,7 +440,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 
 				case '_sm':
 				case 'search-by-meta':
-					$search_data = explode( '!', $query_var_value, 2 );
+					$search_data = explode( jet_smart_filters()->data->url_symbol['var_suffix'], $query_var_value, 2 );
 
 					if ( count( $search_data ) !== 2 ) {
 						break;
@@ -635,17 +637,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 								break;
 
 							case 'plain_query':
-
-								if ( $key === $var ) {
-								//	$var = '_' . $var . '_' . 
-								}
-
 								$this->_query[ $this->clear_key( $key, $var ) ] = $value;
 								break;
 
-
 							default:
-
 								$this->_query[ $var ] = apply_filters(
 									'jet-smart-filters/query/add-var',
 									$value,

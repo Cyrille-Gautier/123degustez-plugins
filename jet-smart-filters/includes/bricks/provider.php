@@ -44,14 +44,8 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 	 * Add hooks specific for exact provider
 	 */
 	public function __construct() {
-		add_filter( 'bricks/query/force_run', '__return_true' );
 		add_filter( 'bricks/element/set_root_attributes', [ $this, 'set_attributes' ], 999, 2 );
 		add_action( 'bricks/query/before_loop', [ $this, 'store_query_props' ], 10 );
-
-		// TODO Remove this code after verifying stability in v3.6.1 (expected removal in 2-3 releases).
-		if ( function_exists( 'jet_engine' ) && jet_engine()->get_version() < '3.5.6' ) {
-			add_action( 'bricks/query/before_loop', [ $this, 'store_custom_query_props' ], 10 );
-		}
 	}
 
 	/**
@@ -171,64 +165,20 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 			[
 				'filtered_post_id'      => $this->get_post_id(),
 				'element_id'            => $query->element_id,
-				'is_archive_main_query' => $query->query_vars['is_archive_main_query'] ?? '',
+				'is_archive_main_query' => isset( $query->settings['query']['is_archive_main_query'] ) ? true : false,
 			],
 			$query_id
 		);
 
 		$query_vars = ! empty( $this->base_query_vars ) ? $this->base_query_vars : $query->query_vars;
 
+		if ( $query->object_type === 'user' ) {
+			$query_vars['_query_type'] = 'users';
+		}
+
 		jet_smart_filters()->query->store_provider_default_query(
 			$this->get_id(),
 			$query_vars,
-			$query_id
-		);
-	}
-
-	public function store_custom_query_props( $query ) {
-		if ( $query->object_type !== 'jet_engine_query_builder' ) {
-			return;
-		}
-
-		$query_id = $query->settings['jsfb_query_id'] ?? 'default';
-		$query_builder = $this->get_query_builder_from_settings( $query->settings );
-
-		if ( ! $query_builder ) {
-			return;
-		}
-
-		// Setup props for the pager
-		jet_smart_filters()->query->set_props(
-			$this->get_id(),
-			array(
-				'found_posts'   => $query_builder->get_items_total_count(),
-				'max_num_pages' => $query_builder->get_items_pages_count(),
-				'page'          => $query_builder->get_current_items_page(),
-				'query_type'    => $query_builder->get_query_type(),
-				'query_id'      => $query_builder->id,
-				'query_meta'    => $query_builder->get_query_meta(),
-			),
-			$query_id
-		);
-
-		if ( jet_smart_filters()->query->is_ajax_filter() ) {
-			return;
-		}
-
-		// Store settings to localize it by SmartFilters later
-		jet_smart_filters()->providers->store_provider_settings(
-			$this->get_id(),
-			array(
-				'filtered_post_id'      => $this->get_post_id(),
-				'element_id'            => $query->element_id,
-			),
-			$query_id
-		);
-
-		// Store current query to allow indexer to get correct posts count for current query
-		jet_smart_filters()->query->store_provider_default_query(
-			$this->get_id(),
-			$query_builder->get_query_args(),
 			$query_id
 		);
 	}
@@ -297,16 +247,19 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 						return $vars;
 					}
 
-					return $this->merge_query_vars( $vars, $query_vars );
+					return $query_vars;
 				}, 10, 3
 			);
+
+			if ( $paged > 1 ) {
+				// Prevent rendering of query loop trail during JSF "Load More" requests.
+				add_filter( 'bricks/render_query_loop_trail', '__return_false' );
+			}
 		}
 
 		if ( $object_type === 'jet_engine_query_builder' ) {
-			// Set the current loop iteration index for correct rendering of dynamic data.
-			add_filter( 'bricks/query/force_loop_index', function() use ( $query_vars ) {
-				return $this->calculate_loop_index( $query_vars );
-			});
+			// Prevent rendering of query loop trail for JetEngine QB
+			add_filter( 'bricks/render_query_loop_trail', '__return_false' );
 		}
 
 		// Remove the parent
@@ -354,7 +307,20 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 		$inline_css = ! empty( Assets::$inline_css[ $jsf_query_page_id ] ) ? Assets::$inline_css[ $jsf_query_page_id ] : '';
 
 		// STEP: Render the element after styles are generated as data-query-loop-index might be inserted through hook in Assets class (@since 1.7.2)
-		echo Frontend::render_data( $loop_elements );
+		$html = Frontend::render_data( $loop_elements );
+
+		/**
+		 * Fixes Bricks infinite scroll/load more after filtering by reinitializing loops
+		 *
+		 * Custom Marker to avoid HTML comment removal by plugins
+		 * - will be converted to HTML comment in the frontend
+		 *
+		 * @since 1.12.3 - Bricks
+		 */
+		if ( $is_default_object_type && $paged === 1 ) {
+			$template = "<template style='display:none' aria-hidden='true' data-brx-loop-start='$query_element_id'></template>";
+			$html     = $template . $html;
+		}
 
 		// Add popup HTML plus styles (@since 1.7.1)
 		$popups = Popups::$looping_popup_html;
@@ -362,19 +328,39 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 		// STEP: Add dynamic data styles after render_data() to catch dynamic data changes (eg. background-image) (@since 1.8.2)
 		$inline_css .= Assets::$inline_css_dynamic_data;
 
-		$styles = ! empty( $inline_css ) ? "\n<style class='brx-jsf-query-styles-{$query_element_id}'>/* JSF CSS */\n{$inline_css}</style>\n" : '';
+		$styles = ! empty( $inline_css ) ? "\n<style>/* JSF CSS */\n{$inline_css}</style>\n" : '';
+
+		// STEP: Query data
+		$query_data = Query::get_query_by_element_id( $query_element_id );
+
+		// Remove unnecessary properties
+		unset( $query_data->settings );
+		unset( $query_data->query_result );
+		unset( $query_data->loop_index );
+		unset( $query_data->loop_object );
+		unset( $query_data->is_looping );
+
+		if ( isset( $query_data->query_vars['queryEditor'] ) ) {
+			unset( $query_data->query_vars['queryEditor'] );
+		}
+
+		if ( isset( $query_data->query_vars['signature'] ) ) {
+			unset( $query_data->query_vars['signature'] );
+		}
+
+		$rendered_data = [
+			'query_id'      => $query_id,
+			'element_id'    => $query_element_id,
+			'html'          => $html,
+			'styles'        => $styles,
+			'popups'        => $popups,
+			'updated_query' => $query_data,
+		];
 
 		add_filter(
 			'jet-smart-filters/render/ajax/data',
-			function ( $data ) use ( $query_id, $query_element_id, $styles, $popups ) {
-				$data['query_id']         = $query_id;
-				$data['rendered_content'] = $data['content'];
-				$data['content']          = false;
-				$data['styles']           = $styles;
-				$data['element_id']       = $query_element_id;
-				$data['popups']           = $popups;
-
-				return $data;
+			function ( $data ) use ( $rendered_data ) {
+				return array_merge( $data, $rendered_data );
 			}
 		);
 
@@ -404,26 +390,32 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 	 * Here we checking - if will be rendered filtered element - we hook 'bricks/{$object_type}s/query_vars' method
 	 * to modify brick query.
 	 */
-	public function modify_bricks_query( $arr, $element ) {
+	public function modify_bricks_query( $result, $element ) {
 		if ( ! $this->is_filtered_element( $element ) ) {
-			return $arr;
+			return $result;
 		}
 
 		$object_type      = $this->get_object_type( $element['settings'] );
 		$query_element_id = $element['id'];
 
 		if ( $this->check_default_object_type( $object_type ) ) {
-			// Add an action to modify the query before it is executed
+			$query_vars = jet_smart_filters()->query->get_query_args();
 
+			// If the 'is_archive_main_query' setting is not empty, override the main WordPress query
+			if ( $object_type === 'post' && isset( $element['settings']['query']['is_archive_main_query'] ) ) {
+				global $wp_query;
+				$wp_query = new \WP_Query( $query_vars );
+			}
+
+			// Add an action to modify the query before it is executed
 			add_filter(
 				"bricks/{$object_type}s/query_vars",
-				function( $vars, $settings, $element_id ) use ( $query_element_id, $object_type ) {
+				function( $vars, $settings, $element_id ) use ( $query_element_id, $query_vars, $object_type ) {
 					if ( $element_id !== $query_element_id ) {
 						return $vars;
 					}
 
 					$this->base_query_vars = $vars;
-					$query_vars = jet_smart_filters()->query->get_query_args();
 
 					if ( $object_type === 'term' ) {
 						if ( ! isset( $query_vars['paged'] ) ) {
@@ -452,24 +444,9 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 						}
 					}
 
-					return $this->merge_query_vars( $vars, $query_vars );
+					return $query_vars;
 				}, 11, 3
 			);
-		}
-
-		if ( $object_type === 'jet_engine_query_builder' ) {
-			$query_builder = $this->get_query_builder_from_settings( $element['settings'] );
-
-			if ( ! $query_builder ) {
-				return $arr;
-			}
-
-			$query_vars = $query_builder->get_query_args();
-
-			// Set the current loop iteration index for correct rendering of dynamic data.
-			add_filter( 'bricks/query/force_loop_index', function() use ( $query_vars ) {
-				return $this->calculate_loop_index( $query_vars );
-			});
 		}
 
 		add_filter(
@@ -483,7 +460,7 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 			}, 10, 3
 		);
 
-		return $arr;
+		return $result;
 	}
 
 	/**
@@ -552,43 +529,6 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 		return false;
 	}
 
-	/**
-	 * Calculate the adjusted loop index for a paginated query.
-	 *
-	 * @param array $query_vars The query variables, including pagination and query type information.
-	 * @return int|string The adjusted loop index or an empty string if conditions are not met.
-	 */
-	public function calculate_loop_index( $query_vars ) {
-		$query = jet_smart_filters()->query->get_query_from_request();
-		$paged = $query['paged'] ?? 1;
-		$object_type = $query_vars['_query_type'] ?? 'posts';
-
-		$posts_per_page = 0;
-
-		switch ( $object_type ) {
-			case "posts":
-				$posts_per_page = $query_vars['posts_per_page'] ?? 0;
-				break;
-
-			case "terms":
-				$posts_per_page = $query_vars['number_per_page'] ?? 0;
-				break;
-
-			case "users":
-				$posts_per_page = $query_vars['number'] ?? 0;
-				break;
-		}
-
-		$query            = Query::get_query_object();
-		$query_loop_index = $query && $query->is_looping ? $query->loop_index : '';
-
-		if ( $paged > 1 && $posts_per_page > 0 && $query_loop_index !== '' ) {
-			return $query_loop_index + $posts_per_page * ( $paged - 1 );
-		}
-
-		 return '';
-	}
-
 	// Generates the no results content with specific classes and default message.
 	function get_no_results_content( $content, $element_id ) {
 		$query_id = jet_smart_filters()->query->get_current_provider( 'query_id' );
@@ -604,46 +544,6 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 		}
 
 		return '<div class="' . $classes . '">' . $content . '</div>';
-	}
-
-	/**
-	 * Duplicate this method from bricks with some variables.
-	 * Merge two query vars arrays, instead of using wp_parse_args
-	 *
-	 * wp_parse_args will only set those values that are not already set in the original array.
-	 */
-	public function merge_query_vars( $original_query_vars, $merging_query_vars ) {
-		foreach ( $merging_query_vars as $key => $value ) {
-			// If the key already exists in the $original_query_vars, and the value is an array, merge the two arrays
-			if ( isset( $original_query_vars[ $key ] ) && is_array( $original_query_vars[ $key ] ) && is_array( $value ) ) {
-				/**
-				 * Handle special case for 'tax_query'
-				 * merging via key might be wrong, as the key is just index of the array
-				 */
-				if ( $key === 'tax_query' ) {
-					$original_query_vars[ $key ] = Query::merge_tax_or_meta_query_vars( $original_query_vars[ $key ], $value, 'tax' );
-				}
-
-				/**
-				 * Handle special case for 'meta_query'
-				 *
-				 * This logic is still needed for 'meta_query' to work correctly.
-				 * Otherwise will merge wrongly into wrong array when performing query filter.
-				 */
-				elseif ( $key === 'meta_query' ) {
-					$original_query_vars[ $key ] = Query::merge_tax_or_meta_query_vars( $original_query_vars[ $key ], $value, 'meta' );
-				}
-
-				else {
-					$original_query_vars[ $key ] = $this->merge_query_vars( $original_query_vars[ $key ], $value ); // Recursively merge arrays (@since 1.9.6)
-				}
-
-			} else {
-				$original_query_vars[ $key ] = $value;
-			}
-		}
-
-		return $original_query_vars;
 	}
 
 	/**

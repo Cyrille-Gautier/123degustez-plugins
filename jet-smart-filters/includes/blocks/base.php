@@ -189,6 +189,18 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Base' ) ) {
 						'type' => 'object'
 					]
 				),
+				'argument_type' => array(
+					'type'    => 'string',
+					'default' => 'plain',
+				),
+				'argument_name' => array(
+					'type'    => 'string',
+					'default' => '',
+				),
+				'argument_value' => array(
+					'type'    => 'string',
+					'default' => '',
+				),
 				'query_id' => array(
 					'type'    => 'string',
 					'default' => '',

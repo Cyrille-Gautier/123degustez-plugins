@@ -62,14 +62,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Select_Filter' ) ) {
 		}
 
 		/**
-		 * Return hierarchical boolean
-		 */
-		public function is_hierarchical( $filter_id ) {
-
-			return filter_var( get_post_meta( $filter_id, '_is_hierarchical', true ), FILTER_VALIDATE_BOOLEAN );
-		}
-
-		/**
 		 * Prepare filter template argumnets
 		 */
 		public function prepare_args( $args ) {
@@ -87,7 +79,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Select_Filter' ) ) {
 			$source                  = get_post_meta( $filter_id, '_data_source', true );
 			$use_exclude_include     = get_post_meta( $filter_id, '_use_exclude_include', true );
 			$exclude_include_options = get_post_meta( $filter_id, '_data_exclude_include', true );
-			$is_hierarchical         = $this->is_hierarchical( $filter_id );
+			$is_hierarchical         = filter_var( get_post_meta( $filter_id, '_is_hierarchical', true ), FILTER_VALIDATE_BOOLEAN );
 			$options                 = array();
 			$query_type              = false;
 			$query_var               = '';
@@ -162,7 +154,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Select_Filter' ) ) {
 						) );
 					} else {
 						$options = get_post_meta( get_the_ID(), $custom_field, true );
-						$options = jet_smart_filters()->data->maybe_parse_repeater_options( $options );
+
+						if ( ! is_array( $options ) ) {
+							$options = jet_smart_filters()->data->get_options_by_field_key( $custom_field );
+						} else {
+							$options = jet_smart_filters()->data->maybe_parse_repeater_options( $options );
+						}
 					}
 
 					$query_type = 'meta_query';
@@ -235,7 +232,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Select_Filter' ) ) {
 
 		public function modify_base_class( $base_class, $filter_id ) {
 
-			if ( $this->is_hierarchical( $filter_id ) ) {
+			if ( $base_class === 'jet-smart-filters-select' && filter_var( get_post_meta( $filter_id, '_is_hierarchical', true ), FILTER_VALIDATE_BOOLEAN ) ) {
 				return 'jet-smart-filters-hierarchy';
 			}
 

@@ -87,7 +87,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Manager' ) ) {
 							: '',
 						'fixed_position' => jet_smart_filters()->provider_preloader->fixed_position,
 						'fixed_edge_gap' => jet_smart_filters()->provider_preloader->fixed_edge_gap
-					)
+					),
+					'url_custom_symbols' => $this->get_url_custom_symbols()
 				)
 			) );
 
@@ -158,6 +159,35 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Manager' ) ) {
 			) );
 		}
 
+		public function get_url_custom_symbols() {
+
+			if ( ! jet_smart_filters()->settings->use_url_custom_symbols ) {
+				return '';
+			}
+
+			$custom_symbols = array();
+
+			if ( jet_smart_filters()->settings->url_provider_id_delimiter ) {
+				$custom_symbols['provider_id'] = jet_smart_filters()->settings->url_provider_id_delimiter;
+			}
+			if ( jet_smart_filters()->settings->url_items_separator ) {
+				$custom_symbols['items_separator'] = jet_smart_filters()->settings->url_items_separator;
+			}
+			if ( jet_smart_filters()->settings->url_key_value_delimiter ) {
+				$custom_symbols['key_value'] = jet_smart_filters()->settings->url_key_value_delimiter;
+			}
+			if ( jet_smart_filters()->settings->url_value_separator ) {
+				$custom_symbols['value_separator'] = jet_smart_filters()->settings->url_value_separator;
+			}
+			if ( jet_smart_filters()->settings->url_var_suffix_separator ) {
+				$custom_symbols['var_suffix'] = jet_smart_filters()->settings->url_var_suffix_separator;
+			}
+
+			return ! empty( $custom_symbols )
+				? $custom_symbols
+				: '';
+		}
+
 		/**
 		 * Enqueue filter styles
 		 */
@@ -207,6 +237,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Manager' ) ) {
 				'Jet_Smart_Filters_Sorting_Filter'     => $base_path . 'sorting.php',
 				'Jet_Smart_Filters_Active_Filters'     => $base_path . 'active-filters.php',
 				'Jet_Smart_Filters_Pagination_Filter'  => $base_path . 'pagination.php',
+				'Jet_Smart_Filters_Hidden_Filter'      => $base_path . 'hidden.php',
 			);
 
 			require $base_path . 'base.php';
@@ -274,7 +305,13 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Manager' ) ) {
 				$is_custom_checkbox = true;
 			}
 
-			if ( in_array( $type, ['search', 'range', 'check-range', 'rating'] ) ) {
+			if ( 'search' === $type ) {
+				if ( strpos( $query_var, '_plain_query::' ) === false ) {
+					$query_var_suffix[] = $type;
+				}
+			}
+
+			if ( in_array( $type, ['range', 'check-range', 'rating'] ) ) {
 				$query_var_suffix[] = $type;
 			}
 

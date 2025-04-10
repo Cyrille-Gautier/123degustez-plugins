@@ -137,9 +137,15 @@ if ( ! class_exists( 'Jet_Smart_Filters_Color_Image_Filter' ) ) {
 				case 'custom_fields':
 					$custom_field    = get_post_meta( $filter_id, '_source_custom_field', true );
 					$current_options = get_post_meta( get_the_ID(), $custom_field, true );
-					$current_options = jet_smart_filters()->data->maybe_parse_repeater_options( $current_options );
-					$query_type      = 'meta_query';
-					$query_var       = get_post_meta( $filter_id, '_query_var', true );
+
+					if ( ! is_array( $current_options ) ) {
+						$current_options = jet_smart_filters()->data->get_options_by_field_key( $custom_field );
+					} else {
+						$current_options = jet_smart_filters()->data->maybe_parse_repeater_options( $current_options );
+					}
+
+					$query_type = 'meta_query';
+					$query_var  = get_post_meta( $filter_id, '_query_var', true );
 
 					$options = array_intersect_key( $options, $current_options );
 					break;

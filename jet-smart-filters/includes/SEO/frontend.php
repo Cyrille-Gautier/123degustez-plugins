@@ -24,8 +24,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_SEO_Frontend' ) ) {
 
 		public function __construct() {
 
-			add_filter( 'wpseo_canonical', array( $this, 'modify_canonical_url' ) );
-
 			if ( ! jet_smart_filters()->settings->is_seo_enabled ) {
 				return;
 			}
@@ -41,8 +39,11 @@ if ( ! class_exists( 'Jet_Smart_Filters_SEO_Frontend' ) ) {
 				return;
 			}
 
+			do_action( 'jet-smart-filters/seo/frontend/init-rule', $this );
+
 			add_filter( 'document_title', array( $this, 'modify_document_title' ) );
 			add_action( 'wp_head', array( $this, 'modify_document_description' ), 1 );
+			add_filter('wpseo_canonical', '__return_false');
 			add_action( 'wp_head', array( $this, 'modify_canonical_url' ), 1 );
 		}
 
@@ -70,7 +71,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_SEO_Frontend' ) ) {
 			echo '<meta name="description" content="' . strip_tags( $current_description ) . '">' . "\n";
 		}
 
-		public function modify_canonical_url( $canonical ) {
+		public function modify_canonical_url( ) {
 
 			$filter_applied = false;
 

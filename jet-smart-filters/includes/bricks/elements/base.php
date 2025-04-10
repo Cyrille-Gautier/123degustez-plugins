@@ -193,7 +193,7 @@ class Jet_Smart_Filters_Bricks_Base extends \Jet_Engine\Bricks_Views\Elements\Ba
 					'tab'      => 'content',
 					'label'    => esc_html__( 'Show apply button', 'jet-smart-filters' ),
 					'type'     => 'checkbox',
-					'default'  => true,
+					'default'  => false,
 					'required' => [ 'apply_on', '=', 'submit' ],
 				]
 			);
@@ -611,6 +611,7 @@ class Jet_Smart_Filters_Bricks_Base extends \Jet_Engine\Bricks_Views\Elements\Ba
 
 		$settings   = $this->parse_jet_render_attributes( $this->get_jet_settings() );
 		$filter_ids = ! empty( $settings['filter_id'] ) ? $settings['filter_id'] : '';
+		$filter_ids = jet_smart_filters()->utils->select_published_filters( $filter_ids );
 
 		// STEP: Select filter is empty: Show placeholder text
 		if ( empty( $filter_ids ) ) {

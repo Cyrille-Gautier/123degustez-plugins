@@ -128,6 +128,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 
 					case 'meta_query':
 						foreach ( $query_data as $meta_key => $meta_data ) {
+							if ( ! $meta_data ) {
+								continue;
+							}
+
 							$sql_and .= $sql_and ? ' OR ' : '';
 
 							if ( strpos( $meta_key, '|' ) ) {
@@ -159,13 +163,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 								$item_key_condition = strpos( $meta_key, ',' )
 									? "item_key IN ('" . str_replace( [",",' '], ["','". ''], $meta_key ) . "')"
 									: "item_key = '$meta_key'";
-								if ( $meta_data ) {
-									foreach ( $meta_data as &$value ) {
-										$value = addslashes( $value );
-									}
 
-									$sql_and .= "(item_query = '$query_type' AND $item_key_condition AND item_value IN ('" . implode( "','", $meta_data ) . "'))";
+								foreach ( $meta_data as &$value ) {
+									$value = addslashes( $value );
 								}
+
+								$sql_and .= "(item_query = '$query_type' AND $item_key_condition AND item_value IN ('" . implode( "','", $meta_data ) . "'))";
 							}
 						}
 
@@ -392,12 +395,20 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 						break;
 
 					case 'custom_fields':
-						$query_type = 'meta_query';
-						$query_var  = $source['_query_var'][0];
-						$custom_field_options = jet_smart_filters()->data->get_choices_from_field_data( array(
-							'field_key' => $source['_source_custom_field'][0],
-							'source'    => $source['_custom_field_source_plugin'][0],
-						) );
+						$query_type          = 'meta_query';
+						$query_var           = $source['_query_var'][0];
+						$custom_field        = $source['_source_custom_field'][0];
+						$custom_field_source = $source['_custom_field_source_plugin'][0];
+						$get_from_field_data = isset( $source['_source_get_from_field_data'][0] ) ? filter_var( $source['_source_get_from_field_data'][0], FILTER_VALIDATE_BOOLEAN ) : false;
+						
+						if ( $get_from_field_data ) {
+							$custom_field_options = jet_smart_filters()->data->get_choices_from_field_data( array(
+								'field_key' => $custom_field,
+								'source'    => $custom_field_source,
+							) );
+						} else {
+							$custom_field_options = jet_smart_filters()->data->get_options_by_field_key( $custom_field );
+						}
 
 						$data[$query_var] = array_keys( $custom_field_options );
 

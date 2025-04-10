@@ -116,6 +116,11 @@ if ( ! class_exists( 'Jet_Smart_Filters_Providers_Manager' ) ) {
 				return;
 			}
 
+			// if Elementor is disabled
+			if ( ! jet_smart_filters()->has_elementor() && strpos( $provider_file, '/epro-' ) !== false ) {
+				return;
+			}
+
 			require $provider_file;
 
 			if ( class_exists( $provider_class ) ) {

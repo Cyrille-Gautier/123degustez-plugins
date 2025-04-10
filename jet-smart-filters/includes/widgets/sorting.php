@@ -108,7 +108,7 @@ class Jet_Smart_Filters_Sorting_Widget extends Widget_Base {
 				'label_on'     => esc_html__( 'Yes', 'jet-smart-filters' ),
 				'label_off'    => esc_html__( 'No', 'jet-smart-filters' ),
 				'return_value' => 'yes',
-				'default'      => 'yes',
+				'default'      => '',
 				'condition'    => array(
 					'apply_on' => 'submit'
 				)

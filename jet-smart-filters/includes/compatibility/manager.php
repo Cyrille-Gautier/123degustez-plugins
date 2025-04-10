@@ -33,6 +33,11 @@ class Jet_Smart_Filters_Compatibility_Manager {
 			new Jet_Smart_Filters_Compatibility_JE();
 		}
 
+		if ( class_exists( 'RankMath' ) ) {
+			require jet_smart_filters()->plugin_path( 'includes/compatibility/rank-math-seo.php' );
+			new Jet_Smart_Filters_Compatibility_Rank_Math_SEO();
+		}
+
 		add_filter( 'jet-smart-filters/filters/localized-data',  array( $this, 'datepicker_texts' ) );
 	}
 
