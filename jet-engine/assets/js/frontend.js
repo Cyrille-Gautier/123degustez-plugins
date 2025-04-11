@@ -277,7 +277,7 @@
 						storeSlug  = query.post__in[2],
 						store      = JetEngineStores[ storeType ],
 						posts      = [],
-						$container = $this.closest( '.elementor-widget-container' );
+						$container = $this.closest( '.jet-listing-grid' );
 
 					if ( ! store ) {
 						return;
@@ -473,9 +473,14 @@
 			const ids = args.synch_id.split( /[\s,]+/ ).map( ( id ) => id.replace( /\s/, '' ) ).filter( ( id ) => !! id );
 
 			ids.forEach( function ( id ) {
-				let $container     = $( '#' + id ),
-				    $elemContainer = $container.find( '> .elementor-widget-container' ),
-				    $items         = $container.find( '.jet-listing-grid__items' ),
+				let $container = $( '#' + id ),
+				$elemContainer = $container.find( '> .elementor-widget-container' );
+
+				if ( ! $container.length ) {
+					return;
+				}
+
+				let $items         = $container.find( '.jet-listing-grid__items' ),
 				    posts          = [],
 				    nav            = $items.data( 'nav' ) || {},
 				    query          = nav.query || {},
@@ -986,8 +991,12 @@
 			if ( hasLazyLoad ) {
 
 				var lazyLoadOptions = $wrapper.data( 'lazy-load' ),
-					widgetSettings = {},
-					$container = $scope.find( '.elementor-widget-container' );
+					$container = $scope.find( '.elementor-widget-container' ),
+					widgetSettings = false;
+
+				if ( ! $container.length ) {
+					$container = $scope;
+				}
 
 				// Get widget settings from `elementorFrontend` in Editor.
 				if ( window.elementorFrontend && window.elementorFrontend.isEditMode()
@@ -997,8 +1006,7 @@
 					widgetID       = false; // for avoid get widget settings from document in editor
 				}
 
-				if ( ! $container.length ) {
-					$container = $scope;
+				if ( ! widgetSettings ) {
 					widgetSettings = $scope.data( 'widget-settings' );
 				}
 
@@ -1897,7 +1905,7 @@
 
 				const slider = event.target;
 
-				if (!slider.classList.contains('jet-engine-gallery-lightbox')) {
+				if (!slider.classList.contains('jet-engine-gallery-lightbox') || ! window?.PhotoSwipeLightbox) {
 					return;
 				}
 
@@ -2171,7 +2179,7 @@
 
 			var $this   = $( this ),
 				$calendar = $this.closest( '.jet-calendar' ),
-				$widget   = $calendar.closest( '.elementor-widget-container' ),
+				$widget   = $this.closest( '.elementor-widget-jet-listing-calendar' ),
 				widgetID  = $widget.closest( '.elementor-widget' ).data( 'id' ),
 				settings  = $calendar.data( 'settings' ),
 				post      = $calendar.data( 'post' ),

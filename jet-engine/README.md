@@ -1,5 +1,18 @@
 # ChangeLog
 
+## 3.6.6.1
+* FIX: Elementor compatibility.
+
+## 3.6.6
+* ADD: Maps LIstings. Allow to set conditional marker color. Crocoblock/suggestions#7979;
+* FIX: Maps LIstings. Gallery arrows in the map listing popup;
+* FIX: Blocks Editor. Lazy load Offset can't be set in the Listing Grid block;
+* FIX: Elementor. Remove some deprecated dependencies;
+* FIX: Polylang. Listing Grid doesn't show up on the front end;
+* FIX: Extract correct object for JetEngine Popup rendering for some cases;
+* FIX: Remove warnings on PHP 8.2+;
+* FIX: Remove PHP and JS warnings in some cases.
+
 ## 3.6.5
 * ADD: Query Builder. Add 'Order by' settings to repeater query
 * ADD: Ability to scroll to map after opening Map Listing Popup;

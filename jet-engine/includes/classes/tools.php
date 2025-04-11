@@ -370,7 +370,7 @@ class Jet_Engine_Tools {
 	 *
 	 * @return [type] [description]
 	 */
-	public static function render_icon( $icon = null, $icon_class = '', $custom_atts = array(), $image_size = 'full' ) {
+	public static function render_icon( $icon = null, $icon_class = '', $custom_atts = array(), $image_size = 'full', $force_custom_atts = false ) {
 
 		$custom_atts_string = '';
 
@@ -394,7 +394,9 @@ class Jet_Engine_Tools {
 				$file = get_attached_file( $icon );
 
 				if ( file_exists( $file ) ) {
-					include $file;
+					//https://github.com/Crocoblock/suggestions/issues/7979
+					//switched from 'include' to prevent file parsing
+					echo file_get_contents( $file );
 				}
 
 			} else {
@@ -427,7 +429,13 @@ class Jet_Engine_Tools {
 
 			ob_start();
 
-			echo '<div class="' . $icon_class . '">';
+			$custom_atts = '';
+
+			if ( $force_custom_atts ) {
+				$custom_atts = $custom_atts_string;
+			}
+
+			echo '<div class="' . $icon_class . '"' . $custom_atts . '>';
 			echo $icon;
 			echo '</div>';
 
@@ -1113,6 +1121,36 @@ class Jet_Engine_Tools {
 		wp_cache_delete_multiple( (array) $object_ids, $meta_type . '_meta' );
 
 		return true;
+	}
+
+	public static function is_valid_color( $color ) {
+		if ( is_array( $color ) && is_string( $color['hex'] ?? '' ) ) {
+			return self::is_valid_color( $color['hex'] );
+		}
+
+		if ( empty( $color ) || ! is_string( $color ) ) {
+			return false;
+		}
+
+		$color = rtrim( $color );
+
+		if ( preg_match( '/(^#[a-f0-9]{3}$)|(^#[a-f0-9]{6}$)|(^#[a-f0-9]{8}$)/', $color ) ) {
+			return true;
+		} elseif( preg_match( '/^rgba\((?<r>\d{1,3}),\s*(?<g>\d{1,3}),\s*(?<b>\d{1,3}),\s*(?<a>.+)\)$/', $color, $args ) ) {
+			if ( $args['r'] > 255 || $args['g'] > 255 || $args['b'] > 255 || ! is_numeric( $args['a'] ) || $args['a'] < 0 || $args['a'] > 1 ) {
+				return false;
+			}
+
+			return true;
+		} elseif ( preg_match( '/^hsla\((?<h>\d{1,3}),\s*(?<s>\d{1,3})%,\s*(?<l>\d{1,3})%,\s*(?<a>.+)\)$/', $color, $args ) ) {
+			if ( $args['h'] > 360 || $args['s'] > 100 || $args['l'] > 100 || ! is_numeric( $args['a'] ) || $args['a'] < 0 || $args['a'] > 1 ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 }

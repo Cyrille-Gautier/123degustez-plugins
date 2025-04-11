@@ -369,6 +369,10 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Editor' ) ) {
 			$custom_panles   = array();
 
 			$config = apply_filters( 'jet-engine/blocks-views/editor-data', array(
+				'adminLinks'            => array(
+					'shortcodes_generator' => admin_url( 'admin.php?page=jet-engine#shortcode_generator' ),
+					'macros_generator'     => admin_url( 'admin.php?page=jet-engine#macros_generator' ),
+				),
 				'isJetEnginePostType'   => 'jet-engine' === get_post_type(),
 				'settings'              => $settings,
 				'object_id'             => $current_object_id,

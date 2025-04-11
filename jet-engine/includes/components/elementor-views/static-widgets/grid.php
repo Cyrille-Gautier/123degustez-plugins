@@ -37,6 +37,10 @@ if ( ! class_exists( 'Elementor\Jet_Listing_Grid_Widget' ) ) {
 			return 'https://crocoblock.com/knowledge-base/articles/jetengine-listing-functionality-how-to-create-a-new-listing-to-apply-for-the-certain-post-type/?utm_source=jetengine&utm_medium=listing-grid&utm_campaign=need-help';
 		}
 
+		public function should_remove_wrapper() {
+			return method_exists( '\Elementor\Widget_Base', 'has_widget_inner_wrapper' ) && ! $this->has_widget_inner_wrapper();
+		}
+
 		public function register_general_settings() {
 
 			$this->start_controls_section(
@@ -75,51 +79,99 @@ if ( ! class_exists( 'Elementor\Jet_Listing_Grid_Widget' ) ) {
 				)
 			);
 
-			$this->add_responsive_control(
-				'columns',
-				array(
-					'label'   => __( 'Columns Number', 'jet-engine' ),
-					'type'    => Controls_Manager::SELECT,
-					'default' => 3,
-					'options' => array(
-						1  => 1,
-						2  => 2,
-						3  => 3,
-						4  => 4,
-						5  => 5,
-						6  => 6,
-						7  => 7,
-						8  => 8,
-						9  => 9,
-						10 => 10,
-						'auto' => __( 'Auto', 'jet-engine' ),
-					),
-					'frontend_available' => true,
-					'selectors' => array(
-						'{{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__items' => '--columns: {{VALUE}}',
-					),
-				)
-			);
+			if ( $this->should_remove_wrapper() ) {
+				$this->add_responsive_control(
+					'columns',
+					array(
+						'label'   => __( 'Columns Number', 'jet-engine' ),
+						'type'    => Controls_Manager::SELECT,
+						'default' => 3,
+						'options' => array(
+							1  => 1,
+							2  => 2,
+							3  => 3,
+							4  => 4,
+							5  => 5,
+							6  => 6,
+							7  => 7,
+							8  => 8,
+							9  => 9,
+							10 => 10,
+							'auto' => __( 'Auto', 'jet-engine' ),
+						),
+						'frontend_available' => true,
+						'selectors' => array(
+							'{{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__items' => '--columns: {{VALUE}}',
+						),
+					)
+				);
 
-			$this->add_responsive_control(
-				'column_min_width',
-				array(
-					'label'   => __( 'Column Min Width', 'jet-engine' ),
-					'type'        => Controls_Manager::NUMBER,
-					'default'     => 240,
-					'min'         => 0,
-					'max'         => 1600,
-					'step'        => 1,
-					'condition'   => array(
-						'columns' => 'auto',
-					),
-					'frontend_available' => true,
-					'selectors' => array(
-						'{{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__items' => 'display: grid; grid-template-columns: repeat( auto-fill, minmax( {{VALUE}}px, 1fr ) );',
-						'{{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__slider > .jet-listing-grid__items.slick-slider .slick-slide' => 'width: {{VALUE}}px;',
-					),
-				)
-			);
+				$this->add_responsive_control(
+					'column_min_width',
+					array(
+						'label'   => __( 'Column Min Width', 'jet-engine' ),
+						'type'        => Controls_Manager::NUMBER,
+						'default'     => 240,
+						'min'         => 0,
+						'max'         => 1600,
+						'step'        => 1,
+						'condition'   => array(
+							'columns' => 'auto',
+						),
+						'frontend_available' => true,
+						'selectors' => array(
+							'{{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__items' => 'display: grid; grid-template-columns: repeat( auto-fill, minmax( {{VALUE}}px, 1fr ) );',
+							'{{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__slider > .jet-listing-grid__items.slick-slider .slick-slide' => 'width: {{VALUE}}px;',
+						),
+					)
+				);
+			} else {
+				$this->add_responsive_control(
+					'columns',
+					array(
+						'label'   => __( 'Columns Number', 'jet-engine' ),
+						'type'    => Controls_Manager::SELECT,
+						'default' => 3,
+						'options' => array(
+							1  => 1,
+							2  => 2,
+							3  => 3,
+							4  => 4,
+							5  => 5,
+							6  => 6,
+							7  => 7,
+							8  => 8,
+							9  => 9,
+							10 => 10,
+							'auto' => __( 'Auto', 'jet-engine' ),
+						),
+						'frontend_available' => true,
+						'selectors' => array(
+							'{{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__items, {{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__items' => '--columns: {{VALUE}}',
+						),
+					)
+				);
+
+				$this->add_responsive_control(
+					'column_min_width',
+					array(
+						'label'   => __( 'Column Min Width', 'jet-engine' ),
+						'type'        => Controls_Manager::NUMBER,
+						'default'     => 240,
+						'min'         => 0,
+						'max'         => 1600,
+						'step'        => 1,
+						'condition'   => array(
+							'columns' => 'auto',
+						),
+						'frontend_available' => true,
+						'selectors' => array(
+							'{{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__items' => 'display: grid; grid-template-columns: repeat( auto-fill, minmax( {{VALUE}}px, 1fr ) );',
+							'{{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__slider > .jet-listing-grid__items.slick-slider .slick-slide' => 'width: {{VALUE}}px;',
+						),
+					)
+				);
+			}
 
 			$this->add_control(
 				'is_archive_template',
@@ -1581,43 +1633,83 @@ if ( ! class_exists( 'Elementor\Jet_Listing_Grid_Widget' ) ) {
 				)
 			);
 
-			$this->add_responsive_control(
-				'horizontal_gap',
-				array(
-					'label' => __( 'Horizontal Gap', 'jet-engine' ),
-					'type'  => Controls_Manager::SLIDER,
-					'range' => array(
-						'px' => array(
-							'min' => 0,
-							'max' => 100,
+			if ( $this->should_remove_wrapper() ) {
+				$this->add_responsive_control(
+					'horizontal_gap',
+					array(
+						'label' => __( 'Horizontal Gap', 'jet-engine' ),
+						'type'  => Controls_Manager::SLIDER,
+						'range' => array(
+							'px' => array(
+								'min' => 0,
+								'max' => 100,
+							),
 						),
-					),
-					'size_units' => array( 'px', 'em', 'rem', 'custom' ),
-					'selectors' => array(
-						':is( {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__items, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__slider > .jet-listing-grid__items > .slick-list > .slick-track, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__scroll-slider > .jet-listing-grid__items ) > .jet-listing-grid__item' => 'padding-left: calc({{SIZE}}{{UNIT}} / 2); padding-right: calc({{SIZE}}{{UNIT}} / 2);',
-						':is( {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__slider, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__scroll-slider ) > .jet-listing-grid__items' => 'margin-left: calc( {{SIZE}}{{UNIT}} / -2); margin-right: calc( {{SIZE}}{{UNIT}} / -2); width: calc(100% + {{SIZE}}{{UNIT}});',
-					),
-				)
-			);
+						'size_units' => array( 'px', 'em', 'rem', 'custom' ),
+						'selectors' => array(
+							':is( {{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__items, {{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__slider > .jet-listing-grid__items > .slick-list > .slick-track, {{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__scroll-slider > .jet-listing-grid__items ) > .jet-listing-grid__item' => 'padding-left: calc({{SIZE}}{{UNIT}} / 2); padding-right: calc({{SIZE}}{{UNIT}} / 2);',
+							':is( {{WRAPPER}} > .jet-listing-grid, {{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__slider, {{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__scroll-slider ) > .jet-listing-grid__items' => 'margin-left: calc( {{SIZE}}{{UNIT}} / -2); margin-right: calc( {{SIZE}}{{UNIT}} / -2); width: calc(100% + {{SIZE}}{{UNIT}});',
+						),
+					)
+				);
 
-			$this->add_responsive_control(
-				'vertical_gap',
-				array(
-					'label' => __( 'Vertical Gap', 'jet-engine' ),
-					'type'  => Controls_Manager::SLIDER,
-					'range' => array(
-						'px' => array(
-							'min' => 0,
-							'max' => 100,
+				$this->add_responsive_control(
+					'vertical_gap',
+					array(
+						'label' => __( 'Vertical Gap', 'jet-engine' ),
+						'type'  => Controls_Manager::SLIDER,
+						'range' => array(
+							'px' => array(
+								'min' => 0,
+								'max' => 100,
+							),
 						),
-					),
-					'size_units' => array( 'px', 'em', 'rem', 'custom' ),
-					'selectors' => array(
-						':is( {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__items, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__slider > .jet-listing-grid__items > .slick-list > .slick-track, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__scroll-slider > .jet-listing-grid__items ) > .jet-listing-grid__item' => 'padding-top: calc({{SIZE}}{{UNIT}} / 2); padding-bottom: calc({{SIZE}}{{UNIT}} / 2);',
-						':is( {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__slider, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__scroll-slider ) > .jet-listing-grid__items.grid-collapse-gap' => 'margin-top: calc( {{SIZE}}{{UNIT}} / -2); margin-bottom: calc( {{SIZE}}{{UNIT}} / -2);',
-					),
-				)
-			);
+						'size_units' => array( 'px', 'em', 'rem', 'custom' ),
+						'selectors' => array(
+							':is( {{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__items, {{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__slider > .jet-listing-grid__items > .slick-list > .slick-track, {{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__scroll-slider > .jet-listing-grid__items ) > .jet-listing-grid__item' => 'padding-top: calc({{SIZE}}{{UNIT}} / 2); padding-bottom: calc({{SIZE}}{{UNIT}} / 2);',
+							':is( {{WRAPPER}} > .jet-listing-grid, {{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__slider, {{WRAPPER}} > .jet-listing-grid > .jet-listing-grid__scroll-slider ) > .jet-listing-grid__items.grid-collapse-gap' => 'margin-top: calc( {{SIZE}}{{UNIT}} / -2); margin-bottom: calc( {{SIZE}}{{UNIT}} / -2);',
+						),
+					)
+				);
+			} else {
+				$this->add_responsive_control(
+					'horizontal_gap',
+					array(
+						'label' => __( 'Horizontal Gap', 'jet-engine' ),
+						'type'  => Controls_Manager::SLIDER,
+						'range' => array(
+							'px' => array(
+								'min' => 0,
+								'max' => 100,
+							),
+						),
+						'size_units' => array( 'px', 'em', 'rem', 'custom' ),
+						'selectors' => array(
+							':is( {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__items, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__slider > .jet-listing-grid__items > .slick-list > .slick-track, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__scroll-slider > .jet-listing-grid__items ) > .jet-listing-grid__item' => 'padding-left: calc({{SIZE}}{{UNIT}} / 2); padding-right: calc({{SIZE}}{{UNIT}} / 2);',
+							':is( {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__slider, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__scroll-slider ) > .jet-listing-grid__items' => 'margin-left: calc( {{SIZE}}{{UNIT}} / -2); margin-right: calc( {{SIZE}}{{UNIT}} / -2); width: calc(100% + {{SIZE}}{{UNIT}});',
+						),
+					)
+				);
+
+				$this->add_responsive_control(
+					'vertical_gap',
+					array(
+						'label' => __( 'Vertical Gap', 'jet-engine' ),
+						'type'  => Controls_Manager::SLIDER,
+						'range' => array(
+							'px' => array(
+								'min' => 0,
+								'max' => 100,
+							),
+						),
+						'size_units' => array( 'px', 'em', 'rem', 'custom' ),
+						'selectors' => array(
+							':is( {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__items, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__slider > .jet-listing-grid__items > .slick-list > .slick-track, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__scroll-slider > .jet-listing-grid__items ) > .jet-listing-grid__item' => 'padding-top: calc({{SIZE}}{{UNIT}} / 2); padding-bottom: calc({{SIZE}}{{UNIT}} / 2);',
+							':is( {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__slider, {{WRAPPER}} > .elementor-widget-container > .jet-listing-grid > .jet-listing-grid__scroll-slider ) > .jet-listing-grid__items.grid-collapse-gap' => 'margin-top: calc( {{SIZE}}{{UNIT}} / -2); margin-bottom: calc( {{SIZE}}{{UNIT}} / -2);',
+						),
+					)
+				);
+			}
 
 			$this->add_control(
 				'collapse_first_last_gap',
@@ -2746,7 +2838,7 @@ if ( ! class_exists( 'Elementor\Jet_Listing_Grid_Widget' ) ) {
 			$this->register_carousel_settings();
 			$this->register_style_settings();
 			$this->register_carousel_style_settings();
-
+			
 		}
 
 		/**

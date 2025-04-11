@@ -482,13 +482,36 @@ class Maps_Listings extends Listing_Grid {
 		);
 
 		$markers_repeater->add_control(
+			'marker_icon_color',
+			[
+				'label'    => esc_html__( 'Icon color', 'jet-engine' ),
+				'type'     => 'color',
+				'required' => [ 'marker_type', '=', 'icon' ],
+			]
+		);
+
+		$links = ' <a href="' . admin_url( 'admin.php?page=jet-engine#shortcode_generator' ) . '" target="_blank">' . __( 'shortcodes', 'jet-engine' ) . '</a>' . '/' .
+		         '<a href="' . admin_url( 'admin.php?page=jet-engine#macros_generator' ) . '" target="_blank">' . __( 'macros', 'jet-engine' ) . '</a>. ';
+
+		$markers_repeater->add_control(
+			'marker_icon_color_dynamic',
+			[
+				'label'       => esc_html__( 'Dynamic Icon Color', 'jet-engine' ),
+				'type'        => 'text',
+				'description' => __( 'You may use JetEngine', 'jet-engine' ) . $links . __(' If it returns an empty value or the value is not a color in HEX/RGBA/HSLA format - "Icon Color" will be used instead', 'jet-engine' ),
+				'required'    => [ 'marker_type', '=', 'icon' ],
+			]
+		);
+
+		$markers_repeater->add_control(
 			'apply_type',
 			[
 				'label'   => esc_html__( 'Apply this marker if', 'jet-engine' ),
 				'type'    => 'select',
 				'options' => [
-					'meta_field' => esc_html__( 'Post meta field is equal to value', 'jet-engine' ),
-					'post_term'  => esc_html__( 'Post has term', 'jet-engine' ),
+					'meta_field'         => esc_html__( 'Post meta field is equal to value', 'jet-engine' ),
+					'post_term'          => esc_html__( 'Post has term', 'jet-engine' ),
+					'has_dynamic_color'  => esc_html__( 'Dynamic color not empty', 'jet-engine' ),
 				],
 				'default' => 'meta_field',
 			]

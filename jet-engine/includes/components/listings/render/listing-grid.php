@@ -1595,7 +1595,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Listing_Grid' ) ) {
 					continue;
 				}
 
-				$wp_query->queried_object = $post_obj;
+				jet_engine()->listings->data->set_queried_object( $post_obj, $wp_query );
 
 				ob_start();
 
@@ -1682,7 +1682,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Listing_Grid' ) ) {
 				$wp_query = $temp_query;
 			}
 
-			$wp_query->queried_object = $default_object;
+			jet_engine()->listings->data->set_queried_object( $default_object, $wp_query );
 
 			jet_engine()->frontend->reset_listing();
 			jet_engine()->listings->data->set_index( $initial_index );

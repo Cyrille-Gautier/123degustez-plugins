@@ -20,6 +20,7 @@
 				const mapId = $container.data( 'query-id' );
 				
 				if ( mapId && mapId !== 'default' ) {
+					//left .elementor-widget-container to ensure backward compatibility
 					this.mapSelector = `#${mapId} > .jet-map-listing, #${mapId} > .elementor-widget-container > .jet-map-listing`;
 				}
 

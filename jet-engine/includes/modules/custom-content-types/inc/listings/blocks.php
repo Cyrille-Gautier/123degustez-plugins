@@ -185,12 +185,13 @@ class Blocks {
 	}
 
 	public function add_editor_settings( $controls, $settings, $post ) {
-		$content_type  = ( $this->manager->source === $settings['source'] && ! empty( $settings['post_type'] ) ) ? $settings['post_type'] : '';
+		$source = $settings['source'] ?? '';
+		$content_type  = ( $this->manager->source === $source && ! empty( $settings['post_type'] ) ) ? $settings['post_type'] : '';
 		$content_types = array( '' => __( 'Select content type...', 'jet-engine' ) );
 
 		$page_settings = get_post_meta( $post->ID, '_elementor_page_settings', true );
 
-		$repeater_field  = ( $this->manager->repeater_source === $settings['source'] && ! empty( $page_settings['cct_repeater_field'] ) ) ? $page_settings['cct_repeater_field'] : '';
+		$repeater_field  = ( $this->manager->repeater_source === $source && ! empty( $page_settings['cct_repeater_field'] ) ) ? $page_settings['cct_repeater_field'] : '';
 		$repeater_fields = array( '' => __( 'Select...', 'jet-engine' ) );
 
 		foreach ( Module::instance()->manager->get_content_types() as $type => $instance ) {

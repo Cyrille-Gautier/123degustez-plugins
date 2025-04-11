@@ -110,6 +110,16 @@ if ( ! class_exists( 'Jet_Engine_Img_Gallery' ) ) {
 					$lightbox_attr = apply_filters( 'jet-engine/gallery/lightbox-attr', $lightbox_attr, $img_data, $gallery_id );
 
 					echo '<a ' . Jet_Engine_Tools::get_attr_string( $lightbox_attr ) . '>';
+
+					echo \Jet_Engine_Tools::render_icon(
+						apply_filters(
+							'jet-engine/gallery/lightbox-trigger-icon',
+							array(
+								'value'   => 'fas fa-plus-circle',
+								'library' => 'fa-solid',
+							), $args
+						), 'jet-engine-lightbox-icon'
+					);
 				} else {
 					echo '<span class="jet-engine-gallery-slider__item-wrap jet-engine-gallery-item-wrap">';
 				}
@@ -228,6 +238,16 @@ if ( ! class_exists( 'Jet_Engine_Img_Gallery' ) ) {
 					$lightbox_attr = apply_filters( 'jet-engine/gallery/lightbox-attr', $lightbox_attr, $img_data, $gallery_id );
 
 					echo '<a ' . Jet_Engine_Tools::get_attr_string( $lightbox_attr ) . '>';
+
+					echo \Jet_Engine_Tools::render_icon(
+						apply_filters(
+							'jet-engine/grid/lightbox-trigger-icon',
+							array(
+								'value'   => 'fas fa-plus-circle',
+								'library' => 'fa-solid',
+							), $args
+						), 'jet-engine-lightbox-icon'
+					);
 				} else {
 					echo '<span class="jet-engine-gallery-grid__item-wrap jet-engine-gallery-item-wrap">';
 				}

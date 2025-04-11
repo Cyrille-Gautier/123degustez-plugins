@@ -384,10 +384,16 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 			return false;
 		}
 
+		$marker_types = array_values( $marker_types );
+
+		$i = 0;
+
 		foreach ( $marker_types as $marker ) {
 
 			$condition_met = false;
 			$apply_type    = ! empty( $marker['apply_type'] ) ? $marker['apply_type'] : 'meta_field';
+
+			$marker['conditional_marker_type_index'] = 'condition-' . ++$i;
 
 			switch ( $apply_type ) {
 
@@ -435,6 +441,12 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 						$condition_met = has_term( $term, $taxonomy, $post->ID );
 					}
 
+					break;
+
+				case 'has_dynamic_color':
+					$icon_color    = ! empty( $marker['marker_icon_color_dynamic'] ) ? $marker['marker_icon_color_dynamic'] : false;
+					$icon_color    = $this->get_dynamic_color( $icon_color );
+					$condition_met = \Jet_Engine_Tools::is_valid_color( $icon_color );
 					break;
 
 			}
@@ -529,6 +541,19 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 		return apply_filters( 'jet-engine/maps-listings/marker-data', $marker );
 	}
 
+	public function get_dynamic_color( $string ) {
+		if ( ! is_string( $string ) || empty( $string ) ) {
+			return false;
+		}
+
+		$string = wp_unslash( $string );
+
+		$color = do_shortcode( $string );
+		$color = jet_engine()->listings->macros->do_macros( $color );
+
+		return $color;
+	}
+
 	/**
 	 * Returns marker data
 	 *
@@ -536,7 +561,8 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 	 */
 	public function get_marker_data( $settings = array() ) {
 
-		$type   = ! empty( $settings['marker_type'] ) ? $settings['marker_type'] : 'image';
+		$type = ! empty( $settings['marker_type'] ) ? $settings['marker_type'] : 'image';
+		
 		$result = array( 'type' => null );
 
 		switch ( $type ) {
@@ -577,10 +603,18 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 
 				$icon           = ! empty( $settings['marker_icon'] ) ? $settings['marker_icon'] : false;
 				$result['type'] = 'icon';
-
+				
+				if ( $icon === false || ( is_array( $icon ) && empty( $icon['value'] ) ) ) {
+					$icon = $this->get_settings( 'marker_icon' );
+				}
+				
 				if ( ! $icon ) {
 					return false;
 				} else {
+					$icon_style = '';
+					$icon_class = 'jet-map-marker';
+					$atts       = array();
+
 					$image_size = ! empty( $settings['marker_image_size'] ) ? $settings['marker_image_size'] : false;
 
 					if ( ! $image_size ) {
@@ -588,7 +622,42 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 						$image_size = ! empty( $widget_settings['marker_image_size'] ) ? $widget_settings['marker_image_size'] : 'full';
 					}
 
-					$icon_html      = \Jet_Engine_Tools::render_icon( $icon, 'jet-map-marker', array( 'style' => 'cursor:pointer;' ), $image_size );
+					if ( ! empty( $settings['conditional_marker_type_index'] ) ) {
+						$icon_class .= ' ' . $settings['conditional_marker_type_index'];
+
+						$icon_color = ! empty( $settings['marker_icon_color_dynamic'] ) ? $settings['marker_icon_color_dynamic'] : false;
+					
+						if ( $icon_color ) {
+							$icon_color = $this->get_dynamic_color( $icon_color );
+						}
+						
+						if ( ! $icon_color || ! \Jet_Engine_Tools::is_valid_color( $icon_color ) ) {
+							$icon_color = ! empty( $settings['marker_icon_color'] ) ? $settings['marker_icon_color'] : false;
+						}
+
+						if ( is_array( $icon_color ) && ! empty( $icon_color['hex'] ) ) {
+							$icon_color = $icon_color['hex'];
+						}
+
+						if ( $icon_color ) {
+							$icon_style .= "color:{$icon_color} !important;";
+							$icon_class .= ' custom-color';
+						}
+					}
+
+					$color_mode  = ! empty( $settings['marker_icon_color_apply_to'] ) ? $settings['marker_icon_color_apply_to'] : 'apply-fill';
+					
+					if ( $color_mode !== 'keep' ) {
+						$icon_class .= ' ' . str_replace( '_', ' ', $color_mode );
+					} else {
+						$icon_class .= ' keep-color';
+					}
+
+					if ( ! empty( $icon_style ) ) {
+						$atts['style'] = $icon_style;
+					}
+					
+					$icon_html      = \Jet_Engine_Tools::render_icon( $icon, $icon_class, $atts, $image_size, true );
 					$result['html'] = $icon_html;
 					return $result;
 				}
@@ -715,7 +784,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 		}
 
 		$permalink_structure = get_option( 'permalink_structure' );
-
+		
 		$general = apply_filters( 'jet-engine/maps-listings/data-settings', array(
 			'api'              => jet_engine()->api->get_route( 'get-map-marker-info', true ),
 			'restNonce'        => wp_create_nonce( 'wp_rest' ),

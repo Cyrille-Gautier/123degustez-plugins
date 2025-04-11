@@ -209,6 +209,7 @@ if ( ! class_exists( 'Jet_Engine_Module_Gallery_Grid' ) ) {
 					'type'      => Elementor\Controls_Manager::COLOR,
 					'selectors' => array(
 						$widget->css_selector( $prefix . ' .jet-engine-gallery-item-wrap:before' ) => 'color: {{VALUE}}',
+						$widget->css_selector( $prefix . ' .jet-engine-lightbox-icon' ) => 'color: {{VALUE}}',
 					),
 					'condition' => array(
 						'dynamic_field_filter' => 'yes',

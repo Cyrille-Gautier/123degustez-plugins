@@ -128,7 +128,7 @@ class Frontend_Editor {
 		wp_enqueue_script(
 			'jet-engine-frontend-query-edit',
 			Manager::instance()->component_url( 'assets/js/frontend.js' ),
-			array(),
+			array( 'jquery' ),
 			jet_engine()->get_version(),
 			true
 		);

@@ -728,4 +728,8 @@ class Jet_Listing_Dynamic_Field_Widget extends \Jet_Listing_Dynamic_Widget {
 		$render->render_content();
 	}
 
+	public function get_style_depends() {
+		return array( 'e-swiper' );
+	}
+
 }

@@ -411,14 +411,18 @@ if ( ! class_exists( 'Jet_Engine_CPT_Admin_Filters' ) ) {
 							}	
 						}
 
-						$result = $wpdb->get_results(
-							$wpdb->prepare(
-								$sql,
-								$field,
-								$this->post_type
-							),
-							ARRAY_A
-						);
+						if ( $is_custom ) {
+							$result = $wpdb->get_results( $sql, ARRAY_A );
+						} else {
+							$result = $wpdb->get_results(
+								$wpdb->prepare(
+									$sql,
+									$field,
+									$this->post_type
+								),
+								ARRAY_A
+							);
+						}
 
 					}
 

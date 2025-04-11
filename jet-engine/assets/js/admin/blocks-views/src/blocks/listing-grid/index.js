@@ -362,7 +362,7 @@ registerBlockType( 'jet-engine/listing-grid', {
 									label={ __( 'Lazy load offset' ) }
 									value={ attributes.lazy_load_offset }
 									onChange={ newValue => {
-										props.setAttributes( { lazy_load_offset: newValue } );
+										props.setAttributes( { lazy_load_offset: Number(newValue) } );
 									} }
 								/>
 							}

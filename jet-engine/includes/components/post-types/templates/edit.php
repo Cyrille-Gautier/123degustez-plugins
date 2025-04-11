@@ -60,6 +60,15 @@
 					</div>
 				</div>
 				<div
+					v-if="generalSettings.custom_storage && JetEngineCPTConfig?.translation_plugins?.wpml"
+					class="cx-vui-component"
+				>
+					<div class="cx-vui-component__meta">
+						<div class="cx-vui-component__label"><?php _e( 'Please note:', 'jet-engine' ); ?></div>
+						<div class="cx-vui-component__desc"><?php _e( 'Custom fields from custom meta storage cannot be translated with WPML. Also, performance gains that might have had from Custom Storage would be nullified by WPML overhead anyway. Please, disable Custom Storage if you are planning to translate meta fields of this post type', 'jet-engine' ); ?></div>
+					</div>
+				</div>
+				<div
 					v-if="generalSettings.custom_storage"
 					class="cx-vui-component cx-vui-component--equalwidth"
 				>

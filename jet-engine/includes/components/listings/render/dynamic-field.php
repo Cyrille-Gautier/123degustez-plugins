@@ -449,6 +449,16 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Field' ) ) {
 
 			ob_start();
 
+			$ensure_wrapper = $this->prevent_wrap()
+							  && isset( $settings['__je_has_widget_inner_wrapper'] )
+							  && ! filter_var( $settings['__je_has_widget_inner_wrapper'] ?? false, FILTER_VALIDATE_BOOLEAN )
+							  && class_exists( '\Elementor\Widget_Base' )
+			                  && method_exists( '\Elementor\Widget_Base', 'has_widget_inner_wrapper' );
+
+			if ( $ensure_wrapper ) {
+				printf( '<div class="%s__replacement-wrap">', $base_class );
+			}
+
 			$classes = $this->get_wrapper_classes();
 
 			if ( ! $this->prevent_wrap() ) {
@@ -484,6 +494,10 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Field' ) ) {
 				}
 
 			if ( ! $this->prevent_wrap() ) {
+				echo '</div>';
+			}
+
+			if ( $ensure_wrapper ) {
 				echo '</div>';
 			}
 

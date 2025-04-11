@@ -38,6 +38,14 @@ abstract class Jet_Listing_Dynamic_Widget extends \Elementor\Widget_Base {
 		return self::get_items( $this->jet_active_settings, $setting_key );
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		if ( ! \Elementor\Plugin::instance()->experiments->is_feature_active( 'e_optimized_markup' ) ) {
+			return true;
+		}
+
+		return apply_filters( 'jet-engine/listing/dynamic-widget/has-inner-wrapper', false, $this );
+	}
+
 	/**
 	 * @since 2.0.14
 	 * @access public
@@ -189,6 +197,8 @@ abstract class Jet_Listing_Dynamic_Widget extends \Elementor\Widget_Base {
 		if ( null === $this->jet_settings ) {
 			$this->jet_settings = $this->jet_with_defaults( $this->get_data( 'settings' ) );
 		}
+
+		$this->jet_settings['__je_has_widget_inner_wrapper'] = $this->has_widget_inner_wrapper();
 
 		return self::get_items( $this->jet_settings, $setting );
 

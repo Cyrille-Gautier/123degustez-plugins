@@ -110,6 +110,10 @@ if ( ! class_exists( 'Jet_Engine_Compatibility' ) ) {
 					'cb'   => 'defined',
 					'args' => 'GENERATEBLOCKS_VERSION',
 				),
+				'layout-switcher.php' => array(
+					'cb'   => 'function_exists',
+					'args' => 'jet_engine_layout_switcher',
+				),
 			);
 
 			foreach ( $whitelist as $file => $condition ) {

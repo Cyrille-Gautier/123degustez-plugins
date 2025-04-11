@@ -549,6 +549,40 @@ if ( ! class_exists( 'Jet_Engine_Listings_Data' ) ) {
 		}
 
 		/**
+		 * Sets the queried object for WP_Query, ensuring required properties are present.
+		 * This method adds default values for essential post properties (e.g., ID, post_title, post_name)
+		 * to prevent PHP warnings when WP_Query accesses them.
+		 *
+		 * @param object $object The object to be set as the queried object.
+		 * @param WP_Query $query The WP_Query instance being modified.
+		 */
+		public function set_queried_object( $object, $query ) {
+			if ( ! is_object( $object ) ) {
+				return;
+			}
+
+			$ensure_props = array(
+				'ID' => 0,
+				'post_title' => '',
+				'post_name' => '',
+				'post_type' => 'post',
+				'post_date' => wp_date( 'Y-m-d H:i:s' ),
+				'post_modified' => wp_date( 'Y-m-d H:i:s' ),
+				'post_content' => '',
+				'post_excerpt' => '',
+				'post_status' => 'publish',
+			);
+
+			foreach ( $ensure_props as $prop => $default ) {
+				if ( ! property_exists( $object, $prop ) ) {
+					$object->$prop = $default;
+				}
+			}
+
+			$query->queried_object = $object;
+		}
+
+		/**
 		 * Returns queried user object
 		 *
 		 * @return [type] [description]

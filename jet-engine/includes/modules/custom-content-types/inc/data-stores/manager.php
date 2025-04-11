@@ -147,7 +147,7 @@ class Manager {
 					query      = $grid.data( 'cct-query' ),
 					store      = window.JetEngine.stores[ storeType ],
 					posts      = [],
-					$container = $grid.closest( '.elementor-widget-container' );
+					$container = $grid.closest( '.jet-listing-grid' );
 
 				if ( ! store ) {
 					return;

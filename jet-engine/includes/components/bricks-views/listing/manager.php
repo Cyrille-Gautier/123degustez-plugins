@@ -50,7 +50,8 @@ class Manager {
 
 		add_filter( 'jet-engine/compatibility/listing/query-id', [ $this, 'modify_query_id' ], 10, 2 );
 
-		add_action( 'wpml_translation_job_saved', [ $this, 'sync_listing_type_for_translation' ], 10, 3 );
+		add_action( 'wpml_translation_job_saved', [ $this, 'sync_listing_type_wpml' ], 10, 3 );
+		add_filter( 'pll_copy_post_metas', [ $this, 'sync_listing_type_polylang' ], 10, 5 );
 
 		add_filter( 'bricks/get_element_data/maybe_from_post_id', [ $this, 'maybe_set_listing_id' ], 10, 2 );
 
@@ -328,16 +329,39 @@ class Manager {
 	/**
 	 * Synchronizes the '_listing_type' meta field for translated JetEngine items.
 	 */
-	public function sync_listing_type_for_translation( $post_id, $data, $job ) {
-		if ( get_post_type( $post_id ) === 'jet-engine' ) {
-			// Retrieve the '_listing_type' value from the original post
-			$original_listing_type = get_post_meta( $job->original_doc_id, '_listing_type', true );
+	public function sync_listing_type( $post_id, $original_post_id ) {
+		if ( get_post_type( $post_id ) !== 'jet-engine' ) {
+			return;
+		}
 
-			// If the original '_listing_type' is 'bricks', update the meta field for the translated post
-			if ( $original_listing_type === 'bricks' ) {
-				update_post_meta( $post_id, '_listing_type', 'bricks' );
+		$meta_keys = [
+			'_listing_type',
+			'_listing_data',
+		];
+
+		// Retrieve the post meta from the original post
+		$original_meta = get_post_meta( $original_post_id );
+
+		if ( empty( $original_meta['_listing_type'][0] ) || $original_meta['_listing_type'][0] !== 'bricks' ) {
+			return;
+		}
+
+		foreach ( $meta_keys as $meta_key ) {
+			if ( isset( $original_meta[ $meta_key ][0] ) ) {
+				$original_value = maybe_unserialize( $original_meta[ $meta_key ][0] );
+				update_post_meta( $post_id, $meta_key, $original_value );
 			}
 		}
+	}
+
+	public function sync_listing_type_wpml( $post_id, $data, $job ) {
+		$this->sync_listing_type( $post_id, $job->original_doc_id );
+	}
+
+	public function sync_listing_type_polylang( $keys, $sync, $from, $to, $lang ) {
+		$this->sync_listing_type($to, $from);
+
+		return $keys;
 	}
 
 	/**

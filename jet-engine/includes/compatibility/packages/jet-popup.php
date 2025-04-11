@@ -229,8 +229,12 @@ if ( ! class_exists( 'Jet_Engine_Popup_Package' ) ) {
 								$query->final_query['object_id'] = $object_id;
 							}
 
-							$items    = $query->get_items();
-							$post_obj = isset( $items[ $item_index ] ) ? $items[ $item_index ] : false;
+							foreach ( $query->get_items() as $item ) {
+								if ( $item->get_index() === intval( $item_index ) ) {
+									$post_obj = $item;
+									break;
+								}
+							}
 
 							break;
 
@@ -315,7 +319,7 @@ if ( ! class_exists( 'Jet_Engine_Popup_Package' ) ) {
 
 			global $wp_query;
 			$default_object = $wp_query->queried_object;
-			$wp_query->queried_object = $post_obj;
+			jet_engine()->listings->data->set_queried_object( $post_obj, $wp_query );
 			$wp_query->queried_object_id = $popup_data['postId'];
 
 			if ( $post_obj && 'WP_Post' === get_class( $post_obj ) ) {
@@ -346,7 +350,7 @@ if ( ! class_exists( 'Jet_Engine_Popup_Package' ) ) {
 				wp_reset_postdata();
 			}
 
-			$wp_query->queried_object = $default_object;
+			jet_engine()->listings->data->set_queried_object( $default_object, $wp_query );
 
 			return $content;
 

@@ -220,6 +220,10 @@ if ( ! class_exists( 'Jet_Engine_CPT_Page_Edit' ) ) {
 							'label' => __( 'How to set the visibility of meta fields using conditional logic', 'jet-engine' ),
 						),
 					),
+					'translation_plugins' => array(
+						'wpml'     => defined( 'ICL_SITEPRESS_VERSION' ),
+						'polylang' => function_exists( 'PLL' ),
+					),
 				) )
 			);
 

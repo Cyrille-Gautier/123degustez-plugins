@@ -3,7 +3,7 @@
  * Plugin Name: JetEngine
  * Plugin URI:  https://crocoblock.com/plugins/jetengine/
  * Description: The ultimate solution for managing custom post types, taxonomies and meta boxes.
- * Version:     3.6.5
+ * Version:     3.6.6.1
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-engine
@@ -61,7 +61,7 @@ if ( ! class_exists( 'Jet_Engine' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '3.6.5';
+		private $version = '3.6.6.1';
 
 		/**
 		 * Holder for base plugin path
@@ -502,7 +502,7 @@ if ( ! class_exists( 'Jet_Engine' ) ) {
 
 		/**
 		 * Register JetPlugins JS library
-		 * 
+		 *
 		 * @return [type] [description]
 		 */
 		public function register_jet_plugins_js() {
