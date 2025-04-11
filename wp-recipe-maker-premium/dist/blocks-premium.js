@@ -1,0 +1,1 @@
+var WPRecipeMaker;(WPRecipeMaker=void 0===WPRecipeMaker?{}:WPRecipeMaker)["wp-recipe-maker-premium/dist/blocks-premium"]=function(){var e={89844:function(){}},r={};return function i(p){if(r[p])return r[p].exports;var t=r[p]={exports:{}};return e[p](t,t.exports,i),t.exports}(89844)}();

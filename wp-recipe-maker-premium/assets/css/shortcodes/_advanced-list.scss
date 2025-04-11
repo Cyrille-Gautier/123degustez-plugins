@@ -1,0 +1,36 @@
+.wprm-recipe-equipment-container,
+.wprm-recipe-ingredients-container,
+.wprm-recipe-instructions-container {
+    counter-reset: wprm-advanced-list-counter;
+}
+
+ul.wprm-advanced-list {
+    &.wprm-advanced-list-reset {
+        counter-reset: wprm-advanced-list-counter;
+    }
+
+    li {
+        list-style-type: none;
+
+        &:before {
+            counter-increment: wprm-advanced-list-counter;
+            content: counter(wprm-advanced-list-counter);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            float: left;
+
+            font-weight: bold;
+            
+            margin: 2px 0 0 -32px;
+            
+            border-radius: 100%;
+            border: 0;
+        }
+    }
+}
+
+.rtl ul.wprm-advanced-list li:before {
+    float: right;
+    margin: 2px -32px 0 0;
+}

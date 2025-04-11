@@ -1,0 +1,2474 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Recipe Maker Premium\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-06-07 15:37+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.3.4; wp-5.4.1"
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:399
+msgid "\"Grid\" is the default collection layout as of version 8.0.0"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:258
+msgid "# Collections"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:297
+msgid "# Items"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:263
+msgid "# Items in Collections"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:262
+msgid "# Items in Inbox"
+msgstr ""
+
+#: templates/public/nutrition-label-legacy.php:49
+msgid "% Daily Value"
+msgstr ""
+
+#: templates/nutrition-label/fda.php:54 
+#: templates/nutrition-label/classic.php:50
+msgid "% Daily Value*"
+msgstr ""
+
+#: templates/nutrition-label/fda.php:124 
+#: templates/nutrition-label/classic.php:120
+msgid "* Percent Daily Values are based on a 2000 calorie diet."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:220
+msgid "A label and key are required."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:127
+msgid "A name is required for this saved nutrition ingredient."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:49
+msgid "Actions"
+msgstr ""
+
+#: templates/admin/settings/license_invalid.php:20
+msgid "Activate now"
+msgstr ""
+
+#: templates/admin/settings/license_invalid.php:17
+msgid "Activate your license key to receive automatic updates."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:253
+msgid "Active"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:72
+msgid "Add Button Behaviour"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:118
+msgid "Add Collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:41
+msgid "Add Column"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:55 
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:299
+msgid "Add Custom Recipe"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:57 
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:296
+msgid "Add from Collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:43
+msgid "Add Group"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:179
+msgid "Add Image"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:37
+msgid "Add Ingredient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:45
+msgid "Add Item"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:56 
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:300
+msgid "Add Note"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:120
+msgid "Add Pre-made Collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:123
+msgid "Add Saved Collection"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:22
+msgid ""
+"Add the [wprm-recipe-submission] shortcode to a regular WordPress page to "
+"display the Recipe Submission form."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:34
+msgid ""
+"Add the Recipe Collections block or [wprm-recipe-collections] shortcode to a "
+"regular WordPress page to display the Recipe Collections feature."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:68
+msgid "Add to Collection Button"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:202
+msgid "Affiliate Link"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:65
+msgid "After Submission"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:76
+msgid "After successful submission"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:178
+msgid "Agree to Terms"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:569
+msgid "Alcohol"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:210
+msgid "All fields are required."
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition-label-layout.php:202 
+#: includes/public/class-wprmp-nutrition-label-layout.php:244
+msgid "All other active Nutrients"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:379
+msgid "Allow Custom Recipes"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:380
+msgid "Allow custom recipes to be added to a collection."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:372
+msgid "Allow Ingredients"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:386
+msgid "Allow Notes"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:387
+msgid "Allow notes to be added to a collection."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:373
+msgid ""
+"Allow nutrition ingredients to be added to a collection. These can be added "
+"on the WP Recipe Maker > Manage > Your Custom Fields > Custom Nutrition page."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:307
+msgid "Allow recipes to be added to a collection by searching for them."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:306
+msgid "Allow Search Recipes"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:699
+msgid ""
+"Allow visitors to generate a shopping list without having go through the "
+"full collections feature. Uses the same options as the shopping list above."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:129
+msgid "Amount"
+msgstr ""
+
+#: templates/public/nutrition-label-legacy.php:32
+msgid "Amount Per Serving"
+msgstr ""
+
+#: templates/nutrition-label/fda.php:39 
+#: templates/nutrition-label/classic.php:36
+msgid "Amount per Serving"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:155
+msgid "API"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:145
+msgid "API Ingredients"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:394
+msgid "Appearance"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:108
+msgid "Approval"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:244
+msgid "Approve Submission"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:245
+msgid "Approve Submission & Add to new Post"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:212
+msgid "Are you sure you want to close without saving changes?"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:247
+msgid "Are you sure you want to delete"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:84
+msgid "Are you sure you want to delete all items in"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:115
+msgid "Are you sure you want to delete this group, and all of the items in it?"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:175
+msgid "Are you sure you want to delete this link?"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:68
+msgid "Are you sure you want to delete?"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:105
+msgid ""
+"Are you sure you want to generate a new shopping list for this collection? "
+"You will only be able to access this shopping list again with the share link."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:237
+msgid "Are you sure you want to overwrite the existing values?"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:153
+msgid "Assign Category to Post"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:88
+msgid "At the bottom of the collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:87
+msgid "At the top of the collection"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:233 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:311
+msgid "Australian"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:192
+msgid "Automatically"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:141
+msgid "Automatically add to Post"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:112
+msgid "Automatically approve submissions for"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:123
+msgid "Automatically Publish Recipe"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:107
+msgid "Back"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:27
+msgid "Blue"
+msgstr ""
+
+#. Author of the plugin
+msgid "Bootstrapped Ventures"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:520
+msgid "Button is enabled by default"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:561
+msgid "Caffeine"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:480
+msgid "Calcium"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:224
+msgid "Calculated"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:230
+msgid "Calculation"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:267 
+#: templates/public/nutrition-label-legacy.php:41 
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:13
+msgid "Calories"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition-label-layout.php:48 
+#: templates/public/nutrition-label-legacy.php:43 
+#: templates/public/nutrition-label-modern.php:105
+msgid "Calories from Fat"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:61
+msgid "Cancel"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:136
+msgid "Cancel Calculation"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:239
+msgid "Cancel import"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:276 
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:14
+msgid "Carbohydrates"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:80
+msgid "Centiliters"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:23
+msgid "Change Description"
+msgstr ""
+
+#: includes/public/shortcodes/recipe/class-wprmp-sc-advanced-adjustable-servings.php:91
+msgid "Change diameter of the baking form"
+msgstr ""
+
+#: includes/public/shortcodes/recipe/class-wprmp-sc-advanced-adjustable-servings.php:114
+msgid "Change height of the baking form"
+msgstr ""
+
+#: includes/public/shortcodes/recipe/class-wprmp-sc-advanced-adjustable-servings.php:99
+msgid "Change length of the baking form"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:64
+msgid "Change Name"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:77
+msgid "Change Servings"
+msgstr ""
+
+#: includes/public/shortcodes/recipe/class-wprmp-sc-advanced-adjustable-servings.php:151
+msgid "Change shape of the baking form"
+msgstr ""
+
+#: includes/public/shortcodes/recipe/class-wprmp-sc-advanced-adjustable-servings.php:170
+msgid "Change unit for the baking form values"
+msgstr ""
+
+#: includes/public/shortcodes/recipe/class-wprmp-sc-advanced-adjustable-servings.php:97
+msgid "Change width of the baking form"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:148
+msgid ""
+"Changes to these values can be made after confirming with the blue button."
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:336
+msgid "Cholesterol"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:585
+msgid "Choline"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:402
+msgid "Classic - The original collections layout using columns"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:112
+msgid "Click the cart icon in the top right to generate a new shopping list."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:110
+msgid "Click the cart icon in the top right to generate the shopping list."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:50
+msgid "Click to add:"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:83
+msgid "Click to confirm..."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:69
+msgid "Click to set name"
+msgstr ""
+
+#: includes/public/class-wprmp-assets.php:91
+msgid "Click to Start Timer"
+msgstr ""
+
+#: includes/public/shortcodes/recipe/class-wprmp-sc-advanced-adjustable-servings.php:164
+msgid "cm"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:100 
+#: addons-elite/recipe-collections/includes/public/class-wprmprc-print.php:77 
+#: addons-elite/recipe-collections/includes/public/class-wprmprc-print.php:172 
+#: addons-elite/recipe-collections/templates/print/shopping-list-collection.php:18
+msgid "Collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:288
+msgid "Collection Items"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:146
+msgid "Collections"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:32
+msgid "Color"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:47
+msgid "Columns & Groups"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:186
+msgid "Conversion"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:190
+msgid "Convert"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:189
+msgid "Convert All Automatically"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:195
+msgid "Convert..."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:187
+msgid "Converted"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:233
+msgid "Cook Time"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:489
+msgid "Copper"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:90
+msgid "Copy this link to allow others to edit this shopping list:"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:254
+msgid "Courses"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:142
+msgid ""
+"Create and publish a new post with the recipe inside it upon automatic "
+"approval."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:723
+msgid "Create your own collections to display to your visitors."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:214
+msgid "Creating new Custom Field"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:222
+msgid "Creating new Nutrient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:236
+msgid "Creating new Nutrition Ingredient"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:261
+msgid "Cuisines"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:35
+msgid "cup"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:214 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:292
+msgid "Cup Type"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:44
+msgid "Cups"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:223
+msgid "Custom"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:265 
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:305
+msgid "Custom Field"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:266
+msgid "Custom Fields"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:146
+msgid "Custom Ingredients"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:200
+msgid "Custom Links for this Recipe only"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:269
+msgid "Custom Nutrient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:270
+msgid "Custom Nutrients"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:268
+msgid "Custom Nutrition"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:267
+msgid "Custom Nutrition Ingredient"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:297
+msgid "Custom Taxonomy"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:198
+msgid "Custom: these links will only affect the recipe below"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:229
+msgid "Daily Need"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:249
+msgid "Date"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:74
+msgid "Deciliters"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:232
+msgid "Decimal Precision"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:287
+msgid "Default"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:292
+msgid "Default Add Item Selection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:293
+msgid "Default selection when adding items to a collection (inbox excluded)."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:359
+msgid "Default to 1 serving for the collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:360
+msgid "Default to 2 servings for the collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:361
+msgid "Default to 3 servings for the collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:362
+msgid "Default to 4 servings for the collection"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:153
+msgid "Default Unit System"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:125
+msgid "Delete"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:67
+msgid "Delete Column"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:281
+msgid "Delete Custom Ingredient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:252
+msgid "Delete Custom Nutrient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:279
+msgid "Delete Field"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:81
+msgid "Delete Group"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:246
+msgid "Delete Recipe Submission"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:285
+msgid "Delete Saved Collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:286
+msgid "Description"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:22
+msgid "Description for this collection:"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:98
+msgid "Deselect all"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:256
+msgid "Display Name"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:142
+msgid "divided by"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:261
+msgid "Does not have Saved Collections"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:51
+msgid "Drag and drop to add:"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:124
+msgid "Duplicate"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:76
+msgid "Duplicate Item"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:284
+msgid "Duplicate Saved Collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:207
+msgid "Edit Affiliate Fields"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:121
+msgid "Edit Collections"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:42
+msgid "Edit Columns"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:280
+msgid "Edit Custom Ingredient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:74
+msgid "Edit Custom Recipe"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:278
+msgid "Edit Field"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:201
+msgid "Edit Global Links"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:44
+msgid "Edit Groups"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:177
+msgid "Edit Image"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:38
+msgid "Edit Ingredients"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:63
+msgid "Edit Item"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:173
+msgid "Edit Link"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:75
+msgid "Edit Note"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:251
+msgid "Edit Nutrient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:243
+msgid "Edit Recipe Submission"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:282
+msgid "Edit Saved Collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:93
+msgid "Edit Shopping List"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:30
+msgid "Edit the Recipe Submission form layout"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:213
+msgid "Editing Custom Field"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:164
+msgid "Editing Equipment Affiliate Fields"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:209
+msgid "Editing Global Ingredient Links"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:221
+msgid "Editing Nutrient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:235
+msgid "Editing Nutrition Ingredient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:60
+msgid "Editing User"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:257 
+#: addons-pro/custom-fields/includes/public/class-wprmpcf-manager.php:178 
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:319
+msgid "Email"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:119
+msgid "Empty Collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:514
+msgid "Enable button to show nutrition facts"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:288
+msgid ""
+"Enable to make this a default collection for new users. Does not affect "
+"those who have used the collections feature before."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:294
+msgid ""
+"Enable to make this saved collection show up after clicking on \"Add Pre-"
+"made Collection\". Can be used to give users easy access to the meal plans "
+"you create."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:292
+msgid ""
+"Enable to make this saved collection show up as an option after clicking "
+"\"Add Collection\". This would usually be an empty collection with a "
+"specific structure like \"Empty Week Plan\"."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:290
+msgid ""
+"Enable to push this collection to everyone using the collections feature. "
+"Will affect both new and existing users and add this collection to their "
+"list."
+msgstr ""
+
+#: addons-pro/translate/templates/admin/settings/translate.php:22
+msgid "Enable Translation API"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:115
+msgid "Enable Unit Conversion"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:268
+msgid "Equipment"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:247
+msgid "Estimated Cost"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:117
+msgid "Everyone"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:294 
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:16
+msgid "Fat"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:271
+msgid "Features"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:363
+msgid "Fiber"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:242
+msgid "Filter:"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:159
+msgid "Find a match for:"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:184 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:130 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:157 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:173
+msgid "First Unit System"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:62
+msgid "Fluid Ounces"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:498
+msgid "Folate"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:577
+msgid "Folic Acid"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:50
+msgid "Gallons"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:94
+msgid "Generate Shopping List"
+msgstr ""
+
+#: templates/admin/settings/license_invalid.php:17
+msgid "Get a License"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:43
+msgid "Get your free invisible reCAPTCHA keys from Google."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:197
+msgid ""
+"Global: the same link will be used for every recipe with this ingredient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:62
+msgid "Go Back"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:137
+msgid "Go to Next Step"
+msgstr ""
+
+#: addons-pro/translate/templates/admin/settings/translate.php:38
+msgid "Google Cloud Platform API key with access to the Cloud Translation API."
+msgstr ""
+
+#: addons-pro/translate/templates/admin/settings/translate.php:37
+msgid "Google Translate API Key"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:32
+msgid "Grams"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:29
+msgid "Green"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:403
+msgid "Grid - Large images, presented in a grid"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:117
+msgid "Group"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:260
+msgid "Has Saved Collections"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:169
+msgid "Header"
+msgstr ""
+
+#: includes/public/shortcodes/recipe/class-wprmp-sc-advanced-adjustable-servings.php:116
+msgid "height"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:20
+msgid "Hide Nutrition Facts"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:98
+msgid "Hide the button"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:573
+msgid "Highlight nutrition facts per item"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:330
+msgid "How to recognize and display specific units. Use ; to separate aliases."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:168
+msgid "HTML Code"
+msgstr ""
+
+#. URI of the plugin
+#. Author URI of the plugin
+msgid "http://bootstrapped.ventures/"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:248
+msgid "ID"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:206 
+#: addons-pro/custom-fields/includes/public/class-wprmpcf-manager.php:179 
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:201
+msgid "Image"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:167
+msgid "Images"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:169
+msgid ""
+"Images and HTML code only show up when the Equipment block is set to the "
+"\"Images\" display style in the Template Editor."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:238
+msgid "Import values from recipe"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:510
+msgid "In each column, show the added totals for the nutrition facts."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:153
+msgid "Inbox"
+msgstr ""
+
+#: includes/public/shortcodes/recipe/class-wprmp-sc-advanced-adjustable-servings.php:165
+msgid "inch"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:96
+msgid "Include ingredient notes"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:196
+msgid "Ingredient Link Type"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:34 
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:275
+msgid "Ingredients"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:282
+msgid "Instructions"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:507
+msgid "Iron"
+msgstr ""
+
+#: addons-pro/translate/templates/admin/settings/translate.php:46
+msgid ""
+"ISO-639-1 code for the source language you write in. Leave blank to let "
+"Google automatically detect the source language."
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:218 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:296
+msgid "Japanese"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:191
+msgid "Keep Unit"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:216
+msgid "Key"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:26
+msgid "Kilograms"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:226
+msgid "Label"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:131 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:138
+msgid "Label to show for this unit system."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:398
+msgid "Layout Style"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:231
+msgid "Learn more"
+msgstr ""
+
+#: templates/admin/settings/license.php:41
+msgid "License Key"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:314
+msgid ""
+"Limit recipes shown in search results by type. Does not affect searches by "
+"editors."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:313
+msgid "Limit Search Recipes by Type"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition-label-layout.php:190 
+#: includes/public/class-wprmp-nutrition-label-layout.php:248
+msgid "Line"
+msgstr ""
+
+#: addons-pro/custom-fields/includes/public/class-wprmpcf-manager.php:177
+msgid "Link"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:114
+msgid "List"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:68
+msgid "Liters"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:52
+msgid "Load more..."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:234
+msgid "Loading..."
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:116
+msgid "Logged in Users"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:525
+msgid "Magnesium"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-shortcode.php:62
+msgid ""
+"Make sure the site and secret key are set correctly on the settings page."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:108
+msgid "Make sure to save the shopping list before printing."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:104
+msgid "Make sure to select some recipes for the shopping list first."
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-emailer.php:36
+msgid "Manage now"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:516
+msgid "Manganese"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:154
+msgid "Match & Units"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:135
+msgid "Match this equation to get the correct amounts:"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:221 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:232 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:244 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:299 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:310 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:322
+msgid "Metric"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:228
+msgid "mg"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:38
+msgid "Milligrams"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:86
+msgid "Milliliters"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:320
+msgid "Monounsaturated Fat"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:80
+msgid "Move Down"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:65
+msgid "Move Left"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:66
+msgid "Move Right"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:79
+msgid "Move Up"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:218
+msgid "My Custom Field"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:227
+msgid "My Custom Nutrient"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:170
+msgid "My Header"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:175
+msgid "My paragraph..."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:217
+msgid "my-custom-field"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:225
+msgid "my-custom-nutrient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:140
+msgid "n/a"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:33 
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:187 
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:312
+msgid "Name"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:131
+msgid "Name (required)"
+msgstr ""
+
+#: templates/admin/settings/license_invalid.php:17
+msgid "Need help activing?"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:593
+msgid "Net Carbohydrates"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-emailer.php:33
+msgid "New Recipe Submission"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:204
+msgid "No equipment set for this recipe."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:208
+msgid "No HTML set"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:161
+msgid "No ingredients found for"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:162
+msgid "No ingredients found."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:150
+msgid "No ingredients set for this recipe."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:203
+msgid "No link set"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:157
+msgid "no match found"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:109
+msgid "No recipes have been added to the shopping list yet."
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:115
+msgid "Nobody"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:26
+msgid "None"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:31
+msgid "Note"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:289
+msgid "Notes"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition-label-layout.php:198 
+#: includes/public/class-wprmp-nutrition-label-layout.php:238
+msgid "Nutrient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:139
+msgid "Nutrition Calculation"
+msgstr ""
+
+#: templates/public/nutrition-label-legacy.php:28 
+#: templates/nutrition-label/fda.php:18 
+#: templates/nutrition-label/classic.php:18 
+#: addons-elite/recipe-collections/templates/translations.php:82 
+#: addons-elite/recipe-collections/includes/public/class-wprmprc-print.php:126 
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:509
+msgid "Nutrition Facts"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:40
+msgid "Nutrition Facts (per serving)"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:583
+msgid "Nutrition fields to highlight"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:545
+msgid "Nutrition fields to show"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition-label-layout.php:60
+msgid "Nutrition Label Layout"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:153
+msgid "Nutrition Source"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:36
+msgid "olive oil"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:318
+msgid "Only show published recipes from selected types"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:70
+msgid "Optional email address to notify when someone has submitted a recipe."
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:154
+msgid ""
+"Optionally assign a specific category to the automatically created post."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:233
+msgid "Order"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:188
+msgid "Original"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:182
+msgid "Original Unit System for this recipe"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:171
+msgid "other recipe(s) affected"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:20
+msgid "Ounces"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:174
+msgid "Paragraph"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:534
+msgid "Phosphorus"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:56
+msgid "Pints"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:83
+msgctxt "plural unit for centiliters"
+msgid "cl"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:47
+msgctxt "plural unit for cups"
+msgid "cups"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:77
+msgctxt "plural unit for deciliters"
+msgid "dl"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:65
+msgctxt "plural unit for fluid ounces"
+msgid "floz"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:53
+msgctxt "plural unit for gallons"
+msgid "gal"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:35
+msgctxt "plural unit for grams"
+msgid "g"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:29
+msgctxt "plural unit for kilograms"
+msgid "kg"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:71
+msgctxt "plural unit for liters"
+msgid "l"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:41
+msgctxt "plural unit for milligrams"
+msgid "mg"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:89
+msgctxt "plural unit for milliliters"
+msgid "ml"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:23
+msgctxt "plural unit for ounces"
+msgid "oz"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:59
+msgctxt "plural unit for pints"
+msgid "pt"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:17
+msgctxt "plural unit for pounds"
+msgid "lb"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:95
+msgctxt "plural unit for tablespoons"
+msgid "tbsp"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:101
+msgctxt "plural unit for teaspoons"
+msgid "tsp"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:312
+msgid "Polyunsaturated Fat"
+msgstr ""
+
+#: addons-elite/recipe-collections/includes/public/class-wprmprc-post-type.php:38
+msgctxt "post type general name"
+msgid "Collections"
+msgstr ""
+
+#: addons-elite/recipe-collections/includes/public/class-wprmprc-post-type.php:39
+msgctxt "post type singular name"
+msgid "Collection"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:354
+msgid "Potassium"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:14
+msgid "Pounds"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:97
+msgid "Preferred Unit System"
+msgstr ""
+
+#. Description of the plugin
+msgid "Premium addons for WP Recipe Maker."
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:226
+msgid "Prep Time"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:17
+msgid "Print"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:18
+msgid "Print Collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:19
+msgid "Print Recipes"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:88
+msgid "Print Shopping List"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:285 
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:15
+msgid "Protein"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:289
+msgid "Push to All"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:698
+msgid "Quick Access Shopping List"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:293
+msgid "Quick Add"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:54
+msgid "reCAPTCHA Secret Key"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:42
+msgid "reCAPTCHA Site Key"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:86
+msgid "Recipe"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:232
+msgid "Recipe Cook Time"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:246
+msgid "Recipe Cost"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:253
+msgid "Recipe Courses"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:260
+msgid "Recipe Cuisines"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:304
+msgid "Recipe Custom Field"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:296
+msgid "Recipe Custom Taxonomy"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:267
+msgid "Recipe Equipment"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:76
+msgid "Recipe gets added to the default \"Inbox\" collection"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:200
+msgid "Recipe Image"
+msgstr ""
+
+#: addons-elite/recipe-collections/includes/public/class-wprmprc-print.php:117
+msgid "Recipe Images"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:274
+msgid "Recipe Ingredients"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:281
+msgid "Recipe Instructions"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:186
+msgid "Recipe Name"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:288
+msgid "Recipe Notes"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:147
+msgid "Recipe Nutrition Facts Preview"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:83
+msgid "Recipe Placement"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:225
+msgid "Recipe Prep Time"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:218 
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:219
+msgid "Recipe Servings"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:277
+msgid "Recipe Submission"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:57
+msgid "Recipe Submission Layout"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:276
+msgid "Recipe Submissions"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:193
+msgid "Recipe Summary"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:239
+msgid "Recipe Total Time"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:328
+msgid "Recipe Types"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:212
+msgid "Recipe Video Embed"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:206
+msgid "Recipe Video Upload"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:126 
+#: addons-elite/recipe-collections/includes/public/class-wprmprc-collection.php:270
+#:  
+#: addons-elite/recipe-collections/includes/public/class-wprmprc-manager.php:71
+#:  
+#: addons-elite/recipe-collections/includes/public/class-wprmprc-manager.php:325
+msgid "Recipes"
+msgstr ""
+
+#: includes/public/shortcodes/recipe/class-wprmp-sc-advanced-adjustable-servings.php:148
+msgid "rectangle"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:28
+msgid "Red"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:80
+msgid "Redirect to a different page"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:87
+msgid "Regenerate Shopping List"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:205
+msgid "Regular Link"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:166
+msgid "Regular Links"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:283
+msgid "Reload Recipes"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:102
+msgid "remove"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:178
+msgid "Remove Image"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:78
+msgid "Remove Item"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:46
+msgid "Remove Items"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:174
+msgid "Remove Link"
+msgstr ""
+
+#: templates/admin/settings/license_expired.php:19
+msgid "Renew now"
+msgstr ""
+
+#: templates/admin/settings/license_expired.php:17
+msgid "Renew your license key to keep receiving updates."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:163
+msgid "Results for"
+msgstr ""
+
+#: addons-pro/custom-fields/includes/public/class-wprmpcf-manager.php:176
+msgid "Rich Textarea"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:113
+msgid ""
+"Right click and copy this link to allow others to edit this shopping list."
+msgstr ""
+
+#: includes/public/shortcodes/recipe/class-wprmp-sc-advanced-adjustable-servings.php:147
+msgid "round"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:303
+msgid "Saturated Fat"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:219
+msgid "Save"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:128
+msgid "Save a new Custom Ingredient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:170
+msgid "Save Changes"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:296
+msgid "Save Collection Link"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:132
+msgid "Save for Later & Use"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:92
+msgid "Save Shopping List"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:25
+msgid "Save to my Collections"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:272
+msgid "Saved Collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:273 
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:722
+msgid "Saved Collections"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:156
+msgid "Saved/Custom"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:160
+msgid "Search"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:54 
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:298
+msgid "Search Ingredients"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:53 
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:297
+msgid "Search Recipes"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:354
+msgid "Search Recipes Servings"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:185 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:137 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:158 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:251
+msgid "Second Unit System"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:13
+msgid "Select a collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:122
+msgid "Select a collection to add for this user"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:14
+msgid "Select a column"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:15
+msgid "Select a group"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:134
+msgid "Select a saved ingredient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:99
+msgid "Select all"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:149
+msgid "Select or search for a saved ingredient"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:111
+msgid ""
+"Select recipes and click the cart icon in the top right to generate the "
+"shopping list."
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:543
+msgid "Selenium"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:69
+msgid "Send email to"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:259
+msgid "Serving"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition-label-layout.php:194 
+#: includes/public/class-wprmp-nutrition-label-layout.php:234
+msgid "Serving Size"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition-label-layout.php:233 
+#: addons-elite/recipe-collections/includes/public/class-wprmprc-print.php:121
+msgid "Servings"
+msgstr ""
+
+#: includes/public/class-wprmp-print.php:101 
+#: addons-elite/recipe-collections/templates/translations.php:72
+msgid "servings"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:355
+msgid "Servings to use when searching for recipes in the collections feature."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:70
+msgid "Set a new amount for this ingredient:"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:176
+msgid "Set Affiliate Link"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:24
+msgid "Set Description"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:124
+msgid "Set recipe status to Publish upon automatic approval."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:71
+msgid "Set the number of servings"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:91
+msgid "Share Edit Link"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:16 
+#: addons-elite/recipe-collections/includes/public/class-wprmprc-print.php:100 
+#: addons-elite/recipe-collections/includes/public/class-wprmprc-print.php:176 
+#: addons-elite/recipe-collections/templates/print/shopping-list.php:18 
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:603
+msgid "Shopping List"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:95
+msgid "Shopping List Options"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:21
+msgid "Shortcode"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:259
+msgid "Show All"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:317
+msgid "Show all published recipes from all types"
+msgstr ""
+
+#: addons-elite/recipe-collections/includes/public/class-wprmprc-print.php:180
+msgid "Show Checked Items"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:21
+msgid "Show Nutrition Facts"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:82
+msgctxt "singular unit for centiliters"
+msgid "cl"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:46
+msgctxt "singular unit for cups"
+msgid "cup"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:76
+msgctxt "singular unit for deciliters"
+msgid "dl"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:64
+msgctxt "singular unit for fluid ounces"
+msgid "floz"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:52
+msgctxt "singular unit for gallons"
+msgid "gal"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:34
+msgctxt "singular unit for grams"
+msgid "g"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:28
+msgctxt "singular unit for kilograms"
+msgid "kg"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:70
+msgctxt "singular unit for liters"
+msgid "l"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:40
+msgctxt "singular unit for milligrams"
+msgid "mg"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:88
+msgctxt "singular unit for milliliters"
+msgid "ml"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:22
+msgctxt "singular unit for ounces"
+msgid "oz"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:58
+msgctxt "singular unit for pints"
+msgid "pt"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:16
+msgctxt "singular unit for pounds"
+msgid "lb"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:94
+msgctxt "singular unit for tablespoons"
+msgid "tbsp"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:100
+msgctxt "singular unit for teaspoons"
+msgid "tsp"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:345
+msgid "Sodium"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:211
+msgid "Something went wrong. Make sure this key does not exist yet."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:241
+msgid "Sort:"
+msgstr ""
+
+#: addons-pro/translate/templates/admin/settings/translate.php:45
+msgid "Source Language"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:58
+msgid "Start typing to search..."
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:79
+msgid "Stay on page and show text"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:85
+msgid "Stop Editing"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:48
+msgid "Stop Removing Items"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-shortcode.php:59
+msgid "Submission blocked by reCAPTCHA."
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:25
+msgid "Submission Form"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:28
+msgid "Submission Form Layout"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:182
+msgid "Submit"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:183
+msgid "Submit Recipe"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:372
+msgid "Sugar"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:194
+msgid "Summary"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:227 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:305
+msgid "Tablespoon Type"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:92
+msgid "Tablespoons"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:100
+msgid "Take the user to a specific page on click"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:239 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:317
+msgid "Teaspoon Type"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:98
+msgid "Teaspoons"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:291
+msgid "Template"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition-label-layout.php:186 
+#: includes/public/class-wprmp-nutrition-label-layout.php:228 
+#: addons-elite/recipe-collections/templates/translations.php:39 
+#: addons-pro/custom-fields/includes/public/class-wprmpcf-manager.php:175
+msgid "Text"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:86
+msgid "Text to show after submission"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:88
+msgid "Thank you for submitting a recipe!"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:99
+msgid "The button does not do anything"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:165
+msgid "The fields you set here will affect all recipes using this equipment."
+msgstr ""
+
+#: includes/public/class-wprmp-assets.php:102
+msgid "The image file is too large"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:89
+msgid ""
+"The link copied to your clipboard will allow others to edit this shopping "
+"list."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:143
+msgid "the number of servings for this recipe."
+msgstr ""
+
+#: includes/class-wp-recipe-maker-premium.php:150
+msgid ""
+"The plugin has not been loaded because it requires at least the following "
+"plugin versions:"
+msgstr ""
+
+#: includes/class-wp-recipe-maker-premium.php:136
+msgid ""
+"The plugin has not been loaded because it requires the following plugin(s) "
+"to be activated:"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:106
+msgid "The shopping list could not be saved. Try again later."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:103
+msgid "There are unsaved changes. Are you sure you want to leave this page?"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-emailer.php:34
+msgid "There is a new Recipe Submission on your website!"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:172
+msgid "This can affect other recipes"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:180
+msgid "This feature is only available in"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:240
+msgid "Total Time"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:328
+msgid "Trans Fat"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:215
+msgid "Type"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:329
+msgid "Types to show in the search results. Select at least one."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:130
+msgid "Unit"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:145
+msgid "Unit Conversion"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:154
+msgid "Unit system you usually write your recipes in."
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:122 
+#: addons-pro/translate/templates/admin/settings/translate.php:29
+msgid "Unit Systems"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:329
+msgid "Units"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:158
+msgid "Units n/a"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:174 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:252
+msgid "Units you want the ingredients to use in this unit system"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:101
+msgid "Unnamed"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:219 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:231 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:243 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:297 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:309 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:321
+msgid "US Customary"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:220 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:298
+msgid "US Legal"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:133
+msgid "Use"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:183
+msgid "Use Default"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:199
+msgid "Use Global Links"
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:36
+msgid "Use invisible reCAPTCHA to prevent spam submissions."
+msgstr ""
+
+#: addons-elite/recipe-submission/templates/admin/settings/recipe-submission.php:35
+msgid "Use reCAPTCHA"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:358
+msgid "Use servings as set for the recipe"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:138
+msgid "Use These Values"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:240
+msgid "Use this recipe"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:152
+msgid "Used for Calculation"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:151
+msgid "Used in Recipe"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:250
+msgid "User"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:274
+msgid "User Collection"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:275
+msgid "User Collections"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:318
+msgid "User Email"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:77
+msgid "User gets to choose a collection to add the recipe to"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:255
+msgid "User ID"
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:311
+msgid "User Name"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:141
+msgid "Values of all the checked ingredients will be added together and"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:144
+msgid "Values of all the checked ingredients will be added together."
+msgstr ""
+
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:207 
+#: addons-elite/recipe-submission/includes/public/class-wprmprs-layout.php:213
+msgid "Video"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:254
+msgid "View and edit collections for this user"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:73
+msgid "View Recipe"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:381
+msgid "Vitamin A"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:390
+msgid "Vitamin B1"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:435
+msgid "Vitamin B12"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:399
+msgid "Vitamin B2"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:408
+msgid "Vitamin B3"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:417
+msgid "Vitamin B5"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:426
+msgid "Vitamin B6"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:444
+msgid "Vitamin C"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:453
+msgid "Vitamin D"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:462
+msgid "Vitamin E"
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:471
+msgid "Vitamin K"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:194 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:196 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:274
+msgid "Volume Units"
+msgstr ""
+
+#: templates/admin/settings/license.php:27
+msgid "Warning: the license is currently inactive."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:193 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:182 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:260
+msgid "Weight Units"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:295
+msgid "What do you want the new order to be?"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:73
+msgid "What happens when clicking the \"Add to Collection\" button."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:95
+msgid ""
+"What to do with the \"Add to Collection\" button when the visitor is not "
+"logged in."
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:215 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:293
+msgid "What type of cup does this unit system use?"
+msgstr ""
+
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:228 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:240 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:306 
+#: addons-pro/unit-conversion/templates/admin/settings/unit-conversion.php:318
+msgid "What type of tablespoon does this unit system use?"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:521
+msgid "When disabled an extra click is required to show the nutrition facts."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:94
+msgid "When not logged in"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/admin/settings/recipe-collections.php:84
+msgid "Where the recipe gets added after clicking the button."
+msgstr ""
+
+#. Name of the plugin
+msgid "WP Recipe Maker Premium"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:30
+msgid "Yellow"
+msgstr ""
+
+#: templates/admin/settings/license.php:42
+msgid ""
+"You can find your license key by logging into your account on our website."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:181
+msgid ""
+"You need to set up this feature on the WP Recipe Maker > Settings > Unit "
+"Conversion page first."
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:59
+msgid "Your Collections"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:264
+msgid "Your Custom Fields"
+msgstr ""
+
+#: templates/admin/settings/license_invalid.php:19
+msgid "Your license key"
+msgstr ""
+
+#: templates/admin/settings/license.php:30
+msgid "Your license key has expired. Renew to keep getting updates."
+msgstr ""
+
+#: templates/admin/settings/license.php:32
+msgid ""
+"Your license key is currently active. Fill in a blank key to deactivate."
+msgstr ""
+
+#: includes/public/shortcodes/recipe/class-wprmp-sc-private-notes.php:69
+msgid "Your own private notes about this recipe"
+msgstr ""
+
+#: addons-elite/recipe-collections/templates/translations.php:116
+msgid "Your shopping list is empty."
+msgstr ""
+
+#: includes/public/class-wprmp-nutrition.php:552
+msgid "Zinc"
+msgstr ""

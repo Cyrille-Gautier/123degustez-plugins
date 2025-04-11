@@ -1,0 +1,112 @@
+#wprm-print-servings-container {
+    margin: 10px;
+
+    #wprm-print-servings {
+        width: 40px;
+        padding: 0;
+        vertical-align: top;
+        text-align: center;
+        outline: none;
+
+        font-size: 14px;
+    }
+    #wprm-print-servings,
+    .wprm-print-servings-change {
+        border: 1px solid #444444;
+        height: 30px;
+        user-select: none;
+    }
+
+    .wprm-print-servings-change {
+        display: inline-block;
+        width: 20px;
+        line-height: 26px;
+        background: #444444;
+        color: white;
+        text-align: center;
+        cursor: pointer;
+      
+        &:active {
+            font-weight: bold;
+        }
+        
+        &.wprm-print-servings-decrement {
+            border-right: none;
+            border-radius: 3px 0 0 3px;
+        }
+        &.wprm-print-servings-increment {
+            border-left: none;
+            border-radius: 0 3px 3px 0;
+        }
+    }
+}
+
+#wprm-print-unit-conversion-container {
+    a.wprm-unit-conversion {
+        border: 1px solid #444444;
+        background-color: white;
+        color: #444;
+
+        display: inline-flex;
+        align-items: center;
+        height: 30px;
+        padding: 0 10px;
+		font-size: 1em;
+		text-decoration: none;
+
+        &:first-child {
+            border-top-left-radius: 3px;
+            border-bottom-left-radius: 3px;
+            border-right: 0;
+        }
+        &:last-child {
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+        }
+
+        &.wprmpuc-active {
+            background: #444444;
+            color: white;
+        }
+
+		&:hover {
+			cursor: pointer;
+		}
+    }
+}
+
+.rtl {
+    #wprm-print-servings-container {    
+        .wprm-print-servings-change {
+            &.wprm-print-servings-decrement {
+                border-right: 1px solid #444444;;
+                border-left: none;
+                border-radius: 0 3px 3px 0;
+            }
+            &.wprm-print-servings-increment {
+                border-left: 1px solid #444444;;
+                border-right: none;
+                border-radius: 3px 0 0 3px;
+            }
+        }
+    }
+    
+    #wprm-print-unit-conversion-container {
+        a.wprm-unit-conversion {    
+            &:first-child {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+                border-top-right-radius: 3px;
+                border-bottom-right-radius: 3px;
+                border-left: 0;
+                border-right: 1px solid #444444;
+            }
+            &:last-child {
+                border-top-left-radius: 3px;
+                border-bottom-left-radius: 3px;
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+        }
+    }
+}

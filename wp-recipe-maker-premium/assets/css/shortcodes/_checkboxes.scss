@@ -1,0 +1,120 @@
+.wprm-checkbox-container {
+    margin-left: -16px;
+}
+.rtl .wprm-checkbox-container {
+    margin-left: 0;
+    margin-right: -16px;
+}
+
+.wprm-checkbox-container input[type="checkbox"] {
+    width: 16px !important;
+    margin: 0 !important;
+    opacity: 0;
+}
+
+.wprm-checkbox-container label.wprm-checkbox-label {
+    position: relative;
+    display: inline !important;
+    margin: 0 !important;
+
+    left: 0;
+    padding-left: 26px;
+}
+
+.wprm-checkbox-container label::before,
+.wprm-checkbox-container label::after {
+    position: absolute;
+    content: "";
+    
+    display: inline-block;
+}
+
+.rtl ​.wprm-checkbox-container label::before {
+    right: 0;
+}
+.rtl .wprm-checkbox-container label::after {
+    right: 5px;
+}
+
+.wprm-checkbox-container label::before{
+    height: 18px;
+    width: 18px;
+    
+    border: 1px solid;
+    left: 0;
+    top: 0;
+}
+.wprm-checkbox-container label::after {
+    height: 5px;
+    width: 9px;
+    border-left: 2px solid;
+    border-bottom: 2px solid;
+    
+    transform: rotate(-45deg);
+    
+    left: 5px;
+    top: 5px;
+}
+
+.wprm-checkbox-container input[type="checkbox"] + label::after {
+    content: none;
+}
+.wprm-checkbox-container input[type="checkbox"]:checked + label::after {
+    content: "";
+}
+.wprm-checkbox-container input[type="checkbox"]:focus + label::before {
+    outline: rgb(59, 153, 252) auto 5px;
+}
+
+
+
+// // Modern Template
+.wprm-recipe-equipment li,
+.wprm-recipe-ingredients li,
+.wprm-recipe-instructions li {
+    position: relative;
+
+    .wprm-checkbox-container {
+        display: inline-block;
+        position: absolute;
+        left: -32px;
+        top: 0.25em;
+        line-height: 0.9em;
+    }
+
+    &.wprm-checkbox-is-checked {
+        text-decoration: line-through;
+
+        .wprm-recipe-instruction-ingredient {
+            text-decoration: line-through;
+        }
+    }
+}
+
+.rtl {
+    .wprm-recipe-equipment li,
+    .wprm-recipe-ingredients li,
+    .wprm-recipe-instructions li {
+        .wprm-checkbox-container {
+            left: inherit;
+            right: -32px;
+        }
+    }
+}
+
+// Legacy Template
+.wprm-list-checkbox-container {
+    &:before {
+        display: none !important;
+    }
+
+    &.wprm-list-checkbox-checked {
+        text-decoration: line-through;
+    }
+
+    .wprm-list-checkbox {
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
