@@ -153,7 +153,10 @@ class Edit_Item_Page extends \Jet_Engine_Options_Page_Factory {
 	public function get( $option = null, $default = false, $field = array() ) {
 
 		$item  = ! empty( $this->page['item'] ) ? $this->page['item'] : array();
-		$value = isset( $item[ $option ] ) ? wp_unslash( $this->pages_manager->factory->maybe_from_timestamp( $item[ $option ], $field ) ) : $default;
+		// Removed second wp_unslash call to prevent over-stripping slashes from input data.
+		// https://github.com/Crocoblock/issues-tracker/issues/15071#issuecomment-2778426105
+//		$value = isset( $item[ $option ] ) ? wp_unslash( $this->pages_manager->factory->maybe_from_timestamp( $item[ $option ], $field ) ) : $default;
+		$value = isset( $item[ $option ] ) ? $this->pages_manager->factory->maybe_from_timestamp( $item[ $option ], $field ) : $default;
 
 		return $value;
 	}

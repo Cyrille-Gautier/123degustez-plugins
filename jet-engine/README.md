@@ -1,5 +1,35 @@
 # ChangeLog
 
+## 3.6.8
+* UPD: https://github.com/Crocoblock/suggestions/issues/7897;
+* UPD: Data Stores. Add data stores requests to queue to correctly stack multiple add/remove requests;
+* UPD: https://github.com/Crocoblock/suggestions/issues/8092;
+* UPD: https://github.com/Crocoblock/suggestions/issues/8093;
+* FIX: Admin Filters. Correctly process special chars in filter values;
+* FIX: CCT. JSF & Indexer. Correctly count items when status enabled in CCT query;
+* FIX: Listing Popup. Open popup after filters applied to the listing;
+* FIX: Dynamic Field. WPML. Allow to translate fallback option;
+* FIX: Components. Correctly process nesetd components;
+* FIX: Maps Listings. Issue with pin styling in some cases;
+* FIX: CCT. Problem with saving special chars.
+
+## 3.6.7.1
+* FIX: Error after Elementor Pro update.
+
+## 3.6.7
+* ADD: Dynamic Image & Block Editor. Native width/height, aspect ratio and scale controls;
+* UPD: Maps Listings. Allow to use Places API (New) for places search;
+* UPD: Elementor. Maps Listings. Correct help links for filters widgets added by Maps module;
+* FIX: Block Editor. Issue with core styles on listings rendered with AJAX;
+* FIX: Query Loop by Current WP Query breaks if filter returns 0 results;
+* FIX: Issues with page objects after 3.6.6 update;
+* FIX: Post Types. Correct auto lable for Not found option;
+* FIX: Meta Fields & Woo. Correctly save 0 in custom panels for Woo;
+* FIX: Slashes issue when svaing meta fields with a special chars;
+* FIX: Avoid PHP warnings in some cases;
+* FIX: Meta Fields. `Add Custom Value` button is missing if meta field has no default options;
+* FIX: Bricks & Lazy load issue.
+
 ## 3.6.6.1
 * FIX: Elementor compatibility.
 

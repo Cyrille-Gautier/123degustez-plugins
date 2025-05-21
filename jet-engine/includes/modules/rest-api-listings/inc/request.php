@@ -14,8 +14,9 @@ class Request {
 
 		$this->endpoint          = $endpoint;
 		$this->is_sample_request = $is_sample_request;
-		$this->url               = ! empty( $this->endpoint['url'] ) ? $this->endpoint['url'] : false;
-		$this->url               = do_shortcode( jet_engine()->listings->macros->do_macros( $this->url ) );
+
+		$this->url = ! empty( $this->endpoint['url'] ) ? wp_unslash($this->endpoint['url'] ) : false;
+		$this->url = do_shortcode( jet_engine()->listings->macros->do_macros( $this->url ) );
 
 		return $this;
 	}

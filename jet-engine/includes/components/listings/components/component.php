@@ -58,7 +58,7 @@ class Component {
 	/**
 	 * Returns ID
 	 * 
-	 * @return [type] [description]
+	 * @return int Component post ID
 	 */
 	public function get_id() {
 		return $this->id;
@@ -67,7 +67,7 @@ class Component {
 	/**
 	 * Returns component status
 	 * 
-	 * @return [type] [description]
+	 * @return string Component post status
 	 */
 	public function get_status() {
 		return $this->status;
@@ -76,7 +76,7 @@ class Component {
 	/**
 	 * Returns unique element name for current component
 	 * 
-	 * @return [type] [description]
+	 * @return string Component element name
 	 */
 	public function get_element_name() {
 		return jet_engine()->listings->components->get_component_base_name() . '-' . $this->get_id();
@@ -85,7 +85,7 @@ class Component {
 	/**
 	 * Returns name
 	 * 
-	 * @return [type] [description]
+	 * @return string Component post title
 	 */
 	public function get_display_name() {
 		return $this->name;
@@ -104,7 +104,7 @@ class Component {
 	 * 	'control_default_image' => false,
 	 * ]
 	 * 
-	 * @return [type] [description]
+	 * @return array Component props
 	 */
 	public function get_props() {
 		return $this->sanitize_props( $this->props );
@@ -120,7 +120,7 @@ class Component {
 	 * 	'control_default'       => 'Default Value',
 	 * ]
 	 * 
-	 * @return [type] [description]
+	 * @return array Component styles
 	 */
 	public function get_styles() {
 		return $this->sanitize_props( $this->styles, 'color' );
@@ -129,8 +129,8 @@ class Component {
 	/**
 	 * Sanitize props
 	 * 
-	 * @param  array  $props [description]
-	 * @return [type]        [description]
+	 * @param  array  $props Props to sanitize
+	 * @return array         Sanitized props
 	 */
 	public function sanitize_props( $props = [], $default_type = 'text' ) {
 		
@@ -147,7 +147,7 @@ class Component {
 	/**
 	 * Returns views
 	 * 
-	 * @return [type] [description]
+	 * @return array Supported views
 	 */
 	public function get_views() {
 		return apply_filters( 'jet-engine/listings/components/component/views', $this->views, $this );
@@ -156,7 +156,7 @@ class Component {
 	/**
 	 * Returns render view
 	 * 
-	 * @return [type] [description]
+	 * @return string Render view name
 	 */
 	public function get_render_view() {
 		return $this->render_view;
@@ -165,7 +165,7 @@ class Component {
 	/**
 	 * Returns category of the component
 	 * 
-	 * @return [type] [description]
+	 * @return string Category slug for editor
 	 */
 	public function get_category() {
 		return $this->category;
@@ -174,9 +174,9 @@ class Component {
 	/**
 	 * Get component meta
 	 * 
-	 * @param  [type] $key     [description]
-	 * @param  [type] $default [description]
-	 * @return [type]          [description]
+	 * @param  string $key     Meta key
+	 * @param  mixed  $default Default value if meta not found
+	 * @return mixed           Meata value or default value
 	 */
 	public function get_meta( $key = null, $default = false ) {
 		
@@ -346,8 +346,8 @@ class Component {
 	/**
 	 * Returns default state of the component
 	 * 
-	 * @param  boolean $props [description]
-	 * @return [type]         [description]
+	 * @param  boolean|array $props Array of component props to use for default state
+	 * @return array                Default state
 	 */
 	public function get_default_state( $props = false, $args = [] ) {
 		
@@ -407,13 +407,21 @@ class Component {
 
 		}
 	}
-
+	
 	/**
-	 * Render component content
+	 * Get component content
 	 * 
-	 * @return [type] [description]
+	 * @return string Rendered component content
 	 */
 	public function get_content( $settings = [], $with_context = false ) {
+		$stack = jet_engine()->listings->components->stack;
+
+		if ( ! $stack->increase_stack( $this ) ) {
+			return sprintf(
+				'<div class="jet-listing-notice">%s</div>',
+				__( 'Please, select another component to show to avoid recursion.', 'jet-engine' )
+			);
+		}
 
 		ob_start();
 
@@ -460,6 +468,8 @@ class Component {
 		) );
 
 		$content = ob_get_clean();
+
+		$stack->decrease_stack();
 
 		return $content;
 	}

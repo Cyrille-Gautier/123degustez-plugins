@@ -10,6 +10,9 @@ if ( ! defined( 'WPINC' ) ) {
 
 class Base_Widget extends \Elementor\Widget_Base {
 
+	/**
+	 * @var \Jet_Engine\Listings\Components\Component
+	 */
 	protected $jet_engine_component;
 	protected $jet_instance_id;
 

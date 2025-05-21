@@ -5,15 +5,15 @@ use Jet_Engine\Modules\Maps_Listings\Module;
 
 class Google extends Base {
 
-	public function base_api_url() {
+	private $places_api_status_key = 'jet-engine-maps-places-api-status';
 
-		$api_url           = 'https://maps.googleapis.com/maps/api/geocode/json';
+	public function get_api_key( $for_geocoding = false ) {
 		$api_key           = Module::instance()->settings->get( 'api_key' );
 		$use_geocoding_key = Module::instance()->settings->get( 'use_geocoding_key' );
 		$geocoding_key     = Module::instance()->settings->get( 'geocoding_key' );
 
 		// from 3.0.0 map could have different providers so we need to reset some data if provider is not Google maps
-		if ( 'google' !== Module::instance()->settings->get( 'map_provider' ) ) {
+		if ( $for_geocoding && 'google' !== Module::instance()->settings->get( 'map_provider' ) ) {
 			$use_geocoding_key = true;
 			$api_key           = false;
 		}
@@ -21,6 +21,14 @@ class Google extends Base {
 		if ( $use_geocoding_key && $geocoding_key ) {
 			$api_key = $geocoding_key;
 		}
+
+		return $api_key;
+	}
+
+	public function base_api_url() {
+
+		$api_url = 'https://maps.googleapis.com/maps/api/geocode/json';
+		$api_key = $this->get_api_key( true );
 
 		// Do nothing if api key not provided
 		if ( ! $api_key ) {
@@ -58,14 +66,8 @@ class Google extends Base {
 	 */
 	public function build_autocomplete_api_url( $query = '' ) {
 
-		$api_url           = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-		$api_key           = Module::instance()->settings->get( 'api_key' );
-		$use_geocoding_key = Module::instance()->settings->get( 'use_geocoding_key' );
-		$geocoding_key     = Module::instance()->settings->get( 'geocoding_key' );
-
-		if ( $use_geocoding_key && $geocoding_key ) {
-			$api_key = $geocoding_key;
-		}
+		$api_url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+		$api_key = $this->get_api_key();
 
 		if ( ! $api_key ) {
 			return false;
@@ -80,6 +82,164 @@ class Google extends Base {
 			) ),
 			$api_url
 		);
+	}
+
+	public function get_autocomplete_data( $query = '' ) {
+
+		if ( ! $query ) {
+			return false;
+		}
+
+		$legacy_status = $this->get_legacy_status();
+
+		switch ( $legacy_status ) {
+			case 'none':
+				$data = false;
+				break;
+			case 'legacy':
+				$data = $this->get_legacy_autocomplete_data( $query );
+				break;
+			case 'new':
+				$data = $this->get_new_autocomplete_data( $query );
+				break;
+			case 'needs_updating':
+				$data = $this->get_autocomplete_data_with_status_update( $query );
+				break;
+		}
+		
+		return $data;
+	}
+
+	public function get_legacy_autocomplete_data( $query = '' ) {
+		
+		if ( ! $query ) {
+			return false;
+		}
+
+		return parent::get_autocomplete_data( $query );
+	}
+
+	public function get_new_autocomplete_data( $query = '' ) {
+
+		if ( ! $query ) {
+			return false;
+		}
+		
+		$api_url = 'https://places.googleapis.com/v1/places:autocomplete';
+		
+		$api_key = $this->get_api_key();
+		
+		$body = array(
+			'input'        => $query,
+			'languageCode' => substr( get_bloginfo( 'language' ), 0, 2 ),
+		);
+
+		$args['headers'] = array(
+			'X-Goog-Api-Key' => $api_key,
+		);
+
+		$response = wp_remote_post( $api_url, array(
+			'body'    => $body,
+			'headers' => $args['headers'],
+		) );
+
+		$json = wp_remote_retrieve_body( $response );
+
+		$data = json_decode( $json, true );
+
+		if ( ! empty( $data['error'] ) ) {
+			$this->save_error( $data, 'autocomplete' );
+		}
+
+		return $this->extract_autocomplete_data_from_response_data( $data );
+	}
+
+	public function has_error( $type = 'autocomplete' ) {
+		$error = $this->get_error( $type );
+
+		if ( ! $error ) {
+			return false;
+		}
+
+		switch ( $type ) {
+			case 'autocomplete':
+				$status = $error['status'] ?? '';
+
+				if ( $status === 'REQUEST_DENIED' ) {
+					return true;
+				}
+
+				$status = $error['error']['status'] ?? '';
+				
+				if ( $status === 'PERMISSION_DENIED' ) {
+					return true;
+				}
+
+			break;
+		}
+
+		return false;
+	}
+
+	public function set_legacy_status( $status ) {
+		$value = time() . ':' . $status;
+		update_option( $this->places_api_status_key, $value );
+		return $status;
+	}
+
+	public function get_legacy_status( $type = 'autocomplete' ) {
+		$value = get_option( $this->places_api_status_key, false );
+
+		if ( ! $value ) {
+			return 'needs_updating';
+		}
+
+		$value = explode( ':', $value );
+		
+		$time   = ( int ) $value[0];
+		$status = $value[1];
+
+		if ( time() - $time > $this->get_legacy_status_timeout( $type ) ) {
+			return 'needs_updating';
+		}
+
+		return $status;
+	}
+
+	public function get_legacy_status_timeout( $type = 'autocomplete' ) {
+		$timeouts = array(
+			'autocomplete' => 300,
+		);
+
+		return $timeouts[ $type ] ?? 300;
+	}
+
+	public function get_autocomplete_data_with_status_update( $query = '' ) {
+		if ( ! $query ) {
+			return false;
+		}
+
+		$data = $this->get_new_autocomplete_data( $query );
+
+		$status = 'new';
+
+		if ( $this->has_error( 'autocomplete' ) ) {
+			$status = 'legacy';
+			$this->clear_error( 'autocomplete' );
+		} else {
+			$this->set_legacy_status( $status );
+			return $data;
+		}
+
+		$data = $this->get_legacy_autocomplete_data( $query );
+		
+		if ( $this->has_error( 'autocomplete' ) ) {
+			$status = 'none';
+		}
+
+		$this->set_legacy_status( $status );
+
+		return $data;
 	}
 
 	/**
@@ -122,16 +282,29 @@ class Google extends Base {
 
 		$predictions = isset( $data['predictions'] ) ? $data['predictions'] : false;
 
+		$new_api = false;
+
+		if ( ! $predictions && isset( $data['suggestions'] ) ) {
+			$predictions = $data['suggestions'] ?? false;
+			$new_api = true;
+		}
+
 		if ( ! $predictions ) {
 			return false;
 		}
-
+		
 		$result = array();
 
 		foreach ( $predictions as $prediction ) {
-			$result[] = array(
-				'address' => $prediction['description']
-			);
+			if ( ! $new_api ) {
+				$result[] = array(
+					'address' => $prediction['description'] ?? '',
+				);
+			} else {
+				$result[] = array(
+					'address' => $prediction['placePrediction']['text']['text'] ?? '',
+				);
+			}
 		}
 
 		return $result;

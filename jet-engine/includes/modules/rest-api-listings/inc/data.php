@@ -157,6 +157,8 @@ class Data extends \Jet_Engine_Base_Data {
 		unset( $result['status'] );
 		unset( $result['meta_fields'] );
 
+		$result['url'] = wp_unslash( $result['url'] );
+
 		return apply_filters( 'jet-engine/rest-api-listings/data/item-for-register', $result );
 	}
 

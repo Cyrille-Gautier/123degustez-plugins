@@ -45,9 +45,9 @@ class Registry {
 	}
 
 	/**
-	 * Get omponents from the DB
+	 * Get components from the DB
 	 * 
-	 * @return [type] [description]
+	 * @return Component[] Array of component instances
 	 */
 	public function get_components() {
 
@@ -84,8 +84,8 @@ class Registry {
 	/**
 	 * Returns component instance by name
 	 * 
-	 * @param  [type] $component_name [description]
-	 * @return [type]                 [description]
+	 * @param  string           $component_name Component name / ID
+	 * @return Component|false                  Component instance or false if not found
 	 */
 	public function get( $component_name, $by = 'name' ) {
 

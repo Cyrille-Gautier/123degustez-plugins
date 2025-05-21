@@ -561,21 +561,23 @@ if ( ! class_exists( 'Jet_Engine_Listings_Data' ) ) {
 				return;
 			}
 
-			$ensure_props = array(
-				'ID' => 0,
-				'post_title' => '',
-				'post_name' => '',
-				'post_type' => 'post',
-				'post_date' => wp_date( 'Y-m-d H:i:s' ),
-				'post_modified' => wp_date( 'Y-m-d H:i:s' ),
-				'post_content' => '',
-				'post_excerpt' => '',
-				'post_status' => 'publish',
-			);
+			if ( 'stdClass' === get_class( $object ) ) {
+				$ensure_props = array(
+					'ID' => 0,
+					'post_title' => '',
+					'post_name' => '',
+					'post_type' => 'post',
+					'post_date' => wp_date( 'Y-m-d H:i:s' ),
+					'post_modified' => wp_date( 'Y-m-d H:i:s' ),
+					'post_content' => '',
+					'post_excerpt' => '',
+					'post_status' => 'publish',
+				);
 
-			foreach ( $ensure_props as $prop => $default ) {
-				if ( ! property_exists( $object, $prop ) ) {
-					$object->$prop = $default;
+				foreach ( $ensure_props as $prop => $default ) {
+					if ( ! property_exists( $object, $prop ) ) {
+						$object->$prop = $default;
+					}
 				}
 			}
 

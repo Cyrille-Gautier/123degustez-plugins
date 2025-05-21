@@ -258,7 +258,9 @@ class Item_Handler {
 			wp_die( 'Your link is expired, please return to the previous page and try again', 'Error' );
 		}
 
-		$itemarr = $_POST;
+		// Remove slashes added by wp_magic_quotes() to normalize $_POST data
+		// https://github.com/Crocoblock/issues-tracker/issues/15447#issuecomment-2804553957
+		$itemarr = wp_unslash( $_POST );
 
 		if ( $item_id ) {
 			$itemarr['_ID'] = $item_id;

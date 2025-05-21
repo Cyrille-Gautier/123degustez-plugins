@@ -5,6 +5,8 @@ use Jet_Engine\Modules\Maps_Listings\Base_Provider;
 
 abstract class Base extends Base_Provider {
 
+	private $errors = false;
+
 	/**
 	 * Hook name to register provider-specific settings
 	 *
@@ -36,6 +38,18 @@ abstract class Base extends Base_Provider {
 	 */
 	public function build_autocomplete_api_url( $query = '' ) {
 		return false;
+	}
+
+	public function get_error( $type = 'autocomplete' ) {
+		return $this->errors[ $type ] ?? false;
+	}
+
+	public function save_error( $error, $type = 'autocomplete' ) {
+		$this->errors[ $type ] = $error;
+	}
+
+	public function clear_error( $type = 'autocomplete' ) {
+		unset( $this->errors[ $type ] );
 	}
 
 	/**
@@ -178,6 +192,10 @@ abstract class Base extends Base_Provider {
 		}
 
 		$data = $this->make_request( $url );
+
+		if ( ! empty( $data['error_message'] ) || ! empty( $data['error'] ) ) {
+			$this->save_error( $data, 'autocomplete' );
+		}
 
 		if ( ! $data ) {
 			return false;

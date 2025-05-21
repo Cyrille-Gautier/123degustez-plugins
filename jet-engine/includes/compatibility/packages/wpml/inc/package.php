@@ -167,6 +167,11 @@ class Package {
 					'type'        => esc_html__( 'Field: Field format (if used)', 'jet-engine' ),
 					'editor_type' => 'AREA',
 				),
+				array(
+					'field'       => 'field_fallback',
+					'type'        => esc_html__( 'Field: Fallback', 'jet-engine' ),
+					'editor_type' => 'LINE',
+				),
 			),
 		);
 

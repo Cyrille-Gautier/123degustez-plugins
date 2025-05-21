@@ -711,7 +711,7 @@ if ( ! class_exists( 'Jet_Engine_CPT' ) ) {
 					'label'       => __( 'Not found', 'jet-engine' ),
 					'description' => __( 'Default is No posts found/No pages found', 'jet-engine' ),
 					'is_singular' => false,
-					'default'     => _x( 'Parent %s%', 'Default value for parent_item_colon label', 'jet-engine' ),
+					'default'     => _x( 'No %s% found', 'Default value for not_found label', 'jet-engine' ),
 				),
 				array(
 					'name'        => 'not_found_in_trash',

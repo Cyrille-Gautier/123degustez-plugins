@@ -26,7 +26,12 @@ class Location_Distance extends \Elementor\Jet_Smart_Filters_Base_Widget {
 		return 'jet-engine-icon-location-distance';
 	}
 
-	public function get_help_url() {}
+	public function get_custom_help_url() {
+		return jet_smart_filters()->widgets->prepare_help_url(
+			'https://crocoblock.com/knowledge-base/jetsmartfilters/location-distance-filter-overview/',
+			$this->get_name()
+		);	
+	}
 
 	protected function register_controls() {
 
@@ -172,7 +177,7 @@ class Location_Distance extends \Elementor\Jet_Smart_Filters_Base_Widget {
 				'label'   => __( 'Distance', 'jet-engine' ),
 				'type'    => Controls_Manager::NUMBER,
 				'min'     => 1,
-				'max'     => 1000,
+				'max'     => 20000,
 				'default' => 50
 			)
 		);

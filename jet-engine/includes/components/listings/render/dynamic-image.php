@@ -35,7 +35,8 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 				'link_url_prefix'             => '',
 				'open_in_new'                 => false,
 				'hide_if_empty'               => false,
-				'object_context'              => 'default_object'
+				'object_context'              => 'default_object',
+				'custom_image_styles'         => array(),
 			);
 		}
 
@@ -45,6 +46,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 		 * @return [type] [description]
 		 */
 		public function render_image( $settings ) {
+
 			$source = isset( $settings['dynamic_image_source'] ) ? $settings['dynamic_image_source'] : 'post_thumbnail';
 			$custom = isset( $settings['dynamic_image_source_custom'] ) ? $settings['dynamic_image_source_custom'] : false;
 
@@ -257,24 +259,14 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 				return;
 			}
 
-			$attr = array(
+			$attr = $this->modify_image_attrs( array(
 				'src'      => $src,
 				'class'    => $this->get_image_css_class(),
 				'alt'      => $alt,
 				'decoding' => 'async',
-			);
+			) );
 
 			$this->full_image_src = $src;
-
-			$custom_alt = $this->get_image_alt( null, $this->get_settings() );
-
-			if ( ! empty( $custom_alt ) ) {
-				$attr['alt'] = $custom_alt;
-			}
-
-			if ( isset( $settings['lazy_load_image'] ) && filter_var( $settings['lazy_load_image'], FILTER_VALIDATE_BOOLEAN ) ) {
-				$attr['loading'] = 'lazy';
-			}
 
 			printf( '<img %s>', Jet_Engine_Tools::get_attr_string( $attr ) );
 		}
@@ -385,7 +377,16 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 
 			$image_html = $this->get_image_html( $settings );
 
-			printf( '<div class="%1$s">', implode( ' ', $classes ) );
+			if ( ! $this->show_field ) {
+				return;
+			}
+
+			$custom_image_styles = ! empty( $settings['custom_image_styles'] ) ? $settings['custom_image_styles'] : array();
+			$custom_styles = $this->get_parsed_custom_styles( $custom_image_styles, true );
+
+			$custom_styles_attr = ! empty( $custom_styles['width'] ) ? 'style="' . $custom_styles['width'] . '"' : '';
+
+			printf( '<div class="%1$s" %2$s>', implode( ' ', $classes ), $custom_styles_attr );
 
 				do_action( 'jet-engine/listing/dynamic-image/before-image', $this );
 
@@ -478,15 +479,69 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 			remove_filter( 'wp_get_attachment_image',            array( $this, 'store_full_image_src' ), 10 );
 		}
 
+		/**
+		 * Parse custom styles array to string.
+		 *
+		 * @param  array $styles Custom styles array.
+		 * @return string
+		 */
+		public function get_parsed_custom_styles( $styles = array(), $as_array = false ) {
+
+			$parsed_styles = array();
+			$aspect_ratio = false;
+
+			if ( ! empty( $styles['aspect_ratio'] ) ) {
+
+				$scale = ! empty( $styles['custom_scale'] ) && in_array(
+					$styles['custom_scale'], array( 'cover', 'contain' )
+				) ? $styles['custom_scale'] : 'cover';
+				$aspect_ratio = str_replace( ':', ' / ', $styles['aspect_ratio'] );
+
+				$parsed_styles['object-fit'] = 'object-fit: ' . $scale;
+				$parsed_styles['aspect-ratio'] = 'aspect-ratio: ' . esc_attr( $aspect_ratio );
+			}
+
+			if ( ! empty( $styles['width'] ) || false !== $aspect_ratio ) {
+				$width = ! empty( $styles['width'] ) ? $styles['width'] : '100%';
+				$parsed_styles['width'] = 'width: ' . esc_attr( $width );
+			}
+
+			if ( ! empty( $styles['height'] ) || false !== $aspect_ratio ) {
+				$height = ! empty( $styles['height'] ) ? $styles['height'] : 'auto';
+				$parsed_styles['height'] = 'height: ' . esc_attr( $height );
+			}
+
+			if ( $as_array ) {
+				return $parsed_styles;
+			} else {
+				return implode( '; ', $parsed_styles );
+			}
+		}
+
+		/**
+		 * Modify image attributes for core WP function and inner render function.
+		 *
+		 * @param  array $attr Attrributes array.
+		 * @return array
+		 */
 		public function modify_image_attrs( $attr ) {
+
 			$settings = $this->get_settings();
 
 			// Add CSS Class
-			$attr['class'] = $this->get_image_css_class() . ' ' . $attr['class'];
+			$attr['class'] = $this->get_image_css_class() . ' ' . esc_attr( $attr['class'] );
 
 			// Add Custom Alt
 			if ( ! empty( $settings['custom_image_alt'] ) ) {
-				$attr['alt'] = $settings['custom_image_alt'];
+				$attr['alt'] = esc_attr( $settings['custom_image_alt'] );
+			}
+
+			// Add Custom Styles
+			if (
+				! empty( $settings['custom_image_styles'] )
+				&& is_array( $settings['custom_image_styles'] )
+			) {
+				$attr['style'] = $this->get_parsed_custom_styles( $settings['custom_image_styles'] );
 			}
 
 			// Modify the `loading` attr

@@ -178,7 +178,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 		 */
 		public function listing_load_more() {
 
-			$query           = ! empty( $_REQUEST['query'] ) ? $_REQUEST['query'] : array();
+			$query           = ! empty( $_REQUEST['query'] ) ? wp_unslash ( $_REQUEST['query'] ) : array();
 			$widget_settings = ! empty( $_REQUEST['widget_settings'] ) ? $_REQUEST['widget_settings'] : array();
 			$response        = array();
 
@@ -213,7 +213,9 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 				$equal_cols_class = 'jet-equal-columns';
 			}
 
-			jet_engine()->listings->data->set_listing_by_id( absint( $widget_settings['lisitng_id'] ) );
+			$listing_id = absint( $widget_settings['lisitng_id'] );
+
+			jet_engine()->listings->data->set_listing_by_id( $listing_id );
 
 			$listing_source = jet_engine()->listings->data->get_listing_source();
 			$page           = ! empty( $_REQUEST['page'] ) ? absint( $_REQUEST['page'] ) : 1;
@@ -291,6 +293,10 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 			if ( jet_engine()->has_elementor() ) {
 				Elementor\Plugin::instance()->frontend->start_excerpt_flag( null );
 			}
+
+			$view_type = jet_engine()->listings->data->get_listing_type( $listing_id );
+			$render_instance->view = $view_type;
+			$render_instance->listing_id = $listing_id;
 
 			$render_instance->posts_loop(
 				$posts,

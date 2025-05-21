@@ -15,7 +15,8 @@ const {
 
 const {
 	InspectorControls,
-	MediaUpload
+	MediaUpload,
+	ColorPaletteControl,
 } = wp.blockEditor;
 
 const {
@@ -464,6 +465,26 @@ if ( -1 !== window.JetEngineListingData.activeModules.indexOf( 'maps-listings' )
 										props.setAttributes( { marker_image_size: newValue } );
 									} }
 								/>
+								{ window.jetSmBlockControl && <SelectControl
+									label={ __( 'Icon color source' ) }
+									value={ attributes.marker_icon_color_apply_to }
+									help={ __( 'Set to \'Original SVG colors\' if you have an icon that should not have its colors overridden by JetStyleManager' ) }
+									options={
+										[
+											{
+												'value': 'keep_jsm',
+												'label': __( 'JetStyleManager', 'jet-engine' ),
+											},
+											{
+												'value': 'keep',
+												'label': __( 'Original SVG colors', 'jet-engine' ),
+											},
+										]
+									}
+									onChange={ newValue => {
+										props.setAttributes( { marker_icon_color_apply_to: newValue } );
+									} }
+								/> }
 								{ -1 !== window.JetEngineListingData.activeModules.indexOf( 'custom-content-types' ) &&
 									( ( 'text' === attributes.marker_type && 'cct_field' === attributes.marker_label_type ) || 'dynamic_image_cct' === attributes.marker_type )  &&
 									<TextControl
@@ -592,14 +613,14 @@ if ( -1 !== window.JetEngineListingData.activeModules.indexOf( 'maps-listings' )
 														updateItem( item, 'marker_icon_color_apply_to', newValue, 'multiple_markers' )
 													} }
 												/>
-												<ColorPalette
+												{ item.marker_icon_color_apply_to !== 'keep' && <ColorPaletteControl
 													label={ __( 'Icon Color' ) }
 													colors={ paletteColors }
 													value={ item.marker_icon_color }
 													onChange={ newValue => {
 														updateItem( item, 'marker_icon_color', newValue, 'multiple_markers' )
 													} }
-												/>
+												/> }
 												<TextControl
 													type="text"
 													label={ __( 'Dynamic Icon Color' ) }

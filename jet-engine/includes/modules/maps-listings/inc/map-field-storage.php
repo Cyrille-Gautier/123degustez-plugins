@@ -41,6 +41,73 @@ class Map_Field_Storage {
 		add_filter( 'jet-engine/maps-listing/settings/js', [ $this, 'add_js_data' ] );
 		add_filter( 'jet-engine/maps-listing/settings/save-response/additional-data', [ $this, 'add_response_data' ], 10, 2 );
 
+		//https://github.com/Crocoblock/issues-tracker/issues/15079
+		add_filter( 'jet-form-builder/preset/extra-fields', array( $this, 'get_map_extra_fields' ), 10, 2 );
+
+	}
+
+	/**
+	 * Get map field preset extra fields
+	 *
+	 * @param  array                                         $extra  Extra fields array
+	 * @param  \Jet_Form_Builder\Presets\Sources\Base_Source $preset Preset instance
+	 * @return array                                                 Extra fields array
+	 */
+	public function get_map_extra_fields( $extra, $preset ) {
+		if ( ! is_a( $preset, '\Jet_Form_Builder\Presets\Sources\Preset_Source_Post' ) ) {
+			return $extra;
+		}
+
+		$preset_settings = $preset->get_field_data();
+		
+		if ( $preset_settings['prop'] !== 'post_meta' ) {
+			return $extra;
+		}
+
+		$post_id = $preset->query_source()->ID ?? false;
+
+		if ( ! $post_id ) {
+			return $extra;
+		}
+
+		$post_type = get_post_type( $post_id );
+
+		if ( ! $post_type ) {
+			return $extra;
+		}
+
+		$is_custom_storage = false;
+
+		foreach ( Custom_Tables::instance()->storages as $storage ) {
+			if ( $storage['object_type'] !== 'post' ) {
+				continue;
+			}
+
+			if ( $storage['object_slug'] === $post_type ) {
+				$is_custom_storage = true;
+				break;
+			}
+		}
+		
+		if ( ! $is_custom_storage ) {
+			return $extra;
+		}
+		
+		$meta_key = $preset_settings['other']['current_field_key'] ?? '';
+
+		if ( empty( $meta_key ) ) {
+			$meta_key = $preset_settings['key'] ?? '';
+		}
+
+		if ( ! $meta_key || empty( $this->fields[ $meta_key ] ) ) {
+			return $extra;
+		}
+
+		return array(
+			'self' => '%key%',
+			'lat'  => '%key%_lat',
+			'lng'  => '%key%_lng',
+		);
 	}
 
 	/**

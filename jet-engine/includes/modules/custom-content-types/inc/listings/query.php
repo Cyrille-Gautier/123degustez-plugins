@@ -236,11 +236,17 @@ class Query {
 		$select   = implode( ', ', $selects );
 		$group    = implode( ', ', $groups );
 		$group_by = '';
+		$status   = ! empty( $query_args['status'] ) ? $query_args['status'] : false;
 
 		if ( $where ) {
 			$where = 'WHERE 1=1 AND ' . $where;
 		} else {
 			$where = 'WHERE 1=1 ';
+		}
+		
+		if ( $status ) {
+			$status = esc_sql( $status );
+			$where .= " AND cct_status = '$status' ";
 		}
 
 		if ( $group ) {
@@ -476,7 +482,7 @@ class Query {
 		$query = json_decode( wp_unslash( $query ), true );
 
 		if ( ! empty( $_REQUEST['action'] ) && 'jet_engine_ajax' === $_REQUEST['action'] && isset( $_REQUEST['query'] ) ) {
-			$query = $_REQUEST['query'];
+			$query = wp_unslash( $_REQUEST['query'] );
 			$page  = isset( $_REQUEST['page'] ) ? absint( $_REQUEST['page'] ) : 1;
 		}
 

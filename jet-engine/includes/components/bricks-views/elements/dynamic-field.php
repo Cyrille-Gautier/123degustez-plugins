@@ -594,8 +594,18 @@ class Dynamic_Field extends Base {
 			);
 		}
 
-		echo "<div {$this->render_attributes( '_root' )}>";
+		ob_start();
 		$render->render_content();
+		$content = ob_get_clean();
+
+		if ( empty( $content ) ) {
+			return;
+		}
+
+		$attrs = $this->render_attributes( '_root' );
+
+		echo "<div {$attrs}>";
+		echo $content;
 		echo "</div>";
 	}
 

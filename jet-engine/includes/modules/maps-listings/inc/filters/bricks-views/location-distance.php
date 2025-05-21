@@ -201,7 +201,7 @@ class Location_Distance extends Jet_Smart_Filters_Bricks_Base {
 				'label'   => esc_html__( 'Distance', 'jet-engine' ),
 				'type'    => 'number',
 				'min'     => 1,
-				'max'     => 1000,
+				'max'     => 20000,
 				'default' => 50
 			]
 		);

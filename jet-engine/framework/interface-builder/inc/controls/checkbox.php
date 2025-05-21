@@ -65,7 +65,7 @@ if ( ! class_exists( 'CX_Control_Checkbox' ) ) {
 				$this->settings['options'] = call_user_func( $this->settings['options_callback'] );
 			}
 
-			if ( ! empty( $this->settings['options'] ) && is_array( $this->settings['options'] ) ) {
+			if ( ! empty( $this->settings['options'] ) || $this->settings['allow_custom_value'] ) {
 
 				if ( ! is_array( $this->settings['value'] ) ) {
 					$this->settings['value'] = array( $this->settings['value'] );
@@ -77,29 +77,32 @@ if ( ! class_exists( 'CX_Control_Checkbox' ) ) {
 
 				$html .= '<div class="cx-checkbox-group cx-check-radio-group--' . esc_attr( $layout ) . '">';
 
-				foreach ( $this->settings['options'] as $option => $option_value ) {
+				if ( ! empty( $this->settings['options'] ) && is_array( $this->settings['options'] ) ) {
 
-					if ( ! empty( $this->settings['value'] ) ) {
-						$option_checked = array_key_exists( $option, $this->settings['value'] ) ? strval( $option ) : '';
-						$item_value     = ! $this->is_empty( $option_checked ) ? $this->settings['value'][ $option ] : 'false';
-					} else {
-						$option_checked = '';
-						$item_value     = 'false';
+					foreach ( $this->settings['options'] as $option => $option_value ) {
+
+						if ( ! empty( $this->settings['value'] ) ) {
+							$option_checked = array_key_exists( $option, $this->settings['value'] ) ? strval( $option ) : '';
+							$item_value     = ! $this->is_empty( $option_checked ) ? $this->settings['value'][ $option ] : 'false';
+						} else {
+							$option_checked = '';
+							$item_value     = 'false';
+						}
+
+						$checked      = ( ! $this->is_empty( $option_checked ) && filter_var( $item_value, FILTER_VALIDATE_BOOLEAN ) ) ? 'checked' : '';
+						$item_value   = filter_var( $item_value, FILTER_VALIDATE_BOOLEAN ) ? 'true' : 'false';
+						$option_label = isset( $option_value ) && is_array( $option_value ) ? $option_value['label'] : $option_value;
+
+						$html .= '<div class="cx-checkbox-item-wrap">';
+							$html .= '<span class="cx-label-content">';
+							$html .= '<input type="hidden" id="' . esc_attr( $this->settings['id'] ) . '-' . $counter . '" class="cx-checkbox-input" name="' . esc_attr( $this->settings['name'] ) . '[' . $option . ']" ' . $checked . ' value="' . $item_value . '" ' . $this->get_required() . '>';
+							$html .= '<span class="cx-checkbox-item"><span class="marker dashicons dashicons-yes"></span></span>';
+							$html .= '<label class="cx-checkbox-label" for="' . esc_attr( $this->settings['id'] ) . '-' . $counter . '"><span class="cx-label-content">' . esc_html( $option_label ) . '</span></label> ';
+							$html .= '</span>';
+						$html .= '</div>';
+
+						$counter++;
 					}
-
-					$checked      = ( ! $this->is_empty( $option_checked ) && filter_var( $item_value, FILTER_VALIDATE_BOOLEAN ) ) ? 'checked' : '';
-					$item_value   = filter_var( $item_value, FILTER_VALIDATE_BOOLEAN ) ? 'true' : 'false';
-					$option_label = isset( $option_value ) && is_array( $option_value ) ? $option_value['label'] : $option_value;
-
-					$html .= '<div class="cx-checkbox-item-wrap">';
-						$html .= '<span class="cx-label-content">';
-						$html .= '<input type="hidden" id="' . esc_attr( $this->settings['id'] ) . '-' . $counter . '" class="cx-checkbox-input" name="' . esc_attr( $this->settings['name'] ) . '[' . $option . ']" ' . $checked . ' value="' . $item_value . '" ' . $this->get_required() . '>';
-						$html .= '<span class="cx-checkbox-item"><span class="marker dashicons dashicons-yes"></span></span>';
-						$html .= '<label class="cx-checkbox-label" for="' . esc_attr( $this->settings['id'] ) . '-' . $counter . '"><span class="cx-label-content">' . esc_html( $option_label ) . '</span></label> ';
-						$html .= '</span>';
-					$html .= '</div>';
-
-					$counter++;
 				}
 
 				if ( $this->settings['allow_custom_value'] ) {

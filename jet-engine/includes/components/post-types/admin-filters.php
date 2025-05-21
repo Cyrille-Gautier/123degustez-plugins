@@ -54,7 +54,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_Admin_Filters' ) ) {
 				return $query;
 			}
 
-			if ( $this->post_type !== $query->query['post_type'] || empty( $_REQUEST[ $this->query_key ] ) ) {
+			if ( isset( $query->query['post_type'] ) && $this->post_type !== $query->query['post_type'] || empty( $_REQUEST[ $this->query_key ] ) ) {
 				return $query;
 			}
 
@@ -153,7 +153,9 @@ if ( ! class_exists( 'Jet_Engine_CPT_Admin_Filters' ) ) {
 		 */
 		public function apply_meta_filter( $query, $meta_key, $value, $settings = array() ) {
 
-			$value = is_string( $value ) ? stripslashes( $value ) : $value;
+			// Prepare meta value for database by escaping special characters and removing slashes
+			// https://github.com/Crocoblock/issues-tracker/issues/14524
+			$value = is_string( $value ) ? htmlspecialchars( stripslashes( $value ), ENT_NOQUOTES ) : $value;
 
 			if ( empty( $query->query_vars['meta_query'] ) ) {
 				$query->query_vars['meta_query'] = array();
@@ -431,6 +433,8 @@ if ( ! class_exists( 'Jet_Engine_CPT_Admin_Filters' ) ) {
 
 			$formatted_result = array();
 
+			$result = $this->sanitize_meta_values( $result );
+
 			foreach ( $result as $key => $value ) {
 
 				if ( is_array( $value ) ) {
@@ -464,6 +468,28 @@ if ( ! class_exists( 'Jet_Engine_CPT_Admin_Filters' ) ) {
 
 			return $formatted_result;
 
+		}
+
+		function sanitize_meta_values( $options ) {
+			foreach ( $options as &$option ) {
+				foreach ( $option as $key => $value ) {
+					if ( is_string( $value ) ) {
+						// Remove tags
+						$value = strip_tags( $value );
+
+						// Replace " to avoid breaking HTML select tags
+						// Example: meta_value => Info about &amp; Mercedes "
+						// It becomes: <option value="Info about &amp; Mercedes " "="">Info about &amp; Mercedes "</option>
+						// Do not use htmlspecialchars() because I have &amp; in the input
+						$value = str_replace('"', '&quot;', $value);
+
+						$option[ $key ] = $value;
+					}
+				}
+			}
+			unset( $option );
+
+			return $options;
 		}
 
 	}

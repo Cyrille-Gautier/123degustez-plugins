@@ -122,7 +122,7 @@ if ( ! class_exists( 'Jet_Engine_Listings' ) ) {
 
 		/**
 		 * Holds instance of components manager
-		 * @var null
+		 * @var \Jet_Engine\Listings\Components\Manager
 		 */
 		public $components = null;
 

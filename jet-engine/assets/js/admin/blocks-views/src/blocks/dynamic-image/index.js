@@ -11,21 +11,19 @@ const {
 } = wp.blockEditor;
 
 const {
-	PanelColor,
 	Button,
 	TextControl,
-	TextareaControl,
 	SelectControl,
 	ToggleControl,
 	PanelBody,
 	RangeControl,
-	CheckboxControl,
 	Disabled,
-	G,
+	__experimentalUnitControl: UnitControl,
+	__experimentalToggleGroupControl: ToggleGroupControl,
+	__experimentalToggleGroupControlOption: ToggleGroupControlOption,
 	Path,
-	Rect,
-	Circle,
-	SVG
+	SVG,
+	Flex
 } = wp.components;
 
 const {
@@ -173,6 +171,115 @@ registerBlockType( 'jet-engine/dynamic-image', {
 										max={ 500 }
 									/>
 								}
+								<SelectControl
+									label={ __( 'Aspect Ratio' ) }
+									value={ attributes.custom_aspect_ratio }
+									options={ [
+										{
+											value: '',
+											label: __( 'Original' ),
+										},
+										{
+											value: '1:1',
+											label: __( '1:1' ),
+										},
+										{
+											value: '3:2',
+											label: '3:2',
+										},
+										{
+											value: '16:9',
+											label: '16:9',
+										},
+										{
+											value: '4:3',
+											label: '4:3',
+										},
+										{
+											value: '2:3',
+											label: '2:3',
+										},
+										{
+											value: '9:16',
+											label: '9:16',
+										},
+										{
+											value: '3:4',
+											label: '3:4',
+										},
+									] }
+									onChange={ newValue => {
+										props.setAttributes({
+											custom_aspect_ratio: newValue,
+										});
+									}}
+								/>
+								<Flex
+									gap={ 5 }
+									align={ 'flex-start' }
+								>
+									<UnitControl
+										label={ __( 'Image Width' ) }
+										value={ attributes.custom_image_width }
+										onChange={ newValue => {
+											props.setAttributes({
+												custom_image_width: newValue,
+											});
+										}}
+										units={ [
+											{
+												value:'px',
+												label: 'px',
+											},
+											{
+												value: '%',
+												label: '%',
+											}
+										] }
+										placeholder={ __( 'Auto' ) }
+										allowEmpty={ true }
+									/>
+									<UnitControl
+										label={ __( 'Image Height' ) }
+										value={ attributes.custom_image_height }
+										onChange={ newValue => {
+											props.setAttributes({
+												custom_image_height: newValue,
+											});
+										}}
+										units={ [
+											{
+												value:'px',
+												label: 'px',
+											},
+											{
+												value: '%',
+												label: '%',
+											}
+										] }
+										placeholder={ __( 'Auto' ) }
+										allowEmpty={ true }
+									/>
+								</Flex>
+								{ '' !== attributes.custom_aspect_ratio && <ToggleGroupControl
+									label={ __( 'Scale' ) }
+									value={ attributes.custom_scale }
+									onChange={ newValue => {
+										props.setAttributes({
+											custom_scale: newValue,
+										});
+									} }
+									isBlock
+								>
+									<ToggleGroupControlOption
+										label={ __( 'Cover' ) }
+										value="cover"
+									/>
+									<ToggleGroupControlOption
+										label={ __( 'Contain' ) }
+										value="contain"
+									/>
+								</ToggleGroupControl> }
 								<TextControl
 									type="text"
 									label={ __( 'Custom Image Alt' ) }

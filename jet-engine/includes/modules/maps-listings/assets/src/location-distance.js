@@ -1,3 +1,6 @@
+import Repeater from "./controls/repeater";
+import { clone } from './utils/utility';
+
 const { registerBlockType } = wp.blocks;
 const { __ } = wp.i18n;
 
@@ -15,6 +18,7 @@ const {
 	SelectControl,
 	TextControl,
 	TextareaControl,
+	ToggleControl,
 	Disabled
 } = wp.components;
 
@@ -48,6 +52,10 @@ registerBlockType( 'jet-smart-filters/location-distance', {
 			type: 'string',
 			default: 'value',
 		},
+		show_label: {
+			type: 'boolean',
+			default: false,
+		},
 		placeholder: {
 			type: 'string',
 			default: 'Enter your location...',
@@ -59,6 +67,17 @@ registerBlockType( 'jet-smart-filters/location-distance', {
 		query_id: {
 			type: 'string',
 			default: '',
+		},
+		additional_providers_enabled: {
+			type: 'boolean',
+			default: false,
+		},
+		additional_providers_list: {
+			type: 'array',
+			default: [{
+				additional_provider: '',
+				additional_query_id: ''
+			}],
 		},
 		distance_units: {
 			type: 'string',
@@ -72,7 +91,7 @@ registerBlockType( 'jet-smart-filters/location-distance', {
 	className: 'jet-smart-filters-location-distance',
 	edit: class extends wp.element.Component {
 
-		getOtptionsFromObject( object ) {
+		getOptionsFromObject( object ) {
 
 			console.log( object );
 
@@ -90,8 +109,15 @@ registerBlockType( 'jet-smart-filters/location-distance', {
 		}
 
 		render() {
-			
+
 			const props = this.props;
+
+			const updateAdditionalProvidersRepeaterItem = ( index, key, value ) => {
+				const providersList = clone( props.attributes.additional_providers_list );
+				providersList[index][key] = value;
+
+				props.setAttributes( { additional_providers_list: providersList } );
+			};
 
 			return [
 				props.isSelected && (
@@ -108,7 +134,7 @@ registerBlockType( 'jet-smart-filters/location-distance', {
 							<SelectControl
 								label={ __( 'Select filter' ) }
 								value={ props.attributes.filter_id }
-								options={ this.getOtptionsFromObject( window.JetSmartFilterBlocksData.filters['location-distance'] ) }
+								options={ this.getOptionsFromObject( window.JetSmartFilterBlocksData.filters['location-distance'] ) }
 								onChange={ newValue => {
 									props.setAttributes({ filter_id: Number(newValue) });
 								} }
@@ -116,7 +142,7 @@ registerBlockType( 'jet-smart-filters/location-distance', {
 							<SelectControl
 								label={ __( 'This filter for' ) }
 								value={ props.attributes.content_provider }
-								options={ this.getOtptionsFromObject( window.JetSmartFilterBlocksData.providers ) }
+								options={ this.getOptionsFromObject( window.JetSmartFilterBlocksData.providers ) }
 								onChange={ newValue => {
 									props.setAttributes({ content_provider: newValue });
 								} }
@@ -155,6 +181,13 @@ registerBlockType( 'jet-smart-filters/location-distance', {
 									props.setAttributes({ apply_on: newValue });
 								}}
 							/>
+							<ToggleControl
+								label={ __( 'Show filter label' ) }
+								checked={ props.attributes.show_label }
+								onChange={ newValue => {
+									props.setAttributes( { show_label: newValue } );
+								}}
+							/>
 							<TextControl
 								type="text"
 								label={ __( 'Placeholder' ) }
@@ -182,6 +215,46 @@ registerBlockType( 'jet-smart-filters/location-distance', {
 									props.setAttributes( { query_id: newValue } );
 								} }
 							/>
+							<ToggleControl
+								label={ __( 'Additional Providers Enabled' ) }
+								checked={ props.attributes.additional_providers_enabled }
+								onChange={ newValue => {
+									props.setAttributes( { additional_providers_enabled: newValue } );
+								}}
+							/>
+							{props.attributes.additional_providers_enabled === true && (
+								<Repeater
+									data={ props.attributes.additional_providers_list }
+									default={{
+										additional_provider: ''
+									}}
+									onChange={ newData => {
+										props.setAttributes({ additional_providers_list: newData });
+									} }
+								>
+									{
+										(item, index) =>
+											<React.Fragment>
+												<SelectControl
+													label={ __('Additional Provider') }
+													value={ item.additional_provider }
+													options={ this.getOptionsFromObject( window.JetSmartFilterBlocksData.providers ) }
+													onChange={ newValue => {
+														updateAdditionalProvidersRepeaterItem(index, 'additional_provider', newValue);
+													}}
+												/>
+												<TextControl
+													type="text"
+													label={ __('Additional Query ID') }
+													value={ item.additional_query_id }
+													onChange={ newValue => {
+														updateAdditionalProvidersRepeaterItem(index, 'additional_query_id', newValue);
+													}}
+												/>
+											</React.Fragment>
+									}
+								</Repeater>
+							)}
 						</PanelBody>
 						<PanelBody title={__( 'Distance Control' )}>
 							<SelectControl

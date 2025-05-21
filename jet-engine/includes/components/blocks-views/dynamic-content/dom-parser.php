@@ -28,8 +28,9 @@ class DOM_Parser {
 		if ( class_exists( '\DOMDocument' ) && false === strpos( $content, '<svg' ) ) {
 			$document = new \DOMDocument();
 
-			if ( function_exists( 'mb_convert_encoding' ) ) {
-				$content = mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' );
+			if ( function_exists( 'mb_encode_numericentity' ) ) {
+				$convmap = array(0x80, 0x10FFFF, 0, 0x10FFFF);
+				$content = mb_encode_numericentity($content, $convmap, 'UTF-8');
 			}
 
 			$document->loadHTML( $content );

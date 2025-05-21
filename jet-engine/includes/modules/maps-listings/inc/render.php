@@ -647,10 +647,14 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 
 					$color_mode  = ! empty( $settings['marker_icon_color_apply_to'] ) ? $settings['marker_icon_color_apply_to'] : 'apply-fill';
 					
-					if ( $color_mode !== 'keep' ) {
-						$icon_class .= ' ' . str_replace( '_', ' ', $color_mode );
-					} else {
-						$icon_class .= ' keep-color';
+					switch ( $color_mode ) {
+						case 'keep':
+							$icon_class .= ' keep-color';
+							break;
+						case 'keep_jsm':
+							break;
+						default:
+							$icon_class .= ' ' . str_replace( '_', ' ', $color_mode );
 					}
 
 					if ( ! empty( $icon_style ) ) {

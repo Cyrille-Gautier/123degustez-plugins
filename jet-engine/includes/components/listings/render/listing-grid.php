@@ -14,6 +14,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Listing_Grid' ) ) {
 		public $query_vars       = array();
 		public $posts_query      = false;
 		public $listing_id       = null;
+		public $view             = null;
 		public $listing_query_id = null;
 
 		public static $did_listings = array();
@@ -1002,6 +1003,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Listing_Grid' ) ) {
 			}
 
 			$view_type = jet_engine()->listings->data->get_listing_type( $listing_id );
+			$this->view = $view_type;
 
 			jet_engine()->admin_bar->register_item( 'edit_post_' . $listing_id, array(
 				'title'     => get_the_title( $listing_id ),
@@ -1371,7 +1373,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Listing_Grid' ) ) {
 					$container_classes[] = 'inline-tablet-css';
 					$inline_css .= '--jet-column-tablet-min-width: ' . absint( $settings['column_min_width_tablet'] ) . 'px;';
 				}
-				
+
 				if ( 'auto' === $mobile_col ) {
 					$container_classes[] = 'inline-mobile-css';
 					$inline_css .= '--jet-column-mobile-min-width: ' . absint( $settings['column_min_width_mobile'] ) . 'px;';
@@ -1677,6 +1679,8 @@ if ( ! class_exists( 'Jet_Engine_Render_Listing_Grid' ) ) {
 				jet_engine()->listings->data->increase_index();
 
 			}
+
+			do_action( 'jet-engine/listing/grid/after-loop', $this );
 
 			if ( $this->posts_query && $temp_query ) {
 				$wp_query = $temp_query;

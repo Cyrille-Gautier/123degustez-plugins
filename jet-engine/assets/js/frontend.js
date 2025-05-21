@@ -88,7 +88,13 @@
 
 		filtersCompatibility: function( event, $provider, filtersInstance, providerType ) {
 
-			if ( 'jet-engine' !== providerType ) {
+			let providers = {
+				'jet-engine': true,
+				'jet-engine-calendar': true,
+				'jet-data-table': true,
+			};
+
+			if ( ! providers[ providerType ] ) {
 				return;
 			}
 
@@ -321,6 +327,20 @@
 			} );
 		},
 
+		dataStores: {
+			queues: {},
+			getQueue: function( store ) {
+				if ( ! ( this.queues?.[ store ] instanceof Promise ) ) {
+					this.queues[ store ] = Promise.resolve();
+				}
+
+				return this.queues[ store ];
+			},
+			addToQueue: function( store, callback ) {
+				this.queues[ store ] = this.getQueue( store ).then( callback );
+			},
+		},
+
 		removeFromStore: function( event ) {
 
 			event.preventDefault();
@@ -377,68 +397,70 @@
 			$this.css( 'opacity', 0.3 );
 			$this.addClass( 'jet-store-processing' );
 
-			$.ajax({
-				url: JetEngineSettings.ajaxurl,
-				type: 'POST',
-				dataType: 'json',
-				data: {
-					action: 'jet_engine_remove_from_store_' + args.store.slug,
-					store: args.store.slug,
-					post_id: args.post_id,
-				},
-			}).done( function( response ) {
+			JetEngine.dataStores.addToQueue( args.store.slug, () => {
+				return $.ajax({
+					url: JetEngineSettings.ajaxurl,
+					type: 'POST',
+					dataType: 'json',
+					data: {
+						action: 'jet_engine_remove_from_store_' + args.store.slug,
+						store: args.store.slug,
+						post_id: args.post_id,
+					},
+				}).done( function( response ) {
 
-				$this.css( 'opacity', 1 );
-				$this.removeClass( 'jet-store-processing' );
+					$this.css( 'opacity', 1 );
+					$this.removeClass( 'jet-store-processing' );
 
-				if ( response.success ) {
+					if ( response.success ) {
 
-					if ( ! isDataStoreBtn ) {
-						$this.addClass( 'is-hidden' );
+						if ( ! isDataStoreBtn ) {
+							$this.addClass( 'is-hidden' );
+						}
+
+						$( '.jet-add-to-store[data-store="' + args.store.slug + '"][data-post="' + args.post_id + '"]' ).each( function() {
+							JetEngine.switchDataStoreStatus( $( this ), true );
+						} );
+
+						$( '.jet-data-store-link.jet-remove-from-store[data-store="' + args.store.slug + '"][data-post="' + args.post_id + '"]' ).each( function() {
+							JetEngine.switchDataStoreStatus( $( this ), true );
+						} );
+
+						JetEngine.dataStoreSyncListings( args );
+
+						if ( args.remove_from_listing ) {
+							$this.closest( '.jet-listing-grid__item[data-post="' + args.post_id + '"]' ).remove();
+						}
+
+						if ( response.data.fragments ) {
+							$.each( response.data.fragments, function( selector, value ) {
+								$( selector ).html( value );
+							} );
+						}
+
+						$( document ).trigger( 'jet-engine-data-stores-on-remove', args );
+
+					} else {
+						alert( response.data.message );
 					}
 
-					$( '.jet-add-to-store[data-store="' + args.store.slug + '"][data-post="' + args.post_id + '"]' ).each( function() {
-						JetEngine.switchDataStoreStatus( $( this ), true );
-					} );
+					return response;
 
-					$( '.jet-data-store-link.jet-remove-from-store[data-store="' + args.store.slug + '"][data-post="' + args.post_id + '"]' ).each( function() {
-						JetEngine.switchDataStoreStatus( $( this ), true );
-					} );
-
-					JetEngine.dataStoreSyncListings( args );
+				} ).done( function( response ) {
 
 					if ( args.remove_from_listing ) {
-						$this.closest( '.jet-listing-grid__item[data-post="' + args.post_id + '"]' ).remove();
+						$this.closest( '.jet-listing-grid__item' ).remove();
 					}
 
-					if ( response.data.fragments ) {
-						$.each( response.data.fragments, function( selector, value ) {
-							$( selector ).html( value );
-						} );
+					if ( response.success ) {
+						$( 'span.jet-engine-data-store-count[data-store="' + args.store.slug + '"]' ).text( response.data.count );
 					}
 
-					$( document ).trigger( 'jet-engine-data-stores-on-remove', args );
-
-				} else {
-					alert( response.data.message );
-				}
-
-				return response;
-
-			} ).done( function( response ) {
-
-				if ( args.remove_from_listing ) {
-					$this.closest( '.jet-listing-grid__item' ).remove();
-				}
-
-				if ( response.success ) {
-					$( 'span.jet-engine-data-store-count[data-store="' + args.store.slug + '"]' ).text( response.data.count );
-				}
-
-			} ).fail( function( jqXHR, textStatus, errorThrown ) {
-				$this.css( 'opacity', 1 );
-				$this.removeClass( 'jet-store-processing' );
-				alert( errorThrown );
+				} ).fail( function( jqXHR, textStatus, errorThrown ) {
+					$this.css( 'opacity', 1 );
+					$this.removeClass( 'jet-store-processing' );
+					alert( errorThrown );
+				} );
 			} );
 
 		},
@@ -596,55 +618,57 @@
 
 			$( document ).trigger( 'jet-engine-on-add-to-store', [ $this, args ] );
 
-			$.ajax({
-				url: JetEngineSettings.ajaxurl,
-				type: 'POST',
-				dataType: 'json',
-				data: {
-					action: 'jet_engine_add_to_store_' + args.store.slug,
-					store: args.store.slug,
-					post_id: args.post_id,
-				},
-			}).done( function( response ) {
+			JetEngine.dataStores.addToQueue( args.store.slug, () => {
+				return $.ajax({
+					url: JetEngineSettings.ajaxurl,
+					type: 'POST',
+					dataType: 'json',
+					data: {
+						action: 'jet_engine_add_to_store_' + args.store.slug,
+						store: args.store.slug,
+						post_id: args.post_id,
+					},
+				}).done( function( response ) {
 
-				$this.css( 'opacity', 1 );
-				$this.removeClass( 'jet-store-processing' );
+					$this.css( 'opacity', 1 );
+					$this.removeClass( 'jet-store-processing' );
 
-				if ( response.success ) {
+					if ( response.success ) {
 
-					JetEngine.switchDataStoreStatus( $this );
-					$( '.jet-remove-from-store[data-store="' + args.store.slug + '"][data-post="' + args.post_id + '"]' ).removeClass( 'is-hidden' );
+						JetEngine.switchDataStoreStatus( $this );
+						$( '.jet-remove-from-store[data-store="' + args.store.slug + '"][data-post="' + args.post_id + '"]' ).removeClass( 'is-hidden' );
 
-					if ( response.data.fragments ) {
-						$.each( response.data.fragments, function( selector, value ) {
-							$( selector ).html( value );
-						} );
+						if ( response.data.fragments ) {
+							$.each( response.data.fragments, function( selector, value ) {
+								$( selector ).html( value );
+							} );
+						}
+
+						JetEngine.dataStoreSyncListings( args );
+
+						if ( args.popup ) {
+							JetEngine.triggerPopup( args.popup, args.isJetEngine, args.post_id );
+						}
+
+					} else {
+						alert( response.data.message );
 					}
 
-					JetEngine.dataStoreSyncListings( args );
+					$( document ).trigger( 'jet-engine-data-stores-on-add', args );
 
-					if ( args.popup ) {
-						JetEngine.triggerPopup( args.popup, args.isJetEngine, args.post_id );
+					return response;
+
+				} ).done( function( response ) {
+
+					if ( response.success ) {
+						$( 'span.jet-engine-data-store-count[data-store="' + args.store.slug + '"]' ).text( response.data.count );
 					}
 
-				} else {
-					alert( response.data.message );
-				}
-
-				$( document ).trigger( 'jet-engine-data-stores-on-add', args );
-
-				return response;
-
-			} ).done( function( response ) {
-
-				if ( response.success ) {
-					$( 'span.jet-engine-data-store-count[data-store="' + args.store.slug + '"]' ).text( response.data.count );
-				}
-
-			} ).fail( function( jqXHR, textStatus, errorThrown ) {
-				$this.css( 'opacity', 1 );
-				$this.removeClass( 'jet-store-processing' );
-				alert( errorThrown );
+				} ).fail( function( jqXHR, textStatus, errorThrown ) {
+					$this.css( 'opacity', 1 );
+					$this.removeClass( 'jet-store-processing' );
+					alert( errorThrown );
+				} );
 			} );
 
 		},
@@ -2314,6 +2338,7 @@
 			}
 
 			if ( window.JetPopupFrontend && window.JetPopupFrontend.initAttachedPopups ) {
+				$selector.find( '.jet-popup-attach-event-inited' ).removeClass( 'jet-popup-attach-event-inited' );
 				window.JetPopupFrontend.initAttachedPopups( $selector );
 			}
 

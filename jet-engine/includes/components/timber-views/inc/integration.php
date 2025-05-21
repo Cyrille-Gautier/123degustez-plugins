@@ -28,7 +28,7 @@ class Integration {
 	}
 
 	public function install_source() {
-		
+
 		$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false;
 
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->nonce_action ) ) {
@@ -59,7 +59,7 @@ class Integration {
 	}
 
 	public function install_timber( array $source = [] ):bool {
-		
+
 		$is_wp  = ( false === strpos( $source['url'], 'https://' ) ) ? true : false;
 		$plugin = $source['slug'];
 
@@ -106,9 +106,9 @@ class Integration {
 			$msg = __( 'Unable to connect to the filesystem. Please confirm your credentials.' );
 
 			// Pass through the error from WP_Filesystem if one was raised.
-			if ( $wp_filesystem instanceof WP_Filesystem_Base 
-				&& is_wp_error( $wp_filesystem->errors ) 
-				&& $wp_filesystem->errors->has_errors() 
+			if ( $wp_filesystem instanceof WP_Filesystem_Base
+				&& is_wp_error( $wp_filesystem->errors )
+				&& $wp_filesystem->errors->has_errors()
 			) {
 				$msg = esc_html( $wp_filesystem->errors->get_error_message() );
 			}
@@ -142,15 +142,15 @@ class Integration {
 	public function render_dashboard_tab() {
 
 		wp_enqueue_script(
-			'jet-engine-timber-wizard', 
+			'jet-engine-timber-wizard',
 			Package::instance()->package_url( 'assets/js/tweaks-wizard.js' ),
 			[],
 			jet_engine()->get_version(),
 			true
 		);
 
-		wp_localize_script( 
-			'jet-engine-timber-wizard', 
+		wp_localize_script(
+			'jet-engine-timber-wizard',
 			'JetEngineTimberViewsWizard',
 			[
 				'sources'     => $this->timber_sources(),
@@ -275,6 +275,14 @@ class Integration {
 	}
 
 	public function timber_sources():array {
+
+		$timber_2_url = add_query_arg(
+			[
+				'v' => time(),
+			],
+			'https://account.crocoblock.com/free-download/crocoblock-timber-library.zip'
+		);
+
 		return [
 			[
 				'name' => 'Timber 1.X',
@@ -285,7 +293,7 @@ class Integration {
 			[
 				'name' => 'Timber 2.X',
 				'description' => 'Timber 2.0.0+ bundled into separate plugin',
-				'url' => 'https://account.crocoblock.com/free-download/crocoblock-timber-library.zip',
+				'url' => $timber_2_url,
 				'slug' => 'crocoblock-timber-library/crocoblock-timber-library.php',
 			]
 		];

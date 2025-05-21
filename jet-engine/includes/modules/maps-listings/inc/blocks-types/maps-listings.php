@@ -129,6 +129,10 @@ class Maps_Listing_Blocks_Views_Type extends \Jet_Engine_Blocks_Views_Type_Base 
 				'type'    => 'string',
 				'default' => '',
 			),
+			'marker_icon_color_apply_to' => array(
+				'type'    => 'string',
+				'default' => 'keep_jsm',
+			),
 			'marker_label_type' => array(
 				'type'    => 'string',
 				'default' => 'post_title',
@@ -458,8 +462,8 @@ class Maps_Listing_Blocks_Views_Type extends \Jet_Engine_Blocks_Views_Type_Base 
 				'label' => __( 'Icon Color', 'jet-engine' ),
 				'type'  => 'color-picker',
 				'css_selector' => array(
-					'{{WRAPPER}} .jet-map-marker' => 'color: {{VALUE}}',
-					'{{WRAPPER}} .jet-map-marker path' => 'fill: {{VALUE}} !important',
+					'{{WRAPPER}} .jet-map-marker:not( .keep-color, .custom-color )' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .jet-map-marker:not( .keep-color, .custom-color ) path' => 'fill: {{VALUE}} !important',
 				),
 			)
 		);

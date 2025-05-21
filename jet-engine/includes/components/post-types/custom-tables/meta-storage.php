@@ -366,6 +366,13 @@ class Meta_Storage {
 
 		if ( $obj_row_exists ) {
 
+			// Filter hook to control how empty values of custom meta fields are saved to the database.
+			// Allows changing empty values to either NULL or an empty string before saving.
+			// https://github.com/Crocoblock/issues-tracker/issues/15348
+			if ( false === $meta_value ) {
+				$meta_value = apply_filters( 'jet-engine/custom-meta-tables/storage/empty-meta-value', $meta_value, $object_id, $meta_key, $this->object_type );
+			}
+
 			$this->db->update( [ $meta_key => $meta_value ], [ 'object_ID' => $object_id ] );
 			wp_cache_delete( $this->get_cache_key( $object_id ), 'jet_engine_custom_tables' );
 

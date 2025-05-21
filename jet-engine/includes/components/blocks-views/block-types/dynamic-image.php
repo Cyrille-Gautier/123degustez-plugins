@@ -25,6 +25,41 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Image' ) ) {
 		}
 
 		/**
+		 * Allow to filter raw attributes from block type instance to adjust JS and PHP attributes format
+		 *
+		 * @param  array $attributes Initial attributes.
+		 * @return array
+		 */
+		public function prepare_attributes( $attributes ) {
+
+			$custom_image_styles = array();
+
+			if ( ! empty( $attributes['custom_image_width'] ) ) {
+				$custom_image_styles['width'] = esc_attr( $attributes['custom_image_width'] );
+				unset( $attributes['custom_image_width'] );
+			}
+
+			if ( ! empty( $attributes['custom_image_height'] ) ) {
+				$custom_image_styles['height'] = esc_attr( $attributes['custom_image_height'] );
+				unset( $attributes['custom_image_height'] );
+			}
+
+			if ( ! empty( $attributes['custom_aspect_ratio'] ) ) {
+				$custom_image_styles['aspect_ratio'] = esc_attr( $attributes['custom_aspect_ratio'] );
+				unset( $attributes['custom_aspect_ratio'] );
+			}
+
+			if ( ! empty( $attributes['custom_scale'] ) ) {
+				$custom_image_styles['custom_scale'] = esc_attr( $attributes['custom_scale'] );
+				unset( $attributes['custom_scale'] );
+			}
+
+			$attributes['custom_image_styles'] = $custom_image_styles;
+
+			return $attributes;
+		}
+
+		/**
 		 * Return attributes array
 		 *
 		 * @return array
@@ -51,6 +86,24 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Image' ) ) {
 					'type' => 'number',
 					'default' => 50,
 				),
+				// Blocks specific attributes - start
+				'custom_aspect_ratio' => array(
+					'type' => 'string',
+					'default' => '',
+				),
+				'custom_image_width' => array(
+					'type' => 'string',
+					'default' => '',
+				),
+				'custom_image_height' => array(
+					'type' => 'string',
+					'default' => '',
+				),
+				'custom_scale' => array(
+					'type' => 'string',
+					'default' => 'cover',
+				),
+				// Blocks specific attributes - end
 				'custom_image_alt' => array(
 					'type' => 'string',
 					'default' => '',

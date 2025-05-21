@@ -9,6 +9,45 @@ class Blocks_Integration {
 	public function __construct() {
 		add_action( 'jet-engine/blocks-views/register-block-types', array( $this, 'register_block_types' ) );
 		add_filter( 'jet-engine/blocks-views/editor/config',        array( $this, 'add_editor_config' ) );
+
+		if ( class_exists( '\JET_SM\Gutenberg\Block_Manager' ) && class_exists( '\JET_SM\Gutenberg\Block_Manager' ) ) {
+			add_filter( 'get_post_metadata', array( $this, 'fix_jsm_styles' ), 10, 4 );
+		}
+	}
+
+	/**
+	 * Fix CSS selectors from Jet Style Manager meta
+	 * https://github.com/Crocoblock/issues-tracker/issues/15337
+	 */
+	public function fix_jsm_styles( $value, $post_id, $meta_key, $single ) {
+		if ( $meta_key !== '_jet_sm_ready_style' ) {
+			return $value;
+		}
+
+		remove_filter( 'get_post_metadata', array( $this, 'fix_jsm_styles' ), 10 );
+
+		$styles = get_post_meta( $post_id, $meta_key, true );
+
+		if ( empty( $styles ) ) {
+			return $value;
+		}
+
+		$styles = preg_replace_callback(
+			'/(?<block_id>\.jet-sm-[^{}]+?)\s+(?<selector>\.jet-map-marker(?:\s+path)?)\s*(?<styles>{\s*(?:color:|fill:).+?})/',
+			function( $matches ) {
+				return sprintf(
+					'%s %s%s',
+					$matches['block_id'],
+					str_replace( '.jet-map-marker', '.jet-map-marker:not( .keep-color, .custom-color )', $matches['selector'] ),
+					$matches['styles']
+				);
+			},
+			$styles
+		);
+
+		add_filter( 'get_post_metadata', array( $this, 'fix_jsm_styles' ), 10, 4 );
+
+		return $single ? $styles : array( $styles );
 	}
 
 	/**

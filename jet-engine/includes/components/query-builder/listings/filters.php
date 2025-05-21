@@ -189,6 +189,8 @@ class Filters {
 
 		}
 
+		$remove_hook = apply_filters( 'jet-engine/query-builder/filters/setup/remove-hook', $remove_hook, $query );
+
 		if ( $remove_hook ) {
 			remove_action( 'jet-engine/query-builder/query/after-query-setup', array( $this, 'maybe_setup_filter' ) );
 		}

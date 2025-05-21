@@ -11,9 +11,22 @@ if ( ! defined( 'WPINC' ) ) {
  */
 class Manager {
 
+	/**
+	 * @var Editor
+	 */
 	public $editor;
+	/**
+	 * @var Registry
+	 */
 	public $registry;
+	/**
+	 * @var State
+	 */
 	public $state;
+	/**
+	 * @var Stack
+	 */
+	public $stack;
 
 	private $is_component_hits = [];
 
@@ -25,18 +38,20 @@ class Manager {
 		require_once $this->path( 'editor.php' );
 		require_once $this->path( 'registry.php' );
 		require_once $this->path( 'state.php' );
+		require_once $this->path( 'component-stack.php' );
 
 		$this->editor   = new Editor();
 		$this->registry = new Registry();
 		$this->state    = new State();
+		$this->stack    = new Stack();
 
 	}
 
 	/**
 	 * Returns component instance by name
 	 * 
-	 * @param  [type] $component_name [description]
-	 * @return [type]                 [description]
+	 * @param  string           $component_name Component name / ID
+	 * @return Component|false                  Component instance or false if not found
 	 */
 	public function get( $component_name = '', $by = 'name' ) {
 		return $this->registry->get( $component_name, $by );

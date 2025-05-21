@@ -41,7 +41,7 @@ class Jet_Engine_AI_Handler {
 		$limit       = 0;
 
 		foreach ( $licenses as $license_key => $license_data ) {
-			
+
 			if ( 'active' === $license_data['licenseStatus']
 				&& 'crocoblock' === $license_data['licenseDetails']['type']
 				&& 'lifetime' === $license_data['licenseDetails']['product_category']
@@ -118,7 +118,7 @@ class Jet_Engine_AI_Handler {
 
 	public function remote_get_completion( $prompt = '', $source = 'sql' ) {
 
-		$max_length = 600;
+		$max_length = 650;
 
 		if ( $max_length < strlen( $prompt ) ) {
 			wp_send_json_error( 'Prompt is too long. Limit is ' . $max_length . ' chars' );
@@ -160,16 +160,16 @@ class Jet_Engine_AI_Handler {
 	}
 
 	public function prepare_completion( $completion, $source = 'sql' ) {
-		
+
 		$completion = ltrim( $completion, "\n" );
 
 		switch ( $source ) {
 			case 'sql':
-				
-				$completion = str_replace( 
+
+				$completion = str_replace(
 					[ 'wp_', 'META_KEY', 'META_VALUE' ],
 					[ '{prefix}', 'meta_key', 'meta_value' ],
-					$completion 
+					$completion
 				);
 
 				break;

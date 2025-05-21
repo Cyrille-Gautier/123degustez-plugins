@@ -48,6 +48,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views' ) ) {
 			require $this->component_path( 'dynamic-content/manager.php' );
 			require $this->component_path( 'components/register.php' );
 			require $this->component_path( 'content-setter.php' );
+			require $this->component_path( 'core-styles.php' );
 
 			$this->render          = new Jet_Engine_Blocks_Views_Render();
 			$this->block_types     = new Jet_Engine_Blocks_Views_Types();
@@ -56,11 +57,12 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views' ) ) {
 			new Jet_Engine_Blocks_Views_Ajax_Handlers();
 			new \Jet_Engine\Blocks_Views\Components\Register();
 			new \Jet_Engine\Blocks_Views\Content_Setter();
+			new \Jet_Engine\Blocks_Views\Core_Styles();
 		}
 
 		/**
 		 * Register listing view
-		 * 
+		 *
 		 * @param [type] $views [description]
 		 */
 		public function add_listing_view( $views ) {
@@ -104,7 +106,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views' ) ) {
 		public function is_blocks_listing( $listing_id ) {
 
 			/**
-			 * Do not use get_listing_type() method here 
+			 * Do not use get_listing_type() method here
 			 * because this method itself used inside get_listing_type() to define what listing type was used
 			 */
 			$meta = get_post_meta( $listing_id, '_listing_type', true );

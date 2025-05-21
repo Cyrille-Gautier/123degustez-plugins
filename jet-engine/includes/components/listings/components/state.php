@@ -18,7 +18,7 @@ class State {
 	/**
 	 * Set current state
 	 * 
-	 * @param array $state [description]
+	 * @param array $state Array of state values to set
 	 */
 	public function set( $state = [] ) {
 
@@ -36,7 +36,6 @@ class State {
 	/**
 	 * Empty current state
 	 * or reset to latest parent
-	 * @return [type] [description]
 	 */
 	public function reset() {
 
@@ -47,6 +46,7 @@ class State {
 			if ( isset( $this->parents[ $latest_parent ] ) ) {
 				$initial_state = $this->parents[ $latest_parent ];
 				unset( $this->parents[ $latest_parent ] );
+				$this->parents = array_values( $this->parents );
 			}
 		}
 
@@ -57,7 +57,7 @@ class State {
 	/**
 	 * Get current component state
 	 * 
-	 * @return [type] [description]
+	 * @return array|mixed Get current state or specific field value
 	 */
 	public function get( $field = null, $default = '' ) {
 

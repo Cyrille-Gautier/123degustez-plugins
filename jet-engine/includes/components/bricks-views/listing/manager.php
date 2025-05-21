@@ -99,7 +99,7 @@ class Manager {
 		Database::set_active_templates();
 		$active_templates = Database::$active_templates;
 
-		if ( $active_templates['content_type'] === 'archive' ) {
+		if ( in_array( $active_templates['content_type'], [ 'content', 'archive' ] ) ) {
 			$post_id = $active_templates['content'];
 		}
 

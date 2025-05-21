@@ -21,7 +21,12 @@ class User_Geolocation extends \Elementor\Jet_Smart_Filters_Base_Widget {
 		return 'jet-engine-icon-user-geolocation';
 	}
 
-	public function get_help_url() {}
+	public function get_custom_help_url() {
+		return jet_smart_filters()->widgets->prepare_help_url(
+			'https://crocoblock.com/knowledge-base/jetengine/how-to-set-geo-search-based-on-user-geolocation/',
+			$this->get_name()
+		);	
+	}
 
 	protected function register_controls() {
 

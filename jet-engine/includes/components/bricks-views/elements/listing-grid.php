@@ -1419,6 +1419,15 @@ class Listing_Grid extends Base {
 		$render->after_listing_grid();
 	}
 
+	public function get_jet_settings( $setting = null, $default = false ) {
+		// Disable AJAX-based options in the Builder (non-frontend) environment.
+		if ( ! $this->is_frontend ) {
+			$this->settings['lazy_load'] = false;
+		}
+
+		return parent::get_jet_settings( $setting, $default );
+	}
+
 	public function parse_jet_render_attributes( $attrs = [] ) {
 		$attrs['arrows']            = $attrs['arrows'] ?? false;
 		$attrs['autoplay']          = $attrs['autoplay'] ?? false;

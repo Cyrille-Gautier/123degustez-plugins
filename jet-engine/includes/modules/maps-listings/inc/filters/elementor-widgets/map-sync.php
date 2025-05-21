@@ -22,7 +22,12 @@ class Map_Sync extends \Elementor\Jet_Smart_Filters_Base_Widget {
 		return 'jet-engine-icon-map-synch';
 	}
 
-	public function get_help_url() {}
+	public function get_custom_help_url() {
+		return jet_smart_filters()->widgets->prepare_help_url(
+			'https://crocoblock.com/knowledge-base/jetengine/how-to-update-map-listing-on-pan/',
+			$this->get_name()
+		);	
+	}
 
 	public function content_providers() {
 		$allowed = array(

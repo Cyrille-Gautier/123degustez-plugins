@@ -250,7 +250,7 @@ class Product_Data_Panel extends \Jet_Engine_CPT_Meta {
 	 */
 	public function save_meta_box_option_fields( $post_id ) {
 		foreach ( $this->fields as $key => $field ) {
-			if ( ! empty( $_POST[ $key ] ) ) {
+			if ( isset( $_POST[ $key ] ) ) {
 				update_post_meta( $post_id, $key, $this->sanitize_meta( $field, $_POST[ $key ] ) );
 			} else {
 				delete_post_meta( $post_id, $key);
@@ -325,7 +325,7 @@ class Product_Data_Panel extends \Jet_Engine_CPT_Meta {
 				break;
 		}
 
-		if ( ! empty( $value ) ) {
+		if ( isset( $value ) && $value !== '' ) {
 			$field['value'] = $value;
 		}
 

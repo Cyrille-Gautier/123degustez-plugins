@@ -246,7 +246,7 @@ class Settings {
 				<?php do_action( 'jet-engine/maps-listing/settings/geocode-provider-controls' ); ?>
 				<cx-vui-switcher
 					label="<?php _e( 'Preload coordinates by address', 'jet-engine' ); ?>"
-						description="<?php _e( 'We recommend to enable this option and set meta field to preload coordinates for. This is required to avoid optimize Google Maps API requests. Note: only JetEngine meta fields could be preloaded', 'jet-engine' ); ?>"
+						description="<?php _e( 'We recommend to enable this option and set meta field to preload coordinates for. This is required to avoid optimize Google Maps API requests.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					@input="updateSetting( $event, 'enable_preload_meta' )"
 					:value="settings.enable_preload_meta"

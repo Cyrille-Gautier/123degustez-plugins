@@ -433,11 +433,14 @@ class DB extends \Jet_Engine_Base_DB {
 
 					$value = maybe_unserialize( $value );
 
-					if ( is_string( $value ) ) {
+					// Removed wp_unslash() since data is already stored without slashes in the database
+					// https://github.com/Crocoblock/issues-tracker/issues/15447#issuecomment-2804553957
+					$item[ $key ] = $value;
+					/*if ( is_string( $value ) ) {
 						$item[ $key ] = wp_unslash( $value );
 					} else {
 						$item[ $key ] = $value;
-					}
+					}*/
 				}
 
 				$item['cct_slug'] = $this->table;
@@ -448,11 +451,14 @@ class DB extends \Jet_Engine_Base_DB {
 
 					$value = maybe_unserialize( $value );
 
-					if ( is_string( $value ) ) {
+					// Removed wp_unslash() since data is already stored without slashes in the database
+					// https://github.com/Crocoblock/issues-tracker/issues/15447#issuecomment-2804553957
+					$item->$key = $value;
+					/*if ( is_string( $value ) ) {
 						$item->$key = wp_unslash( $value );
 					} else {
 						$item->$key = $value;
-					}
+					}*/
 
 				}
 

@@ -973,6 +973,28 @@ class Relation {
 					}
 
 					break;
+				case 'checkbox':
+				case 'select':
+
+					if ( $field['type'] === 'select' && empty( $field['is_multiple'] ) ) {
+						break;
+					}
+
+					$allowed = array();
+	
+					foreach ( $field['options'] ?? array() as $opt ) {
+						$allowed[ $opt['key'] ] = true;
+					}
+	
+					$value = array_filter(
+						$value,
+						function( $key ) use ( $allowed ) {
+							return isset( $allowed[ $key ] );
+						}
+					);
+
+					$value = array_values( $value );
+					break;
 
 			}
 
@@ -1002,6 +1024,26 @@ class Relation {
 					$input = strtotime( $input );
 				}
 
+				break;
+			case 'checkbox':
+			case 'select':
+
+				if ( $field['type'] === 'select' && empty( $field['is_multiple'] ) ) {
+					break;
+				}
+				
+				$allowed = array();
+
+				foreach ( $field['options'] ?? array() as $opt ) {
+					$allowed[ $opt['key'] ] = true;
+				}
+
+				$input = array_filter(
+					$input,
+					function( $key ) use ( $allowed ) {
+						return isset( $allowed[ $key ] );
+					}
+				);
 				break;
 
 		}

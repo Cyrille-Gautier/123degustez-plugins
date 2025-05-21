@@ -296,6 +296,10 @@ class Location_Distance extends \Jet_Smart_Filters_Block_Base {
 				'type'    => 'string',
 				'default' => 'value',
 			),
+			'show_label' => array(
+				'type'    => 'boolean',
+				'default' => false,
+			),
 			'placeholder' => array(
 				'type'    => 'string',
 				'default' => '',
@@ -307,6 +311,19 @@ class Location_Distance extends \Jet_Smart_Filters_Block_Base {
 			'query_id' => array(
 				'type'    => 'string',
 				'default' => '',
+			),
+			'additional_providers_enabled' => array(
+				'type'    => 'boolean',
+				'default' => false,
+			),
+			'additional_providers_list' => array(
+				'type'    => 'array',
+				'default' => array(
+					array(
+						'additional_provider'       => '',
+						'additional_providers_list' => '',
+					)
+				)
 			),
 			'distance_units' => array(
 				'type'    => 'string',
