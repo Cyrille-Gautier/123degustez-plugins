@@ -436,7 +436,7 @@ if ( ! class_exists( 'Jet_Search_Tools' ) ) {
 					$list = jet_search_blocks_integration()->get_post_types_list();
 					break;
 				case 'taxonomies':
-					$list = jet_search_blocks_integration()->get_taxonomies_list();
+					$list = jet_search_blocks_integration()->get_taxonomies_list( true );
 					break;
 				case 'terms':
 					$ids = $settings[$setting];

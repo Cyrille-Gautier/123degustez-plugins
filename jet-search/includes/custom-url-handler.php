@@ -36,7 +36,8 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 		public $query_builder_post_type = array();
 
 		private $target_widget_id = null;
-		private $current_widget_id = null;
+		private $active_query_element_id = null;
+		private $processed_element_ids = array();
 
 		public function __construct() {
 			$this->target_widget_id = $this->get_settings( 'search_results_target_widget_id' );
@@ -45,12 +46,71 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 				$this->target_widget_id = sanitize_key( $this->target_widget_id );
 			}
 
-			if ( $this->target_widget_id && $this->get_search_string() ) {
-				add_filter( 'jet-engine/listing/grid/source', [ $this, 'maybe_set_current_widget_id' ], -999, 2 );
-			// catch all queries where we need to inject search query
-			} else if ( $this->get_search_string() && $this->allow_handle_custom_results_page() ) {
+			if ( $this->get_search_string() ) {
+				add_action( 'pre_get_posts', array( $this, 'maybe_setup_handler_by_context' ), 1 );
+			}
+
+		}
+
+		/**
+		 * Decide which handler to use based on page type and search parameters.
+		 */
+		public function maybe_setup_handler_by_context( $query ) {
+			if ( $query->is_main_query() ) {
+				$this->handle_main_archive_query( $query );
+
+				if ( $this->target_widget_id ) {
+					add_filter( 'jet-engine/listing/grid/source', array( $this, 'maybe_set_current_widget_id' ), -999, 2 );
+				}
+
+			} else if ( ! is_archive() && $this->target_widget_id ) {
+				add_filter( 'jet-engine/listing/grid/source', array( $this, 'maybe_set_current_widget_id' ), -999, 2 );
+			} else if ( ! is_archive() && $this->allow_handle_custom_results_page() ) {
 				add_action( 'pre_get_posts', array( $this, 'handle_custom_results_page' ) );
 				add_action( 'jet-engine/query-builder/query/after-query-setup', array( $this, 'final_query_setup' ) );
+			}
+
+		}
+
+		/**
+		 * Handles search query injection for main archive queries.
+		 *
+		 * Applies the 'jet_search' parameter and other JetSearch settings
+		 * to the main WP_Query on archive pages.
+		 *
+		 * @param WP_Query $query Main archive query.
+		 */
+		public function handle_main_archive_query( $query ) {
+
+			if ( is_admin() || ! is_archive() || ! $query->is_main_query() ) {
+				return;
+			}
+
+			if ( isset( $_GET['jet_search'] ) && empty( $query->get('s') ) ) {
+				$query->set( 's', sanitize_text_field( $_GET['jet_search'] ) );
+			}
+
+			$args = $this->get_settings();
+			$this->set_query_settings( $args );
+
+			$query->set( 's', $this->get_search_string() );
+
+			if ( ! empty( $this->query_builder_post_type ) ) {
+				$this->search_query['post_type'] = $this->query_builder_post_type;
+			}
+
+			if ( ! empty( $this->search_query ) ) {
+				foreach ( $this->search_query as $key => $value ) {
+					$query->set( $key, $value );
+					$query->query[$key] = $value;
+				}
+			}
+
+			if ( isset( $args['results_order_by'] ) && ( is_shop() || is_product_taxonomy() ) ) {
+				$order_by = strtolower( $args['results_order_by'] );
+				$order    = strtoupper( ! empty( $args['results_order'] ) ? $args['results_order'] : 'ASC' );
+
+				$query->set( 'orderby', "{$order_by}-{$order}" );
 			}
 		}
 
@@ -60,13 +120,17 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 				return $source;
 			}
 
-			if ( isset( $settings['_element_id'] ) ) {
-				$this->current_widget_id = sanitize_key( $settings['_element_id'] );
-			}
+			$element_id = sanitize_key( $settings['_element_id'] );
 
-			if ( $this->target_widget_id === $this->current_widget_id ) {
-				add_action( 'pre_get_posts', [ $this, 'handle_custom_results_page' ] );
-				add_action( 'jet-engine/query-builder/query/after-query-setup', [ $this, 'final_query_setup' ] );
+			if ( $this->target_widget_id === $element_id ) {
+
+				$this->active_query_element_id = $element_id;
+
+				if ( ! is_archive() && $this->allow_handle_custom_results_page() ) {
+					add_action( 'pre_get_posts', array( $this, 'handle_custom_results_page' ), 999 );
+				}
+
+				add_action( 'jet-engine/query-builder/query/after-query-setup', array( $this, 'final_query_setup' ), 1 );
 			}
 
 			return $source;
@@ -79,6 +143,18 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 
 				$this->set_query_settings( $args );
 			}
+
+			$element_id = $this->active_query_element_id;
+
+			if ( empty( $element_id ) || $element_id !== $this->target_widget_id ) {
+				return;
+			}
+
+			if ( in_array( $element_id, $this->processed_element_ids, true ) ) {
+				return;
+			}
+
+			$this->processed_element_ids[] = $element_id;
 
 			$allowed_query_types = [ 'wc-product-query', 'posts' ];
 
@@ -154,8 +230,13 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 						}
 					}
 
-					$query->final_query['orderby'] = (array) $query->final_query['orderby'];
-					$query->final_query['order']   = (array) $query->final_query['order'];
+					if ( isset( $query->final_query['orderby'] ) ) {
+						$query->final_query['orderby'] = (array) $query->final_query['orderby'];
+					}
+
+					if ( isset( $query->final_query['order'] ) ) {
+						$query->final_query['order'] = (array) $query->final_query['order'];
+					}
 
 					if ( isset( $query->final_query['post__in'] ) ) {
 						if ( empty( $query->final_query['post__in'] ) ) {
@@ -166,7 +247,7 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 			}
 
 			if ( ! empty( $this->target_widget_id ) ) {
-				remove_action( 'jet-engine/query-builder/query/after-query-setup', array( $this, 'final_query_setup' ) );
+				remove_action( 'jet-engine/query-builder/query/after-query-setup', array( $this, 'final_query_setup' ), 1  );
 			}
 		}
 
@@ -302,11 +383,16 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 				$this->search_query['jet_ajax_search'] = true;
 				$this->search_query['cache_results']   = true;
 				$this->search_query['post_type']       = $args['search_source'];
-				$this->search_query['order']           = isset( $args['results_order'] ) ? $args['results_order'] : '';
-				$this->search_query['orderby']         = isset( $args['results_order_by'] ) ? $args['results_order_by'] : '';
 				$this->search_query['tax_query']       = array( 'relation' => 'AND' );
 				$this->search_query['sentence']        = isset( $args['sentence'] ) ? filter_var( $args['sentence'], FILTER_VALIDATE_BOOLEAN ) : false;
 				$this->search_query['post_status']     = 'publish';
+
+				if ( ! empty( $args['results_order_by'] ) ) {
+					$order = ! empty( $args['results_order'] ) ? $args['results_order'] : 'asc';
+					$this->search_query['orderby'] = array(
+						$args['results_order_by'] => $order,
+					);
+				}
 
 				if ( function_exists( 'jet_smart_filters' ) ) {
 					$sort = isset( $_REQUEST['query']['_sort_standard'] ) || isset( $_REQUEST['sort'] ) ? true : false;

@@ -219,6 +219,7 @@ Vue.component( 'jet-search-ajax-search-settings', {
 		this.settings         = window.JetSearchSettingsConfig;
 		this.searchSourceList = this.settings['settingsData']['postTypes'];
 		this.taxonomiesList   = this.settings['settingsData']['taxonomies'];
+		this.taxonomiesListExtended = this.settings['settingsData']['taxonomiesListExtended'];
 		this.requestTypeList  = this.settings['settingsData']['request_type_list'];
 
 		this.loadQuerySettings().then( () => {

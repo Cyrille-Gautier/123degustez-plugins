@@ -67,6 +67,7 @@ if ( ! class_exists( 'Jet_Search_Blocks_Integration' ) ) {
 			wp_localize_script( 'jet-search-block', 'JetSearchData', array(
 				'supportSVG'                  => isset( $mimes['svg'] ) ? true : false,
 				'taxonomiesList'              => $this->get_taxonomies_list(),
+				'taxonomiesListExtended'      => $this->get_taxonomies_list( true ),
 				'postTypesList'               => $this->get_post_types_list(),
 				'metaCallbacks'               => \Jet_Search_Tools::allowed_meta_callbacks(),
 				'thumbSizes'                  => $this->get_thumb_sizes(),
@@ -143,9 +144,9 @@ if ( ! class_exists( 'Jet_Search_Blocks_Integration' ) ) {
 			wp_enqueue_style( 'jet-search-editor' );
 		}
 
-		public function get_taxonomies_list() {
+		public function get_taxonomies_list( $include_custom_attributes = false ) {
 
-			$taxonomies = \Jet_Search_Tools::get_taxonomies();
+			$taxonomies = \Jet_Search_Tools::get_taxonomies( false, $include_custom_attributes );
 
 			foreach ( $taxonomies as $value => $label ) {
 				$taxonomies_list[] = array(

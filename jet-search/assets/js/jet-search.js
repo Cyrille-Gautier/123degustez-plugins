@@ -1599,6 +1599,8 @@
 								data: addToCartData,
 								success: function( response ) {
 									$( document.body ).trigger( 'wc_fragment_refresh' );
+									$( document.body ).trigger( 'added_to_cart' );
+
 									_this.prop( 'disabled', false );
 								},
 								error: function(xhr, status, error) {

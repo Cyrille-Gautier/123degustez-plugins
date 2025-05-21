@@ -169,7 +169,7 @@
 			label="<?php _e( 'Taxonomies', 'jet-search' ); ?>"
 			:wrapper-css="[ 'equalwidth' ]"
 			multiple="true"
-			:options-list="taxonomiesList"
+			:options-list="taxonomiesListExtended"
 			size="fullwidth"
 			v-model="querySettings['search_in_taxonomy_source']"
 			:conditions="[

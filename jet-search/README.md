@@ -4,6 +4,11 @@ The best tool for adding complex search functionality to pages built with Elemen
 
 # ChangeLog
 
+# 3.5.9
+* ADD: `Target Widget ID ( optional )` compatibility for Archive Templates;
+* ADD: support for custom attributes in 'Search in taxonomy terms' for Bricks and Gutenberg;
+* ADD: trigger 'added_to_cart' event for plugins compatibility.
+
 # 3.5.8
 * ADD: filters to allow including custom attributes in the Ajax Search widget;
 * ADD: `Target Widget ID ( optional )` option to limit search results to specific Listing Grid on custom results page;

@@ -723,7 +723,7 @@ class Jet_Search_Bricks_Ajax_Search extends Base {
 				'label'    => esc_html__( 'Taxonomies', 'jet-search' ),
 				'type'     => 'select',
 				'multiple' => true,
-				'options'  => \Jet_Search_Tools::get_taxonomies( true ),
+				'options'  => \Jet_Search_Tools::get_taxonomies( true, true ),
 				'default'  => $default_query_settings['search_in_taxonomy_source'],
 				'required' => [ 'search_in_taxonomy', '=', true ],
 			]
