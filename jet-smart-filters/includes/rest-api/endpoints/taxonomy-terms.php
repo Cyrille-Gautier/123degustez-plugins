@@ -31,7 +31,7 @@ class TaxonomyTerms extends Base {
 
 		$args = array(
 			'taxonomy'   => $tax,
-			'hide_empty' => $hide_empty
+			'hide_empty' => false,
 		);
 
 		$terms = get_terms( $args );

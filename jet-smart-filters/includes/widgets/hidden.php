@@ -27,6 +27,14 @@ class Jet_Smart_Filters_Hidden_Widget extends Widget_Base {
 		return 'jet-smart-filters-icon-hidden';
 	}
 
+	public function get_help_url() {
+
+		return jet_smart_filters()->widgets->prepare_help_url(
+			'https://crocoblock.com/knowledge-base/jetsmartfilters/hidden-filter-overview/',
+			$this->get_name()
+		);
+	}
+
 	public function get_categories() {
 
 		return array( jet_smart_filters()->widgets->get_category() );

@@ -15,6 +15,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_EPro_Archive_Products' ) ) {
 	 */
 	class Jet_Smart_Filters_Provider_EPro_Archive_Products extends Jet_Smart_Filters_Provider_Base {
 
+		protected $has_container_wrapper = null;
 		public $default_query = null;
 
 		/**
@@ -247,7 +248,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_EPro_Archive_Products' ) ) {
 			if ( $content ) {
 				echo $content;
 			} else {
-				echo '<div class="elementor-widget-container"></div>';
+				$container_class = $this->has_container_wrapper() ? 'elementor-widget-container' : 'elementor-products';
+				echo '<div class="' . $container_class . '"></div>';
 			}
 
 			do_action( 'jet-smart-filters/providers/epro-archive-products/after-ajax-content' );
@@ -277,9 +279,23 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_EPro_Archive_Products' ) ) {
 		 */
 		public function get_wrapper_selector() {
 
-			return Elementor\Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' )
-				? '.elementor-widget-wc-archive-products'
-				: '.elementor-widget-wc-archive-products .elementor-widget-container';
+			if ( $this->has_container_wrapper() ) {
+				return '.elementor-widget-wc-archive-products .elementor-widget-container';
+			} else {
+				return '.elementor-widget-wc-archive-products';
+			}
+		}
+
+		/**
+		 * Check if provider has .elementor-widget-container wrapper
+		 */
+		public function has_container_wrapper() {
+
+			if ( null === $this->has_container_wrapper ) {
+				$this->has_container_wrapper = ! Elementor\Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+			}
+
+			return $this->has_container_wrapper;
 		}
 
 		/**
@@ -303,9 +319,9 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_EPro_Archive_Products' ) ) {
 		 */
 		public function get_wrapper_action() {
 
-			return Elementor\Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' )
-				? 'insert'
-				: 'replace';
+			return $this->has_container_wrapper()
+				? 'replace'
+				: 'insert';
 		}
 
 		/**

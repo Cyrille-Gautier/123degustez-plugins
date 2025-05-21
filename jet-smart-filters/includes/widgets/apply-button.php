@@ -30,7 +30,7 @@ class Jet_Smart_Filters_Apply_Button_Widget extends Widget_Base {
 	public function get_help_url() {
 
 		return jet_smart_filters()->widgets->prepare_help_url(
-			'https://crocoblock.com/knowledge-base/articles/jetsmartfilters-how-to-specify-the-widget-for-which-to-apply-the-jetsmartfilter-widgets-filter/',
+			'https://crocoblock.com/knowledge-base/jetsmartfilters/jetsmartfilters-how-to-set-up-a-redirect-path-to-filter-results-page/',
 			$this->get_name()
 		);
 	}

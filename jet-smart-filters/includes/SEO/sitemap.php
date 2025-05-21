@@ -264,8 +264,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_SEO_Sitemap' ) ) {
 
 		public function process_settings( $settings ) {
 
-			$new_use_seo = $settings['use_seo'];
-			$old_use_seo = jet_smart_filters()->settings->get( 'use_seo', false );
+			$new_use_seo = $settings['use_seo_sitemap'];
+			$old_use_seo = jet_smart_filters()->settings->get( 'use_seo_sitemap', '' );
 
 			if ( $new_use_seo == $old_use_seo ) {
 				return;

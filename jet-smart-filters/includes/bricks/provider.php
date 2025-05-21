@@ -247,7 +247,10 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 						return $vars;
 					}
 
-					return $query_vars;
+					// Merge the query vars
+					$merged_query_vars = jet_smart_filters()->utils->merge_query_args( $vars, $query_vars );
+
+					return $merged_query_vars;
 				}, 10, 3
 			);
 
@@ -444,7 +447,10 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 						}
 					}
 
-					return $query_vars;
+					// Merge the query vars
+					$merged_query_vars = jet_smart_filters()->utils->merge_query_args( $vars, $query_vars );
+
+					return $merged_query_vars;
 				}, 11, 3
 			);
 		}

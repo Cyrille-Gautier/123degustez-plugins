@@ -29,7 +29,7 @@ class Jet_Smart_Filters_Radio_Widget extends Jet_Smart_Filters_Base_Widget {
 	public function get_help_url() {
 
 		return jet_smart_filters()->widgets->prepare_help_url(
-			'https://crocoblock.com/knowledge-base/articles/jetsmartfilters-how-to-create-a-checkboxes-filter-a-difference-between-checkboxes-select-and-radio-filters/',
+			'https://crocoblock.com/knowledge-base/jetsmartfilters/radio-filter-overview/',
 			$this->get_name()
 		);
 	}

@@ -27,6 +27,14 @@ class Jet_Smart_Filters_Sorting_Widget extends Widget_Base {
 		return 'jet-smart-filters-icon-sorting-filter';
 	}
 
+	public function get_help_url() {
+
+		return jet_smart_filters()->widgets->prepare_help_url(
+			'https://crocoblock.com/knowledge-base/jetsmartfilters/jetsmartfilters-how-to-sort-posts-and-products-with-sorting-filter-widget/',
+			$this->get_name()
+		);
+	}
+
 	public function get_categories() {
 
 		return array( jet_smart_filters()->widgets->get_category() );

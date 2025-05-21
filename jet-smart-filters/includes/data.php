@@ -311,6 +311,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 				foreach ( $raw_results as $row ) {
 					$value = maybe_unserialize( $row->meta_value );
 					if ( $value && ! is_array( $value ) && ! is_object( $value ) ) {
+						$value = wp_kses( $value, array() );
 						$options[ $value ] = $value;
 					}
 				}

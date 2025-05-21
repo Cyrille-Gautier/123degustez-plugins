@@ -2,6 +2,19 @@
 
 # ChangeLog
 
+## 3.6.6
+
+- FIX: range filters apply on Enter in Safari browser
+- FIX: Remove dangerous tags from DB values before usage
+- FIX: Elementor Archive & Archive Products providers & optimized DOM
+
+## 3.6.5
+
+- UPD: links in the Need Help button
+- FIX: fixed query variable merging for 'Page Reload' filters in Bricks for more reliable behavior
+- FIX: Deprecated Dynamic Properties
+- FIX: warnings
+
 ## 3.6.4
 
 - FIX: sorting filter with meta key containing date

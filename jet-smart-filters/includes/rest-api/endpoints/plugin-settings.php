@@ -22,6 +22,7 @@ class Plugin_Settings extends Base {
 
 		return array(
 			'key'      => array(
+				'default'  => false,
 				'required' => false,
 			),
 			'settings' => array(

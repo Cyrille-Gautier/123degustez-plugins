@@ -13,6 +13,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Сlassic_Admin' ) ) {
 	 * Define Jet_Smart_Filters_Сlassic_Admin class
 	 */
 	class Jet_Smart_Filters_Сlassic_Admin {
+
+		public $data;
+		public $is_indexer_enabled;
+
 		/**
 		 * Constructor for the class
 		 */
@@ -248,14 +252,13 @@ if ( ! class_exists( 'Jet_Smart_Filters_Сlassic_Admin' ) ) {
 
 			$tax        = ! empty( $_REQUEST['taxonomy'] ) ? $_REQUEST['taxonomy'] : false;
 			$post_type  = ! empty( $_REQUEST['post_type'] ) ? $_REQUEST['post_type'] : false;
-			$hide_empty = isset( $_REQUEST['hide_empty'] ) ? filter_var( $_REQUEST['hide_empty'], FILTER_VALIDATE_BOOLEAN ) : true;
 			$posts_list = '';
 			$terms_list = '';
 
 			if ( $tax ) {
 				$args = array(
 					'taxonomy'   => $tax,
-					'hide_empty' => $hide_empty
+					'hide_empty' => false,
 				);
 
 				$terms = get_terms( $args );

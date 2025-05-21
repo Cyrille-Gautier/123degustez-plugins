@@ -34,7 +34,7 @@ class Jet_Smart_Filters_Active_Tags_Widget extends Widget_Base {
 	public function get_help_url() {
 
 		return jet_smart_filters()->widgets->prepare_help_url(
-			'https://crocoblock.com/knowledge-base/articles/jetsmartfilters-how-to-enable-visitors-to-disable-active-filters/',
+			'https://crocoblock.com/knowledge-base/jetsmartfilters/jetsmartfilters-active-tags-widget-overview/',
 			$this->get_name()
 		);
 	}
