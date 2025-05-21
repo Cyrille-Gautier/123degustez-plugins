@@ -345,6 +345,19 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 		);
 
 		$this->add_control(
+			'tooltip_interactive',
+			[
+				'label'        => esc_html__( 'Interactive Tooltip', 'jet-tricks' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-tricks' ),
+				'label_off'    => esc_html__( 'No', 'jet-tricks' ),
+				'return_value' => 'true',
+				'default'      => 'false',
+				'description'  => esc_html__( 'Allow interaction with elements inside tooltip', 'jet-tricks' ),
+			]
+		);
+
+		$this->add_control(
 			'tooltip_placement',
 			array(
 				'label'   => esc_html__( 'Placement', 'jet-tricks' ),
@@ -925,6 +938,9 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 			'tooltipDelay'        => ! empty( $settings['tooltip_delay'] ) ? $settings['tooltip_delay'] : '',
 			'tooltipDistance'     => $settings['tooltip_distance'],
 			'tooltipAnimation'    => ! empty( $settings['tooltip_animation'] ) ? $settings['tooltip_animation'] : '',
+			'tooltipInteractive'   => filter_var( $settings['tooltip_interactive'], FILTER_VALIDATE_BOOLEAN ),
+			
+
 		);
 
 		$this->add_render_attribute( 'instance', array(

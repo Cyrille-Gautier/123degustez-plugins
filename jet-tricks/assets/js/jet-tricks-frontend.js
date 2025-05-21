@@ -6,6 +6,7 @@
 
 		init: function() {
 			elementor.hooks.addAction( 'frontend/element_ready/section', JetTricks.elementorSection );
+			elementor.hooks.addAction( 'frontend/element_ready/section', JetTricks.elementorColumn );
 			elementor.hooks.addAction( 'frontend/element_ready/container', JetTricks.elementorSection );
 			elementor.hooks.addAction( 'frontend/element_ready/container', JetTricks.elementorColumn );
 			elementor.hooks.addAction( 'frontend/element_ready/column', JetTricks.elementorColumn );
@@ -199,123 +200,233 @@
 				settings = $target.data( 'jet-settings' );
 
 				if ( $target.hasClass( 'jet-sticky-column' ) ) {
-
 					if ( -1 !== settings['stickyOn'].indexOf( elementorFrontend.getCurrentDeviceMode() ) ) {
-
 						$target.each( function() {
-
 							var $this  = $( this ),
-
-							elementType = $this.data( 'element_type' );
-
-							if ( elementType !== 'container' ){
-
-								stickyInstanceOptions.topSpacing = settings['topSpacing'];
-								stickyInstanceOptions.bottomSpacing = settings['bottomSpacing'];
-
-								imagesLoaded( $parentSection, function() {
-									$target.data( 'stickyColumnInit', true );
-									stickyInstance = new StickySidebar( $target[0], stickyInstanceOptions );
-								} );
-
-								var targetMutation = $target[0],
-									config         = { attributes: true, childList: true, subtree: true };
-
-								var callbackMutation = function( mutationsList, observer ) {
-									for( var mutation of mutationsList ) {
-										if ( 'attributes' === mutation.type ) {
-											$target[0].style.height = 'auto';
-										}
-									}
-								};
-
-								var observer = new MutationObserver( callbackMutation );
-								observer.observe( targetMutation, config );
-
-								$window.on( 'resize.JetTricksStickyColumn orientationchange.JetTricksStickyColumn', JetTricksTools.debounce( 50, resizeDebounce ) );
-
-								MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-
-								var observer = new MutationObserver( function( mutations ) {
-									if ( stickyInstance ) {
-										mutations.forEach( function(mutation){
-											if (mutation.attributeName === 'class') {
-												setTimeout( function() {
-													stickyInstance.destroy();
-													stickyInstance = new StickySidebar( $target[0], stickyInstanceOptions );
-												}, 100 );
-											}
-										} )
-									}
-								} );
-
-								$observerTarget.each( function(){
-									observer.observe( $( this )[0], {
-										// subtree: true,
-										// childList: true,
-										attributes: true
-									} );
-								} )
-							
+								elementType = $this.data( 'element_type' );
+		
+							if ( settings['behavior'] === 'fixed' ) {
+								initFixedSticky( $this, settings );
+							} else if ( elementType !== 'container' && elementType !== 'section' ) {
+								initSidebarSticky( $this, settings, stickyInstanceOptions );
+							} else if ( settings['behavior'] === 'scroll_until_end' ) {
+								initScrollUntilEndSticky( $this, settings );
+							} else {
+								initDefaultSticky( $this, settings );
 							}
-							else if ( settings['behavior'] === 'scroll_until_end' ){
-								const stickyHeight = $this.outerHeight();
-								const stickyContentBottom  = $this.offset().top + stickyHeight;
-								const stickyViewportOffset = $window.height() - stickyHeight - settings['bottomSpacing'];
-
-								$('body').addClass('jet-sticky-container');
-
-								$window.on( 'scroll.jetSticky', function () {
-									const scrollPosition = $window.scrollTop();
-
-									if ( scrollPosition + $window.height() >= stickyContentBottom ) {
-										$this.css({
-											position: 'sticky',
-											top: stickyViewportOffset + 'px',
-											bottom: 'auto',
-											left: 'auto',
-											zIndex: 1100,
-										});
-									}
-								});
-
-								$observerTarget.on( 'destroy.jetSticky', function () {
-									$window.off( 'scroll.jetSticky' );
-									$('body').removeClass('jet-sticky-container');
-								});
-
-							} else{
-								$('body').addClass('jet-sticky-container');
-								$this.addClass( 'jet-sticky-container-sticky' );
-								$this.css({ 
-									'top': settings['topSpacing'], 
-									'bottom': settings['bottomSpacing']
-								});
-							}
-
 						});
 					}
 				}
+			}
 
-			} else {
+			function initFixedSticky($element, settings) {
+				var offsetTop = parseInt(settings['topSpacing']) || 0;
+				var bottomSpacing = parseInt(settings['bottomSpacing']) || 0;
+				var $window = $(window);
+				var elementId = $element.data('id');
+				var originalOffsetTop = $element.offset().top;
+				var originalHeight = $element.outerHeight();
+			
+				var $allStickyElements = $('.jet-sticky-column').filter(function() {
+					var $this = $(this);
+					var elementSettings = $this.data('jet-settings');
 
-				return false;
+					return elementSettings && elementSettings.stickyOn.indexOf(elementorFrontend.getCurrentDeviceMode()) !== -1;
+				});
 
-				// settings = JetTricks.columnEditorSettings( columnId );
+				var currentIndex = $allStickyElements.index($element);
+				var $nextSticky = currentIndex + 1 < $allStickyElements.length ? $allStickyElements.eq(currentIndex + 1) : null;
+				var $stopper = null;
+				if ($nextSticky) {
+					$stopper = $nextSticky.closest('.elementor-top-section, .e-parent');
+					if (!$stopper.length) {
+						$stopper = $nextSticky;
+					}
+				}
+			
+				const $placeholder = $('<div></div>')
+					.addClass('jet-sticky-placeholder')
+					.css({
+						display: 'none',
+						height: originalHeight,
+						width: $element.outerWidth(),
+						visibility: 'hidden'
+					});
+			
+				$element.before($placeholder);				
+			
+				function enableSticky() {
+					$placeholder.show();
+					$element.addClass('jet-sticky-container--stuck');
+			
+					var stopperTop = $stopper?.offset()?.top;
+					var stopPoint = stopperTop ? (stopperTop - $element.outerHeight() - offsetTop - bottomSpacing) : null;
+					var diff = 0;
+			
+					if (stopPoint && stopPoint < $window.scrollTop()) {
+						diff = (stopPoint - $window.scrollTop());
+					}
+			
+					$element.css({
+						position: 'fixed',
+						top: diff + 'px',
+						transform: `translateY(${offsetTop}px)`,
+						left: $placeholder.offset().left + 'px',
+						width: $placeholder.outerWidth() + 'px'
+					});
+				}
+			
+				function disableSticky() {
+					$placeholder.hide();
+					$element.removeClass('jet-sticky-container--stuck');
+			
+					$element.css({
+						position: '',
+						top: '',
+						transform: '',
+						left: '',
+						width: ''
+					});
+				}
+			
+				function onScroll() {
+					var scrollTop = $window.scrollTop();
+					if (scrollTop >= originalOffsetTop) {
+						enableSticky();
+					} else {
+						disableSticky();
+					}
+				}
+			
+				function onResize() {
+					originalOffsetTop = $placeholder.offset().top;
+					originalHeight = $element.outerHeight();
+			
+					$placeholder.css({
+						height: originalHeight,
+						width: $element.outerWidth()
+					});
+			
+					onScroll();
+				}
+			
+				let ticking = false;
+				$window.on('scroll.jetStickyHeader-' + elementId, function() {
+					if (!ticking) {
+						requestAnimationFrame(function() {
+							onScroll();
+							ticking = false;
+						});
+						ticking = true;
+					}
+				});
+			
+				$window.on('resize.jetStickyHeader-' + elementId, JetTricksTools.debounce(100, onResize));
+				onScroll();
+			
+				$window.on('resize.jetStickyHeader-' + elementId, JetTricksTools.debounce(100, function() {
+					if (-1 === settings['stickyOn'].indexOf(elementorFrontend.getCurrentDeviceMode())) {
+						cleanupSticky($element, $placeholder, elementId);
+					}
+				}));
+			}
+			
+			function cleanupSticky( $element, $placeholder, elementId ) {
+				$placeholder.remove();
+				$element.css({
+					position: '',
+					top: '',
+					transform: '',
+					left: '',
+					width: '',
+					zIndex: '',
+					transition: '',
+					willChange: ''
+				});
+				$element.removeClass('jet-sticky-container--stuck');
+				$window.off('scroll.jetStickyHeader-' + elementId);
+				$window.off('resize.jetStickyHeader-' + elementId);
+			}
 
-				// if ( 'true' === settings['sticky'] ) {
-				// 	$target.addClass( 'jet-sticky-column' );
+			function initSidebarSticky( $element, settings, options ) {
+				options.topSpacing = settings['topSpacing'];
+				options.bottomSpacing = settings['bottomSpacing'];
 
-				// 	if ( -1 !== settings['stickyOn'].indexOf( elementorFrontend.getCurrentDeviceMode() ) ) {
-				// 		stickyInstanceOptions.topSpacing = settings['topSpacing'];
-				// 		stickyInstanceOptions.bottomSpacing = settings['bottomSpacing'];
+				imagesLoaded( $parentSection, function() {
+					$target.data( 'stickyColumnInit', true );
+					stickyInstance = new StickySidebar( $target[0], options );
+				});
 
-				// 		$target.data( 'stickyColumnInit', true );
-				// 		stickyInstance = new StickySidebar( $target[0], stickyInstanceOptions );
+				var targetMutation = $target[0],
+					config = { attributes: true, childList: true, subtree: true };
 
-				// 		$window.on( 'resize.JetTricksStickyColumn orientationchange.JetTricksStickyColumn', JetTricksTools.debounce( 50, resizeDebounce ) );
-				// 	}
-				// }
+				var observer = new MutationObserver( function( mutations ) {
+					for( var mutation of mutations ) {
+						if ( 'attributes' === mutation.type ) {
+							$target[0].style.height = 'auto';
+						}
+					}
+				});
+
+				observer.observe( targetMutation, config );
+
+				$window.on( 'resize.JetTricksStickyColumn orientationchange.JetTricksStickyColumn', 
+					JetTricksTools.debounce( 50, resizeDebounce ) );
+
+				var observer = new MutationObserver( function( mutations ) {
+					if ( stickyInstance ) {
+						mutations.forEach( function(mutation){
+							if (mutation.attributeName === 'class') {
+								setTimeout( function() {
+									stickyInstance.destroy();
+									stickyInstance = new StickySidebar( $target[0], options );
+								}, 100 );
+							}
+						});
+					}
+				});
+
+				$observerTarget.each( function(){
+					observer.observe( $( this )[0], {
+						attributes: true
+					});
+				});
+			}
+
+			function initScrollUntilEndSticky( $element, settings ) {
+				const stickyHeight = $element.outerHeight();
+				const stickyContentBottom = $element.offset().top + stickyHeight;
+				const stickyViewportOffset = $window.height() - stickyHeight - settings['bottomSpacing'];
+
+				$('body').addClass('jet-sticky-container');
+
+				$window.on( 'scroll.jetSticky', function () {
+					const scrollPosition = $window.scrollTop();
+
+					if ( scrollPosition + $window.height() >= stickyContentBottom ) {
+						$element.css({
+							position: 'sticky',
+							top: stickyViewportOffset + 'px',
+							bottom: 'auto',
+							left: 'auto',
+							zIndex: settings['zIndex'],
+						});
+					}
+				});
+
+				$observerTarget.on( 'destroy.jetSticky', function () {
+					$window.off( 'scroll.jetSticky' );
+					$('body').removeClass('jet-sticky-container');
+				});
+			}
+
+			function initDefaultSticky( $element, settings ) {
+				$('body').addClass('jet-sticky-container');
+				$element.addClass( 'jet-sticky-container-sticky' );
+				$element.css({ 
+					'top': settings['topSpacing'], 
+					'bottom': settings['bottomSpacing']
+				});
 			}
 
 			function resizeDebounce() {
@@ -324,7 +435,6 @@
 					isInit            = $target.data( 'stickyColumnInit' );
 
 				if ( -1 !== availableDevices.indexOf( currentDeviceMode ) ) {
-
 					if ( ! isInit ) {
 						$target.data( 'stickyColumnInit', true );
 						stickyInstance = new StickySidebar( $target[0], stickyInstanceOptions );
@@ -335,7 +445,6 @@
 					stickyInstance.destroy();
 				}
 			}
-
 		},
 
 		elementorWidget: function( $scope ) {
@@ -537,16 +646,21 @@
 					$buttonIcon.html( foldIcon );
 					$buttonText.html( foldText );
 
-					anime( {
-						targets: $mask[0],
-						height: contentHeight,
-						duration: unfoldDuration['size'],
-						easing: unfoldEasing,
-						complete: function( anim ) {
-							// Recalculate listing masonry.
-							$( document ).trigger( 'jet-engine/listing/recalculate-masonry' );
-						}
-					} );
+					// Force recalculation of content height after state change
+					setTimeout(function() {
+						contentHeight = $contentInner.outerHeight();
+						
+						anime( {
+							targets: $mask[0],
+							height: contentHeight,
+							duration: unfoldDuration['size'],
+							easing: unfoldEasing,
+							complete: function( anim ) {
+								// Recalculate listing masonry.
+								$( document ).trigger( 'jet-engine/listing/recalculate-masonry' );
+							}
+						} );
+					}, 0);
 
 					if ( 'true' === autoHide ) {
 						autoHideTrigger = setTimeout( function() {
@@ -660,6 +774,7 @@
 					maxWidth: 'none',
 					offset: [0, settings['tooltipDistance']['size']],
 					allowHTML: true,
+					interactive: settings['tooltipInteractive'] ? true : false,
 					onShow( instance ) {
 						$( itemSelector ).addClass( itemActiveClass );
 
@@ -766,31 +881,34 @@
 
 		widgetEditorSettings: function( widgetId ) {
 			var editorElements = null,
-				widgetData     = {};
-
-			if ( ! window.elementor.hasOwnProperty( 'elements' ) ) {
+				widgetData = {};
+		
+			if ( !window.elementor.hasOwnProperty( 'elements' ) || !window.elementor.elements.models ) {
 				return false;
 			}
-
+		
 			editorElements = window.elementor.elements;
-
-			if ( ! editorElements.models ) {
-				return false;
-			}
-
-			$.each( editorElements.models, function( index, obj ) {
-
-				$.each( obj.attributes.elements.models, function( index, obj ) {
-
-					$.each( obj.attributes.elements.models, function( index, obj ) {
-						if ( widgetId == obj.id ) {
-							widgetData = obj.attributes.settings.attributes;
+		
+			function findWidgetById( models, widgetId ) {
+				let foundData = null;
+		
+				$.each( models, function( index, obj ) {
+					if ( obj.id === widgetId ) {
+						foundData = obj.attributes.settings.attributes;
+						return false;
+					}
+					if ( obj.attributes.elements && obj.attributes.elements.models ) {
+						foundData = findWidgetById( obj.attributes.elements.models, widgetId );
+						if ( foundData ) {
+							return false;
 						}
-					} );
-
-				} );
-
-			} );
+					}
+				});
+		
+				return foundData;
+			}
+		
+			widgetData = findWidgetById( editorElements.models, widgetId ) || {};
 
 			return {
 				'speed': widgetData['jet_tricks_widget_parallax_speed'] || { 'size': 50, 'unit': '%'},
@@ -950,7 +1068,7 @@
 	 */
 	window.jetWidgetParallax = function( $scope ) {
 		var self         = this,
-			$target      = $( '> .elementor-widget-container', $scope ),
+			$target      = $scope,
 			$section     = $scope.closest( '.elementor-top-section' ),
 			widgetId     = $scope.data('id'),
 			settings     = {},
@@ -1120,7 +1238,8 @@
 				{
 					content: $scope.find( '.jet-tooltip-widget__content' )[0].innerHTML,
 					allowHTML: true,
-					appendTo: widgetSelector,
+					//appendTo: widgetSelector,
+					appendTo: editMode ? document.body : widgetSelector,
 					arrow: settings['tooltipArrow'] ? true : false,
 					placement: settings['tooltipPlacement'],
 					offset: [ settings['xOffset'], settings['yOffset'] ],
@@ -1130,6 +1249,14 @@
 					zIndex: settings['zIndex'],
 					maxWidth: 'none',
 					delay: settings['delay']['size'] ? settings['delay']['size'] : 0,
+					onCreate: function (instance) {
+						if ( editMode ) {
+							var dataId = tooltipSelector.getAttribute('data-id');
+							if ( dataId ) {
+								instance.popper.classList.add( 'tippy-' + dataId );
+							}
+						}
+					}
 				}
 			);
 
@@ -1139,5 +1266,5 @@
 
 		};
 	};
-
+	
 }( jQuery, window.elementorFrontend ) );

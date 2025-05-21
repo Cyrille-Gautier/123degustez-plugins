@@ -167,6 +167,9 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 					'px',
 					'%',
 					'vh',
+					'em',
+					'rem',
+					'custom'
 				),
 				'range'      => array(
 					'px' => array(
@@ -198,11 +201,24 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				'type'       => Controls_Manager::SLIDER,
 				'size_units' => array(
 					'px',
+					'%',
+					'vh',
+					'em',
+					'rem',
+					'custom'
 				),
 				'range'      => array(
 					'px' => array(
-						'min' => 10,
-						'max' => 200,
+						'min' => 20,
+						'max' => 1000,
+					),
+					'%' => array(
+						'min' => 1,
+						'max' => 100,
+					),
+					'vh' => array(
+						'min' => 1,
+						'max' => 100,
 					),
 				),
 				'selectors'  => array(
@@ -211,6 +227,19 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 			)
 		);
 
+		$this->add_control(
+			'separator_z_index',
+			[
+				'label' => esc_html__( 'Separator Z-Index', 'jet-tricks' ),
+				'type' => \Elementor\Controls_Manager::NUMBER,
+				'min' => 0,
+				'max' => 9999,
+				'selectors' => [
+					'{{WRAPPER}} ' . $css_scheme['separator'] => 'z-index: {{VALUE}};',
+				],
+			]
+		);
+		
 		$this->add_control(
 			'widget_state_settings_heading',
 			array(

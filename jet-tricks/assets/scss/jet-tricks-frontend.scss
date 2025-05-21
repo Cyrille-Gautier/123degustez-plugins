@@ -13,14 +13,17 @@
 	}
 }
 
-.jet-sticky-container-sticky{
-	display: flex;
-    align-self: flex-start;
+.jet-sticky-container-sticky {
 	position: -webkit-sticky;
 	position: sticky;
 	max-width: 100%;
 	z-index: 1100;
 	top: 0;
+}
+
+
+.jet-sticky-container--stuck {
+	z-index: 1100;
 }
 
 //compability stiky container with jet menu
@@ -48,11 +51,9 @@
 }
 
 .jet-parallax-widget:not(.is-mac) {
-	> .elementor-widget-container {
-		transition: transform 0.25s cubic-bezier(.25,.88,.54,.98);
-		will-change: transform;
-		transform: translateZ(0);
-	}
+	transition: transform 0.25s cubic-bezier(.25,.88,.54,.98);
+	will-change: transform;
+	transform: translateZ(0);	
 }
 
 .jet-tricks-icon {

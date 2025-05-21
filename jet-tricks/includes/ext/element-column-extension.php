@@ -77,6 +77,10 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Column_Extension' ) ) {
 
 			add_action( 'elementor/frontend/element/before_render', array( $this, 'column_before_render' ) );
 
+			add_action( 'elementor/element/section/section_jet_tricks_settings/before_section_end', array( $this, 'after_column_section_setting' ), 10, 2 );
+			
+            add_action( 'elementor/frontend/section/before_render', array( $this, 'column_before_render' ) );
+
 			add_action( 'elementor/frontend/before_enqueue_scripts', array( $this, 'enqueue_scripts' ), 9 );
 		}
 
@@ -199,14 +203,17 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Column_Extension' ) ) {
 						'flex-end'           => esc_html__( 'Bottom', 'jet-tricks' ),
 					),
 					'default' => '',
-					'condition' => $condition,
+					'condition' => array(
+						'jet_tricks_column_sticky' => 'true',
+						'jet_tricks_column_sticky_behavior!' => 'fixed',
+					),
 					'selectors'  => array(
 						'{{WRAPPER}}' => 'align-self: {{VALUE}};',
 					),
 				)
 			);
 
-			if ( 'container' === $type ) {
+			if ( in_array( $type, array( 'container', 'section' ) ) ) {
 				$obj->add_control(
 					'jet_tricks_column_sticky_behavior',
 					array(
@@ -216,6 +223,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Column_Extension' ) ) {
 						'options' => array(
 							'default' => esc_html__( 'Default', 'jet-tricks' ),
 							'scroll_until_end' => esc_html__( 'Scroll Until End', 'jet-tricks' ),
+							'fixed'     => esc_html__( 'Fixed', 'jet-tricks' ),
 						),
 						'condition' => array(
 							'jet_tricks_column_sticky' => 'true',
@@ -223,6 +231,71 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Column_Extension' ) ) {
 					)
 				);
 			}
+
+			$obj->add_responsive_control(
+				'jet_tricks_sticky_padding',
+				array(
+					'label'      => esc_html__( 'Padding', 'jet-tricks' ),
+					'type'       => Elementor\Controls_Manager::DIMENSIONS,
+					'size_units' => array( 'px', 'em', '%' ),
+					'selectors'  => array(
+						'{{WRAPPER}}.jet-sticky-container--stuck' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					),
+					'condition' => array(
+						'jet_tricks_column_sticky' => 'true',
+						'jet_tricks_column_sticky_behavior' => 'fixed',
+					),
+				)
+			);
+
+			$obj->add_group_control(
+				Elementor\Group_Control_Background::get_type(),
+				array(
+					'name'      => 'jet_tricks_sticky_background',
+					'selector'  => '{{WRAPPER}}.jet-sticky-container--stuck',
+					'condition' => array(
+						'jet_tricks_column_sticky' => 'true',
+						'jet_tricks_column_sticky_behavior' => 'fixed',
+					),
+				)
+			);
+
+			$obj->add_group_control(
+				Elementor\Group_Control_Box_Shadow::get_type(),
+				array(
+					'name'      => 'jet_tricks_sticky_box_shadow',
+					'selector'  => '{{WRAPPER}}.jet-sticky-container--stuck',
+					'condition' => array(
+						'jet_tricks_column_sticky' => 'true',
+						'jet_tricks_column_sticky_behavior' => 'fixed',
+					),
+				)
+			);
+
+			$obj->add_control(
+				'jet_tricks_sticky_transition',
+				array(
+					'label'   => esc_html__( 'Transition Duration', 'jet-tricks' ),
+					'type'    => Elementor\Controls_Manager::SLIDER,
+					'default' => array(
+						'size' => 0.3,
+					),
+					'range' => array(
+						'px' => array(
+							'max'  => 3,
+							'step' => 0.1,
+						),
+					),
+					'selectors' => array(
+						'{{WRAPPER}}.jet-sticky-container--stuck' => 'transition: padding {{SIZE}}s, background {{SIZE}}s, box-shadow {{SIZE}}s, transform {{SIZE}}s',
+					),
+					'condition' => array(
+						'jet_tricks_column_sticky' => 'true',
+						'jet_tricks_column_sticky_behavior' => 'fixed',
+						'jet_tricks_sticky_background_background!' => 'gradient'
+					),
+				)
+			);
 
 			$obj->add_control(
 				'jet_tricks_column_sticky_on',
@@ -242,6 +315,24 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Column_Extension' ) ) {
 					'render_type'        => 'none',
 				)
 			);
+
+			$obj->add_control(
+				'jet_tricks_column_sticky_z_index',
+				array(
+					'label'       => esc_html__( 'Z-index', 'jet-blocks' ),
+					'type'        => Elementor\Controls_Manager::NUMBER,
+					'default'     => '',
+					'min'         => 0,
+					'max'         => 10000,
+					'step'        => 1,
+					'selectors'   => array(
+						'{{WRAPPER}}' => 'z-index: {{VALUE}};',
+					),
+					'condition' => array(
+						'jet_tricks_column_sticky' => 'true',
+					),
+				)
+			);
 		}
 
 		/**
@@ -254,9 +345,10 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Column_Extension' ) ) {
 			$type     = isset( $data['elType'] ) ? $data['elType'] : 'column';
 			$settings = $data['settings'];
 
-			if ( 'column' !== $type && 'container' !== $type ) {
-				return false;
-			}
+			if ( ! in_array( $type, array( 'column', 'container', 'section' ) ) ) {
+                return false;
+            }
+
 
 			if ( isset( $settings['jet_tricks_column_sticky'] ) ) {
 				$column_settings = array(
@@ -266,6 +358,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Column_Extension' ) ) {
 					'bottomSpacing' => isset( $settings['jet_tricks_bottom_spacing'] ) ? $settings['jet_tricks_bottom_spacing'] : 50,
 					'stickyOn'      => isset( $settings['jet_tricks_column_sticky_on'] ) ? $settings['jet_tricks_column_sticky_on'] : array( 'desktop', 'tablet' ),
 					'behavior'      => isset( $settings['jet_tricks_column_sticky_behavior'] ) ? $settings['jet_tricks_column_sticky_behavior'] : 'default',
+					'zIndex'        => isset( $settings['jet_tricks_column_sticky_z_index'] ) ? $settings['jet_tricks_column_sticky_z_index'] : 1100,
 				);
 
 				if ( filter_var( $settings['jet_tricks_column_sticky'], FILTER_VALIDATE_BOOLEAN ) ) {

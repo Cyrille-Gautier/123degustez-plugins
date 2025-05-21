@@ -3,7 +3,7 @@
  * Plugin Name: JetTricks
  * Plugin URI:  https://crocoblock.com/plugins/jettricks/
  * Description: Use different eye-catching stylish animation effects and let your content become truly alive with outstanding visual tricks!
- * Version:     1.5.1.1
+ * Version:     1.5.3
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-tricks
@@ -40,7 +40,7 @@ if ( ! class_exists( 'Jet_Tricks' ) ) {
 		 * @var string
 		 */
 
-		private $version = '1.5.1.1';
+		private $version = '1.5.3';
 
 		/**
 		 * Holder for base plugin URL
@@ -255,7 +255,6 @@ if ( ! class_exists( 'Jet_Tricks' ) ) {
 			require $this->plugin_path( 'includes/compatibility/compatibility.php' );
 			require $this->plugin_path( 'includes/rest-api/rest-api.php' );
 			require $this->plugin_path( 'includes/rest-api/endpoints/base.php' );
-			require $this->plugin_path( 'includes/rest-api/endpoints/elementor-template.php' );
 			require $this->plugin_path( 'includes/rest-api/endpoints/plugin-settings.php' );
 		}
 

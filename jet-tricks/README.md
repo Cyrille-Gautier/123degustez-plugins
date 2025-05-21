@@ -4,6 +4,21 @@ Enjoy adding animation on the fly without coding skills
 
 # ChangeLog
 
+## 1.5.3
+* Added: `Separator Z-index` control for Unfold widget;
+* Added: `Interactive Tooltip` control for Tooltip settings;
+* Fixed: content height recalculation after state change in Unfold widget;
+* Fixed: [Crocoblock/suggestions#3625](https://github.com/Crocoblock/suggestions/issues/3625);
+* Updated: extended size units for `Closed Height` and `Separator Height` controls in Unfold widget.
+
+## 1.5.2
+* Added: `Z-index` control for Sticky Column;
+* Added: `Fixed` option to Sticky Behavior control;
+* Fixed: tooltip display in editor;
+* Fixed: Sticky Column support for sections;
+* Updated: compatibility with Elementor 3.26;
+* Updated: removed unused REST API endpoint `elementor-template` for improved security and performance.
+
 ## 1.5.1.1
 * Fixed: prevent unauthorized access to templates in REST API;
 

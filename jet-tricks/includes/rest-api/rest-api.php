@@ -62,7 +62,6 @@ class Rest_Api {
 
 		$this->_endpoints = array();
 
-		$this->register_endpoint( new Endpoints\Elementor_Template() );
 		$this->register_endpoint( new Endpoints\Plugin_Settings() );
 
 		do_action( 'jet-tricks/rest/init-endpoints', $this );

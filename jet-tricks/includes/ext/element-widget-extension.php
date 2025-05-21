@@ -347,10 +347,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				'jet_tricks_widget_satellite_image',
 				array(
 					'label'   => esc_html__( 'Image', 'jet-tricks' ),
-					'type'    => Elementor\Controls_Manager::MEDIA,
-					'default' => array(
-						'url' => Elementor\Utils::get_placeholder_image_src(),
-					),
+					'type'    => Elementor\Controls_Manager::MEDIA,					
 					'dynamic'   => array( 'active' => true ),
 					'condition' => array(
 						'jet_tricks_widget_satellite'     => 'true',
@@ -848,7 +845,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 						),
 					),
 					'selectors'  => array(
-						'{{WRAPPER}} > [data-tippy-root] .tippy-box' => 'width: {{SIZE}}{{UNIT}};',
+						':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box' => 'width: {{SIZE}}{{UNIT}};',
 					),
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
@@ -861,7 +858,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				Elementor\Group_Control_Typography::get_type(),
 				array(
 					'name'     => 'jet_tricks_widget_tooltip_typography',
-					'selector' => '{{WRAPPER}} > [data-tippy-root] .tippy-box .tippy-content',
+					'selector' => ':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box .tippy-content',
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
 					),
@@ -874,7 +871,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'label'  => esc_html__( 'Text Color', 'jet-tricks' ),
 					'type'   => Elementor\Controls_Manager::COLOR,
 					'selectors' => array(
-						'{{WRAPPER}} > [data-tippy-root] .tippy-box .tippy-content' => 'color: {{VALUE}}',
+						':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box .tippy-content' => 'color: {{VALUE}}',
 					),
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
@@ -903,7 +900,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 						),
 					),
 					'selectors'  => array(
-						'{{WRAPPER}} > [data-tippy-root] .tippy-box .tippy-content' => 'text-align: {{VALUE}};',
+						':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box .tippy-content' => 'text-align: {{VALUE}};',
 					),
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
@@ -916,7 +913,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				Elementor\Group_Control_Background::get_type(),
 				array(
 					'name'     => 'jet_tricks_widget_tooltip_background',
-					'selector' => '{{WRAPPER}} > [data-tippy-root] .tippy-box',
+					'selector' => ':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box',
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
 					),
@@ -929,10 +926,10 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'label'  => esc_html__( 'Arrow Color', 'jet-tricks' ),
 					'type'   => Elementor\Controls_Manager::COLOR,
 					'selectors' => array(
-						'{{WRAPPER}} > [data-tippy-root] .tippy-box[data-placement^=left] .tippy-arrow:before'=> 'border-left-color: {{VALUE}}',
-						'{{WRAPPER}} > [data-tippy-root] .tippy-box[data-placement^=right] .tippy-arrow:before'=> 'border-right-color: {{VALUE}}',
-						'{{WRAPPER}} > [data-tippy-root] .tippy-box[data-placement^=top] .tippy-arrow:before'=> 'border-top-color: {{VALUE}}',
-						'{{WRAPPER}} > [data-tippy-root] .tippy-box[data-placement^=bottom] .tippy-arrow:before'=> 'border-bottom-color: {{VALUE}}',
+						':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box[data-placement^=left] .tippy-arrow:before'=> 'border-left-color: {{VALUE}}',
+						':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box[data-placement^=right] .tippy-arrow:before'=> 'border-right-color: {{VALUE}}',
+						':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box[data-placement^=top] .tippy-arrow:before'=> 'border-top-color: {{VALUE}}',
+						':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box[data-placement^=bottom] .tippy-arrow:before'=> 'border-bottom-color: {{VALUE}}',
 					),
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
@@ -947,7 +944,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'type'       => Elementor\Controls_Manager::DIMENSIONS,
 					'size_units' => array( 'px', '%' ),
 					'selectors'  => array(
-						'{{WRAPPER}} > [data-tippy-root] .tippy-box .tippy-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+						':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box .tippy-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 					),
 					'render_type'  => 'template',
 					'condition' => array(
@@ -963,7 +960,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'label'       => esc_html__( 'Border', 'jet-tricks' ),
 					'placeholder' => '1px',
 					'default'     => '1px',
-					'selector'    => '{{WRAPPER}} > [data-tippy-root] .tippy-box',
+					'selector'    => ':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box',
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
 					),
@@ -977,7 +974,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'type'       => Elementor\Controls_Manager::DIMENSIONS,
 					'size_units' => array( 'px', '%' ),
 					'selectors'  => array(
-						'{{WRAPPER}} > [data-tippy-root] .tippy-box ' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+						':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 					),
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
@@ -989,7 +986,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				Elementor\Group_Control_Box_Shadow::get_type(),
 				array(
 					'name' => 'jet_tricks_widget_tooltip_box_shadow',
-					'selector' => '{{WRAPPER}} > [data-tippy-root] .tippy-box',
+					'selector' => ':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box',
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
 					),
