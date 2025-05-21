@@ -114,12 +114,10 @@ class CPT_Archive {
 	 *
 	 * @return bool
 	 */
-	public function check( $arg = '' ) {
-
+	public function check( $arg = '', $sub_group = false, $sub_group_arg = false ) {
 		$queried_object = get_queried_object();
 
 		if ( is_a( $queried_object, 'WP_Term' ) ) {
-
 			$taxonomy = $queried_object->taxonomy;
 
 			if ( is_tax( $taxonomy, '' ) ) {
@@ -129,8 +127,9 @@ class CPT_Archive {
 
 		if ( is_a( $queried_object, 'WP_Post_Type' ) ) {
 			$post_type = $queried_object->name;
+			$custom_post_type = str_replace('cpt-archive-', '', $sub_group );
 
-			return is_post_type_archive( $post_type );
+			return $custom_post_type === $post_type && is_post_type_archive( $post_type );
 		}
 
 		return false;

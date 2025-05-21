@@ -3,7 +3,7 @@
  * Plugin Name: JetThemeCore
  * Plugin URI:  https://crocoblock.com/plugins/jetthemecore/
  * Description: Most powerful plugin created to make building websites super easy
- * Version:     2.3.0
+ * Version:     2.3.0.2
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-theme-core
@@ -20,7 +20,7 @@ if ( ! defined( 'WPINC' ) ) {
 add_action( 'plugins_loaded', 'jet_theme_core_init' );
 
 function jet_theme_core_init() {
-	define( 'JET_THEME_CORE_VERSION', '2.3.0' );
+	define( 'JET_THEME_CORE_VERSION', '2.3.0.2' );
 	define( 'JET_THEME_CORE_FILE', __FILE__ );
 	define( 'JET_THEME_CORE_PLUGIN_NAME', plugin_basename( __FILE__ ) );
 	define( 'JET_THEME_CORE_PLUGIN_BASE', plugin_basename( JET_THEME_CORE_FILE ) );

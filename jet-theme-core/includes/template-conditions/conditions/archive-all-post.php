@@ -98,9 +98,31 @@ class Archive_All_Post extends Base {
 	 * @return bool
 	 */
 	public function check( $args ) {
+		$show_on_front = get_option('show_on_front');
 
-		if ( is_post_type_archive( 'post' ) ) {
-			return is_archive() || is_home();
+		if ( 'posts' === $show_on_front && is_home() && is_front_page() ) {
+			return true;
+		}
+
+		if ( 'page' === $show_on_front && is_home() && ! is_front_page() ) {
+			return true;
+		}
+
+		if ( is_post_type_archive('post') ) {
+			return true;
+		}
+
+		if ( is_category() || is_tag() || is_tax() ) {
+			$queried_object = get_queried_object();
+
+			if ( isset( $queried_object->taxonomy ) ) {
+				$taxonomy = $queried_object->taxonomy;
+				$post_types = get_taxonomy( $taxonomy )->object_type ?? [];
+
+				if ( in_array( 'post', $post_types, true ) ) {
+					return true;
+				}
+			}
 		}
 
 		return false;

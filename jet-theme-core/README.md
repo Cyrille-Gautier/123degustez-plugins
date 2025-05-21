@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.0.2 - 29.04.2025
+- Fixed: All post archive condition
+
+## 2.3.0.1 - 15.04.2025
+- Fixed: All archive CPT condition
+
 ## 2.3.0 - 05.03.2025
 - Add: Theme Builder three node view
 - Fixed: Minor fixes

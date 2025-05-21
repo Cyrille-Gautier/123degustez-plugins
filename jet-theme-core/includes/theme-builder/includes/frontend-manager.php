@@ -548,7 +548,6 @@ class Frontend_Manager {
 
 					$sub_group_value = isset( $condition['subGroupValue'] ) ? $condition['subGroupValue'] : '';
 					$sub_group_arg = isset( $condition['subGroupArg'] ) ? $condition['subGroupArg'] : '';
-
 					$instance_check = call_user_func( array( $instance, 'check' ), $sub_group_value, $sub_group, $sub_group_arg );
 
 					$condition['match'] = $instance_check;

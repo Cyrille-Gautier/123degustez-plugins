@@ -934,14 +934,23 @@ class Page_Templates_Manager {
 
 				switch ( $sub_group ) {
 					case 'archive-post-type':
+
+						if ( 'post' === $condition['subGroupValue'] ) {
+							$new_sub_group = 'archive-all-post';
+							$new_priority = 10;
+						} else {
+							$new_sub_group = 'cpt-archive-' . $condition['subGroupValue'];
+							$new_priority = 45;
+						}
+
 						$new_conditions[] = [
 							'id'                   => uniqid( '_' ),
 							'include'              => 'true',
 							'group'                => 'archive',
-							'subGroup'             => 'cpt-archive-' . $condition['subGroupValue'],
+							'subGroup'             => $new_sub_group,
 							'subGroupValue'        => '',
 							'subGroupValueVerbose' => '',
-							'priority'             => 45
+							'priority'             => $new_priority,
 						];
 
 						unset( $conditions[ $key ] );
