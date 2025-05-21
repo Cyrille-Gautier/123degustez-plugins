@@ -618,6 +618,38 @@
 				this.mobileVueComponents();
 				this.initMobileRender();
 			} );
+
+			// Init Vue for hamburger menu block in Gutenberg ( also on DOM change )
+			if ( document.body.classList.contains( 'block-editor-page' ) ) {
+				const tryObserve = () => {
+					const target = document.querySelector( '.block-editor-block-list__layout' );
+
+					if ( target ) {
+						const initedMenus = new Set();
+
+						const observer = new MutationObserver( () => {
+							const menus = document.querySelectorAll( '.jet-mobile-menu--location-wp-nav' );
+
+							menus.forEach( (menu) => {
+								const menuId = menu.getAttribute( 'id' );
+
+								if ( menuId && ! initedMenus.has( menuId ) ) {
+									jetMenu.initMobileRender();
+									initedMenus.add( menuId );
+								}
+
+							});
+						});
+
+						observer.observe( target, { childList: true, subtree: true } );
+					} else {
+						requestAnimationFrame( tryObserve );
+					}
+				};
+
+				requestAnimationFrame( tryObserve );
+			}
+
 		},
 
 		initLocationMenuRender: function() {

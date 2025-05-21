@@ -254,7 +254,10 @@ if ( ! class_exists( 'Jet_Menu_Tools' ) ) {
 					'selector' => array (
 						'> a .jet-menu-icon:before'                             => 'font-size',
 						'> a .jet-menu-icon svg'                                => 'width',
+						'> a .jet-menu-icon img'                                => 'width',
 						'> .jet-mobile-menu__item-inner > a .jet-menu-icon'     => 'font-size',
+						'> .jet-mobile-menu__item-inner > a .jet-menu-icon img' => 'width',
+						'> .jet-mobile-menu__item-inner > a .jet-menu-icon svg' => 'width',
 					),
 					'rule'     => 'font-size',
 					'value'    => '%1$spx !important;',
@@ -278,8 +281,11 @@ if ( ! class_exists( 'Jet_Menu_Tools' ) ) {
 				'badge_svg_size'              => array (
 					'selector' => array (
 						'> a .jet-mega-menu-item__badge svg'                     => 'width',
+						'> a .jet-mega-menu-item__badge img'                     => 'width',
 						'> .jet-mobile-menu__item-inner > a .jet-menu-badge svg' => 'width',
+						'> .jet-mobile-menu__item-inner > a .jet-menu-badge img' => 'width',
 						'> a .jet-menu-badge svg'                                => 'width',
+						'> a .jet-menu-badge img'                                => 'width',
 					),
 					'rule'     => 'width',
 					'value'    => '%1$spx !important;',

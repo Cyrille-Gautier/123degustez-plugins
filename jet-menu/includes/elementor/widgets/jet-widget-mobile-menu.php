@@ -1743,6 +1743,14 @@ class Jet_Widget_Mobile_Menu extends Widget_Base {
 
 		$render_widget_instance->render();
 
+		if ( $this->is_css_required() ) {
+			$dynamic_css = jet_menu()->dynamic_css_manager;
+
+			add_filter( 'cx_dynamic_css/collector/localize_object', array( $this, 'fix_preview_css' ) );
+			$dynamic_css->collector->print_style();
+			remove_filter( 'cx_dynamic_css/collector/localize_object', array( $this, 'fix_preview_css' ) );
+		}
+
 	}
 
 	/**
@@ -1759,5 +1767,34 @@ class Jet_Widget_Mobile_Menu extends Widget_Base {
 		ob_start();
 		Icons_Manager::render_icon( $icon_setting, $attr );
 		return ob_get_clean();
+	}
+
+	/**
+	 * Check if need to insert custom CSS
+	 * @return boolean [description]
+	 */
+	public function is_css_required() {
+
+		$allowed_actions = array( 'elementor_render_widget', 'elementor', 'elementor_ajax' );
+
+		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $allowed_actions ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Fix preview styles
+	 *
+	 * @return array
+	 */
+	public function fix_preview_css( $data ) {
+
+		if ( ! empty( $data['css'] ) ) {
+			printf( '<style>%s</style>', html_entity_decode( $data['css'] ) );
+		}
+
+		return $data;
 	}
 }

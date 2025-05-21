@@ -315,15 +315,15 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'options' => array(
 					'left'    => array(
 						'title' => esc_html__( 'Left', 'jet-menu' ),
-						'icon'  => 'fa fa-arrow-left',
+						'icon'  => 'eicon-h-align-left',
 					),
 					'center' => array(
 						'title' => esc_html__( 'Center', 'jet-menu' ),
-						'icon'  => 'fa fa-align-center',
+						'icon'  => 'eicon-h-align-center',
 					),
 					'right' => array(
 						'title' => esc_html__( 'Right', 'jet-menu' ),
-						'icon'  => 'fa fa-arrow-right',
+						'icon'  => 'eicon-h-align-right',
 					),
 				),
 				'selectors_dictionary' => array(
@@ -2075,15 +2075,15 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'options' => array(
 					'flex-start'    => array(
 						'title' => esc_html__( 'Top', 'jet-menu' ),
-						'icon'  => 'fa fa-arrow-up',
+						'icon'  => 'eicon-v-align-top',
 					),
 					'center' => array(
 						'title' => esc_html__( 'Center', 'jet-menu' ),
-						'icon'  => 'fa fa-align-center',
+						'icon'  => 'eicon-v-align-middle',
 					),
 					'flex-end' => array(
 						'title' => esc_html__( 'Bottom', 'jet-menu' ),
-						'icon'  => 'fa fa-arrow-down',
+						'icon'  => 'eicon-v-align-bottom',
 					),
 				),
 				'selectors'  => array(
@@ -2199,20 +2199,20 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'options' => array(
 					'flex-start'    => array(
 						'title' => esc_html__( 'Top', 'jet-menu' ),
-						'icon'  => 'fa fa-arrow-up',
+						'icon'  => 'eicon-v-align-top',
 					),
 					'center' => array(
 						'title' => esc_html__( 'Center', 'jet-menu' ),
-						'icon'  => 'fa fa-align-center',
+						'icon'  => 'eicon-v-align-middle',
 					),
 					'flex-end' => array(
 						'title' => esc_html__( 'Bottom', 'jet-menu' ),
-						'icon'  => 'fa fa-arrow-down',
+						'icon'  => 'eicon-v-align-bottom',
 					),
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} ' . $css_scheme['badge'] => 'align-self: {{VALUE}};',
-					'{{WRAPPER}} ' . $css_scheme['badge_sub'] => 'align-self: {{VALUE}};',
+					'{{WRAPPER}} ' . $css_scheme['badge'] => 'align-self: {{VALUE}}; transform: none;',
+					'{{WRAPPER}} ' . $css_scheme['badge_sub'] => 'align-self: {{VALUE}}; transform: none;',
 				),
 			)
 		);
@@ -2414,6 +2414,8 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 					),
 				),
 				'selectors'  => array(
+					'{{WRAPPER}} ' . $css_scheme['dropdown_icon'] . ' i' => 'font-size: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} ' . $css_scheme['dropdown_icon_sub'] . ' i' => 'font-size: {{SIZE}}{{UNIT}}',
 					'{{WRAPPER}} ' . $css_scheme['dropdown_icon'] . ' svg' => 'width: {{SIZE}}{{UNIT}}',
 					'{{WRAPPER}} ' . $css_scheme['dropdown_icon_sub'] . ' svg' => 'width: {{SIZE}}{{UNIT}}',
 					'{{WRAPPER}} ' . $css_scheme['dropdown_icon'] . ':before' => 'font-size: {{SIZE}}{{UNIT}}',
@@ -2485,15 +2487,15 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 				'options' => array(
 					'flex-start'    => array(
 						'title' => esc_html__( 'Top', 'jet-menu' ),
-						'icon'  => 'fa fa-arrow-up',
+						'icon'  => 'eicon-v-align-top',
 					),
 					'center' => array(
 						'title' => esc_html__( 'Center', 'jet-menu' ),
-						'icon'  => 'fa fa-align-center',
+						'icon'  => 'eicon-v-align-middle',
 					),
 					'flex-end' => array(
 						'title' => esc_html__( 'Bottom', 'jet-menu' ),
-						'icon'  => 'fa fa-arrow-down',
+						'icon'  => 'eicon-v-align-bottom',
 					),
 				),
 				'selectors'  => array(
