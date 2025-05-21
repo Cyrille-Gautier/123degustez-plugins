@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 2.4.4
+* FIX: Resolved fatal error caused by untranslated widget meta in WPML environments;
+* FIX: Fixed playback issue in the Video Playlist widget when switching between videos.
+* UPD: Removed unused REST API endpoint `elementor-template` for improved security and performance;
+
 ## 2.4.3.1
 * FIX: XSS vulnerability in Video Playlist widget by sanitizing data attributes;
 * FIX: prevent unauthorized access to templates in REST API.

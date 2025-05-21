@@ -3,7 +3,7 @@
  * Plugin Name: JetBlog For Elementor
  * Plugin URI:  https://crocoblock.com/plugins/jetblog/
  * Description: Blogging Package for Elementor Page Builder
- * Version:     2.4.3.1
+ * Version:     2.4.4
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-blog
@@ -11,7 +11,7 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Domain Path: /languages
  *
- * Elementor tested up to: 3.1
+ * Elementor tested up to: 3.28.3
  * Elementor Pro tested up to: 3.2
  */
 
@@ -51,7 +51,7 @@ if ( ! class_exists( 'Jet_Blog' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '2.4.3.1';
+		private $version = '2.4.4';
 
 		/**
 		 * Holder for base plugin path
@@ -270,7 +270,6 @@ if ( ! class_exists( 'Jet_Blog' ) ) {
 
 			require $this->plugin_path( 'includes/rest-api/rest-api.php' );
 			require $this->plugin_path( 'includes/rest-api/endpoints/base.php' );
-			require $this->plugin_path( 'includes/rest-api/endpoints/elementor-template.php' );
 			require $this->plugin_path( 'includes/rest-api/endpoints/plugin-settings.php' );
 		}
 

@@ -50,13 +50,13 @@ if ( ! class_exists( 'Jet_Blog_DB_Upgrader' ) ) {
 					'path'      => $db_updater_data['path'],
 					'url'       => $db_updater_data['url'],
 					'slug'      => 'jet-blog',
-					'version'   => '2.4.3',
+					'version'   => '2.4.4',
 					'callbacks' => array(
 						'2.1.22' => array(
 							array( $this, 'update_db_2_1_22' ),
 						),
-						'2.4.3' => array(
-							array( $this, 'update_db_2_4_3' ),
+						'2.4.4' => array(
+							array( $this, 'update_db_2_4_4' ),
 						),
 					),
 					'labels'    => array(
@@ -83,11 +83,14 @@ if ( ! class_exists( 'Jet_Blog_DB_Upgrader' ) ) {
 			}
 		}
 
-		public function update_db_2_4_3() {
+		public function update_db_2_4_4() {
 			if ( class_exists( 'Elementor\Plugin' ) ) {
+
+				$elementor_post_types = get_post_types_by_support( 'elementor' );
+
 				$query = new WP_Query( [
-					'post_type'      => [ 'page', 'post', 'elementor_library', 'jet-theme-core', 'jet-woo-builder' ],
-					'post_status'    => 'publish',
+					'post_type'      => $elementor_post_types,
+					'post_status'    => 'any',
 					'meta_query'     => [
 						[
 							'key'     => '_elementor_data',
@@ -99,6 +102,7 @@ if ( ! class_exists( 'Jet_Blog_DB_Upgrader' ) ) {
 							'compare' => 'LIKE',
 						],
 					],
+					'suppress_filters' => false,
 					'posts_per_page' => -1,
 				] );
 

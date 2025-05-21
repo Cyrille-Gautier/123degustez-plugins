@@ -1457,11 +1457,25 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 
 	public function _get_video_data_atts( $video_data, $item, $settings, $index ) {
 
+        $allowed_tags = array(
+            'iframe' => array(
+                'src'             => true,
+                'height'          => true,
+                'width'           => true,
+                'frameborder'     => true,
+                'allow'           => true,
+                'allowfullscreen' => true,
+                'title'           => true,
+                'referrerpolicy'  => true,
+                'loading'         => true,
+            )
+        );
+
 		$data = array(
 			'data-id'          => sanitize_key($item['_id']),
 			'data-video_id'    => sanitize_text_field($video_data['video_id']),
 			'data-provider'    => sanitize_text_field(strtolower($video_data['provider_name'])),
-			'data-html'        => wp_json_encode($this->adjust_height(wp_kses_post($video_data['html']))),
+            'data-html'        => wp_json_encode( $this->adjust_height( wp_kses( $video_data['html'], $allowed_tags ) ) ),
 			'data-height'      => absint($settings['playlist_height']),
 			'data-video_index' => absint($index) + 1,
 			'data-video_start' => isset($item['start_time']) ? absint($item['start_time']) : '',
