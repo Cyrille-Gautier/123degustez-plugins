@@ -6,7 +6,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-04-02 09:08+0000\n"
+"POT-Creation-Date: 2025-05-13 07:57+0000\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -70,23 +70,23 @@ msgstr ""
 msgid "Default values were set successfully"
 msgstr ""
 
-#: ../classes/Product/LicenseManager.php:191
+#: ../classes/Product/LicenseManager.php:192
 msgid "An error occurred while connecting to the license server. Error: %s. Please login to thrivethemes.com, report this error message on the forums and we'll get this sorted for you"
 msgstr ""
 
-#: ../classes/Product/LicenseManager.php:201
+#: ../classes/Product/LicenseManager.php:202
 msgid "An error occurred while receiving the license status. The response was: %s. Please login to thrivethemes.com, report this error message on the forums and we'll get this sorted for you."
 msgstr ""
 
-#: ../classes/Product/LicenseManager.php:217
+#: ../classes/Product/LicenseManager.php:218
 msgid "Invalid response!"
 msgstr ""
 
-#: ../classes/Product/LicenseManager.php:225
+#: ../classes/Product/LicenseManager.php:226
 msgid "Invalid products returned from server!"
 msgstr ""
 
-#: ../classes/Product/LicenseManager.php:233
+#: ../classes/Product/LicenseManager.php:234
 msgid "Products returned from server are not accepted for licensing!"
 msgstr ""
 
@@ -518,47 +518,47 @@ msgstr ""
 msgid "This Thrive Design Pack contains some themes. In order for themes to be imported Thrive Theme Builder needs to be active."
 msgstr ""
 
-#: ../inc/metrics/class-deactivate.php:69
+#: ../inc/metrics/class-deactivate.php:71
 msgid "Please share why you are deactivating"
 msgstr ""
 
-#: ../inc/metrics/class-deactivate.php:70
+#: ../inc/metrics/class-deactivate.php:72
 msgid "Submit & Deactivate"
 msgstr ""
 
-#: ../inc/metrics/class-deactivate.php:71
+#: ../inc/metrics/class-deactivate.php:73
 msgid "Skip & Deactivate"
 msgstr ""
 
-#: ../inc/metrics/class-deactivate.php:72
+#: ../inc/metrics/class-deactivate.php:74
 msgid "Reason for deactivation"
 msgstr ""
 
-#: ../inc/metrics/class-deactivate.php:94
+#: ../inc/metrics/class-deactivate.php:96
 msgid "I couldn't get the plugin to work"
 msgstr ""
 
-#: ../inc/metrics/class-deactivate.php:98
+#: ../inc/metrics/class-deactivate.php:100
 msgid "It's a temporary deactivation"
 msgstr ""
 
-#: ../inc/metrics/class-deactivate.php:102
+#: ../inc/metrics/class-deactivate.php:104
 msgid "I'm requesting a refund"
 msgstr ""
 
-#: ../inc/metrics/class-deactivate.php:106
+#: ../inc/metrics/class-deactivate.php:108
 msgid "I'm canceling my subscription"
 msgstr ""
 
-#: ../inc/metrics/class-deactivate.php:110
+#: ../inc/metrics/class-deactivate.php:112
 msgid "I found a better plugin"
 msgstr ""
 
-#: ../inc/metrics/class-deactivate.php:114
+#: ../inc/metrics/class-deactivate.php:116
 msgid "I no longer need the plugin"
 msgstr ""
 
-#: ../inc/metrics/class-deactivate.php:118
+#: ../inc/metrics/class-deactivate.php:120
 msgid "Other"
 msgstr ""
 
@@ -2324,19 +2324,19 @@ msgstr ""
 msgid "Mailchimp connected successfully"
 msgstr ""
 
-#: ../inc/auto-responder/classes/Connection/Mailchimp.php:524, ../inc/auto-responder/classes/Connection/Mailchimp.php:606, ../inc/auto-responder/classes/Connection/MailerLite.php:188, ../inc/auto-responder/classes/Connection/Sendinblue.php:224, ../inc/auto-responder/classes/Connection/SendinblueEmail.php:384, ../inc/auto-responder/classes/Connection/SendinblueEmailV3.php:423, ../inc/auto-responder/classes/Connection/SendinblueV3.php:261
+#: ../inc/auto-responder/classes/Connection/Mailchimp.php:532, ../inc/auto-responder/classes/Connection/Mailchimp.php:614, ../inc/auto-responder/classes/Connection/MailerLite.php:188, ../inc/auto-responder/classes/Connection/Sendinblue.php:224, ../inc/auto-responder/classes/Connection/SendinblueEmail.php:384, ../inc/auto-responder/classes/Connection/SendinblueEmailV3.php:423, ../inc/auto-responder/classes/Connection/SendinblueV3.php:261
 msgid "Unknown Error"
 msgstr ""
 
-#: ../inc/auto-responder/classes/Connection/Mailchimp.php:604
+#: ../inc/auto-responder/classes/Connection/Mailchimp.php:612
 msgid "Unknown Mailchimp Error"
 msgstr ""
 
-#: ../inc/auto-responder/classes/Connection/Mailchimp.php:622, ../inc/auto-responder/classes/Connection/Mailchimp.php:714
+#: ../inc/auto-responder/classes/Connection/Mailchimp.php:630, ../inc/auto-responder/classes/Connection/Mailchimp.php:722
 msgid "Missing required parameters for adding tags to contact"
 msgstr ""
 
-#: ../inc/auto-responder/classes/Connection/Mailchimp.php:639, ../inc/auto-responder/classes/Connection/Mailchimp.php:932, ../inc/auto-responder/classes/Connection/MailerLite.php:128, ../inc/auto-responder/classes/Connection/Sendinblue.php:167, ../inc/auto-responder/classes/Connection/SendinblueEmail.php:346, ../inc/auto-responder/classes/Connection/SendinblueEmailV3.php:383, ../inc/auto-responder/classes/Connection/SendinblueV3.php:190, ../inc/auto-responder/classes/Connection/SGAutorepondeur.php:128
+#: ../inc/auto-responder/classes/Connection/Mailchimp.php:647, ../inc/auto-responder/classes/Connection/Mailchimp.php:940, ../inc/auto-responder/classes/Connection/MailerLite.php:128, ../inc/auto-responder/classes/Connection/Sendinblue.php:167, ../inc/auto-responder/classes/Connection/SendinblueEmail.php:346, ../inc/auto-responder/classes/Connection/SendinblueEmailV3.php:383, ../inc/auto-responder/classes/Connection/SendinblueV3.php:190, ../inc/auto-responder/classes/Connection/SGAutorepondeur.php:128
 msgid "Please re-check your API connection details."
 msgstr ""
 
@@ -2580,15 +2580,15 @@ msgstr ""
 msgid "Unknown SG-Autorepondeur Error"
 msgstr ""
 
-#: ../inc/auto-responder/classes/Connection/Slack.php:104
+#: ../inc/auto-responder/classes/Connection/Slack.php:106
 msgid "Could not test Slack connection: %s"
 msgstr ""
 
-#: ../inc/auto-responder/classes/Connection/Slack.php:170
+#: ../inc/auto-responder/classes/Connection/Slack.php:172
 msgid "See how this is done"
 msgstr ""
 
-#: ../inc/auto-responder/classes/Connection/Slack.php:172
+#: ../inc/auto-responder/classes/Connection/Slack.php:174
 msgid "You can now use Slack actions in Thrive Automator"
 msgstr ""
 

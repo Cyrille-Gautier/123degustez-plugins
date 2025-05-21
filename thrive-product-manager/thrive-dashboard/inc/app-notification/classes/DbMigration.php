@@ -1,5 +1,10 @@
 <?php
-require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Silence is golden!
+}
+
+require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
 class TD_DbMigration {
 	static $tableName = 'td_app_notifications';
 
@@ -41,5 +46,11 @@ class TD_DbMigration {
         if ($index_exists) {
             $wpdb->query("ALTER TABLE $table DROP INDEX ian_slug");
         }
+
+		// Make level column nullable
+		$level_exists = $wpdb->get_results("SHOW COLUMNS FROM $table LIKE 'level'");
+		if ($level_exists) {
+			$wpdb->query("ALTER TABLE $table MODIFY COLUMN `level` text DEFAULT NULL");
+		}
 	}
 }

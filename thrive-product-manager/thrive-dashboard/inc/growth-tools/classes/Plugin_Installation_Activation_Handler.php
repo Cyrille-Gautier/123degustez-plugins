@@ -331,7 +331,9 @@ class Plugin_Installation_Activation_Handler extends Thrive_Product_Tags_Helper
             'api_slug' => $this->plugin_slug,
         );
 
-        $url    = add_query_arg( array( 'p' => $this->_get_hash( $options['body'] ) ), 'https://service-api.thrivethemes.com/plugin/update' );
+        $service_api = defined( 'TD_SERVICE_API_URL' ) ? TD_SERVICE_API_URL : 'https://service-api.thrivethemes.com';
+        $endpoint = rtrim($service_api, '/') . '/plugin/update';
+        $url    = add_query_arg( array( 'p' => $this->_get_hash( $options['body'] ) ), $endpoint );
         $result = wp_remote_post( $url, $options );
 
         if ( ! is_wp_error( $result ) ) {

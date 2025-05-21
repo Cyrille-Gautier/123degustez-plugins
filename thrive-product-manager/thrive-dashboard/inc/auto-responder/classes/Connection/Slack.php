@@ -38,10 +38,12 @@ class Thrive_Dash_List_Connection_Slack extends Thrive_Dash_List_Connection_Abst
 			'&'
 		);
 
+		$slack_url = defined( 'TD_SERVICE_API_URL' ) ? rtrim(TD_SERVICE_API_URL, '/') . '/integrations/slack' : static::SERVICE_URL;
+
 		return sprintf(
 			'%s%s%s',
-			static::SERVICE_URL,
-			false === strpos( static::SERVICE_URL, '?' ) ? '?' : '&',
+			$slack_url,
+			false === strpos( $slack_url, '?' ) ? '?' : '&',
 			$query_params
 		);
 

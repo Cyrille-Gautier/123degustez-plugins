@@ -155,12 +155,13 @@ class TVE_Dash_Product_LicenseManager {
 	}
 
 	public function checkLicense( $email, $key, $tag = false ) {
-		$api_url = "https://service-api.thrivethemes.com/license";
-
+		$service_api_url = defined( 'TD_SERVICE_API_URL' ) ? TD_SERVICE_API_URL : 'https://service-api.thrivethemes.com';
+		$api_url = rtrim($service_api_url, '/') . '/license';
 
 		$body = array(
-			'email'   => $email,
-			'license' => $key,
+			'email'   		=> $email,
+			'license' 		=> $key,
+			'site_url'   	=> get_site_url(),
 		);
 
 		if ( $tag !== false ) {

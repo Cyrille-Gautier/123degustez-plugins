@@ -114,6 +114,39 @@ class Thrive_Dash_List_Connection_SendLayer extends Thrive_Dash_List_Connection_
 	}
 
 	/**
+	 * Send custom email
+	 *
+	 * @param $data
+	 *
+	 * @return bool|string true for success or error message for failure
+	 */
+	public function sendCustomEmail( $data ) {
+		$sendlayer  = $this->get_api();
+		$from_email = get_option( 'admin_email' );
+		$site_name  = html_entity_decode( get_option( 'blogname' ) );
+
+		try {
+			$message = array(
+				'name'       => empty ( $data['from_name'] ) ? $site_name : $data['from_name'],
+				'from'       => $from_email,
+				'to'         => array( array( 'email' => $data['email'] ) ),
+				'subject'    => $data['subject'],
+				'text'       => empty ( $data['text_content'] ) ? '' : $data['text_content'],
+				'html'       => empty ( $data['html_content'] ) ? '' : $data['html_content'],
+				'h:Reply-To' => empty ( $data['reply_to'] ) ? '' : $data['reply_to'],
+				'tags'	     => empty( $data['email_tags'] ) ? [] :  $data['email_tags'],
+				'multipart'  => true,
+			);
+
+			$sendlayer->sendMessage( $message );
+		} catch ( Exception $e ) {
+			return $e->getMessage();
+		}
+
+		return true;
+	}
+
+	/**
 	 * Send the same email to multiple addresses
 	 *
 	 * @param $data

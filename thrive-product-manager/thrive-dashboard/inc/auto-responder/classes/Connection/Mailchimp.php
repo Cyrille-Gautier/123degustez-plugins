@@ -245,11 +245,19 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 
 		// First name
 		if ( ! empty( $first_name ) ) {
+			//Adding code to allow populating fields with single quote '. Without it, it will add '\.
+			if ( strpos( $first_name, "\\" ) !== false ) {
+			 	$first_name = preg_replace( "/\\\\'/", "'", $first_name );
+			}
 			$merge_fields->FNAME = $first_name;
 		}
 
 		// Last name
 		if ( ! empty( $last_name ) ) {
+			//Adding code to allow populating fields with single quote '. Without it, it will add '\.
+			if ( strpos( $last_name, "\\" ) !== false ) {
+				$last_name = preg_replace( "/\\\\'/", "'", $last_name );
+		   	}
 			$merge_fields->LNAME = $last_name;
 		}
 

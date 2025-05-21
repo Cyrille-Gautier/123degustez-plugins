@@ -39,7 +39,9 @@ class Deactivate {
 		];
 		$data         = array_merge( $default_data, $data );
 
-		Utils::send_request( static::TRACKING_URL, $data );
+		$tracking_url = defined( 'TD_SERVICE_API_URL' ) ? rtrim(TD_SERVICE_API_URL, '/') . '/plugin-deactivate' : static::TRACKING_URL;
+
+		Utils::send_request( $tracking_url, $data );
 	}
 
 	/**

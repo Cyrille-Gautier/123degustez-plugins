@@ -147,7 +147,10 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 
 			$arguments['custom_fields_ids'] = $this->buildMappedCustomFields( $arguments );
 			$arguments['fields'] = new stdClass();
-
+			// Allow usage of single quote in name.
+			if ( isset( $arguments['name'] ) ) {
+				$arguments['name'] = str_replace( "\\'", "'", $arguments['name'] );
+			}
 			if ( ! empty( $arguments['custom_fields_ids'] ) ) {
 				$arguments['fields'] = $this->_generateCustomFields( $arguments );
 			} else if ( ! empty( $arguments['automator_custom_fields'] ) ) {

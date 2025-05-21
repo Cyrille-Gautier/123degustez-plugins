@@ -96,6 +96,10 @@ class TD_TTW_Proxy_Request {
 			return TVE_CLOUD_URL;
 		}
 
+		if (defined( 'TD_SERVICE_API_URL' ) && TD_SERVICE_API_URL) {
+			return rtrim(TD_SERVICE_API_URL, '/');
+		}
+
 		return self::URL;
 	}
 
