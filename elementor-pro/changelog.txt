@@ -1,5 +1,80 @@
 # Elementor Pro - by Elementor.com
 
+#### 3.29.0 - 2025-05-19
+
+* New: Introduced Cloud Templates - save, manage, and reuse your templates across all your sites from a single cloud library
+* Tweak: Improved accessibility with `role` attributes in Share Buttons widget
+* Tweak: Improved accessibility by grouping content with `role=region` in the Video Playlist widget
+* Fix: Focus color is not applied correctly for accessibility in WordPress Menu widget ([#24239](https://github.com/elementor/elementor/issues/24239))
+* Fix: Common scripts loaded late when using the Theme Builder
+
+#### 3.28.4 - 2025-05-05
+
+* Fix: Empty results appeared on the frontend when using the Taxonomy Filter with the 'Avoid Duplicates' option in Loop Grid widget
+* Fix: Errors occur when Debug mode is enabled and the Optimized Markup experiment is active
+
+#### 3.28.3 - 2025-04-16
+* Tweak: Improved sidebar navigation flow on the Elementor Home screen
+
+#### 3.28.2 - 2025-03-30
+
+* Fix: Default Elementor animation shown for logged-out users when using an "External URL" source in Lottie widget
+
+#### 3.28.1 - 2025-03-23
+
+* Security Fix: Improved code security enforcement in Animated Headline and Form widgets
+
+#### 3.28.0 - 2025-03-17
+
+* Tweak: Ensured File Upload field styles are overridden by global styles in Form widget ([#11651](https://github.com/elementor/elementor/issues/11651), [#17223](https://github.com/elementor/elementor/issues/17223))
+* Tweak: Updated Scroll Snap description to clarify incompatibility with animations and motion effects
+* Tweak: Prevented special characters from being encoded in the email subject field in Form widget
+* Tweak: Loaded module styles within the module instead of registering them in `plugin.php`
+* Tweak: Updated minimum required WordPress version to 6.5
+* Tweak: Improved keyboard accessibility for menus in Editor Top Bar
+* Tweak: Made the edit button accessible in the Template widget
+* Tweak: Optimized Form widget performance by caching field assets `using get_style_depends()` and `get_script_depends()` methods
+* Tweak: Added Text Shadow control in Testimonial Carousel, Call to Action and Animated Headline widgets
+* Fix: Button icon alignment breaks when Inline Font Icons feature is activated ([#16077](https://github.com/elementor/elementor/issues/16077), [#16511](https://github.com/elementor/elementor/issues/16511), [#17692](https://github.com/elementor/elementor/issues/17692), [#17922](https://github.com/elementor/elementor/issues/17922), [#19253](https://github.com/elementor/elementor/issues/19253), [#19370](https://github.com/elementor/elementor/issues/19370), [#21236](https://github.com/elementor/elementor/issues/21236), [#21844](https://github.com/elementor/elementor/issues/21844), [#28080](https://github.com/elementor/elementor/issues/28080))
+* Fix: Dropdown caret color did not follow menu item color when Inline Font Icons feature is activated ([#17500](https://github.com/elementor/elementor/issues/17500), [#18466](https://github.com/elementor/elementor/issues/18466), [#21664](https://github.com/elementor/elementor/issues/21664), [#24929](https://github.com/elementor/elementor/issues/24929), [#28064](https://github.com/elementor/elementor/issues/28064))
+* Fix: Page doesn't scroll up when a coupon error notice appears in Checkout widget
+
+#### 3.27.7 - 2025-03-13
+
+* Security Fix: Improved code security enforcement in Lottie widget
+
+#### 3.27.6 - 2025-03-10
+
+* Security Fix: Improved code security enforcement in Template Condition
+
+#### 3.27.5 - 2025-03-03
+
+* Fix: The `wp_trigger_error` function causes the site to crash instead of triggering a warning when used with ACF text
+
+#### 3.27.4 - 2025-02-16
+
+* Security Fix: Improved code security enforcement in Screenshots module
+* Security Fix: Improved code security enforcement in Query control
+* Fix: ACF `true_false` field causing a fatal error when used as a dynamic tag with third-party plugins ([#30170](https://github.com/elementor/elementor/issues/30170))
+
+#### 3.27.3 - 2025-02-06
+
+* Security Fix: Improved code security enforcement in Stripe Button widget
+
+#### 3.27.2 - 2025-02-03
+
+* Fix: Value type configuration issue causing errors when using ACF
+* Fix: Hide content on responsive breakpoint option is not working on WordPress Menu widget when Optimized Markup experiment is activated
+
+#### 3.27.1 - 2025-01-27
+
+* Tweak: Increased the number of items allowed in Dynamic Tags options in Display Conditions for Elements
+* Security Fix: Improved code security enforcement in Global widget
+* Security Fix: Improved code security enforcement in Lottie widget
+* Security Fix: Improved code security enforcement in Admin settings
+* Fix: Accessible navigation in popups caused unintended scrolling of the page when triggered ([#29175](https://github.com/elementor/elementor/issues/29175))
+* Fix: Empty custom fields are missing in the Dynamic Tags options in Display Conditions for Elements
+
 #### 3.27.0 - 2025-01-20
 
 * Tweak: Removed the `elementor-widget-container` div from the Menu, Loop, Table of Contents, Form, and Hotspot widgets as part of the Optimized Markup experiment to improve HTML structure

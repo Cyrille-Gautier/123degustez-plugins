@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.27.0 - 20-01-2025 */
+/*! elementor-pro - v3.29.0 - 19-05-2025 */
 "use strict";
 (self["webpackChunkelementor_pro"] = self["webpackChunkelementor_pro"] || []).push([["product-add-to-cart"],{
 
