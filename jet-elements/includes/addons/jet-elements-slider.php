@@ -746,6 +746,19 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			)
 		);
 
+		$this->add_control(
+			'auto_adjust_slide_height',
+			array(
+				'label'        => esc_html__( 'Dynamic Slide Height for Templates', 'jet-elements' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-elements' ),
+				'label_off'    => esc_html__( 'No', 'jet-elements' ),
+				'return_value' => 'true',
+				'default'      => 'no',
+				'description'  => esc_html__( 'Enable to automatically adjust slide height based on the content of template slides.', 'jet-elements' )
+			)			
+		);
+
 		$this->add_responsive_control(
 			'slider_container_width',
 			array(
@@ -3296,6 +3309,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 			'rightToLeft'           => is_rtl(),
 			'touchswipe'            => filter_var( $module_settings['slider_touchswipe'], FILTER_VALIDATE_BOOLEAN ),
 			'fractionPag'           => filter_var( $module_settings['fraction_pagination'], FILTER_VALIDATE_BOOLEAN ),
+			'autoSliderHeight'    => filter_var( $module_settings['auto_adjust_slide_height'], FILTER_VALIDATE_BOOLEAN ),
 		);
 
 		$settings = apply_filters( 'jet-elements/slider/slider-options', $settings, $module_settings );

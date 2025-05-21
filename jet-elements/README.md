@@ -4,6 +4,14 @@ Brand new addon for Elementor Page builder. It provides the set of modules to cr
 
 # ChangeLog
 
+## [2.7.6](https://github.com/ZemezLab/jet-elements/archive/2.7.6.zip) - 02.05.2025
+* Added: [Crocoblock/suggestions#7977](https://github.com/Crocoblock/suggestions/issues/7977)
+* Added: [Crocoblock/suggestions#7456](https://github.com/Crocoblock/suggestions/issues/7456)
+* Added: [Crocoblock/suggestions#4977](https://github.com/Crocoblock/suggestions/issues/4977)
+* Fixed: improve IntersectionObserver handling for scroll navigation widget
+* Fixed: WPML compatibility
+* Fixed: minor issue
+
 ## [2.7.5.1](https://github.com/ZemezLab/jet-elements/archive/2.7.5.1.zip) - 08.04.2025
 * Fixed: background setting in the Audio Player widget
 

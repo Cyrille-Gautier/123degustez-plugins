@@ -3,7 +3,7 @@
  * Plugin Name: JetElements For Elementor
  * Plugin URI:  https://crocoblock.com/plugins/jetelements/
  * Description: Brand new addon for Elementor Page builder. It provides the set of modules to create different kinds of content, adds custom modules to your website and applies attractive styles in the matter of several clicks!
- * Version:     2.7.5.1
+ * Version:     2.7.6
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-elements
@@ -65,7 +65,7 @@ if ( ! class_exists( 'Jet_Elements' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '2.7.5.1';
+		private $version = '2.7.6';
 
 		/**
 		 * Framework component

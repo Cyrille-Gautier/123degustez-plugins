@@ -569,51 +569,51 @@
 			}
 		},
 
-		observer: function( $element, callback, options = {} ) {
-
+		observer: function( $elements, callback, options = {} ) {
+			// Default options: activate a section when at least 50% of it is visible
 			const defaultOptions = {
-				offset: '0px', // Default offset
-				triggerOnce: true, // Trigger only once when entering the viewport
+				threshold: 0.5,      // Activate when the element is more than half visible
+				triggerOnce: false,  // Continuously observe the element
 			};
-
+		
+			// Merge custom options with defaults
 			options = jQuery.extend( defaultOptions, options );
 
 			const observerOptions = {
-				root: null, // Default to the viewport
-				rootMargin: '0px', 
-				threshold: 0, 
+				root: null,         // Use the browser viewport as the container
+				rootMargin: '0px',  // No margin adjustment, relying solely on threshold
+				threshold: options.threshold
 			};
-
-			 // Track the previous position of each element
+		
+			// To determine scroll direction, store the previous Y-coordinate for each element
 			const previousY = new WeakMap();
-
-			const observer = new IntersectionObserver(( entries, observer ) => {
-				entries.forEach(( entry ) => {
-
+		
+			const observer = new IntersectionObserver(( entries ) => {
+				// First, determine the scroll direction for each entry
+				entries.forEach( entry => {
 					const currentY = entry.boundingClientRect.y;
-            		const prevY = previousY.get( entry.target ) || currentY;
-					const element = entry.target;
-					const direction = currentY < prevY ? 'down' : 'up';
-					 // Update the previous position
-					 previousY.set( entry.target, currentY );
-
-					if ( entry.isIntersecting ) {
-						const result = callback.call( element, direction, entry );
-						// If triggerOnce is enabled, unobserve the element
-						if ( options.triggerOnce ) {
-							observer.unobserve( element );
-						}
-						return result;
-					} 
+					const prevY = previousY.get( entry.target ) || currentY;
+					// Add a new property "direction" to the entry object
+					entry.direction = currentY < prevY ? 'down' : 'up';
+					previousY.set( entry.target, currentY );
 				});
+		
+				// Filter entries with an intersection ratio greater or equal to the threshold (e.g., 50%)
+				const visibleEntries = entries.filter( entry => entry.intersectionRatio >= options.threshold );
+		
+				// If there are visible entries, choose the one with the highest intersection ratio
+				if ( visibleEntries.length > 0 ) {
+					visibleEntries.sort(( a, b ) => b.intersectionRatio - a.intersectionRatio );
+					callback.call( visibleEntries[0].target, visibleEntries[0].direction, visibleEntries[0] );
+				}
 			}, observerOptions );
-			
-			// Attach observer to each element
-			$element.each( function () {
+		
+			// Attach the observer to every element in the collection
+			$elements.each( function() {
 				observer.observe( this );
 			});
-
-    		return observer;
+		
+			return observer;
 		},
 
 		prepareWaypointOptions: function( $scope, waypointOptions ) {
@@ -1760,6 +1760,86 @@
 					$( '.sp-next-arrow', $target ).html( arrowIconHtml );
 					$( '.slider-pro', $target ).addClass( 'slider-loaded' );
 
+					if ( settings.autoSliderHeight ) {
+
+						var $slider = $('.slider-pro', $target);
+									
+						// Update mask, imageContainer and slide height
+						function updateHeight() {
+							var $slider = $( '.slider-pro', $target ),
+								$activeSlide = $slider.find( '.jet-slider__item.sp-slide.sp-selected' ),
+								$inner = $activeSlide.find( '.jet-slider__content-inner' ),
+								$mask = $slider.find( '.sp-mask.sp-grab' ),
+								$imageContainer = $activeSlide.find( '.sp-image-container' ),
+								isFullscreen = $slider.hasClass( 'sp-full-screen' );
+				
+								if ( $activeSlide.find( '.elementor' ).length > 0 ) {
+									var $innerHeight = $inner.outerHeight();
+									if ( isFullscreen ) {
+										// In fullscreen mode, use the window height
+										var windowHeight = $( window ).height();
+										$mask.css( 'height', windowHeight + 'px' );
+										$imageContainer.css( 'height', windowHeight + 'px' );
+										$activeSlide.css( 'height', windowHeight + 'px' );
+									} else {
+										$mask.css( 'height', $innerHeight + 'px' );
+										$imageContainer.css( 'height', $innerHeight + 'px' );
+										$activeSlide.css( 'height', $innerHeight + 'px' );
+									}
+								} else {
+									if ( isFullscreen ) {
+										var windowHeight = $( window ).height();
+										$mask.css( 'height', windowHeight + 'px' );
+										$imageContainer.css( 'height', windowHeight + 'px' );
+										$activeSlide.css( 'height', windowHeight + 'px' );
+									} else {
+										$mask.css( 'height', defaultHeight );
+										$imageContainer.css( 'height', defaultHeight );
+										$activeSlide.css( 'height', defaultHeight );
+									}
+								}
+						}
+				
+						// Initialize ResizeObserver
+						var resizeObserver = new ResizeObserver( function( entries ) {
+							for ( let entry of entries ) {
+								updateHeight();
+							}
+						});
+			
+						function observeActiveSlide() {
+							var $activeSlide = $slider.find( '.jet-slider__item.sp-slide.sp-selected' ),
+								$inner = $activeSlide.find( '.jet-slider__content-inner' );
+			
+							if ( $inner.length ) {
+								resizeObserver.observe( $inner.get( 0 ) );
+							}
+						}
+			
+						// Initialize all slides
+						$slider.find( '.jet-slider__item.sp-slide' ).each( function() {
+							var $this = $( this ),
+								$inner = $this.find( '.jet-slider__content-inner' ),
+								$imageContainer = $this.find( '.sp-image-container' ),
+								$innerHeight = $inner.outerHeight();
+			
+							if ($this.find( '.elementor' ).length > 0 ) {
+								$this.css( 'height', $innerHeight + 'px' );
+								$imageContainer.css( 'height', $innerHeight + 'px' );
+							}
+						});
+			
+						updateHeight();
+						observeActiveSlide();
+			
+						// On slide change
+						$slider.on( 'gotoSlide', function() {
+							resizeObserver.disconnect();
+							updateHeight();
+							observeActiveSlide();
+						});
+					}
+			
 					this.resize();
 				},
 				gotoSlideComplete: function() {
@@ -2971,27 +3051,34 @@
 					ctx           = $this[0].getContext( '2d' ),
 					wrappedLabels = [];
 
-				var wrap  = (label, limit) => {
-					let words = label.split(" ");
-					let labels = []
-					let concat = []
-					for (let i = 0; i < words.length; i++) {
-						concat.push(words[i])
-						let join = concat.join(' ')
-						if (join.length > limit) {
-							labels.push(join)
-							concat = []
+					var wrap  = ( label, limit ) => {
+						// Ensure that label is a string
+						label = String( label );
+						
+						let words = label.split(" ");
+						let labels = [];
+						let concat = [];
+						
+						for ( let i = 0; i < words.length; i++ ) {
+							concat.push( words[i] );
+							let join = concat.join(' ');
+							if ( join.length > limit ) {
+								labels.push( join );
+								concat = [];
+							}
 						}
+						
+						if ( concat.length ) {
+							labels.push( concat.join(' ').trim() );
+						}
+						
+						return labels;
 					}
-					if (concat.length) {
-						labels.push(concat.join(' ').trim())
-					}
-					return labels
-				}
+					
+					settings.data.labels.forEach( function( label ) {
+						wrappedLabels.push( wrap( label, labels_length ));
+					});
 
-				settings.data.labels.forEach(function(label) {
-					wrappedLabels.push(wrap(label, labels_length));
-				});
 				settings.data.labels = wrappedLabels;
 
 				var myChart = new Chart( ctx, settings );
@@ -3000,6 +3087,7 @@
 				offset: 'bottom-in-view'
 			} ) );
 		},
+
 		widgetLineChart: function( $scope ) {
 			var id                  = $scope.data( 'id' ),
 				$line_chart         = $scope.find( '.jet-line-chart-container' ),

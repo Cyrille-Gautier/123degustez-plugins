@@ -263,6 +263,47 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 		);
 
 		$this->add_control(
+			'video_subtitles',
+			array(
+				'label' => esc_html__( 'Subtitles (WebVTT)', 'jet-elements' ),
+				'type'  => Controls_Manager::MEDIA,
+				'media_type' => 'text/vtt',
+				'condition' => array(
+					'video_type'   => 'self_hosted',
+					'video_source' => 'self',
+				),
+			)
+		);
+
+		$this->add_control(
+			'video_subtitles_label',
+			array(
+				'label'     => esc_html__( 'Subtitle language and name', 'jet-elements' ),
+				'type'      => Controls_Manager::TEXT,
+				'default'   => esc_html__( 'English', 'jet-elements' ),
+				'condition' => array(
+					'video_subtitles[url]!' => '',
+					'video_type'   => 'self_hosted',
+					'video_source' => 'self',
+				),
+			)
+		);
+
+		$this->add_control(
+			'video_subtitles_lang',
+			array(
+				'label'     => esc_html__( 'Language code (e.g. "de", "en")', 'jet-elements' ),
+				'type'      => Controls_Manager::TEXT,
+				'default'   => esc_html__( 'en', 'jet-elements' ),
+				'condition' => array(
+					'video_subtitles[url]!' => '',
+					'video_type'   => 'self_hosted',
+					'video_source' => 'self',
+				),
+			)
+		);
+
+		$this->add_control(
 			'youtube_shorts',
 			array(
 				'label'   => esc_html__( 'YouTube Shorts', 'jet-elements' ),
@@ -1930,7 +1971,22 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 				$this->add_render_attribute( 'video_player', 'class', 'jet-video-custom-play-button' );
 			}
 
-			$video_html = '<video ' . $this->get_render_attribute_string( 'video_player' ) . '></video>';
+			$subtitle_html = '';
+
+			if ( ! empty( $settings['video_subtitles']['url'] ) ) {
+				$label = esc_attr( $settings['video_subtitles_label'] );
+				$lang  = esc_attr( $settings['video_subtitles_lang'] );
+
+				$subtitle_html = sprintf(
+					'<track src="%s" kind="subtitles" srclang="%s" label="%s" default>',
+					esc_url( $settings['video_subtitles']['url'] ),
+					$lang,
+					$label
+				);
+			}
+
+			$video_html = '<video ' . $this->get_render_attribute_string( 'video_player' ) . '>' . $subtitle_html . '</video>';
+
 		} else {
 			$embed_params  = $this->get_embed_params();
 			$embed_options = $this->get_embed_options();

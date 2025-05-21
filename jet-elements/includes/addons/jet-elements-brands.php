@@ -158,6 +158,16 @@ class Jet_Elements_Brands extends Jet_Elements_Base {
 			)
 		);
 
+		$this->add_control(
+			'company_name_html_tag',
+			array(
+				'label'   => esc_html__( 'Company Name HTML Tag', 'jet-elements' ),
+				'type'    => Controls_Manager::SELECT,
+				'options' => jet_elements_tools()->get_available_title_html_tags(),
+				'default' => 'h5',
+			)
+		);
+
 		$this->end_controls_section();
 
 		$css_scheme = apply_filters(
