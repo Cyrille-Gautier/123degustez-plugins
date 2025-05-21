@@ -14,6 +14,15 @@ $classes = [
     'jet-blocks-cart--' . $settings['layout_type'] . '-layout',
 ];
 
+// Check if the cart should be hidden when empty
+if (
+	'yes' === $settings['hide_cart_when_empty']
+	&& class_exists('WooCommerce')
+	&& WC()->cart
+	&& WC()->cart->is_empty()
+) {
+	$classes[] = 'jet-blocks-cart--empty';
+}
 $class_string = implode( ' ', $classes );
 
 ?><div class="<?php echo esc_attr( $class_string ); ?>" data-settings="<?php echo htmlspecialchars( json_encode( $widget_settings ) ); ?>">
@@ -24,4 +33,8 @@ $class_string = implode( ' ', $classes );
 	<?php if ( 'yes' === $settings['show_cart_list'] ) {
 		include $this->__get_global_template( 'cart-list' );
 	} ?>
+
+	<?php if ( 'slide-out' === $settings['layout_type'] && 'yes' === $settings['show_overlay_color'] ) { ?>
+		<div class="jet-blocks-cart__overlay"></div>
+	<?php } ?>
 </div>

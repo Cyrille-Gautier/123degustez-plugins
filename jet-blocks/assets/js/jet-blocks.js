@@ -36,6 +36,7 @@
 			} );
 
 			elementorFrontend.hooks.addAction( 'frontend/element_ready/section', JetBlocks.setStickySection );
+			elementorFrontend.hooks.addAction( 'frontend/element_ready/column', JetBlocks.setStickySection );
 			elementorFrontend.hooks.addAction( 'frontend/element_ready/container', JetBlocks.setStickySection );
 
 			$( JetBlocks.stickySection );
@@ -53,6 +54,7 @@
 
 			var $target         =  $( '.jet-blocks-cart', $scope ),
 				$toggle         = $( '.jet-blocks-cart__heading-link', $target ),
+				$overlay        = $( '.jet-blocks-cart__overlay', $target ),
 				settings        = $target.data( 'settings' ),
 				firstMouseEvent = true,
 				$htmlBody       = $( 'html, body' ),
@@ -168,13 +170,23 @@
 			
 				$( document ).on( 'click', function( event ) {
 					if ( settings['closeOnClickOutside'] === 'yes' ) {
-						if ( ! $( event.target ).closest( $target ).length && ! $( event.target ).closest( $toggle ).length ) {
+						if (
+							(! $( event.target ).closest( $target ).length && ! $( event.target ).closest( $toggle ).length )
+							|| ( $overlay.length && event.target === $overlay[0] )
+						) {
 							$target.removeClass( 'jet-cart-open' );
 						}
 					}
 				});
 			}
 			
+		},
+
+		listenAddedToCartEvent: function() {
+			$( document ).on( 'added_to_cart', function( e ) {
+				const $cart = $( '.jet-blocks-cart' );
+				$cart.removeClass( 'jet-blocks-cart--empty' );
+			} );
 		},
 
 		userRegistration: function( $scope ) {
@@ -1103,12 +1115,12 @@
 							$this.initTablet = false;
 						}
 
-						if ( $this.initMobiletExtra && 'mobile_extra' !== DeviceMode ) {
+						if ( $this.initMobileExtra && 'mobile_extra' !== DeviceMode ) {
 							JetBlocks.getStickySectionsMobiletExtra.forEach( function( section, i ) {
 								section.trigger( 'jetStickySection:detach' );
 							});
 
-							$this.initMobiletExtra = false;
+							$this.initMobileExtra = false;
 						}
 
 						if ( $this.initMobile && 'mobile' !== DeviceMode ) {
@@ -1121,19 +1133,51 @@
 
 					}
 
-					function getJetStickySectionsDevice(getStickySectionsDevice){
-
+					function getJetStickySectionsDevice( getStickySectionsDevice ) {
 						getStickySectionsDevice.forEach( function( section, i ) {
-
-							if ( getStickySectionsDevice[i+1] ) {
+							var settings = section.data( 'settings' ) || {};
+							var stopAtParentEnd = 'yes' === settings['jet_sticky_section_stop_at_parent_end'];
+					
+							if ( stopAtParentEnd ) {
+								var parentSection = section.closest( '.elementor-section:not(.jet-sticky-section), .e-container:not(.jet-sticky-section), .e-con-inner:not(.jet-sticky-section)' );
+								if ( parentSection.length ) {
+									var calculateStopper = function( reinit = false ) {
+										var parentHeight = parentSection.outerHeight( true );
+										var parentTop = parentSection.offset().top;
+										var sectionHeight = section.outerHeight( true );
+										var parentPaddingBottom = parseFloat( parentSection.css( 'padding-bottom' ) ) || 0;
+										var stopPoint = ( parentTop + parentHeight - parentPaddingBottom ) - sectionHeight;
+										options.stopper = stopPoint + sectionHeight;
+										
+										if ( true === reinit ) {
+											section.trigger( 'jetStickySection:detach' );
+										}
+										initSticky( section, options );
+									};
+									
+									calculateStopper();
+									
+									if ( window.ResizeObserver ) {
+										const resizeObserver = new ResizeObserver( function( entries ) {
+											calculateStopper( true );
+										} );
+										resizeObserver.observe( parentSection[0] );
+									}
+								} else {
+									options.stopper = '';
+									initSticky( section, options );
+								}
+							} else if ( getStickySectionsDevice[i+1] ) {
 								options.stopper = getStickySectionsDevice[i+1];
+								initSticky( section, options );
 							} else {
-								options.stopper = ''
+								options.stopper = '';
+								initSticky( section, options );
 							}
-
-							initSticky( section, options );
 						});
 					}
+
+					
 
 					if ( 'widescreen' === currentDeviceMode && ! this.initWidescreen ) {
 
@@ -1490,6 +1534,8 @@
 			}
 		}
 	};
+
+	JetBlocks.listenAddedToCartEvent();
 
 	$( window ).on( 'elementor/frontend/init', JetBlocks.init );
 

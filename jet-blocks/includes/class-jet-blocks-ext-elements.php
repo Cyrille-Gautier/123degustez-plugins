@@ -51,9 +51,11 @@ if ( ! class_exists( 'Jet_Blocks_Ext_Elements' ) ) {
 
 				add_action( 'elementor/element/section/section_advanced/after_section_end', array( $this, 'add_section_sticky_controls' ), 10, 2 );
 				add_action( 'elementor/element/container/section_layout/after_section_end', array( $this, 'add_section_sticky_controls' ), 10, 2 );
+				add_action( 'elementor/element/column/section_advanced/after_section_end', array( $this, 'add_section_sticky_controls' ), 10, 2 );
 				add_action( 'elementor/frontend/element/before_render',                     array( $this, 'section_before_render' ) );
 				add_action( 'elementor/frontend/section/before_render',                     array( $this, 'section_before_render' ) ); // for compatibility with Elementor 2.1.0
 				add_action( 'elementor/frontend/container/before_render',                   array( $this, 'section_before_render' ) );
+				add_action( 'elementor/frontend/column/before_render',                   array( $this, 'section_before_render' ) );
 				add_action( 'elementor/frontend/before_enqueue_scripts',                    array( $this, 'enqueue_scripts' ), 9 );
 
 			}
@@ -131,6 +133,20 @@ if ( ! class_exists( 'Jet_Blocks_Ext_Elements' ) ) {
 					'label'   => esc_html__( 'Sticky Section', 'jet-blocks' ),
 					'type'    => Elementor\Controls_Manager::SWITCHER,
 					'default' => '',
+					'frontend_available' => true,
+				)
+			);
+
+			$element->add_control(
+				'jet_sticky_section_stop_at_parent_end',
+				array(
+					'label'   => esc_html__( 'Stop Sticky at Parent End', 'jet-blocks' ),
+					'type'    => Elementor\Controls_Manager::SWITCHER,
+					'default' => '',
+					'description' => esc_html__( 'If enabled, the sticky effect will stop at the end of the parent section or container. By default, sticky effect stops at the next sticky element.', 'jet-blocks' ),
+					'condition' => array(
+						'jet_sticky_section' => 'yes',
+					),
 					'frontend_available' => true,
 				)
 			);
@@ -223,6 +239,7 @@ if ( ! class_exists( 'Jet_Blocks_Ext_Elements' ) ) {
 					'size_units' => array( 'px', 'vh', 'vw' ),
 					'selectors' => array(
 						'{{WRAPPER}}.jet-sticky-section--stuck > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
+						'{{WRAPPER}}.jet-sticky-section--stuck' => 'min-height: {{SIZE}}{{UNIT}};',
 					),
 					'condition' => array(
 						'jet_sticky_section' => 'yes',
@@ -324,13 +341,14 @@ if ( ! class_exists( 'Jet_Blocks_Ext_Elements' ) ) {
 		 * @param object $element Section instance.
 		 */
 		public function section_before_render( $element ) {
-			if ( 'section' !== $element->get_name() && 'container' !== $element->get_name() ) {
+			if ( ! in_array( $element->get_name(), array( 'section', 'container', 'column' ) ) ) {
 				return;
 			}
 
 			if ( 'yes' === $element->get_settings( 'jet_sticky_section' ) ) {
 				$element->add_render_attribute( '_wrapper', array(
 					'class' => 'jet-sticky-section',
+					'style' => 'height: fit-content;',
 				) );
 
 				$this->has_sticky = true;

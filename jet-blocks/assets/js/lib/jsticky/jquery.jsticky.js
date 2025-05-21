@@ -40,13 +40,13 @@
       }
     }
     var hasStopper = checkStopper(); // True or false
-
     return this.each(function() {
 
       var $this = $(this);
       var topSpacing = settings.topSpacing;
       var thisHeight = $this.outerHeight();
       var thisWidth = $this.outerWidth();
+      var originalLeft = $this.offset().left;
       var zIndex = settings.zIndex;
       var pushPoint = $this.offset().top - topSpacing; // Point at which the sticky element starts pushing
       var placeholder = $('<div></div>').width(thisWidth ).height(thisHeight).addClass('sticky-placeholder'); // Cache a clone sticky element
@@ -54,6 +54,8 @@
       var $window = $(window);
       var detached = false;
       var stick = false;
+      var isSection = $this.hasClass('elementor-section');
+      var isOuterContainer = $this.hasClass('e-parent');
 
       function stickyScroll() {
         if (detached) {
@@ -65,11 +67,15 @@
         var stopPoint = stopper;
         var parentWidth = $this.parent().width();
 
-        placeholder.width(parentWidth);
+        placeholder.width(thisWidth);
 
-        if ( hasStopper && typeof settings.stopper !== 'number' ) {
-          var stopperTop = stopper.offset().top;
-          stopPoint  = (stopperTop - thisHeight) - topSpacing;
+        if (hasStopper) {
+          if (typeof settings.stopper !== 'number') {
+            var stopperTop = settings.stopper.offset().top;
+            stopPoint = stopperTop - thisHeight - topSpacing;
+          } else if (typeof settings.stopper === 'number') {
+            stopPoint = settings.stopper - thisHeight - topSpacing;
+          }
         }
 
         if (pushPoint < windowTop) {
@@ -77,11 +83,16 @@
           if(settings.stickyClass)
             $this.addClass(settings.stickyClass);
 
-          $this.after(placeholder ).css({
+          var cssOptions = {
             position: 'fixed',
             top: topSpacing,
-            width: parentWidth
-          });
+            width: thisWidth
+          };
+          if (!isSection && !isOuterContainer) {
+            cssOptions.left = originalLeft;
+          }
+
+          $this.after(placeholder).css(cssOptions);
 
           if (hasIndex) {
             $this.css({

@@ -191,6 +191,16 @@ gulp.task( 'jet-blocks-editor-js-minify', function() {
 		.pipe( notify( 'js editor Minify Done!' ) );
 } );
 
+// Minify jSticky JS
+gulp.task( 'jet-blocks-jsticky-js-minify', function() {
+	return gulp.src( './assets/js/lib/jsticky/jquery.jsticky.js' )
+		.pipe( uglify() )
+		.pipe( rename( { extname: '.min.js' } ) )
+		.pipe( gulp.dest( './assets/js/lib/jsticky/' ) )
+		.pipe( notify( 'jSticky JS Minify Done!' ) );
+} );
+
+
 //watch
 gulp.task( 'watch', () => {
 	gulp.watch( './assets/scss/**', gulp.series( 'jet-blocks' ) );
@@ -202,6 +212,7 @@ gulp.task( 'watch', () => {
 	gulp.watch( './assets/scss/**', gulp.series( 'jet-blocks-icons' ) );
 	gulp.watch( './assets/js/jet-blocks.js', gulp.series( 'jet-blocks-js-minify' ) );
 	gulp.watch( './assets/js/jet-blocks-editor.js', gulp.series( 'jet-blocks-editor-js-minify' ) );
+	gulp.watch( './assets/js/lib/jsticky/jquery.jsticky.js', gulp.series( 'jet-blocks-jsticky-js-minify' ) );
 } );
 
 //check text-domain

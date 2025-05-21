@@ -30,6 +30,39 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 	}
 
 	protected function register_controls() {
+        $css_scheme = apply_filters(
+            'jet-blocks/woo-cart/css-scheme',
+            array(
+                'cart_wrapper'    => '.elementor-jet-blocks-cart',
+                'cart_link'       => '.jet-blocks-cart__heading-link',
+                'cart_icon'       => '.jet-blocks-cart__icon',
+                'cart_label'      => '.jet-blocks-cart__label',
+                'cart_count'      => '.jet-blocks-cart__count',
+                'cart_totals'     => '.jet-blocks-cart__total',
+                'cart_list'       => '.jet-blocks-cart__list',
+                'cart_list_title' => '.jet-blocks-cart__list-title',
+                'cart_list_close' => '.jet-blocks-cart__close-button',
+                'overlay_color'   => '.jet-blocks-cart__overlay',
+
+                'cart_empty_message'    => '.widget_shopping_cart .woocommerce-mini-cart__empty-message',
+                'cart_product_list'     => '.widget_shopping_cart .woocommerce-mini-cart',
+                'cart_product_item'     => '.widget_shopping_cart .woocommerce-mini-cart-item',
+                'cart_product_link'     => '.widget_shopping_cart .woocommerce-mini-cart-item a:not(.remove)',
+                'cart_product_img'      => '.widget_shopping_cart .woocommerce-mini-cart-item img',
+                'cart_product_quantity' => '.widget_shopping_cart .woocommerce-mini-cart-item .quantity',
+                'cart_product_amount'   => '.widget_shopping_cart .woocommerce-mini-cart-item .amount',
+                'cart_product_remove'   => '.widget_shopping_cart .woocommerce-mini-cart-item .remove',
+
+                'cart_list_total'        => '.widget_shopping_cart .woocommerce-mini-cart__total',
+                'cart_list_total_title'  => '.widget_shopping_cart .woocommerce-mini-cart__total strong',
+                'cart_list_total_amount' => '.widget_shopping_cart .woocommerce-mini-cart__total .amount',
+
+                'cart_list_buttons' => '.widget_shopping_cart .woocommerce-mini-cart__buttons.buttons',
+                'view_cart_button'  => '.widget_shopping_cart .woocommerce-mini-cart__buttons.buttons .button.wc-forward:not(.checkout)',
+                'checkout_button'   => '.widget_shopping_cart .woocommerce-mini-cart__buttons.buttons .button.checkout.wc-forward',
+            )
+        );
+
 		$this->start_controls_section(
 			'section_settings',
 			array(
@@ -61,6 +94,18 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 				),
 			)
 		);
+
+        $this->add_control(
+            'hide_cart_when_empty',
+            array(
+                'label'        => esc_html__( 'Hide Cart When Empty', 'jet-blocks' ),
+                'type'         => Controls_Manager::SWITCHER,
+                'label_on'     => esc_html__( 'Yes', 'jet-blocks' ),
+                'label_off'    => esc_html__( 'No', 'jet-blocks' ),
+                'return_value' => 'yes',
+                'default'      => 'no',
+            )
+        );
 
 		$this->add_control(
 			'show_count',
@@ -153,7 +198,7 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 				),
 			)
 		);
-		
+
 		$this->add_control(
 			'close_on_click_outside',
 			array(
@@ -167,7 +212,6 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 					'show_cart_list' => 'yes',
 					'trigger_type' => 'click',
 				),
-				
 			)
 		);
 
@@ -186,6 +230,39 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 				),
 			)
 		);
+
+        $this->add_control(
+            'show_overlay_color',
+            array(
+                'label'        => esc_html__( 'Show Overlay Color', 'jet-blocks' ),
+                'type'         => Controls_Manager::SWITCHER,
+                'label_on'     => esc_html__( 'Yes', 'jet-blocks' ),
+                'label_off'    => esc_html__( 'No', 'jet-blocks' ),
+                'return_value' => 'yes',
+                'default'      => 'no',
+                'condition' => array(
+                    'show_cart_list' => 'yes',
+                    'layout_type'    => 'slide-out',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'overlay_color',
+            array(
+                'label'     => esc_html__( 'Overlay Color', 'jet-blocks' ),
+                'type'      => Controls_Manager::COLOR,
+                'default'   => 'rgba(0, 0, 0, 0.5)',
+                'condition' => array(
+                    'show_cart_list'     => 'yes',
+                    'layout_type'        => 'slide-out',
+                    'show_overlay_color' => 'yes',
+                ),
+                'selectors' => array(
+                    '{{WRAPPER}} ' . $css_scheme['overlay_color'] => 'background-color: {{VALUE}}',
+                ),
+            )
+        );
 
 		$this->add_control(
 			'cart_list_label',
@@ -220,38 +297,6 @@ class Jet_Blocks_Woo_Cart extends Jet_Blocks_Base {
 		);
 
 		$this->end_controls_section();
-
-		$css_scheme = apply_filters(
-			'jet-blocks/woo-cart/css-scheme',
-			array(
-				'cart_wrapper'    => '.elementor-jet-blocks-cart',
-				'cart_link'       => '.jet-blocks-cart__heading-link',
-				'cart_icon'       => '.jet-blocks-cart__icon',
-				'cart_label'      => '.jet-blocks-cart__label',
-				'cart_count'      => '.jet-blocks-cart__count',
-				'cart_totals'     => '.jet-blocks-cart__total',
-				'cart_list'       => '.jet-blocks-cart__list',
-				'cart_list_title' => '.jet-blocks-cart__list-title',
-				'cart_list_close' => '.jet-blocks-cart__close-button',
-
-				'cart_empty_message'    => '.widget_shopping_cart .woocommerce-mini-cart__empty-message',
-				'cart_product_list'     => '.widget_shopping_cart .woocommerce-mini-cart',
-				'cart_product_item'     => '.widget_shopping_cart .woocommerce-mini-cart-item',
-				'cart_product_link'     => '.widget_shopping_cart .woocommerce-mini-cart-item a:not(.remove)',
-				'cart_product_img'      => '.widget_shopping_cart .woocommerce-mini-cart-item img',
-				'cart_product_quantity' => '.widget_shopping_cart .woocommerce-mini-cart-item .quantity',
-				'cart_product_amount'   => '.widget_shopping_cart .woocommerce-mini-cart-item .amount',
-				'cart_product_remove'   => '.widget_shopping_cart .woocommerce-mini-cart-item .remove',
-
-				'cart_list_total'        => '.widget_shopping_cart .woocommerce-mini-cart__total',
-				'cart_list_total_title'  => '.widget_shopping_cart .woocommerce-mini-cart__total strong',
-				'cart_list_total_amount' => '.widget_shopping_cart .woocommerce-mini-cart__total .amount',
-
-				'cart_list_buttons' => '.widget_shopping_cart .woocommerce-mini-cart__buttons.buttons',
-				'view_cart_button'  => '.widget_shopping_cart .woocommerce-mini-cart__buttons.buttons .button.wc-forward:not(.checkout)',
-				'checkout_button'   => '.widget_shopping_cart .woocommerce-mini-cart__buttons.buttons .button.checkout.wc-forward',
-			)
-		);
 
 		$this->__start_controls_section(
 			'section_general_style',

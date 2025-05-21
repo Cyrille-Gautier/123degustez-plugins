@@ -387,6 +387,7 @@ abstract class Jet_Blocks_Base extends Widget_Base {
 		} else {
 			printf( $format, $val );
 		}
+
 	}
 
 	/**

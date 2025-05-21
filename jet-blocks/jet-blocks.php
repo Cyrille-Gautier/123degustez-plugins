@@ -3,7 +3,7 @@
  * Plugin Name: JetBlocks For Elementor
  * Plugin URI:  https://crocoblock.com/plugins/jetblocks/
  * Description: The basic utilitary widgets for implementing additional functionality to headers, footers and special sections built with Elementor
- * Version:     1.3.16.1
+ * Version:     1.3.18
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-blocks
@@ -42,7 +42,7 @@ if ( ! class_exists( 'Jet_Blocks' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '1.3.16.1';
+		private $version = '1.3.18';
 
 		/**
 		 * Holder for base plugin URL

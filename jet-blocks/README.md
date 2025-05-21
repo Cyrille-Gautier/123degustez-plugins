@@ -4,8 +4,18 @@ Enjoy the easy-to-use widgets made for enriching headers & footers with content.
 
 # ChangeLog
 
+## 1.3.18
+* Added: Overlay option for WooCommerce Cart widget - https://github.com/Crocoblock/suggestions/issues/4317;
+* Added: Option to hide the WooCommerce Cart widget when the cart is empty - https://github.com/Crocoblock/suggestions/issues/3761;
+* Fixed: Minor style inconsistencies on different pages in the WooCommerce Cart widget - https://github.com/Crocoblock/suggestions/issues/4192;
+
+## 1.3.17
+* Fixed: Sticky Section compatibility with columns and containers;
+* Added: `Stop Sticky at Parent End` control in the Jet Sticky section.
+
 ## 1.3.16.1
-* Fixed: Prevent unauthorized access to templates in REST API.
+* Fixed: Prevent unauthorized access to templates in REST API;
+* Fixed: Prevent php warning.
 
 ## 1.3.16
 * Added: 'Close Cart Dropdown on Click Outside' option and Escape key handling for WooCommerce Shopping Cart widget - https://github.com/Crocoblock/suggestions/issues/7817;
