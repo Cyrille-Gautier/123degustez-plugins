@@ -5,7 +5,7 @@
 ?>
 <div class="jet-engine-edit-page__fields">
 	<div class="cx-vui-collapse__heading">
-		<h3 class="cx-vui-subtitle"><?php _e( 'WC Product Query', 'jet-engine' ); ?></h3>
+		<h3 class="cx-vui-subtitle"><?php esc_html_e( 'WC Product Query', 'jet-engine' ); ?></h3>
 	</div>
 	<div class="cx-vui-panel">
 		<cx-vui-tabs
@@ -15,12 +15,12 @@
 		>
 			<cx-vui-tabs-panel
 				name="general"
-				:label="isInUseMark( [ 'status', 'type', 'include', 'exclude', 'parent', 'parent_exclude', 'author', 'orderby', 'meta_key', 'order', 'avoid_duplicates' ] ) + '<?php _e( 'General', 'jet-engine' ); ?>'"
+				:label="isInUseMark( [ 'status', 'type', 'include', 'exclude', 'parent', 'parent_exclude', 'author', 'orderby', 'meta_key', 'order', 'avoid_duplicates' ] ) + '<?php esc_html_e( 'General', 'jet-engine' ); ?>'"
 				key="general"
 			>
 				<cx-vui-f-select
-					label="<?php _e( 'Product Status', 'jet-engine' ); ?>"
-					description="<?php _e( 'One or more of `draft`, `pending`, `private`, `publish`, or a custom status. By default include all WP default post statuses.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Product Status', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'One or more of `draft`, `pending`, `private`, `publish`, or a custom status. By default include all WP default post statuses.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					:options-list="postStatuses"
 					size="fullwidth"
@@ -29,8 +29,8 @@
 					v-model="query.status"
 				></cx-vui-f-select>
 				<cx-vui-f-select
-					label="<?php _e( 'Product Type', 'jet-engine' ); ?>"
-					description="<?php _e( 'Set one or more of product type slug: `external`, `grouped`, `simple`, `variable`, or a custom type. Leave empty to retrieve products of any type.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Product Type', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Set one or more of product type slug: `external`, `grouped`, `simple`, `variable`, or a custom type. Leave empty to retrieve products of any type.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					:options-list="productTypes"
 					size="fullwidth"
@@ -39,15 +39,15 @@
 					v-model="query.type"
 				></cx-vui-f-select>
 				<cx-vui-switcher
-					label="<?php _e( 'Handle Search Query', 'jet-engine' ); ?>"
-					description="<?php _e( 'Enable for compatibility with search query.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Handle Search Query', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Enable for compatibility with search query.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					name="query_search_query"
 					v-model="query.search_query"
 				></cx-vui-switcher>
 				<cx-vui-input
-					label="<?php _e( 'Include', 'jet-engine' ); ?>"
-					description="<?php _e( 'Only includes products with IDs in the array. Comma-separated products IDs list - 1, 10, 25.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Include', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Only includes products with IDs in the array. Comma-separated products IDs list - 1, 10, 25.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
 					name="query_include"
@@ -56,8 +56,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.include"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Exclude', 'jet-engine' ); ?>"
-					description="<?php _e( 'Excludes products with IDs in the array Comma-separated Products IDs list - 1, 10, 25. ATTENTION: Ignored if you use `Include`.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Exclude', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Excludes products with IDs in the array Comma-separated Products IDs list - 1, 10, 25. ATTENTION: Ignored if you use `Include`.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
 					name="query_exclude"
@@ -67,8 +67,8 @@
 				</cx-vui-input>
 				<?php \Jet_Engine\Query_Builder\Avoid_Duplicates::instance()->print_control( 'products' ); ?>
 				<cx-vui-input
-					label="<?php _e( 'Parent ID', 'jet-engine' ); ?>"
-					description="<?php _e( 'Post ID of the product parent. Get product with a specific parent.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Parent ID', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Post ID of the product parent. Get product with a specific parent.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -78,8 +78,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.parent"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Parent ID Exclude', 'jet-engine' ); ?>"
-					description="<?php _e( 'Excludes products with parent ids in the array. Comma-separated post IDs list - 1, 10, 25. ATTENTION: Ignored if you use `Parent ID`.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Parent ID Exclude', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Excludes products with parent ids in the array. Comma-separated post IDs list - 1, 10, 25. ATTENTION: Ignored if you use `Parent ID`.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
 					name="query_parent_exclude"
@@ -88,9 +88,9 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.parent_exclude"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Author ID', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Author ID', 'jet-engine' ); ?>"
 					type="number"
-					description="<?php _e( 'Get products with a specific author.', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Get products with a specific author.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
 					name="query_author"
@@ -99,8 +99,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.author"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-select
-					label="<?php _e( 'Order By', 'jet-engine' ); ?>"
-					description="<?php _e( 'Sort retrieved products by selected parameter.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Order By', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Sort retrieved products by selected parameter.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					:options-list="[
 										{
@@ -140,8 +140,8 @@
 					v-model="query.orderby"
 				></cx-vui-select>
 				<cx-vui-input
-					label="<?php _e( 'Meta Key', 'jet-engine' ); ?>"
-					description="<?php _e( 'Set meta field key.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Meta Key', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Set meta field key.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
 					name="query_meta_key"
@@ -151,8 +151,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.meta_key"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-select
-					label="<?php _e( 'Order', 'jet-engine' ); ?>"
-					description="<?php _e( 'Designates the ascending or descending order of the `Order By` parameter.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Order', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Designates the ascending or descending order of the `Order By` parameter.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					:options-list="[
 										{
@@ -170,12 +170,12 @@
 			</cx-vui-tabs-panel>
 			<cx-vui-tabs-panel
 				name="product"
-				:label="isInUseMark( [ 'sku', 'tag', 'category', 'total_sales', 'backorders', 'visibility', 'stock_quantity', 'stock_status', 'tax_status', 'shipping_class', 'download_limit', 'download_expiry', 'average_rating', 'review_count' ] ) + '<?php _e( 'Product', 'jet-engine' ); ?>'"
+				:label="isInUseMark( [ 'sku', 'tag', 'category', 'total_sales', 'backorders', 'visibility', 'stock_quantity', 'stock_status', 'tax_status', 'shipping_class', 'download_limit', 'download_expiry', 'average_rating', 'review_count' ] ) + '<?php esc_html_e( 'Product', 'jet-engine' ); ?>'"
 				key="product"
 			>
 				<cx-vui-input
-					label="<?php _e( 'SKU', 'jet-engine' ); ?>"
-					description="<?php _e( 'Product SKU to match on. Does partial matching on the SKU.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'SKU', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Product SKU to match on. Does partial matching on the SKU.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
 					name="query_sku"
@@ -184,8 +184,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.sku"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-f-select
-					label="<?php _e( 'Tags', 'jet-engine' ); ?>"
-					description="<?php _e( 'Limit results to products assigned to specific tags by slug.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Tags', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Limit results to products assigned to specific tags by slug.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					:options-list="productTags"
 					size="fullwidth"
@@ -194,8 +194,8 @@
 					v-model="query.tag"
 				></cx-vui-f-select>
 				<cx-vui-f-select
-					label="<?php _e( 'Categories', 'jet-engine' ); ?>"
-					description="<?php _e( 'Limit results to products assigned to specific categories by slug.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Categories', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Limit results to products assigned to specific categories by slug.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					:options-list="productCategories"
 					size="fullwidth"
@@ -204,8 +204,8 @@
 					v-model="query.category"
 				></cx-vui-f-select>
 				<cx-vui-input
-					label="<?php _e( 'Total Sales', 'jet-engine' ); ?>"
-					description="<?php _e( 'Gets products with that many sales.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Total Sales', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Gets products with that many sales.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -215,8 +215,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.total_sales"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-select
-					label="<?php _e( 'Backorders', 'jet-engine' ); ?>"
-					description="<?php _e( 'Get products that match selected option.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Backorders', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Get products that match selected option.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					:options-list="[
 										{
@@ -240,8 +240,8 @@
 					v-model="query.backorders"
 				></cx-vui-select>
 				<cx-vui-select
-					label="<?php _e( 'Visibility', 'jet-engine' ); ?>"
-					description="<?php _e( 'Get products that match selected visibility option.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Visibility', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Get products that match selected visibility option.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					:options-list="[
 										{
@@ -269,8 +269,8 @@
 					v-model="query.visibility"
 				></cx-vui-select>
 				<cx-vui-input
-					label="<?php _e( 'Stock Quantity', 'jet-engine' ); ?>"
-					description="<?php _e( 'The quantity of a product in stock.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Stock Quantity', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'The quantity of a product in stock.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -280,8 +280,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.stock_quantity"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-select
-					label="<?php _e( 'Stock Status', 'jet-engine' ); ?>"
-					description="<?php _e( 'Get products that match selected option.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Stock Status', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Get products that match selected option.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					:options-list="[
 										{
@@ -301,8 +301,8 @@
 					v-model="query.stock_status"
 				></cx-vui-select>
 				<cx-vui-select
-					label="<?php _e( 'Tax Status', 'jet-engine' ); ?>"
-					description="<?php _e( 'Get products that match selected option.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Tax Status', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Get products that match selected option.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					:options-list="[
 										{
@@ -326,8 +326,8 @@
 					v-model="query.tax_status"
 				></cx-vui-select>
 				<cx-vui-input
-					label="<?php _e( 'Tax Class', 'jet-engine' ); ?>"
-					description="<?php _e( 'A tax class slug. Get products that match specified class.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Tax Class', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'A tax class slug. Get products that match specified class.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
 					name="query_tax_class"
@@ -336,8 +336,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.tax_class"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Shipping Class', 'jet-engine' ); ?>"
-					description="<?php _e( 'One or more shipping class slug. Get products that match specified class. Comma-separated class slugs list - class_1, class_2, class_3.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Shipping Class', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'One or more shipping class slug. Get products that match specified class. Comma-separated class slugs list - class_1, class_2, class_3.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
 					name="query_shipping_class"
@@ -346,8 +346,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.shipping_class"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Download Limit', 'jet-engine' ); ?>"
-					description="<?php _e( 'Gets products with that download limit, set `-1` for unlimited.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Download Limit', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Gets products with that download limit, set `-1` for unlimited.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -357,8 +357,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.download_limit"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Download Expiry', 'jet-engine' ); ?>"
-					description="<?php _e( 'Gets products with that download expiry, set `-1` for unlimited.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Download Expiry', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Gets products with that download expiry, set `-1` for unlimited.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -368,8 +368,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.download_expiry"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Average Rating', 'jet-engine' ); ?>"
-					description="<?php _e( 'Gets products with that average rating.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Average Rating', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Gets products with that average rating.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -379,8 +379,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.average_rating"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Review Count', 'jet-engine' ); ?>"
-					description="<?php _e( 'Gets products with that number of reviews.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Review Count', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Gets products with that number of reviews.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -392,12 +392,12 @@
 			</cx-vui-tabs-panel>
 			<cx-vui-tabs-panel
 				name="prices"
-				:label="isInUseMark( [ 'price', 'regular_price', 'sale_price' ] ) + '<?php _e( 'Prices', 'jet-engine' ); ?>'"
+				:label="isInUseMark( [ 'price', 'regular_price', 'sale_price' ] ) + '<?php esc_html_e( 'Prices', 'jet-engine' ); ?>'"
 				key="prices"
 			>
 				<cx-vui-input
-					label="<?php _e( 'Price', 'jet-engine' ); ?>"
-					description="<?php _e( 'Gets products with that price.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Price', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Gets products with that price.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -407,8 +407,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.price"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Regular Price', 'jet-engine' ); ?>"
-					description="<?php _e( 'Gets products with that regular price.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Regular Price', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Gets products with that regular price.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -418,8 +418,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.regular_price"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Sale Price', 'jet-engine' ); ?>"
-					description="<?php _e( 'Gets products with that sale price.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Sale Price', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Gets products with that sale price.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -431,12 +431,12 @@
 			</cx-vui-tabs-panel>
 			<cx-vui-tabs-panel
 				name="measurements"
-				:label="isInUseMark( [ 'weight', 'length', 'width', 'height' ] ) + '<?php _e( 'Measurements', 'jet-engine' ); ?>'"
+				:label="isInUseMark( [ 'weight', 'length', 'width', 'height' ] ) + '<?php esc_html_e( 'Measurements', 'jet-engine' ); ?>'"
 				key="measurements"
 			>
 				<cx-vui-input
-					label="<?php _e( 'Weight', 'jet-engine' ); ?>"
-					description="<?php _e( 'Gets products with that weight.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Weight', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Gets products with that weight.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -446,8 +446,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.weight"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Length', 'jet-engine' ); ?>"
-					description="<?php _e( 'Gets products with that length.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Length', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Gets products with that length.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -457,8 +457,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.length"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Width', 'jet-engine' ); ?>"
-					description="<?php _e( 'Gets products with that width.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Width', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Gets products with that width.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -468,8 +468,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.width"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Height', 'jet-engine' ); ?>"
-					description="<?php _e( 'Gets products with that height.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Height', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Gets products with that height.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -481,16 +481,16 @@
 			</cx-vui-tabs-panel>
 			<cx-vui-tabs-panel
 				name="specific"
-				:label="isInUseMark( [ 'specific_query' ] ) + '<?php _e( 'Specific', 'jet-engine' ); ?>'"
+				:label="isInUseMark( [ 'specific_query' ] ) + '<?php esc_html_e( 'Specific', 'jet-engine' ); ?>'"
 				key="specific"
 			>
 				<cx-vui-component-wrapper
 					:wrapper-css="[ 'query-fullwidth' ]"
 				>
 					<div class="cx-vui-inner-panel query-panel">
-						<div class="cx-vui-component__label"><?php _e( 'Specific Settings', 'jet-engine' ); ?></div>
+						<div class="cx-vui-component__label"><?php esc_html_e( 'Specific Settings', 'jet-engine' ); ?></div>
 						<cx-vui-repeater
-							button-label="<?php _e( 'Add new ', 'jet-engine' ); ?>"
+							button-label="<?php esc_html_e( 'Add new ', 'jet-engine' ); ?>"
 							button-style="accent"
 							button-size="mini"
 							v-model="query.specific_query"
@@ -507,8 +507,8 @@
 								:key="specificClause._id"
 							>
 								<cx-vui-select
-									label="<?php _e( 'Feature', 'jet-engine' ); ?>"
-									description="<?php _e( 'Limit results to products with the specific settings or features.', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Feature', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'Limit results to products with the specific settings or features.', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth' ]"
 									:options-list="[
 										{
@@ -541,8 +541,8 @@
 									@input="setFieldProp( specificClause._id, 'feature', $event, query.specific_query )"
 								></cx-vui-select>
 								<cx-vui-select
-									label="<?php _e( 'Status', 'jet-engine' ); ?>"
-									description="<?php _e( 'Enable or disable selected `Feature`.', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Status', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'Enable or disable selected `Feature`.', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth' ]"
 									:options-list="[
 										{
@@ -565,12 +565,12 @@
 			</cx-vui-tabs-panel>
 			<cx-vui-tabs-panel
 				name="pagination"
-				:label="isInUseMark( [ 'limit', 'page', 'offset' ] ) + '<?php _e( 'Pagination', 'jet-engine' ); ?>'"
+				:label="isInUseMark( [ 'limit', 'page', 'offset' ] ) + '<?php esc_html_e( 'Pagination', 'jet-engine' ); ?>'"
 				key="pagination"
 			>
 				<cx-vui-switcher
-					label="<?php _e( 'Enable Pagination', 'jet-engine' ); ?>"
-					description="<?php _e( 'Enable to modifies the return result and get an object with fields: `products`, `total`, `max_num_pages`. ATTENTION: If you disable this option it may cause some query issues.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Enable Pagination', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Enable to modifies the return result and get an object with fields: `products`, `total`, `max_num_pages`. ATTENTION: If you disable this option it may cause some query issues.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					name="query_paginate"
 					:return-true="true"
@@ -578,8 +578,8 @@
 					v-model="query.paginate"
 				></cx-vui-switcher>
 				<cx-vui-input
-					label="<?php _e( 'Limit', 'jet-engine' ); ?>"
-					description="<?php _e( 'Maximum number of results to retrieve or `-1` for unlimited.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Limit', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Maximum number of results to retrieve or `-1` for unlimited.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -589,8 +589,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.limit"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Page', 'jet-engine' ); ?>"
-					description="<?php _e( 'Page of results to retrieve. Does nothing if `offset` is used.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Page', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Page of results to retrieve. Does nothing if `offset` is used.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -600,8 +600,8 @@
 					<jet-query-dynamic-args v-model="dynamicQuery.page"></jet-query-dynamic-args>
 				</cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Offset', 'jet-engine' ); ?>"
-					description="<?php _e( 'Amount to offset product result. WARNING: Setting the offset parameter overrides/ignores the page parameter and breaks pagination.', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Offset', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'Amount to offset product result. WARNING: Setting the offset parameter overrides/ignores the page parameter and breaks pagination.', 'jet-engine' ); ?>"
 					type="number"
 					:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 					size="fullwidth"
@@ -613,16 +613,16 @@
 			</cx-vui-tabs-panel>
 			<cx-vui-tabs-panel
 				name="date"
-				:label="isInUseMark( [ 'date_query' ] ) + '<?php _e( 'Date', 'jet-engine' ); ?>'"
+				:label="isInUseMark( [ 'date_query' ] ) + '<?php esc_html_e( 'Date', 'jet-engine' ); ?>'"
 				key="date"
 			>
 				<cx-vui-component-wrapper
 					:wrapper-css="[ 'query-fullwidth' ]"
 				>
 					<div class="cx-vui-inner-panel query-panel">
-						<div class="cx-vui-component__label"><?php _e( 'Date Query Clauses', 'jet-engine' ); ?></div>
+						<div class="cx-vui-component__label"><?php esc_html_e( 'Date Query Clauses', 'jet-engine' ); ?></div>
 						<cx-vui-repeater
-							button-label="<?php _e( 'Add new', 'jet-engine' ); ?>"
+							button-label="<?php esc_html_e( 'Add new', 'jet-engine' ); ?>"
 							button-style="accent"
 							button-size="mini"
 							v-model="query.date_query"
@@ -637,8 +637,8 @@
 								:key="dateClause._id"
 							>
 								<cx-vui-input
-									label="<?php _e( 'Year', 'jet-engine' ); ?>"
-									description="<?php _e( '4 digit year (e.g. 2011)', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Year', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( '4 digit year (e.g. 2011)', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 									size="fullwidth"
 									:value="query.date_query[ index ].year"
@@ -647,8 +647,8 @@
 									<jet-query-dynamic-args v-model="dynamicQuery.date_query[ dateClause._id ].year"></jet-query-dynamic-args>
 								</cx-vui-input>
 								<cx-vui-input
-									label="<?php _e( 'Month', 'jet-engine' ); ?>"
-									description="<?php _e( 'Month number (from 1 to 12)', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Month', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'Month number (from 1 to 12)', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 									size="fullwidth"
 									:value="query.date_query[ index ].month"
@@ -657,8 +657,8 @@
 									<jet-query-dynamic-args v-model="dynamicQuery.date_query[ dateClause._id ].month"></jet-query-dynamic-args>
 								</cx-vui-input>
 								<cx-vui-input
-									label="<?php _e( 'Day', 'jet-engine' ); ?>"
-									description="<?php _e( 'Day of the month (from 1 to 31)', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Day', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'Day of the month (from 1 to 31)', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 									size="fullwidth"
 									:value="query.date_query[ index ].day"
@@ -667,8 +667,8 @@
 									<jet-query-dynamic-args v-model="dynamicQuery.date_query[ dateClause._id ].day"></jet-query-dynamic-args>
 								</cx-vui-input>
 								<cx-vui-input
-									label="<?php _e( 'After', 'jet-engine' ); ?>"
-									description="<?php _e( 'Date to retrieve products after. Eg. January 1st 2020, Today, Tomorrow etc.', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'After', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'Date to retrieve products after. Eg. January 1st 2020, Today, Tomorrow etc.', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 									size="fullwidth"
 									:value="query.date_query[ index ].after"
@@ -677,8 +677,8 @@
 									<jet-query-dynamic-args v-model="dynamicQuery.date_query[ dateClause._id ].after"></jet-query-dynamic-args>
 								</cx-vui-input>
 								<cx-vui-input
-									label="<?php _e( 'Before', 'jet-engine' ); ?>"
-									description="<?php _e( 'Date to retrieve products before. Eg. January 1st 2020, Today, Tomorrow etc.', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Before', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'Date to retrieve products before. Eg. January 1st 2020, Today, Tomorrow etc.', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 									size="fullwidth"
 									:value="query.date_query[ index ].before"
@@ -687,8 +687,8 @@
 									<jet-query-dynamic-args v-model="dynamicQuery.date_query[ dateClause._id ].before"></jet-query-dynamic-args>
 								</cx-vui-input>
 								<cx-vui-select
-									label="<?php _e( 'Compare', 'jet-engine' ); ?>"
-									description="<?php _e( 'The search operator', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Compare', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'The search operator', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth' ]"
 									:options-list="dateOperators"
 									size="fullwidth"
@@ -696,8 +696,8 @@
 									@input="setFieldProp( dateClause._id, 'compare', $event, query.date_query )"
 								></cx-vui-select>
 								<cx-vui-select
-									label="<?php _e( 'Column', 'jet-engine' ); ?>"
-									description="<?php _e( 'Products column to query against', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Column', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'Products column to query against', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth' ]"
 									:options-list="[
 										{
@@ -728,16 +728,16 @@
 			</cx-vui-tabs-panel>
 			<cx-vui-tabs-panel
 				name="meta_query"
-				:label="isInUseMark( [ 'meta_query' ] ) + '<?php _e( 'Meta Query', 'jet-engine' ); ?>'"
+				:label="isInUseMark( [ 'meta_query' ] ) + '<?php esc_html_e( 'Meta Query', 'jet-engine' ); ?>'"
 				key="meta_query"
 			>
 				<cx-vui-component-wrapper
 					:wrapper-css="[ 'query-fullwidth' ]"
 				>
 					<div class="cx-vui-inner-panel query-panel">
-						<div class="cx-vui-component__label"><?php _e( 'Meta Query Clauses', 'jet-engine' ); ?></div>
+						<div class="cx-vui-component__label"><?php esc_html_e( 'Meta Query Clauses', 'jet-engine' ); ?></div>
 						<cx-vui-repeater
-							button-label="<?php _e( 'Add new', 'jet-engine' ); ?>"
+							button-label="<?php esc_html_e( 'Add new', 'jet-engine' ); ?>"
 							button-style="accent"
 							button-size="mini"
 							v-model="query.meta_query"
@@ -752,23 +752,23 @@
 								:key="clause._id"
 							>
 								<cx-vui-input
-									label="<?php _e( 'Field key/name', 'jet-engine' ); ?>"
-									description="<?php _e( 'You can use `JetEngine meta field` macros to get name of the field created by JetEngine', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Field key/name', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'You can use `JetEngine meta field` macros to get the name of the field created by JetEngine', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 									size="fullwidth"
 									:value="query.meta_query[ index ].key"
 									@input="setFieldProp( clause._id, 'key', $event, query.meta_query )"
 								><jet-query-dynamic-args v-model="dynamicQuery.meta_query[ clause._id ].key"></jet-query-dynamic-args></cx-vui-input>
 								<cx-vui-input
-									label="<?php _e( 'Value', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Value', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 									size="fullwidth"
 									:value="query.meta_query[ index ].value"
 									@input="setFieldProp( clause._id, 'value', $event, query.meta_query )"
 								><jet-query-dynamic-args v-model="dynamicQuery.meta_query[ clause._id ].value"></jet-query-dynamic-args></cx-vui-input>
 								<cx-vui-select
-									label="<?php _e( 'Compare', 'jet-engine' ); ?>"
-									description="<?php _e( 'Operator to test', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Compare', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'Operator to test', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth' ]"
 									:options-list="operators"
 									size="fullwidth"
@@ -776,8 +776,8 @@
 									@input="setFieldProp( clause._id, 'compare', $event, query.meta_query )"
 								></cx-vui-select>
 								<cx-vui-select
-									label="<?php _e( 'Type', 'jet-engine' ); ?>"
-									description="<?php _e( 'Data type stored in the given field', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Type', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'Data type stored in the given field', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth' ]"
 									:options-list="dataTypes"
 									size="fullwidth"
@@ -790,17 +790,17 @@
 				</cx-vui-component-wrapper>
 				<cx-vui-select
 					v-if="1 < query.meta_query.length"
-					label="<?php _e( 'Relation', 'jet-engine' ); ?>"
-					description="<?php _e( 'The logical relationship between meta query clauses', 'jet-engine' ); ?>"
+					label="<?php esc_html_e( 'Relation', 'jet-engine' ); ?>"
+					description="<?php esc_html_e( 'The logical relationship between meta query clauses', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					:options-list="[
 						{
 							value: 'AND',
-							label: '<?php _e( 'And', 'jet-engine' ); ?>',
+							label: '<?php esc_html_e( 'And', 'jet-engine' ); ?>',
 						},
 						{
 							value: 'OR',
-							label: '<?php _e( 'Or', 'jet-engine' ); ?>',
+							label: '<?php esc_html_e( 'Or', 'jet-engine' ); ?>',
 						},
 					]"
 					size="fullwidth"
@@ -809,16 +809,16 @@
 			</cx-vui-tabs-panel>
 			<cx-vui-tabs-panel
 				name="tax_query"
-				:label="isInUseMark( [ 'tax_query' ] ) + '<?php _e( 'Tax Query', 'jet-engine' ); ?>'"
+				:label="isInUseMark( [ 'tax_query' ] ) + '<?php esc_html_e( 'Tax Query', 'jet-engine' ); ?>'"
 				key="tax_query"
 			>
 				<cx-vui-component-wrapper
 					:wrapper-css="[ 'query-fullwidth' ]"
 				>
 					<div class="cx-vui-inner-panel query-panel">
-						<div class="cx-vui-component__label"><?php _e( 'Tax Query Clauses', 'jet-engine' ); ?></div>
+						<div class="cx-vui-component__label"><?php esc_html_e( 'Tax Query Clauses', 'jet-engine' ); ?></div>
 						<cx-vui-repeater
-							button-label="<?php _e( 'Add new', 'jet-engine' ); ?>"
+							button-label="<?php esc_html_e( 'Add new', 'jet-engine' ); ?>"
 							button-style="accent"
 							button-size="mini"
 							v-model="query.tax_query"
@@ -833,8 +833,8 @@
 								:key="taxClause._id"
 							>
 								<cx-vui-select
-									label="<?php _e( 'Taxonomy', 'jet-engine' ); ?>"
-									description="<?php _e( 'Select taxonomy to get posts from', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Taxonomy', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'Select taxonomy to get posts from', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth' ]"
 									:options-list="taxonomies"
 									size="fullwidth"
@@ -842,25 +842,25 @@
 									@input="setFieldProp( taxClause._id, 'taxonomy', $event, query.tax_query )"
 								></cx-vui-select>
 								<cx-vui-select
-									label="<?php _e( 'Field', 'jet-engine' ); ?>"
-									description="<?php _e( 'Select taxonomy term by. Default value is `Term ID`.', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Field', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'Select taxonomy term by. Default value is `Term ID`.', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth' ]"
 									:options-list="[
 										{
 											value: 'term_id',
-											label: '<?php _e( 'Term ID', 'jet-engine' ); ?>',
+											label: '<?php esc_html_e( 'Term ID', 'jet-engine' ); ?>',
 										},
 										{
 											value: 'name',
-											label: '<?php _e( 'Name', 'jet-engine' ); ?>',
+											label: '<?php esc_html_e( 'Name', 'jet-engine' ); ?>',
 										},
 										{
 											value: 'slug',
-											label: '<?php _e( 'Slug', 'jet-engine' ); ?>',
+											label: '<?php esc_html_e( 'Slug', 'jet-engine' ); ?>',
 										},
 										{
 											value: 'term_taxonomy_id',
-											label: '<?php _e( 'Term taxonomy ID', 'jet-engine' ); ?>',
+											label: '<?php esc_html_e( 'Term taxonomy ID', 'jet-engine' ); ?>',
 										},
 									]"
 									size="fullwidth"
@@ -868,23 +868,23 @@
 									@input="setFieldProp( taxClause._id, 'field', $event, query.tax_query )"
 								></cx-vui-select>
 								<cx-vui-input
-									label="<?php _e( 'Terms', 'jet-engine' ); ?>"
-									description="<?php _e( 'Taxonomy term(s) to get posts by.', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Terms', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'Taxonomy term(s) to get posts by.', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth', 'has-macros' ]"
 									size="fullwidth"
 									:value="query.tax_query[ index ].terms"
 									@input="setFieldProp( taxClause._id, 'terms', $event, query.tax_query )"
 								><jet-query-dynamic-args v-model="dynamicQuery.tax_query[ taxClause._id ].terms"></jet-query-dynamic-args></cx-vui-input>
 								<cx-vui-switcher
-									label="<?php _e( 'Exclude children', 'jet-engine' ); ?>"
-									description="<?php _e( 'By default children for hierarchical taxonomies will be included into query results. Enable this option to exclude children terms.', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Exclude children', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'By default children for hierarchical taxonomies will be included into query results. Enable this option to exclude children terms.', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth' ]"
 									:value="query.tax_query[ index ].exclude_children"
 									@input="setFieldProp( taxClause._id, 'exclude_children', $event, query.tax_query )"
 								></cx-vui-switcher>
 								<cx-vui-select
-									label="<?php _e( 'Compare operator', 'jet-engine' ); ?>"
-									description="<?php _e( 'Operator to test terms against.', 'jet-engine' ); ?>"
+									label="<?php esc_html_e( 'Compare operator', 'jet-engine' ); ?>"
+									description="<?php esc_html_e( 'Operator to test terms against.', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth' ]"
 									:options-list="[
 										{
@@ -917,7 +917,7 @@
 					</div>
 				</cx-vui-component-wrapper>
 				<div class="cx-vui-component__desc" v-if="1 < query.tax_query.length">
-					<?php _e( 'At the moment, WooCommerce partially supports the `tax_query` functionality and does not provide the ability to use the relation property. The relation option will be hidden until its functionality is implemented.', 'jet-engine' ); ?>
+					<?php esc_html_e( 'At the moment, WooCommerce partially supports the `tax_query` functionality and does not provide the ability to use the relation property. The relation option will be hidden until its functionality is implemented.', 'jet-engine' ); ?>
 				</div>
 				<!--<cx-vui-select
 					v-if="1 < query.tax_query.length"

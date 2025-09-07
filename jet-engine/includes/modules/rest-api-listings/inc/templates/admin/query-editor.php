@@ -45,13 +45,30 @@
 							:value="query.args[ index ].field"
 							@input="setFieldProp( clause._id, 'field', $event, query.args )"
 						></cx-vui-input>
-						<cx-vui-textarea
+						<cx-vui-input
 							label="<?php _e( 'Value', 'jet-engine' ); ?>"
-							:wrapper-css="[ 'equalwidth', 'has-macros' ]"
+							:wrapper-css="[ 'equalwidth', 'has-macros', 'has-empty-toggle' ]"
 							size="fullwidth"
 							:value="query.args[ index ].value"
 							@input="setFieldProp( clause._id, 'value', $event, query.args )"
-						><jet-query-dynamic-args v-model="dynamicQuery.args[ clause._id ].value"></jet-query-dynamic-args></cx-vui-textarea>
+						>
+							<jet-query-dynamic-args
+								v-model="dynamicQuery.args[ clause._id ].value"
+								@on-delete="setFieldProp( clause._id, 'exclude_empty', false, query.args )"
+							></jet-query-dynamic-args>
+							<label
+								class="jet-engine-exclude-empty-toggle"
+								v-if="dynamicQuery.args[ clause._id ].value"
+							>
+								<input
+									type="checkbox"
+									:value="query.args[ index ].exclude_empty"
+									:checked="query.args[ index ].exclude_empty"
+									@input="setFieldProp( clause._id, 'exclude_empty', $event.target.checked, query.args )"
+								>
+								<?php _e( 'Exclude this clause from the query if the dynamic value is empty', 'jet-engine' ) ?>
+							</label>
+						</cx-vui-input>
 					</cx-vui-repeater-item>
 				</cx-vui-repeater>
 			</div>

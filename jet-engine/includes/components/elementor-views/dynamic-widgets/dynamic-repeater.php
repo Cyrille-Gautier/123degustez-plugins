@@ -43,7 +43,7 @@ class Jet_Listing_Dynamic_Repeater_Widget extends Widget_Base {
 			'repeater_notice',
 			array(
 				'type' => Controls_Manager::RAW_HTML,
-				'raw'  => __( '<b>Note</b> this widget could process only repeater meta fields created with JetEngine or ACF plugins', 'jet-engine' ),
+				'raw'  => __( '<b>Note</b> this widget could process only repeater meta fields created with JetEngine or ACF plugins. Alternatively, you may use JetEngine query of any type as a source.', 'jet-engine' ),
 			)
 		);
 
@@ -52,6 +52,8 @@ class Jet_Listing_Dynamic_Repeater_Widget extends Widget_Base {
 		if ( jet_engine()->options_pages ) {
 			$repeater_fields['options_page'] = __( 'Options', 'jet-engine' );
 		}
+
+		$repeater_fields['je_query'] = __( 'JetEngine Query', 'jet-engine' );
 
 		$this->add_control(
 			'dynamic_field_source',
@@ -83,6 +85,32 @@ class Jet_Listing_Dynamic_Repeater_Widget extends Widget_Base {
 			}
 
 		}
+
+		$this->add_control(
+			'je_query_id',
+			array(
+				'label'     => __( 'Query ID', 'jet-engine' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => '',
+				'groups'    => \Jet_Engine\Query_Builder\Manager::instance()->get_queries_for_options( false ),
+				'condition' => array(
+					'dynamic_field_source' => 'je_query',
+				),
+			)
+		);
+
+		$this->add_control(
+			'je_macros_notice',
+			array(
+				'type' => Controls_Manager::RAW_HTML,
+				'notice_type' => 'info',
+				'raw'  => __( '<div style="font-size:0.9em;"><b>Note:</b> you may use JetEngine macros with the Query source, but if you need to filter the value obtained by a macro, do it by this example - <code>%current_meta|image_field%{"filter":"img_url_by_id"}</code></div>', 'jet-engine' ),
+				'condition' => array(
+					'dynamic_field_source' => 'je_query',
+					'je_query_id!' => '',
+				),
+			)
+		);
 
 		/**
 		 * Add 3rd-party controls for sources
@@ -154,7 +182,7 @@ class Jet_Listing_Dynamic_Repeater_Widget extends Widget_Base {
 		$this->add_control(
 			'dynamic_field_leading_zero',
 			array(
-				'label'     => __( 'Add leding zero before counter items', 'jet-engine' ),
+				'label'     => __( 'Add leading zero before counter items', 'jet-engine' ),
 				'type'      => Controls_Manager::SWITCHER,
 				'default'   => '',
 				'condition' => array(

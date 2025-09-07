@@ -66,6 +66,8 @@ class Meta_Fields extends Manual_Bulk_Options {
 			return;
 		}
 
+		//adding custom option happens on backend post save, that already has security checks
+		//phpcs:ignore
 		$new_fields = ! empty( $_REQUEST[ $field ] ) ? $_REQUEST[ $field ] : array();
 		$fields     = $glossary['fields'];
 		$existing   = array();

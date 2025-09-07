@@ -72,12 +72,26 @@ class Terms_Query extends Base_Query {
 				unset( $args['meta_key'] );
 			}
 		}
-		
+
 		$args['hide_empty'] = ! empty( $args['hide_empty'] ) ? filter_var( $args['hide_empty'], FILTER_VALIDATE_BOOLEAN ) : false;
 
 		$args_replacer = new Empty_Items_Replacer( $args, array( 'include', 'exclude', 'object_ids' ) );
 
 		return $args_replacer->replace();
+	}
+
+	/**
+	 * Returns current query arguments
+	 *
+	 * @return array
+	 */
+	public function get_query_args() {
+
+		if ( null === $this->final_query ) {
+			$this->setup_query();
+		}
+
+		return $this->build_current_query();
 	}
 
 	public function get_current_items_page() {
@@ -90,7 +104,6 @@ class Terms_Query extends Base_Query {
 		} else {
 			return ceil( $offset / $per_page ) + 1;
 		}
-
 	}
 
 	/**
@@ -122,7 +135,6 @@ class Terms_Query extends Base_Query {
 		$this->update_query_cache( $result, 'count' );
 
 		return $result;
-
 	}
 
 	/**
@@ -202,6 +214,10 @@ class Terms_Query extends Base_Query {
 
 				break;
 
+			case '_items_per_page':
+				$this->final_query['number_per_page'] = $value;
+				break;
+
 			case 'meta_query':
 				$this->replace_meta_query_row( $value );
 				break;
@@ -216,7 +232,7 @@ class Terms_Query extends Base_Query {
 	/**
 	 * Adds date range query arguments to given query parameters.
 	 * Required to allow ech query to ensure compatibility with Dynamic Calendar
-	 * 
+	 *
 	 * @param array $args [description]
 	 */
 	public function add_date_range_args( $args = array(), $dates_range = array(), $settings = array() ) {

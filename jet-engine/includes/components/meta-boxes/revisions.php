@@ -66,7 +66,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_Revisions' ) ) {
 				return false;
 			}
 
-			if ( ! isset( $_POST[ $this->field_name ] ) ) {
+			if ( ! isset( $_POST[ $this->field_name ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 				return false;
 			}
 
@@ -79,7 +79,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_Revisions' ) ) {
 				return $fields;
 			}
 
-			if ( ! empty( $_GET['action'] ) && 'restore' === $_GET['action'] ) {
+			if ( ! empty( $_GET['action'] ) && 'restore' === $_GET['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				return $fields;
 			}
 
@@ -122,7 +122,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_Revisions' ) ) {
 		}
 
 		public function is_diff_request() {
-			return ! empty( $_REQUEST['action'] ) && 'get-revision-diffs' === $_REQUEST['action'];
+			return ! empty( $_REQUEST['action'] ) && 'get-revision-diffs' === $_REQUEST['action']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		public function wp_post_revision_field( $value, $field_name, $post, $direction ) {
@@ -150,7 +150,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_Revisions' ) ) {
 				return;
 			}
 
-			if ( isset( $_POST[ $this->field_name ] ) ) {
+			if ( isset( $_POST[ $this->field_name ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 				$value = $this->get_current_field_value();
 			} else {
 				$value = get_post_meta( $parent_id, $this->field_name, true );
@@ -179,7 +179,8 @@ if ( ! class_exists( 'Jet_Engine_CPT_Revisions' ) ) {
 
 			$post_meta_instance = $this->get_post_meta_instance();
 
-			$value = $post_meta_instance->sanitize_meta( $this->field_name, $_POST[ $this->field_name ] );
+			$raw_value = isset( $_POST[ $this->field_name ] ) ? wp_unslash( $_POST[ $this->field_name ] ) : ''; // phpcs:ignore -- sanitized below
+			$value     = $post_meta_instance->sanitize_meta( $this->field_name, $raw_value );
 
 			if ( 'textarea' === $this->field['type'] && false === strpos( $value, "\\" ) ) {
 				$value = wp_slash( $value );

@@ -25,13 +25,22 @@ class Jet_Engine_Advanced_Date_Field {
 	 */
 	public function __construct() {
 
-		require_once jet_engine()->plugin_path( 'includes/modules/calendar/advanced-date-field/view.php' );
-		require_once jet_engine()->plugin_path( 'includes/modules/calendar/advanced-date-field/data.php' );
-		require_once jet_engine()->plugin_path( 'includes/modules/calendar/advanced-date-field/rest-api.php' );
+		$base_path = jet_engine()->plugin_path( 'includes/modules/calendar/advanced-date-field/' );
+		$base_url  = jet_engine()->plugin_url( 'includes/modules/calendar/assets/' );
+
+		require_once $base_path . 'view.php';
+		require_once $base_path . 'data.php';
+		require_once $base_path . 'rest-api.php';
+		require_once $base_path . 'form-builder/register.php';
 
 		$this->view = new Jet_Engine_Advanced_Date_Field_View( $this->field_type );
 		$this->data = new Jet_Engine_Advanced_Date_Field_Data( $this->field_type );
 		$this->rest = new Jet_Engine_Advanced_Date_Field_Rest_API( $this->field_type );
+
+		new \Jet_Engine\Dynamic_Calendar\Advanced_Date_Field\Form_Builder(
+			$base_path . 'form-builder/',
+			$base_url
+		);
 
 		add_action(
 			'jet-engine/callbacks/register',
@@ -39,23 +48,23 @@ class Jet_Engine_Advanced_Date_Field {
 		);
 
 		add_filter(
-			'jet-engine/listing/dynamic-field/callback-args', 
-			array( $this, 'add_field_name_to_callback_args' ), 
-			10, 4 
+			'jet-engine/listing/dynamic-field/callback-args',
+			array( $this, 'add_field_name_to_callback_args' ),
+			10, 4
 		);
 
 		add_filter(
-			'jet-engine/listings/allowed-callbacks-args', 
-			array( $this, 'modify_date_format_conditions' ), 
+			'jet-engine/listings/allowed-callbacks-args',
+			array( $this, 'modify_date_format_conditions' ),
 			10, 4
 		);
 
 		add_action(
-			'jet-engine/meta-fields/enqueue-assets', 
+			'jet-engine/meta-fields/enqueue-assets',
 			array( $this, 'add_editor_js' )
 		);
 
-		add_action( 
+		add_action(
 			'jet-engine/meta-boxes/templates/fields/controls',
 			array( $this, 'editor_controls' )
 		);
@@ -65,7 +74,7 @@ class Jet_Engine_Advanced_Date_Field {
 	public function editor_controls() {
 		?>
 		<cx-vui-select
-			label="<?php _e( 'Recurrency Format', 'jet-engine' ); ?>"
+			label="<?php _e( 'Recurrence Format', 'jet-engine' ); ?>"
 			description="<?php _e( 'Defines UI to set up recurrent dates on edit screen', 'jet-engine' ); ?>"
 			:wrapper-css="[ 'equalwidth' ]"
 			size="fullwidth"
@@ -132,37 +141,48 @@ class Jet_Engine_Advanced_Date_Field {
 
 	/**
 	 * Regsiter advanced date realted JetEngine callback(s)
-	 * 
+	 *
 	 * @param  [type] $callbacks [description]
 	 * @return [type]            [description]
 	 */
 	public function register_advanced_date_callbacks( $callbacks ) {
-		$callbacks->register_callback( 
-			'jet_engine_advanced_date_next', 
+		$callbacks->register_callback(
+			'jet_engine_advanced_date_next',
 			__( 'Advanced date: Get next date', 'jet-engine' )
 		);
 
-		$callbacks->register_callback( 
-			'jet_engine_advanced_end_date_next', 
+		$callbacks->register_callback(
+			'jet_engine_advanced_end_date_next',
 			__( 'Advanced date: Get next end date', 'jet-engine' )
 		);
 	}
 
 	/**
 	 * Add jet_engine_advanced_date_next callback to date_format callback control conditions
-	 * 
+	 *
 	 * @param  array  $args [description]
 	 * @return [type]       [description]
 	 */
 	public function modify_date_format_conditions( $args = [] ) {
 		$args['date_format']['condition']['filter_callback'][] = 'jet_engine_advanced_date_next';
 		$args['date_format']['condition']['filter_callback'][] = 'jet_engine_advanced_end_date_next';
+		$args['include_future_end_dates'] = [
+			'label'       => __( 'Include future end dates', 'jet-engine' ),
+			'description' => __( 'If enabled, the first date pair with an end date in the nearest future will be returned when no date pair with upcoming start date is found.', 'jet-engine' ),
+			'type'        => 'switcher',
+			'default'     => '',
+			'condition'   => [
+				'dynamic_field_filter' => 'yes',
+				'filter_callback'    => [ 'jet_engine_advanced_date_next' ],
+			],
+		];
+
 		return $args;
 	}
 
 	/**
 	 * Adjust jet_engine_advanced_date_next callback arguments before apply the callback
-	 * 
+	 *
 	 * @param [type] $args     [description]
 	 * @param [type] $callback [description]
 	 * @param array  $settings [description]
@@ -176,6 +196,8 @@ class Jet_Engine_Advanced_Date_Field {
 
 		$format = ! empty( $settings['date_format'] ) ? $settings['date_format'] : 'd F Y';
 		$field  = ! empty( $settings['dynamic_field_post_meta_custom'] ) ? $settings['dynamic_field_post_meta_custom'] : false;
+		$include_future_end_dates = ! empty( $settings['include_future_end_dates'] ) ? $settings['include_future_end_dates'] : false;
+		$include_future_end_dates = filter_var( $include_future_end_dates, FILTER_VALIDATE_BOOLEAN );
 
 		if ( ! $field && isset( $settings['dynamic_field_post_meta'] ) ) {
 			$field = ! empty( $settings['dynamic_field_post_meta'] ) ? $settings['dynamic_field_post_meta'] : false;
@@ -183,6 +205,7 @@ class Jet_Engine_Advanced_Date_Field {
 
 		$args[] = $format;
 		$args[] = $field;
+		$args[] = $include_future_end_dates;
 
 		return $args;
 	}
@@ -192,7 +215,7 @@ class Jet_Engine_Advanced_Date_Field {
 	 *
 	 * @since  1.0.0
 	 * @access public
-	 * @return Jet_Engine
+	 * @return static
 	 */
 	public static function instance() {
 		// If the single instance hasn't been set, set it now.
@@ -205,47 +228,91 @@ class Jet_Engine_Advanced_Date_Field {
 }
 
 /**
- * As the JetEngine callbacks support only functions 
+ * As the JetEngine callbacks support only functions
  * so we need to register appropriate function for the callback
  */
-function jet_engine_advanced_date_next( $result, $format = 'd F Y', $field = '' ) {
+function jet_engine_advanced_date_next( $result, $format = 'd F Y', $field = '', $include_future_end_dates = false ) {
 
 	$time      = time();
 	$post_id   = jet_engine()->listings->data->get_current_object_id();
 	$dates     = Jet_Engine_Advanced_Date_Field::instance()->data->get_dates( $post_id, $field );
 	$next_date = false;
+	$next_end  = false;
 
 	if ( empty( $dates ) ) {
-		return $result;
+		return;
 	}
 
 	$field_config = Jet_Engine_Advanced_Date_Field::instance()->data->get_field_config( $post_id, $field, true );
 
-	if ( empty( $field_config->is_recurring ) && empty( $field_config->dates ) ) {
-		return jet_engine_date( $format, $dates[0] );
+	if ( ! $include_future_end_dates && empty( $field_config->is_recurring ) && empty( $field_config->dates ) ) {
+		if ( empty( $result ) || $result < $time ) {
+			return;
+		}
+
+		$result_date = jet_engine_date( $format, $result );
+		$end_date    = $field_config->end_date ?? false;
+
+		if ( ! empty( $field_config->is_end_date ) && ! empty( $end_date ) ) {
+			$end_date  = jet_engine_date( $format, strtotime( $end_date ) );
+			$md_format = apply_filters(
+				'jet-engine/calendar/advanced-date/multiday-format',
+				'%1$s - %2$s', $result_date, $end_date
+			);
+	
+			return sprintf( $md_format, $result_date, $end_date );
+		} else {
+			return $result_date;
+		}
 	}
 
-	$found_index = false;
+	$date_pairs = Jet_Engine_Advanced_Date_Field::instance()->data->get_date_pairs( $post_id, $field );
 
-	// https://github.com/Crocoblock/issues-tracker/issues/10072
-	asort( $dates, SORT_NUMERIC );
+	usort( $date_pairs, function( $a, $b ) {
+		return intval( $a['start'] ) <=> intval( $b['start'] );
+	} );
 
-	foreach ( $dates as $index => $date ) {
-		if ( $date > $time ) {
-			$next_date = $date;
-			$found_index = $index;
+	foreach ( $date_pairs as $pair ) {
+		if ( $pair['start'] > $time ) {
+			$next_date = $pair['start'];
+			$next_end  = $pair['end'];
 			break;
 		}
 	}
 
+	$no_past_date = $next_date < $time;
+
+	if ( $no_past_date && ! $include_future_end_dates ) {
+		return;
+	}
+
+	if ( $no_past_date && $include_future_end_dates ) {
+		usort( $date_pairs, function( $a, $b ) {
+			return intval( $a['end'] ) <=> intval( $b['end'] );
+		} );
+		
+		$next_date = false;
+		$next_end  = false;
+
+		foreach ( $date_pairs as $pair ) {
+			if ( $pair['end'] > $time ) {
+				$next_date = $pair['start'];
+				$next_end  = $pair['end'];
+				break;
+			}
+		}
+	}
+	
+	if ( $next_date === false ) {
+		return;
+	}
+
 	$result_date = jet_engine_date( $format, $next_date );
-	$end_dates   = Jet_Engine_Advanced_Date_Field::instance()->data->get_end_dates( $post_id, $field );
 
-	if ( ! empty( $end_dates ) && ! empty( $end_dates[ $found_index ] ) ) {
-
-		$end_date  = jet_engine_date( $format, $end_dates[ $found_index ] );
-		$md_format = apply_filters( 
-			'jet-engine/calendar/advanced-date/multiday-format', 
+	if ( $next_end !== false ) {
+		$end_date  = jet_engine_date( $format, $next_end );
+		$md_format = apply_filters(
+			'jet-engine/calendar/advanced-date/multiday-format',
 			'%1$s - %2$s', $result_date, $end_date
 		);
 
@@ -258,7 +325,7 @@ function jet_engine_advanced_date_next( $result, $format = 'd F Y', $field = '' 
 }
 
 /**
- * As the JetEngine callbacks support only functions 
+ * As the JetEngine callbacks support only functions
  * so we need to register appropriate function for the callback
  */
 function jet_engine_advanced_end_date_next( $result, $format = 'd F Y', $field = '' ) {
@@ -269,12 +336,16 @@ function jet_engine_advanced_end_date_next( $result, $format = 'd F Y', $field =
 	$next_date = false;
 
 	if ( empty( $dates ) ) {
-		return $result;
+		return;
 	}
 
 	$field_config = Jet_Engine_Advanced_Date_Field::instance()->data->get_field_config( $post_id, $field, true );
 
 	if ( empty( $field_config->is_recurring ) && empty( $field_config->dates ) ) {
+		if ( empty( $dates[0] ) || $dates[0] < $time ) {
+			return;
+		}
+
 		return jet_engine_date( $format, $dates[0] );
 	}
 
@@ -286,6 +357,10 @@ function jet_engine_advanced_end_date_next( $result, $format = 'd F Y', $field =
 			$next_date = $date;
 			break;
 		}
+	}
+
+	if ( $next_date === false ) {
+		return;
 	}
 
 	$result_date = jet_engine_date( $format, $next_date );

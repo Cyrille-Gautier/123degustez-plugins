@@ -114,7 +114,7 @@ class Module {
 
 		$data['jedv_field'] = array(
 			'label'       => __( 'Field', 'jet-engine' ),
-			'description' => __( 'Enter meta field name or select dynamic tag to compare value against. <br><b>Note!</b> If your meta field contains array, for example JetEngine Checkbox field etc, you need to set meta field name manually (not with dynamic capability)', 'jet-engine' ),
+			'description' => __( 'Enter the name of a meta field or object property, or select dynamic tag to compare value against. <br><b>Note!</b> If your meta field or object property contains an array (for example, JetEngine Checkbox field etc.), you need to set the name manually (not with dynamic capability)', 'jet-engine' ),
 			'type'        => 'text',
 			'label_block' => true,
 			'has_html'    => true,

@@ -1,5 +1,98 @@
 # ChangeLog
 
+## 3.7.5
+* ADD: Bricks. Add Dynamic Repeater element;
+* UPD: Bricks and Data Stores. Support Bricks native SVG icon settings in Data Store button;
+* UPD: CCT. Rest API endpoint. Allow to filter by checkbox field;
+* FIX: Bricks. Retrieve correct query ID when filtering by switched query in Bricks loop;
+* FIX: Bricks. Prevent unnecessary class injection for SVG icons in Bricks;
+* FIX: Advanced Date field. Callback working improperly when no dates in the future;
+* FIX: Components. Component styles do not load when Lazy Load and dynamic visibility are enabled;
+* FIX: Map Listings. Fatal error if lat/lng field is empty;
+* FIX: Components. Correctly apply styles for cross-builder components;
+* FIX: Map Listings. Filter for new Places Autocomplete;
+* FIX: Woo Compatibility. Fatal error in Add to Cart link.
+
+## 3.7.4
+* UPD: Listings Ajax. Add request signature checking for Listing lazy load and load more to avoid request hijacking;
+* FIX: Bricks. Components registration issue;
+* FIX: Bricks. CSS generation issue;
+* FIX: Blocks. Container block. Ensure background image exists before process;
+* FIX: Map Listings. Styles for MapBox maps;
+* FIX: Data santiziation and escaping where is needed.
+
+## 3.7.3
+* ADD: External Moduels. `Items Number Swither` module;
+* UPD: Meta Boxes. `Allow MIME types` for media type field;
+* UPD: Query Builder. Allow to set user ID into Object ID property of the repeater query;
+* UPD: Query Builder. Automatically convert SQL settings to plain SQL on query type switch;
+* FIX: Map Listings. Marker popup disappears when Map Sync is applied and the Map Centering toggle is enabled;
+* FIX: Meta Boxes. Make CPT search case insensetive in the meta box conditions;
+* FIX: Bricks. Dynamic Image border disappears in some cases;
+* FIX: Bricks & Map Listings. Control for displaying labels in Location & Distance filter;
+* FIX: Bricks & Map Listings. Problems with map styles generation;
+* FIX: Map Listings. Location & Distance input width doesn't work correctly on mobile devices;
+* FIX: Map Listings. Fit popup to map after autocentering;
+* FIX: CPT Admin Filters. Warning with admin filters by checkbox/multiple select field;
+* FIX: Woo Integration. Dynamic image doesn't clickable in product listing;
+* FIX: Bricks. Components registration in the Bricks 2.0
+
+## 3.7.2
+* ADD: Data Stores. Action for JetFormBuilder. https://github.com/Crocoblock/suggestions/issues/7214;
+* ADD: Query Builder. Allow to set column alias for calculated columns in SQL query;
+* FIX: Components. Better Polylang compatibility;
+* FIX: Query Builder. Avoid duplicates for Current WP Query query type with Load More and Infinity Scroll;
+* FIX: Map Listings: Compatibility issue for User Geolocation and Location & Distance filter in some cases;
+* FIX: Profile Builder. Warnings when user is not logged in;
+* FIX: Dynamic Image: Linked image alignment;
+* FIX: Fatal error if admin column value is not string;
+* FIX: Data Stores. Better WPML compatibility.
+
+## 3.7.1.2
+* FIX: Prevent PHP fatals in some cases.
+
+## 3.7.1.1
+* UPD: Ensure listing ID is integer anywhere it used;
+* FIX: Sanitize Twig template before execute;
+* FIX: Sanitize and validate JetQuery control request.
+
+## 3.7.1
+* ADD: Allow to use macros/shortcodes in delete post confirmation message;
+* UPD: Listing Grid. Scroll slider + Custom breakpoints compatibility;
+* UPD: Relations. Allow to create meta fields with Number type;
+* FIX: Woo + Custom Meta Tab. Bug with special chars in meta box name;
+* FIX: Map Listings. Leafleat clusters issue;
+* FIX: https://github.com/Crocoblock/suggestions/issues/7956;
+* FIX: https://github.com/Crocoblock/suggestions/issues/8158;
+* FIX: CCT. Filtering not working with special chars;
+* FIX: Allow to force CSS rendering for Twig listings/components;
+* FIX: Correctly handle context option for ACF fields in JetEngine widgets.
+
+## 3.7.0
+* ADD: Query Builder. Ability to Configure Nested Queries Where Query Arguments Are Added via Repeater;
+* ADD: Query Builder. Ability to Remove an Argument From the Query if Its Macro Returns an Empty Value;
+* ADD: Query Builder & Dynamic Repeater Widget/Block compatibility;
+* ADD: Dynamic Calendar. Advanced Date Field for JetFormBuilder;
+* ADD: Woo Data Widget/Block/Element;
+* ADD: Listing Grid. Wrapper Tags Option;
+* ADD: Dynamic Link. Remove from cart link source;
+* UPD: Query Builder. Better visual editor for Advanced SQL queries;
+* FIX: Meta field in listing show value form current user meta field instead of post meta;
+* FIX: Map Listings. Correctly enqueue assets for the content inside map marker popup.
+
+## 3.6.9
+* ADD: CCT. Allow to filter CCT items by `cct_created` and `cct_modified` fields (query vars in case of filters);
+* UPD: Map Listings. Reduce requests number to Geocoding API;
+* UPD: Dynamic Calendar. Apply styling options for cells with posts in the nearby months in mobile view;
+* FIX: Dynamic Visibility. Allow to use plaing object keys to get dynamic values from (only post meta keys was allowed before);
+* FIX: Dynamic Visibility. Related items context for the macro in Block editor;
+* FIX: Dynamic Visibility. PHP warnings in some cases;
+* FIX: Map Listings. Lightbox inside map marker popup;
+* FIX: Custom Meta Storage. PHP error in some cases;
+* FIX: https://github.com/Crocoblock/suggestions/issues/8097;
+* FIX: Relations. Meta saving issue when field options are from glossary;
+* FIX: Admin Filter. Sanitize allowed filter values.
+
 ## 3.6.8
 * UPD: https://github.com/Crocoblock/suggestions/issues/7897;
 * UPD: Data Stores. Add data stores requests to queue to correctly stack multiple add/remove requests;

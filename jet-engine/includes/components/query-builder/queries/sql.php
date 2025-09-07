@@ -1,8 +1,6 @@
 <?php
 namespace Jet_Engine\Query_Builder\Queries;
 
-use Jet_Engine\Query_Builder\Manager;
-
 class SQL_Query extends Base_Query {
 
 	public $current_query = null;
@@ -19,10 +17,24 @@ class SQL_Query extends Base_Query {
 		),
 	);
 
+	private $keep_macros = false;
+
+	public function is_keep_macros() {
+		return $this->keep_macros;
+	}
+
+	public function set_keep_macros() {
+		$this->keep_macros = true;
+	}
+
+	public function reset_keep_macros() {
+		$this->keep_macros = false;
+	}
+
 	/**
 	 * Returns queries items
 	 *
-	 * @return object[] Database query results. 
+	 * @return object[] Database query results.
 	 */
 	public function _get_items() {
 
@@ -37,7 +49,7 @@ class SQL_Query extends Base_Query {
 
 		if ( $cast_to_class && ( class_exists( $cast_to_class ) || function_exists( $cast_to_class ) ) ) {
 			$result = array_map( function( $item ) use ( $cast_to_class ) {
-				
+
 				if ( class_exists( $cast_to_class ) ) {
 					return new $cast_to_class( $item );
 				} elseif ( function_exists( $cast_to_class ) ) {
@@ -45,9 +57,10 @@ class SQL_Query extends Base_Query {
 				} else {
 					return $item;
 				}
-				
+
 			}, $result );
 		} else {
+
 			$start_index = $this->get_start_item_index_on_page() - 1;
 
 			$result = array_map( function( $item, $index ) use ( $start_index ) {
@@ -57,7 +70,6 @@ class SQL_Query extends Base_Query {
 		}
 
 		return $result;
-
 	}
 
 	public function get_current_items_page() {
@@ -92,7 +104,7 @@ class SQL_Query extends Base_Query {
 			$this->sql_query_strings['count']['error'] = '';
 		} else {
 			$result = $this->wpdb()->get_var( $sql );
-			
+
 			if ( $this->wpdb()->last_error ) {
 				$this->sql_query_strings['count']['error'] = $this->wpdb()->last_error;
 			}
@@ -101,7 +113,6 @@ class SQL_Query extends Base_Query {
 		$this->update_query_cache( $result, 'count' );
 
 		return $result;
-
 	}
 
 	/**
@@ -420,13 +431,20 @@ class SQL_Query extends Base_Query {
 			} else {
 				$this->sql_query_strings['items']['query'] = $advanced_query;
 			}
-			
+
 			return $advanced_query;
 		}
 
+		return $this->get_simple_query( $is_count );
+
+	}
+
+	public function get_simple_query( $is_count = false ) {
 		$prefix = $this->wpdb()->prefix;
 
 		$select_query = "SELECT ";
+
+		$column_aliases = array();
 
 		if ( $is_count && ! $this->is_grouped() && empty( $this->final_query['limit'] ) ) {
 			$select_query .= " COUNT(*) ";
@@ -452,11 +470,18 @@ class SQL_Query extends Base_Query {
 					if ( 'custom' === $col_func ) {
 						$custom_col      = ! empty( $col['custom_col'] ) ? $col['custom_col'] : '%1$s';
 						$prepared_col    = str_replace( '%1$s', $col['column'], $custom_col );
-						$prepared_col    = jet_engine()->listings->macros->do_macros( $prepared_col );
+						if ( ! $this->is_keep_macros() ) {
+							$prepared_col = jet_engine()->listings->macros->do_macros( $prepared_col );
+						}
 						$prepared_col_as = sprintf( '%1$s(%2$s)', $col_func, $col['column'] );
 					} else {
 						$prepared_col    = sprintf( '%1$s(%2$s)', $col_func, $col['column'] );
 						$prepared_col_as = $prepared_col;
+					}
+
+					if ( ! empty( $col['column_alias'] ) ) {
+						$column_aliases[ $prepared_col_as ] = $col['column_alias'];
+						$prepared_col_as = $col['column_alias'];
 					}
 
 					$implode[] = $prepared_col . " AS '" . $prepared_col_as . "'";
@@ -530,7 +555,8 @@ class SQL_Query extends Base_Query {
 			}
 
 			if ( ! empty( $this->final_query['group_results'] ) && ! empty( $this->final_query['group_by'] ) ) {
-				$current_query .= " GROUP BY " . $this->final_query['group_by'];
+				$group_col = str_replace( '`', '', $this->final_query['group_by'] );
+				$current_query .= " GROUP BY `" . $group_col . "`";
 			}
 
 			if ( ! empty( $this->final_query['orderby'] ) ) {
@@ -544,7 +570,7 @@ class SQL_Query extends Base_Query {
 						continue;
 					}
 
-					$row['column'] = $row['orderby'];
+					$row['column'] = ! empty( $column_aliases[ $row['orderby'] ] ) ? $column_aliases[ $row['orderby'] ] : $row['orderby'];
 					$orderby[] = $row;
 				}
 
@@ -552,21 +578,29 @@ class SQL_Query extends Base_Query {
 			}
 
 			$this->current_query = $current_query;
-
 		}
 
 		$limit_offset = "";
 
-		if ( ! $is_count ) {
-			$limit = $this->get_items_per_page();
+		if ( ! $this->is_keep_macros() ) {
+			if ( ! $is_count ) {
+				$limit = $this->get_items_per_page();
+			} else {
+				$limit = ! empty( $this->final_query['limit'] ) ? absint( $this->final_query['limit'] ) : 0;
+			}
 		} else {
-			$limit = ! empty( $this->final_query['limit'] ) ? absint( $this->final_query['limit'] ) : 0;
+			$limit = ! empty( $this->final_query['limit'] ) ? $this->final_query['limit'] : 0;
 		}
 
 		if ( $limit ) {
 			$limit_offset .= " LIMIT";
-			$offset = ! empty( $this->final_query['offset'] ) ? absint( $this->final_query['offset'] ) : 0;
 
+			if ( ! $this->is_keep_macros() ) {
+				$offset = ! empty( $this->final_query['offset'] ) ? absint( $this->final_query['offset'] ) : 0;
+			} else {
+				$offset = ! empty( $this->final_query['offset'] ) ? $this->final_query['offset'] : 0;
+			}
+			
 			if ( ! $is_count && ! empty( $this->final_query['_page'] ) ) {
 				$page    = absint( $this->final_query['_page'] );
 				$pages   = $this->get_items_pages_count();
@@ -599,14 +633,33 @@ class SQL_Query extends Base_Query {
 			$result = $this->wrap_grouped_query( 'COUNT(*)', $result );
 		}
 
-		if ( $is_count ) {
-			$this->sql_query_strings['count']['query'] = $result;
-		} else {
-			$this->sql_query_strings['items']['query'] = $result;
+		if ( ! $this->is_keep_macros() ) {
+			if ( $is_count ) {
+				$this->sql_query_strings['count']['query'] = $result;
+			} else {
+				$this->sql_query_strings['items']['query'] = $result;
+			}
 		}
 
 		return $result;
+	}
 
+	public function get_converted_sql() {
+		$this->final_query = null;
+		$this->reset_query();
+		$this->setup_query();
+
+		$this->final_query = $this->final_query_raw;
+
+		$this->set_keep_macros();
+		$result = $this->get_simple_query();
+		$this->reset_keep_macros();
+
+		$this->final_query = null;
+		$this->reset_query();
+		$this->setup_query();
+		
+		return $result;
 	}
 
 	public function wrap_grouped_query( $select, $query ) {
@@ -719,13 +772,18 @@ class SQL_Query extends Base_Query {
 		$query      = '';
 		$multi_args = false;
 
+		if ( ! empty( $args['is_group'] )
+			&& ! empty( $args['args'] )
+			&& is_array( $args['args'] )
+		) {
+			$args = $args['args'];
+			$add_where_string = false;
+		}
+
 		if ( ! empty( $args ) ) {
 
-			if ( $add_where_string ) {
-				$query .= ' WHERE ';
-			}
-
 			$glue = '';
+			$where_query = '';
 
 			if ( count( $args ) > 1 ) {
 				$multi_args = true;
@@ -746,6 +804,13 @@ class SQL_Query extends Base_Query {
 
 				} else {
 
+					$exclude_empty = ! empty( $arg['exclude_empty'] ) ? $arg['exclude_empty'] : false;
+					$exclude_empty = filter_var( $exclude_empty, FILTER_VALIDATE_BOOLEAN );
+
+					if ( $exclude_empty && \Jet_Engine_Tools::is_empty( $arg, 'value' ) ) {
+						continue;
+					}
+
 					if ( is_array( $arg ) && isset( $arg['column'] ) ) {
 						$column  = ! empty( $arg['column'] ) ? $arg['column'] : false;
 						$compare = ! empty( $arg['compare'] ) ? $arg['compare'] : '=';
@@ -762,13 +827,21 @@ class SQL_Query extends Base_Query {
 				}
 
 				if ( $clause ) {
-					$query .= $glue;
-					$query .= $clause;
+					$where_query .= $glue;
+					$where_query .= $clause;
 					$glue   = ' ' . $rel . ' ';
 				}
 
 			}
 
+			if ( ! empty( $where_query ) ) {
+
+				if ( $add_where_string ) {
+					$query .= ' WHERE ';
+				}
+
+				$query .= $where_query;
+			}
 		}
 
 		return $query;
@@ -786,6 +859,10 @@ class SQL_Query extends Base_Query {
 
 		if ( is_array( $value ) ) {
 			return false;
+		}
+
+		if ( $this->is_keep_macros() ) {
+			return sprintf( "'%s'", $value );
 		}
 
 		if ( false !== strpos( strtolower( $type ), 'decimal' ) ) {
@@ -855,6 +932,10 @@ class SQL_Query extends Base_Query {
 	 * @return [type]        [description]
 	 */
 	public function prepare_value_for_like_operator( $value ) {
+		if ( $this->is_keep_macros() ) {
+			return sprintf( "'%%%s%%'", $value );
+		}
+
 		if ( $this->starts_with( $value, '%' ) || $this->ends_with( $value, '%' ) ) {
 			return sprintf( "'%s'", $value );
 		} else {
@@ -963,6 +1044,10 @@ class SQL_Query extends Base_Query {
 			$cols = $this->query['default_columns'];
 		}
 
+		$result = array();
+
+		$calc_columns = array();
+
 		if ( ! empty( $this->query['include_calc'] ) && ! empty( $this->query['calc_cols'] ) ) {
 			foreach ( $this->query['calc_cols'] as $col ) {
 
@@ -972,15 +1057,27 @@ class SQL_Query extends Base_Query {
 
 				$col_func = ! empty( $col['function'] ) ? $col['function'] : '';
 
-				$cols[] = sprintf( '%1$s(%2$s)', $col_func, $col['column'] );
+				if ( ! empty( $col['column_alias'] ) ) {
+					$calc_label = sprintf( '%1$s (%2$s)', $col['column_alias'], 'calculated' );
+					$calc_value = $col['column_alias'];
+				} else {
+					$calc_label = sprintf( '%1$s(%2$s)', $col_func, $col['column'] );
+					$calc_value = $calc_label;
+				}
+
+				$calc_columns[ $calc_value ] = $calc_label;
 			}
 		}
-
-		$result = array();
 
 		if ( ! empty( $cols ) ) {
 			foreach ( $cols as $col ) {
 				$result[ $col ] = $col;
+			}
+		}
+
+		if ( ! empty( $calc_columns ) ) {
+			foreach ( $calc_columns as $name => $col ) {
+				$result[ $name ] = $col;
 			}
 		}
 
@@ -1001,7 +1098,7 @@ class SQL_Query extends Base_Query {
 	public function before_preview_body() {
 		print_r( esc_html__( ' QUERY:' ) . "\n" );
 		print_r( $this->sql_query_strings['items']['query'] . "\n\n" );
-		
+
 		if ( $this->sql_query_strings['items']['error'] ) {
 			print_r( esc_html__( ' QUERY ERROR:' ) . "\n" );
 			print_r( $this->sql_query_strings['items']['error'] . "\n\n" );

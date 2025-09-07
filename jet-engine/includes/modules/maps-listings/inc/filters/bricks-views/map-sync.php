@@ -180,7 +180,7 @@ class Map_Sync extends Jet_Smart_Filters_Bricks_Base {
 		$settings['filter_id'] = 0;
 		$settings['additional_providers'] = jet_smart_filters()->utils->get_additional_providers( $settings );
 
-		echo "<div {$this->render_attributes( '_root' )}>";
+		echo "<div {$this->render_attributes( '_root' )}>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		jet_smart_filters()->filter_types->render_filter_template( 'map-sync', $settings );
 		echo "</div>";
 	}

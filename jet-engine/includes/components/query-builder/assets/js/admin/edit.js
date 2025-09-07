@@ -218,7 +218,8 @@
 
 				var preview = {},
 					query = {},
-					dynamic_query = {};
+					dynamic_query = {},
+					general_settings = {};
 
 				if ( self.generalSettings.preview_page || self.generalSettings.preview_page_title ) {
 					preview.page = self.generalSettings.preview_page;
@@ -235,6 +236,7 @@
 
 				query         = self.generalSettings[ self.generalSettings.query_type ];
 				dynamic_query = self.generalSettings[ '__dynamic_' + self.generalSettings.query_type ];
+				general_settings = self.generalSettings;
 
 				wp.apiFetch( {
 					method: 'post',
@@ -245,6 +247,7 @@
 						query_type: self.generalSettings.query_type,
 						query: query,
 						dynamic_query: dynamic_query,
+						general_settings: general_settings,
 					}
 				} ).then( function( response ) {
 

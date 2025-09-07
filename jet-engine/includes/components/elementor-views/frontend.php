@@ -21,6 +21,7 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Frontend' ) ) {
 
 		protected $processed_listing_id = null;
 		protected $css_added = array();
+		protected $hidden_listings = array();
 		protected $reset_excerpt_flag = false;
 		protected $inner_templates = array();
 		protected $not_found_templates = array();
@@ -51,6 +52,13 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Frontend' ) ) {
 			// Print a template styles if the "Not found message" contains elementor shortcodes.
 			add_action( 'jet-engine/listing/grid/not-found/before', array( $this, 'find_not_found_templates' ) );
 			add_action( 'jet-engine/listing/grid/not-found/after',  array( $this, 'print_not_found_templates_css' ) );
+
+			/**
+			 * Allow to re-render CSS if listing item is hidden by dynamic vibility.
+			 *
+			 * @see https://github.com/Crocoblock/issues-tracker/issues/16542
+			 */
+			add_action( 'jet-engine/listing/on-hide', array( $this, 'set_is_hidden' ) );
 		}
 
 		/**
@@ -84,9 +92,14 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Frontend' ) ) {
 		 */
 		public function maybe_add_inline_css( $post_id ) {
 
-			if ( ! empty( $_REQUEST['addedPostCSS'] ) && is_array( $_REQUEST['addedPostCSS'] ) && in_array( $post_id, $_REQUEST['addedPostCSS'] ) ) {
+			// phpcs:disable
+			if ( ! empty( $_REQUEST['addedPostCSS'] )
+				&& is_array( $_REQUEST['addedPostCSS'] )
+				&& in_array( $post_id, $_REQUEST['addedPostCSS'] )
+			) {
 				return;
 			}
+			// phpcs:enable
 
 			if ( in_array( $post_id, $this->css_added ) ) {
 				return;
@@ -95,6 +108,11 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Frontend' ) ) {
 			$css_file = \Elementor\Core\Files\CSS\Post::create( $post_id );
 
 			wp_styles()->done[] = 'elementor-frontend';
+
+			/**
+			 * @see https://github.com/Crocoblock/issues-tracker/issues/16542
+			 */
+			do_action( 'jet-engine/elementor-views/frontend/before-inline-css', $post_id, $css_file );
 
 			if ( 'internal' === get_option( 'elementor_css_print_method' ) ) {
 				$css_file->enqueue();
@@ -124,7 +142,22 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Frontend' ) ) {
 				}
 			}
 
-			$this->css_added[] = $post_id;
+			/**
+			 * Allow to re-render CSS if listing item is hidden by dynamic vibility.
+			 *
+			 * @see https://github.com/Crocoblock/issues-tracker/issues/16542
+			 */
+			$force_css_render = in_array( $post_id, $this->hidden_listings ) ? true : false;
+
+			$force_css_render = apply_filters(
+				'jet-engine/listing/force-render-css',
+				$force_css_render,
+				$post_id
+			);
+
+			if ( ! $force_css_render ) {
+				$this->css_added[] = $post_id;
+			}
 		}
 
 		public function get_listing_content_cb( $result, $listing_id ) {
@@ -165,7 +198,7 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Frontend' ) ) {
 
 			/**
 			 * @since 3.2.3.1 get_builder_content_for_display() replaced with get_builder_content()
-			 * 
+			 *
 			 * get_builder_content_for_display() caused errors in the editor after Elementor 3.15.0 update
 			 * It was related clearing controls stack before sending it to editor config.
 			 */
@@ -370,9 +403,11 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Frontend' ) ) {
 
 		public function register_assets_on_ajax() {
 
+			// phpcs:disable
 			if ( isset( $_REQUEST['isEditMode'] ) && filter_var( $_REQUEST['isEditMode'], FILTER_VALIDATE_BOOLEAN ) ) {
 				return;
 			}
+			// phpcs:enable
 
 			Elementor\Plugin::instance()->frontend->register_styles();
 			Elementor\Plugin::instance()->frontend->register_scripts();
@@ -423,6 +458,22 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Frontend' ) ) {
 
 			return $result;
 		}
-	}
 
+		/**
+		 * Mark listing as hidden by dynamic visibility to force it to
+		 * try render it's own CSS on each next attempt.
+		 */
+		public function set_is_hidden( $listing_id ) {
+
+			if ( ! in_array( $listing_id, $this->hidden_listings ) ) {
+				$this->hidden_listings[] = $listing_id;
+			}
+
+			if ( ! in_array( $listing_id, $this->css_added ) ) {
+				return;
+			}
+
+			$this->css_added = array_diff( $this->css_added, [ $listing_id ] );
+		}
+	}
 }

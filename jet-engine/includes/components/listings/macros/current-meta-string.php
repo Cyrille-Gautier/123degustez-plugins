@@ -41,6 +41,8 @@ class Current_Meta_String extends \Jet_Engine_Base_Macros {
 		$meta_key = ! empty( $args['meta_key'] ) ? $args['meta_key'] : null;
 		$meta     = jet_engine()->listings->macros->get_current_meta( $field_value, $meta_key );
 
-		return is_array( $meta ) ? implode( ', ', $meta ) : $meta;
+		$result = is_array( $meta ) ? implode( ', ', $meta ) : $meta;
+
+		return wp_kses_post( $result );
 	}
 }

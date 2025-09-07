@@ -1,6 +1,8 @@
 <?php
-
 namespace Jet_Engine\Compatibility\Packages\Jet_Engine_Woo_Package\Listings\Blocks_Views;
+
+use Jet_Engine\Compatibility\Packages\Jet_Engine_Woo_Package\Listings\Data_Render;
+use Jet_Engine\Compatibility\Packages\Jet_Engine_Woo_Package\Package;
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -11,12 +13,81 @@ class Integration {
 
 	public function __construct() {
 
-		add_filter( 'jet-engine/blocks-views/block-types/attributes/dynamic-link', [ $this, 'register_add_to_cart_atts' ] );
-		add_filter( 'jet-engine/blocks-views/custom-blocks-controls', [ $this, 'register_link_controls' ] );
-		add_filter( 'jet-engine/listings/macros-list', [ $this, 'register_macros' ] );
+		add_filter(
+			'jet-engine/blocks-views/block-types/attributes/dynamic-link',
+			[ $this, 'register_add_to_cart_atts' ]
+		);
 
-		add_action( 'jet-engine/blocks-views/dynamic-link/style-controls', [ $this, 'register_dynamic_link_style_controls' ], 10, 2 );
+		add_filter(
+			'jet-engine/blocks-views/custom-blocks-controls',
+			[ $this, 'register_link_controls' ]
+		);
 
+		add_filter(
+			'jet-engine/listings/macros-list',
+			[ $this, 'register_macros' ]
+		);
+
+		add_action(
+			'jet-engine/blocks-views/dynamic-link/style-controls',
+			[ $this, 'register_dynamic_link_style_controls' ], 10, 2
+		);
+
+		add_action(
+			'jet-engine/blocks-views/register-block-types',
+			[ $this, 'register_blocks' ]
+		);
+
+		add_action(
+			'jet-engine/blocks-views/editor-script/after',
+			[ $this, 'blocks_assets' ]
+		);
+	}
+
+	/**
+	 * Blocks assets.
+	 *
+	 * Enqueue blocks assets.
+	 *
+	 * @since  3.7.0
+	 *
+	 * @return void
+	 */
+	public function blocks_assets() {
+
+		wp_enqueue_script(
+			'jet-engine-woo-blocks',
+			Package::instance()->package_url( 'assets/js/blocks-views.js' ),
+			[],
+			jet_engine()->get_version(),
+			true
+		);
+
+		wp_localize_script(
+			'jet-engine-woo-blocks',
+			'JetEngineWooData',
+			[
+				'allowed_types'     => Data_Render::instance()->get_data_types( 'blocks' ),
+				'allowed_hooks'     => Data_Render::instance()->get_allowed_hooks( 'blocks' ),
+				'allowed_functions' => Data_Render::instance()->get_allowed_template_functions( 'blocks' ),
+				'allow_links'       => Data_Render::instance()->get_functions_with_link_allowed(),
+			]
+		);
+	}
+
+	/**
+	 * Register blocks.
+	 *
+	 * Register WooCommerce data block.
+	 *
+	 * @since  3.7.0
+	 *
+	 * @param object $blocks_manager Blocks manager instance.
+	 * @return void
+	 */
+	public function register_blocks( $blocks_manager ) {
+		require Package::instance()->package_path( 'listings/blocks-views/block-types/woo-data.php' );
+		$blocks_manager->register_block_type( new Block_Types\Woo_Data() );
 	}
 
 	public function register_macros( $macros_list ) {

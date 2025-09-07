@@ -45,7 +45,7 @@ class Repeater_Query extends Base_Query {
 
 		if ( jet_engine()->meta_boxes ) {
 			add_filter( 'jet-engine/meta-boxes/fields-for-select/name', array( $this, 'name_format' ), 10, 3 );
-			$meta_fields = $this->remap_options( jet_engine()->meta_boxes->get_fields_for_select( 'repeater', 'blocks' ) );
+			$meta_fields = $this->remap_options( jet_engine()->meta_boxes->get_fields_for_select( 'repeater', 'blocks', 'all', true ) );
 			remove_filter( 'jet-engine/meta-boxes/fields-for-select/name', array( $this, 'name_format' ), 10, 3 );
 		} else {
 			$meta_fields = array();
@@ -87,6 +87,14 @@ class Repeater_Query extends Base_Query {
 			if ( ! empty( $option['values'] ) ) {
 				$option['options'] = $option['values'];
 				unset( $option['values'] );
+				
+				$for = $option['for'] ?? 'all';
+
+				if ( $for === 'user' ) {
+					foreach ( $option['options'] as $i => $opt ) {
+						$option['options'][ $i ]['value'] .= '::user';
+					}
+				}
 			}
 
 			return $option;

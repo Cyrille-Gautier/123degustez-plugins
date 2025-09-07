@@ -27,7 +27,10 @@ class Posts_Query extends Base_Query {
 		}
 
 		return $result;
+	}
 
+	public function _set_items_number($number = 0) {
+		$this->final_query['posts_per_page'] = $number;
 	}
 
 	/**
@@ -189,7 +192,6 @@ class Posts_Query extends Base_Query {
 			} else {
 				$args['comment_count'] = $value;
 			}
-
 		}
 
 		return apply_filters( 'jet-engine/query-builder/types/posts-query/args', $args, $this );
@@ -199,7 +201,7 @@ class Posts_Query extends Base_Query {
 	/**
 	 * Returns WP Query object for current query
 	 *
-	 * @return WP_Query
+	 * @return \WP_Query
 	 */
 	public function get_current_wp_query() {
 
@@ -314,6 +316,10 @@ class Posts_Query extends Base_Query {
 				$this->final_query['page']  = $value;
 				break;
 
+			case '_items_per_page':
+				$this->final_query['posts_per_page'] = $value;
+				break;
+
 			case 'orderby':
 			case 'order':
 			case 'meta_key':
@@ -335,7 +341,11 @@ class Posts_Query extends Base_Query {
 			case 'post__in':
 
 				if ( ! empty( $this->final_query['post__in'] ) ) {
-					$this->final_query['post__in'] = array_intersect( $this->final_query['post__in'], $value );
+
+					$this->final_query['post__in'] = array_intersect(
+						$this->final_query['post__in'],
+						$value
+					);
 
 					if ( empty( $this->final_query['post__in'] ) ) {
 						$this->final_query['post__in'] = array( PHP_INT_MAX );
@@ -414,7 +424,7 @@ class Posts_Query extends Base_Query {
 	/**
 	 * Adds date range query arguments to given query parameters.
 	 * Required to allow ech query to ensure compatibility with Dynamic Calendar
-	 * 
+	 *
 	 * @param array $args [description]
 	 */
 	public function add_date_range_args( $args = array(), $dates_range = array(), $settings = array() ) {

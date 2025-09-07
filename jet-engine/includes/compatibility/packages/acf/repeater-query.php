@@ -57,7 +57,7 @@ class Jet_Engine_ACF_Repeater_Query {
 		}
 
 		return $items;
-		
+
 	}
 
 	public function get_repeater_sub_fields( $fields, $args ) {
@@ -84,7 +84,7 @@ class Jet_Engine_ACF_Repeater_Query {
 	}
 
 	public function register_source( $data ) {
-		
+
 		$data['sources'][] = [
 			'value' => 'acf_field',
 			'label' => __( 'ACF Field', 'jet-engine' ),
@@ -100,7 +100,7 @@ class Jet_Engine_ACF_Repeater_Query {
 		if ( ! empty( $acf_fields ) ) {
 
 			$acf_fields = array_map( function( $option ) {
-			
+
 				if ( ! empty( $option['values'] ) ) {
 					$option['options'] = $option['values'];
 					unset( $option['values'] );
@@ -114,10 +114,10 @@ class Jet_Engine_ACF_Repeater_Query {
 
 		?>
 		<cx-vui-select
-			label="<?php _e( 'ACF Field', 'jet-engine' ); ?>"
-			description="<?php _e( 'Select ACF Field to use as items source', 'jet-engine' ); ?>"
+			label="<?php esc_html_e( 'ACF Field', 'jet-engine' ); ?>"
+			description="<?php esc_html_e( 'Select ACF Field to use as items source', 'jet-engine' ); ?>"
 			:wrapper-css="[ 'equalwidth' ]"
-			:groups-list="<?php echo htmlspecialchars( json_encode( $acf_fields ) ); ?>"
+			:groups-list="<?php echo htmlspecialchars( json_encode( $acf_fields ) ); // phpcs:ignore ?>"
 			size="fullwidth"
 			name="acf_field"
 			key="acf_field"

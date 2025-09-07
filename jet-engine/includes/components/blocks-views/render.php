@@ -71,28 +71,42 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Render' ) ) {
 
 		/**
 		 * Print listing CSS for given listing ID
-		 * 
+		 *
 		 * @param  int $listing_id Listing/Component ID to print CSS for
 		 * @return void
 		 */
 		public function print_listing_css( $listing_id ) {
 
 			if ( ! empty( $this->enqueued_css[ $listing_id ] ) && ! in_array( $listing_id, $this->printed_css ) ) {
-				echo $this->enqueued_css[ $listing_id ];
+				// Sanitized by $this->enqueue_listing_css()
+				echo $this->enqueued_css[ $listing_id ]; // phpcs:ignore
 				$this->printed_css[] = $listing_id;
 			}
 
 		}
 
+		/**
+		 * Print all enqueued CSS
+		 *
+		 * @return void
+		 */
 		public function print_css() {
 			foreach ( $this->enqueued_css as $post_id => $css ) {
 				if ( ! empty( $css ) && ! in_array( $post_id, $this->printed_css ) ) {
-					echo $css;
+					// Sanitized by $this->enqueue_listing_css()
+					echo $css; // phpcs:ignore
 					$this->printed_css[] = $post_id;
 				}
 			}
 		}
 
+		/**
+		 * Main callback to print Block listing item
+		 *
+		 * @param  string $content    Initial content to replace.
+		 * @param  int    $listing_id Listing ID to get content for.
+		 * @return string
+		 */
 		public function get_listing_content_cb( $content, $listing_id ) {
 			return $this->get_listing_content( $listing_id );
 		}
@@ -100,7 +114,8 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Render' ) ) {
 		/**
 		 * Returns listing content for given listing ID
 		 *
-		 * @return [type] [description]
+		 * @param  int $listing_id Listing ID to get content for.
+		 * @return string
 		 */
 		public function get_listing_content( $listing_id ) {
 
@@ -111,7 +126,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Render' ) ) {
 			}
 
 			$this->enqueue_listing_css( $listing_id, $print_css );
-			
+
 			$content = $this->get_raw_content( $listing_id );
 			$content = do_shortcode( $this->parse_content( $content, $listing_id ) );
 			$content = $this->add_link_to_content( $content, $listing_id );
@@ -215,7 +230,18 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Render' ) ) {
 			$this->enqueue_listing_css( $template_id, true );
 		}
 
+		/**
+		 * Enqueue listing CSS for given listing ID.
+		 * Directly prints CSS if `$print` is true or add to the queue if false
+		 *
+		 * @param int   $listing_id  Listing ID to enqueue CSS for.
+		 * @param  bool $print       Whether to print CSS immediately or not.
+		 *
+		 * @return void
+		 */
 		public function enqueue_listing_css( $listing_id, $print = false ) {
+
+			$listing_id = absint( $listing_id );
 
 			if ( isset( $this->enqueued_css[ $listing_id ] ) ) {
 				return;
@@ -228,16 +254,18 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Render' ) ) {
 			if ( class_exists( '\JET_SM\Gutenberg\Style_Manager' ) ) {
 				$style = \JET_SM\Gutenberg\Style_Manager::get_instance()->get_blocks_style( $listing_id );
 			}
-			
+
 			$css .= $style;
 
 			if ( $css ) {
 				$css    = str_replace( 'selector', '.jet-listing-grid--' . $listing_id, $css );
+				$css    = Jet_Engine_Sanitizer::sanitize_inline_css( $css ); // phpcs:ignore
 				$result = '<style class="listing-css-' . $listing_id . '">' . $css . '</style>';
 			}
 
 			if ( $print ) {
-				echo $result;
+				// Sanitized above
+				echo $result; // phpcs:ignore
 				$this->printed_css[] = $listing_id;
 			} else {
 				$this->enqueued_css[ $listing_id ] = $result;
@@ -246,14 +274,13 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Render' ) ) {
 			if ( class_exists( '\JET_SM\Gutenberg\Style_Manager' ) ) {
 				\JET_SM\Gutenberg\Style_Manager::get_instance()->render_blocks_fonts( $listing_id );
 			}
-
 		}
 
 		/**
 		 * Returns raw listing content
 		 *
-		 * @param  [type] $listing_id [description]
-		 * @return [type]             [description]
+		 * @param  int $listing_id Listing ID to get content for.
+		 * @return string
 		 */
 		public function get_raw_content( $listing_id ) {
 
@@ -266,8 +293,9 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Render' ) ) {
 		}
 
 		/**
-		 * `wp_render_layout_support_flag` is rewritten to prevent conflict of not uniq css classes (`wp-container-`) on ajax.
-		 * See: https://github.com/Crocoblock/issues-tracker/issues/700
+		 * `wp_render_layout_support_flag` is rewritten
+		 * to prevent conflict of not uniq css classes (`wp-container-`) on ajax.
+		 * @see: https://github.com/Crocoblock/issues-tracker/issues/700
 		 *
 		 * @param $block_content
 		 * @param $block

@@ -150,6 +150,7 @@ class Product_Variation_Panel extends Product_Data_Panel {
 	 * @return void
 	 */
 	public function save_variation_meta_box_fields( $variation_id, $i ) {
+		// phpcs:disable WordPress.Security.NonceVerification
 		foreach ( $this->fields as $key => $field ) {
 			if ( isset( $_POST[ $key ][ $i ] ) ) {
 				if ( 'stepper' === $field['type'] ) {
@@ -162,11 +163,12 @@ class Product_Variation_Panel extends Product_Data_Panel {
 					}
 				}
 
-				$_POST[ $key ][ $i ] = $this->sanitize_meta( $field, $_POST[ $key ][ $i ] );
+				$meta_value = $this->sanitize_meta( $field, wp_unslash( $_POST[ $key ][ $i ] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
-				update_post_meta( $variation_id, $key, $_POST[ $key ][ $i ] );
+				update_post_meta( $variation_id, $key, $meta_value );
 			}
 		}
+		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
 }

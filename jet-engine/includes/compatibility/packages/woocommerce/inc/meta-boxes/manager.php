@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable
 
 namespace Jet_Engine\Compatibility\Packages\Jet_Engine_Woo_Package\Meta_Boxes;
 
@@ -381,10 +382,10 @@ class Manager {
 				( function( $ ) {
 					$( document ).on( 'woocommerce_variations_loaded', function ( event ) {
 						$( event.target ).trigger( 'cx-control-init' );
-						
+
 						$( window ).on( 'cx-checkbox-change cx-control-change cx-switcher-change', function ( event ) {
 							let field = $( '.cx-control[data-control-name=\"' + event.controlName + '\"]' );
-							
+
 							field.closest( '.woocommerce_variation' ).addClass( 'variation-needs-update' );
 							$( 'button.cancel-variation-changes, button.save-variation-changes' ).prop( 'disabled', false );
 						} )

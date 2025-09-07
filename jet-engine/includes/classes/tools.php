@@ -42,7 +42,7 @@ class Jet_Engine_Tools {
 		// Set the file size header
 		header( "Content-Length: " . strlen( $file ) );
 
-		echo $file;
+		echo $file; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		die();
 
 	}
@@ -94,12 +94,12 @@ class Jet_Engine_Tools {
 
 	/**
 	 * Get options prepared to use by JetEngine fields from the callback
-	 * 
+	 *
 	 * @param  [type] $callback [description]
 	 * @return [type]           [description]
 	 */
 	public static function get_options_from_callback( $callback = null, $is_blocks = false ) {
-		
+
 		if ( ! is_callable( $callback ) ) {
 			return [];
 		}
@@ -118,7 +118,7 @@ class Jet_Engine_Tools {
 
 					$value = isset( $option['value'] ) ? $option['value'] : $value;
 					$label = isset( $option['label'] ) ? $option['label'] : array_values( $option )[0];
-					
+
 					$options[ $value ] = [
 						'value' => $value,
 						'label' => $label,
@@ -145,35 +145,19 @@ class Jet_Engine_Tools {
 		return isset( $list[ $key ] ) ? $list[ $key ] : $default;
 	}
 
-	public static function sanitize_html_tag( $input ) {
-		$available_tags = array(
-			'div',
-			'h1',
-			'h2',
-			'h3',
-			'h4',
-			'h5',
-			'h6',
-			'p',
-			'span',
-			'a',
-			'section',
-			'header',
-			'footer',
-			'main',
-			'b',
-			'em',
-			'i',
-			'nav',
-			'article',
-			'aside',
-			'tr',
-			'ul',
-			'ol',
-			'li'
-		);
+	/**
+	 * Recursively sanitize an array or string
+	 *
+	 * @param mixed $input The input to sanitize.
+	 * @param callable|null $callback Optional callback function to apply to strings.
+	 * @return mixed Sanitized input.
+	 */
+	public static function sanitize_array_recursively( $input, $callback = null ) {
+		return Jet_Engine_Sanitizer::sanitize_array_recursively( $input, $callback );
+	}
 
-		return in_array( strtolower( $input ), $available_tags ) ? $input : 'div';
+	public static function sanitize_html_tag( $input ) {
+		return Jet_Engine_Sanitizer::sanitize_html_tag( $input );
 	}
 
 	public static function prepare_controls_for_js( $controls = array() ) {
@@ -239,7 +223,7 @@ class Jet_Engine_Tools {
 	 * @return [type] [description]
 	 */
 	public static function get_taxonomies_for_js( $key = false, $with_slug = false ) {
-		
+
 		$taxonomies          = get_taxonomies( array(), 'objects' );
 		$prepared_taxonomies = self::prepare_list_for_js( $taxonomies, 'name', 'label', $key );
 
@@ -372,11 +356,25 @@ class Jet_Engine_Tools {
 	 */
 	public static function render_icon( $icon = null, $icon_class = '', $custom_atts = array(), $image_size = 'full', $force_custom_atts = false ) {
 
+		$pre_render_icon = apply_filters( 'jet-engine/tools/pre-render-icon', false, array(
+			'icon'        => $icon,
+			'icon_class'  => $icon_class,
+			'custom_atts' => $custom_atts,
+			'image_size'  =>$image_size,
+		) );
+
+		if ( $pre_render_icon ) {
+			return $pre_render_icon;
+		}
+
 		$custom_atts_string = '';
 
 		if ( ! empty( $custom_atts ) ) {
 			foreach ( $custom_atts as $key => $value ) {
-				$custom_atts_string .= sprintf( ' %1$s="%2$s"', $key, $value );
+				$custom_atts_string .= sprintf(
+					' %1$s="%2$s"',
+					esc_attr( $key ),
+					esc_attr( $value ) );
 			}
 		}
 
@@ -386,7 +384,8 @@ class Jet_Engine_Tools {
 
 			ob_start();
 
-			echo '<div class="' . $icon_class . ' is-svg-icon"' . $custom_atts_string . '>';
+			// Custom attributes already escaped in $custom_atts_string with esc_attr() in the loop above.
+			echo '<div class="' . esc_attr( $icon_class ) . ' is-svg-icon"' . $custom_atts_string . '>'; // phpcs:ignore
 
 			$mime = get_post_mime_type( $icon );
 
@@ -396,29 +395,29 @@ class Jet_Engine_Tools {
 				if ( file_exists( $file ) ) {
 					//https://github.com/Crocoblock/suggestions/issues/7979
 					//switched from 'include' to prevent file parsing
-					echo file_get_contents( $file );
+					echo file_get_contents( $file ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 
 			} else {
 				if ( empty( $image_size ) ) {
 					$image_size = 'full';
 				}
-				
+
 				echo wp_get_attachment_image( $icon, $image_size );
 			}
 
 			echo '</div>';
 
 			return ob_get_clean();
-
 		}
 		// Render Bricks svg icon
 		elseif ( ! is_array( $icon ) && false !== str_contains( $icon, '<svg' ) ) {
 
 			ob_start();
 
-			echo '<div class="' . $icon_class . ' is-svg-icon"' . $custom_atts_string . '>';
-			echo $icon;
+			// Custom attributes already escaped in $custom_atts_string with esc_attr() in the loop above.
+			echo '<div class="' . esc_attr( $icon_class ) . ' is-svg-icon"' . $custom_atts_string . '>'; // phpcs:ignore
+			echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo '</div>';
 
 			return ob_get_clean();
@@ -435,8 +434,9 @@ class Jet_Engine_Tools {
 				$custom_atts = $custom_atts_string;
 			}
 
-			echo '<div class="' . $icon_class . '"' . $custom_atts . '>';
-			echo $icon;
+			// Custom attributes already escaped in $custom_atts_string with esc_attr() in the loop above.
+			echo '<div class="' . esc_attr( $icon_class ) . '"' . $custom_atts . '>'; // phpcs:ignore
+			echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo '</div>';
 
 			return ob_get_clean();
@@ -471,6 +471,7 @@ class Jet_Engine_Tools {
 					$html = str_replace( $icon_class . ' ', '', $html );
 				}
 
+				// Custom attributes already escaped in $custom_atts_string with esc_attr() in the loop above.
 				$html = sprintf( '<div class="%1$s is-svg-icon"%2$s>%3$s</div>', $icon_class, $custom_atts_string, $html );
 			}
 
@@ -479,7 +480,6 @@ class Jet_Engine_Tools {
 		} else {
 			return false;
 		}
-
 	}
 
 	/**
@@ -677,7 +677,7 @@ class Jet_Engine_Tools {
 
 	/**
 	 * Return registered image sizes array for options
-	 * 
+	 *
 	 * @param  string $context [description]
 	 * @return [type]          [description]
 	 */
@@ -1001,7 +1001,7 @@ class Jet_Engine_Tools {
 	/**
 	 * Returns default menu poistion for JetEngine user-created instance.
 	 * Main purpose - compatibility with JetDashboard module
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public static function get_default_menu_position() {
@@ -1022,16 +1022,7 @@ class Jet_Engine_Tools {
 	 * @return string|false Returns $orderby if valid, false otherwise.
 	 */
 	public static function sanitize_sql_orderby( $orderby ) {
-
-		if (
-			preg_match( '/^\s*(([a-z0-9_\.]+|`[a-z0-9_\.]+`)(\s+(ASC|DESC))?\s*(,\s*(?=[a-z0-9_`\.])|$))+$/i', $orderby )
-			|| preg_match( '/^\s*RAND\(\s*\)\s*$/i', $orderby )
-			|| preg_match( '/^\s*FIELD\s*\(.*?\)\s*$/i', $orderby )
-		) {
-			return $orderby;
-		}
-
-		return false;
+		return Jet_Engine_Sanitizer::sanitize_sql_orderby( $orderby );
 	}
 
 	public static function delete_metadata_by_object_where( $meta_type = null, $meta_key = null, $object_where = array() ) {

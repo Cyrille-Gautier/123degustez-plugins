@@ -95,7 +95,7 @@ class Get_Map_Marker_Info extends \Jet_Engine_Base_API_Endpoint {
 		$additional_attrs = apply_filters( 'jet-engine/maps-listings/map-popup-additional-attrs', $additional_attrs, $params, $post_obj );
 
 		$content = sprintf(
-			'<div class="jet-map-popup-%1$s jet-listing-dynamic-post-%1$s" data-item-object="%1$s" data-additional-map-popup-data="%3$s">%2$s</div>',
+			'<div class="jet-map-popup-%1$s jet-listing-dynamic-post-%1$s" data-item-object="%1$s" data-render-type="jet-engine-maps" data-additional-map-popup-data="%3$s">%2$s</div>',
 			$post_id,
 			$content,
 			! empty( $additional_attrs ) ? htmlspecialchars( json_encode( $additional_attrs ) ) : '{}'

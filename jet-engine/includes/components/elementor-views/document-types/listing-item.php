@@ -44,7 +44,7 @@ class Jet_Listing_Item_Document extends Elementor\Core\Base\Document {
 	}
 
 	public function register_jet_controls() {
-		
+
 		$this->start_controls_section(
 			'jet_listing_settings',
 			array(
@@ -392,7 +392,7 @@ class Jet_Listing_Item_Document extends Elementor\Core\Base\Document {
 
 		return apply_filters(
 			'jet-engine/elementor-views/listing-document/preview-args',
-			$preview->get_preview_args(), $this 
+			$preview->get_preview_args(), $this
 		);
 
 	}
@@ -421,9 +421,11 @@ class Jet_Listing_Item_Document extends Elementor\Core\Base\Document {
 
 	public function get_elements_data( $status = 'publish' ) {
 
+		// phpcs:disable
 		if ( ! isset( $_GET[ jet_engine()->post_type->slug() ] ) || ! isset( $_GET['preview'] ) ) {
 			return parent::get_elements_data( $status );
 		}
+		// phpcs:enable
 
 		jet_engine()->elementor_views->switch_to_preview_query();
 

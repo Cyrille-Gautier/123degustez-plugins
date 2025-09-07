@@ -120,6 +120,16 @@ class Location_Distance extends Jet_Smart_Filters_Bricks_Base {
 		);
 
 		$this->register_jet_control(
+			'show_label',
+			[
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Show filter label', 'jet-engine' ),
+				'type'    => 'checkbox',
+				'default' => false,
+			]
+		);
+
+		$this->register_jet_control(
 			'placeholder',
 			[
 				'tab'            => 'content',
@@ -440,7 +450,7 @@ class Location_Distance extends Jet_Smart_Filters_Bricks_Base {
 		$settings        = $this->parse_jet_render_attributes( $this->get_jet_settings() );
 		$render_instance = new Location_Distance_Render();
 
-		echo "<div {$this->render_attributes( '_root' )}>";
+		echo "<div {$this->render_attributes( '_root' )}>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		$render_instance->render( $settings, $this->name );
 

@@ -76,6 +76,24 @@ if ( ! class_exists( 'Jet_Engine_CPT' ) ) {
 			add_action( 'jet-engine/meta-boxes/register-instances', array( $this, 'init_meta_boxes' ) );
 			add_action( 'current_screen', array( $this, 'init_edit_links' ) );
 
+			add_action( 'admin_enqueue_scripts', function() {
+				$mime_options = array_map(
+					function( $mime ) {
+						return array(
+							'value' => $mime,
+							'label' => $mime,
+						);
+					}, array_values( get_allowed_mime_types() )
+				);
+				wp_localize_script(
+					'cx-vue-ui',
+					'JetEngineMediaConfig',
+					array(
+						'mime_types' => $mime_options,
+					)
+				);
+			}, 20 );
+
 			require_once $this->component_path( 'custom-tables/manager.php' );
 
 		}

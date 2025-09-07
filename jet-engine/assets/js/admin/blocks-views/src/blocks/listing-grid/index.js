@@ -223,6 +223,27 @@ registerBlockType( 'jet-engine/listing-grid', {
 								}}
 							/>
 							<SelectControl
+								label={ __( 'Wrapper Tags' ) }
+								value={ attributes.list_tags_selection }
+								options={ [
+									{
+										'label': __( 'Default (DIV > DIV)' ),
+										'value': '',
+									},
+									{
+										'label': __( 'Unordered list (UL > LI)' ),
+										'value': 'ul_li',
+									},
+									{
+										'label': __( 'Ordered list (OL > LI)' ),
+										'value': 'ol_li',
+									},
+								] }
+								onChange={ newValue => {
+									props.setAttributes( { list_tags_selection: newValue } );
+								} }
+							/>
+							<SelectControl
 								label={ __( 'Columns Number' ) }
 								value={ attributes.columns }
 								options={ columnsOptions }
@@ -1887,6 +1908,9 @@ registerBlockType( 'jet-engine/listing-grid', {
 									props.setAttributes( { carousel_enabled: ! attributes.carousel_enabled } );
 								} }
 							/> }
+							{ ! isMasonry() && attributes.carousel_enabled && ! attributes.scroll_slider_enabled && [ 'ul_li', 'ol_li' ].includes( attributes.list_tags_selection ) &&
+								<><div dangerouslySetInnerHTML={ { __html: "Note: You selected a list tag for the listing. The slider adds wrappers, which make the list markup invalid by W3C standards." } }></div><br/></>
+							}
 							{ ! isMasonry() && ! attributes.scroll_slider_enabled && attributes.carousel_enabled && <div>
 									<RangeControl
 										label={ __( 'Slides to Scroll' ) }

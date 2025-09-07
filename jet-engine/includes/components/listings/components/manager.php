@@ -49,7 +49,7 @@ class Manager {
 
 	/**
 	 * Returns component instance by name
-	 * 
+	 *
 	 * @param  string           $component_name Component name / ID
 	 * @return Component|false                  Component instance or false if not found
 	 */
@@ -59,12 +59,12 @@ class Manager {
 
 	/**
 	 * Check if given ID is ID of component
-	 * 
+	 *
 	 * @param  [type]  $id [description]
 	 * @return boolean     [description]
 	 */
 	public function is_component( $id ) {
-		
+
 		if ( isset( $this->is_component_hits[ $id ] ) ) {
 			return $this->is_component_hits[ $id ];
 		}
@@ -78,7 +78,7 @@ class Manager {
 
 	/**
 	 * Returns component category data - slug and name
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function components_category( $return = 'slug' ) {
@@ -93,7 +93,7 @@ class Manager {
 
 	/**
 	 * Base component name to use in elements and docuemnts
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function get_component_base_name() {
@@ -103,7 +103,7 @@ class Manager {
 	/**
 	 * Get supported control types for component properties.
 	 * Used to implement UI for various builders.
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function get_supported_control_types() {
@@ -120,7 +120,7 @@ class Manager {
 
 	/**
 	 * Path inside components dir
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function path( $path = '' ) {
@@ -129,7 +129,7 @@ class Manager {
 
 	/**
 	 * Path inside components dir
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function url( $path = '' ) {

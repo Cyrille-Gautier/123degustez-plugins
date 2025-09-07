@@ -72,7 +72,7 @@ if ( ! class_exists( 'Jet_Engine_Relations_Page_Edit' ) ) {
 				\Jet_Engine_Meta_Boxes_Page_Edit::enqueue_meta_fields( array(
 					'title'         => __( 'Meta Fields', 'jet-engine' ),
 					'button'        => __( 'New Field', 'jet-engine' ),
-					'allowed_types' => array( 'text', 'select', 'radio', 'checkbox', 'textarea', 'media', 'date', 'time', 'textarea', 'datetime-local' ),
+					'allowed_types' => array( 'text', 'number', 'select', 'radio', 'checkbox', 'textarea', 'media', 'date', 'time', 'textarea', 'datetime-local' ),
 					'disabled'      => array(
 						'max_length',
 						'object_type',

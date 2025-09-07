@@ -306,7 +306,7 @@ class Jet_Engine_Base_DB {
 	 *
 	 * @param  array $columns Array of new columns, 'column name' => 'column type',
 	 *                        or 'column name' => false (column will be of 'text' type)
-	 * 
+	 *
 	 * @return void
 	 */
 	public function insert_table_columns( $columns = array() ) {
@@ -519,10 +519,6 @@ class Jet_Engine_Base_DB {
 
 		if ( ! empty( $args ) ) {
 
-			if ( $add_where_string ) {
-				$query .= ' WHERE ';
-			}
-
 			$glue = '';
 
 			if ( count( $args ) > 1 ) {
@@ -536,7 +532,10 @@ class Jet_Engine_Base_DB {
 				if ( isset( $arg['relation'] ) ) {
 					$sub_rel = $arg['relation'];
 					unset( $arg['relation'] );
-					$clause = '(' . $this->add_where_args( $arg, $sub_rel, false ) . ')';
+					$inner_clause = $this->add_where_args( $arg, $sub_rel, false );
+					if ( ! empty( $inner_clause ) ) {
+						$clause = '(' . $inner_clause . ')';
+					}
 				} else {
 					if ( is_array( $arg ) && isset( $arg['field'] ) ) {
 						$field    = ! empty( $arg['field'] ) ? $arg['field'] : false;
@@ -561,10 +560,12 @@ class Jet_Engine_Base_DB {
 
 			}
 
+			if ( $add_where_string && $query ) {
+				$query = ' WHERE ' . $query;
+			}
 		}
 
 		return $query;
-
 	}
 
 	/**

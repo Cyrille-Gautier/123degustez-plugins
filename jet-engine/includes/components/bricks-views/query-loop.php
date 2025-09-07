@@ -149,14 +149,7 @@ class Query_Loop {
 
 		$query->add_to_history();
 
-		$query_id = apply_filters( 'jet-engine/bricks-views/query-builder/query-id', $this->get_jet_engine_query_id( $query->settings ) );
-
-		// Return empty results if no query selected or Use Query is not checked
-		if ( $query_id === 0 ) {
-			return $results;
-		}
-
-		$je_query = Query_Manager::instance()->get_query_by_id( $query_id );
+		$je_query = $this->get_jet_engine_query( $query->settings );
 
 		// Return empty results if query not found in JetEngine Query Builder
 		if ( ! $je_query ) {
@@ -389,7 +382,9 @@ class Query_Loop {
 	 * @return int The query ID as an integer, or 0 if not found or empty.
 	 */
 	public function get_jet_engine_query_id( $settings ) {
-		return ! empty( $settings['jet_engine_query_builder_id'] ) ? absint( $settings['jet_engine_query_builder_id'] ) : 0;
+		$query_id = isset( $settings['jet_engine_query_builder_id'] ) ? absint( $settings['jet_engine_query_builder_id'] ) : 0;
+
+		return apply_filters( 'jet-engine/bricks-views/query-builder/query-id', $query_id );
 	}
 
 	/**
@@ -570,8 +565,17 @@ class Query_Loop {
 	 * @return bool True if the request is to Bricks API.
 	 */
 	function is_bricks_api_request() {
+
+		// phpcs:disable
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url( $_SERVER['REQUEST_URI'] ) : '';
+		// phpcs:enable
+
+		if ( empty( $request_uri ) ) {
+			return false;
+		}
+
+		$request_uri         = parse_url( $request_uri, PHP_URL_PATH );
 		$bricks_request_path = 'wp-json/bricks/v1/render_element';
-		$request_uri         = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 
 		// Check if the request URI contains the API path at the end
 		return ! empty( $request_uri ) && str_ends_with( rtrim( $request_uri, '/' ), $bricks_request_path );

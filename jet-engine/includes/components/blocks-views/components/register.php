@@ -8,11 +8,11 @@ class Register {
 
 	public function __construct() {
 		add_action( 'jet-engine/listings/components/register-component-elements', [ $this, 'register_component_blocks' ] );
-		
+
 	}
 
 	public function init() {
-		
+
 		$this->_initialized = true;
 
 		add_filter( 'jet-engine/blocks-views/editor-data', [ $this, 'add_editor_data' ] );
@@ -20,7 +20,7 @@ class Register {
 
 		// Tweak for external builders compatibility
 		add_action( 'elementor/preview/enqueue_styles', function() {
-			
+
 			// For some reason these 2 blocks styles doesn't enqueued in the preview mode
 			// Most of other blocks styles are enqueued automatically
 			wp_enqueue_style( 'wp-block-columns' );
@@ -32,15 +32,17 @@ class Register {
 
 	/**
 	 * Setup preview state for given block
-	 * 
+	 *
 	 * @param  [type] $block      [description]
 	 * @param  [type] $attributes [description]
 	 * @return [type]             [description]
 	 */
 	public function setup_preview_state( $block ) {
 
+		// phpcs:disable WordPress.Security.NonceVerification
 		$post_id = ! empty( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : false;
-		
+		// phpcs:enable WordPress.Security.NonceVerification
+
 		if ( ! $post_id || ! jet_engine()->listings->components->is_component( $post_id ) ) {
 			return;
 		}
@@ -53,7 +55,7 @@ class Register {
 
 	/**
 	 * Add block editor data required for compnents registration
-	 * 
+	 *
 	 * @param array $data [description]
 	 */
 	public function add_editor_data( $data = [] ) {
@@ -61,13 +63,13 @@ class Register {
 		if ( ! empty( $this->_registered_blocks ) ) {
 			$data['blockComponents'] = $this->_registered_blocks;
 		}
-		
+
 		return $data;
 	}
 
 	/**
 	 * Register appropriate blocks for the components
-	 * 
+	 *
 	 * @param  [type] $component [description]
 	 * @return [type]            [description]
 	 */
@@ -91,7 +93,7 @@ class Register {
 
 	/**
 	 * save registerd block info to register in JS
-	 * 
+	 *
 	 * @param [type] $block [description]
 	 */
 	public function add_registered_block( $block ) {

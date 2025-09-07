@@ -46,6 +46,7 @@ class Query_Var extends \Jet_Engine_Base_Macros {
 
 		global $wp_query;
 
+		// phpcs:disable
 		if ( isset( $wp_query->query_vars[ $variable ] ) ) {
 			return $wp_query->query_vars[ $variable ];
 		} elseif ( isset( $_REQUEST[ $variable ] ) ) {
@@ -55,6 +56,7 @@ class Query_Var extends \Jet_Engine_Base_Macros {
 				return $_REQUEST[ $variable ];
 			}
 		}
+		// phpcs:enable
 
 		return null;
 	}

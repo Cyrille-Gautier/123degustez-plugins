@@ -1,63 +1,31 @@
-.jet-engine-advanced-date-field__switch {
-	position: relative;
-	display: inline-block;
-	width: 54px;
-	height: 20px;
+:root {
+	--wd-border-color: #dcdcdc;
+	--wd-color: #111;
+	--wd-bg-color: #fff;
+	--wd-checked-bg-color: #eceeef;
+	--mn-button-color: #298ffc;
+	--mn-button-hover-color: #005f8a;
 }
 
-input.jet-engine-advanced-date-field__switch-input {
-	opacity: 0;
-	width: 0;
-	height: 0;
-}
-
-/* The slider */
-.jet-engine-advanced-date-field__switch-slider {
-	position: absolute;
-	cursor: pointer;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: #eceeef;
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15);
-	-webkit-transition: .4s;
-	transition: .4s;
-	border-radius: 10px;
-}
-
-.jet-engine-advanced-date-field__switch-slider:before {
-	position: absolute;
-	content: "";
-	background-color: white;
-	width: 18px;
-	height: 18px;
-	margin: 1px;
-	top: 0;
-	left: 0;
-	border-radius: 50%;
-	transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-	box-sizing: border-box;
-	z-index: 3;
-}
-
-.jet-engine-advanced-date-field__switch-input:checked + .jet-engine-advanced-date-field__switch-slider {
-	background-color: #49c66a;
-}
-
-.jet-engine-advanced-date-field__switch-input:checked + .jet-engine-advanced-date-field__switch-slider:before {
-	transform: translateX(34px);
+.jet-engine-advanced-date-field .cx-control__error {
+	margin-top: 0;
 }
 
 .jet-engine-advanced-date-field__date {
 	display: flex;
 	gap: 15px;
-	align-items: flex-start;
-	padding: 0 0 10px;
-	min-height: 38px;
+	padding: 15px 0 0 0;
+	min-height: 40px;
+	box-sizing: border-box;
+	align-items: center;
+}
+
+.jet-engine-advanced-date-field__end-date-input {
+	width: 100%;
 	box-sizing: border-box;
 }
 
+.jet-engine-advanced-date-field__date-input,
 .jet-engine-advanced-date-field__date-warp {
 	flex: 1 1 auto;
 }
@@ -78,7 +46,12 @@ input.jet-engine-advanced-date-field__switch-input {
 	display: flex;
 	gap: 15px;
 	flex: 1 1 auto;
-	align-items: flex-start;
+	align-items: stretch;
+}
+
+.jet-engine-advanced-date-field__end-date-controls .field-type-switcher {
+	display: flex;
+	align-items: center;
 }
 
 .jet-engine-advanced-date-field__date > span {
@@ -88,26 +61,21 @@ input.jet-engine-advanced-date-field__switch-input {
 .jet-engine-advanced-date-field__is-recurring {
 	display: flex;
 	gap: 15px;
-	padding: 0 0 10px;
-	min-height: 38px;
+	padding: 15px 0 0;
+	min-height: 40px;
 	align-items: center;
 	box-sizing: border-box;
 }
 
-.jet-engine-advanced-date-field__switch-wrap {
-	padding: 4px 0 0 0;
-}
-
 .jet-engine-advanced-date-field__label {
-	min-width: 80px;
-	padding: 4px 0 0 0;
+	min-width: 100px;
 }
 
 .jet-engine-advanced-date-field__recurring-row {
 	display: flex;
 	gap: 15px;
 	align-items: center;
-	padding: 0 0 15px;
+	padding: 15px 0 0 0;
 }
 
 .jet-engine-advanced-date-field__recurring-content {
@@ -138,8 +106,16 @@ input.jet-engine-advanced-date-field__switch-input {
 	display: flex;
 	flex: 0 0 100%;
 	overflow: hidden;
-	border: 1px solid #dcdcdc;
+	border: 1px solid var( --wd-border-color );
+	color: var( --wd-color );
+	background: var( --wd-bg-color );
 	border-radius: 2px;
+}
+
+.jet-engine-advanced-date-field__weekdays label {
+	cursor: pointer;
+	margin: 0;
+	color: var( --wd-color );
 }
 
 .jet-engine-advanced-date-field--tiny .label-weekdays {
@@ -151,7 +127,7 @@ input.jet-engine-advanced-date-field__switch-input {
 	box-sizing: border-box;
 	position: relative;
 	text-align: center;
-	border-left: 1px solid #dcdcdc;
+	border-left: 1px solid var( --wd-border-color );
 	padding: 5px;
 }
 
@@ -176,7 +152,7 @@ input.jet-engine-advanced-date-field__switch-input {
 	right:0;
 	top: 0;
 	bottom:0;
-	background: #eceeef;
+	background:var(--wd-checked-bg-color);
 }
 
 .jet-engine-advanced-date-field__monthly {
@@ -196,24 +172,23 @@ input.jet-engine-advanced-date-field__switch-input {
 .jet-engine-advanced-date-field__monthly-row label {
 	flex: 0 0 80px;
 }
+.jet-engine-advanced-date-field__recurring-label {
+	white-space: nowrap;
+}
 
 .jet-engine-advanced-date-field__repeater-row {
 	position: relative;
-	padding: 14px 30px 0 0;
+	padding: 5px 30px 20px 0;
 	border-top: 1px solid rgba( 0, 0, 0, .1 );
 	&:first-child {
-		padding-top: 0;
 		border-top: none;
-		.jet-engine-advanced-date-field__repeater-delete {
-			top: 1px;
-		}
 	}
 }
 
 .jet-engine-advanced-date-field__repeater-delete {
 	position:absolute;
-	right:0;
-	top:15px;
+	right: 0;
+	top: 21px;
 }
 
 button.jet-engine-advanced-date-field__repeater-delete-button {
@@ -285,9 +260,14 @@ button.jet-engine-advanced-date-field__repeater-new {
 	cursor: pointer;
 	background: none;
 	box-shadow: none;
-	color: #298ffc;
+	color: var(--mn-button-color);
 	font-weight: bold;
 	text-transform: uppercase;
 }
 
-
+button.jet-engine-advanced-date-field__repeater-new:hover,
+button.jet-engine-advanced-date-field__repeater-new:focus,
+button.jet-engine-advanced-date-field__repeater-new:active {
+	background: none;
+	color: var(--mn-button-hover-color);
+}

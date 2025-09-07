@@ -70,10 +70,10 @@ class Filters {
 			return;
 		}
 
-		$relations_list = array(
+		$relations_list = apply_filters( 'jet-engine/relations/dynamic-queries', array(
 			'related_children' => __( 'filters children items list by parents IDs', 'jet-engine' ),
 			'related_parents'  => __( 'filters parents items list by children IDs', 'jet-engine' )
-		);
+		) );
 
 		$relations_options = array();
 		foreach ( $relations as $relation_item ) {
@@ -222,7 +222,6 @@ class Filters {
 				}
 
 				if ( empty( $data ) ) {
-
 					switch ( $rel_type ) {
 
 						case 'related_children':
@@ -257,6 +256,10 @@ class Filters {
 							if ( $this->is_supported_type( $type, $relation->get_args( 'parent_object' ) ) ) {
 								$rel_ids = $relation->get_parents( $value, 'ids' );
 							}
+							break;
+
+						default:
+							$rel_ids = apply_filters( 'jet-engine/relations/custom-indexer-rel-ids', $rel_ids, $rel_type, $relation, $value, $type );
 							break;
 
 					}
@@ -439,7 +442,18 @@ class Filters {
 	 * @return boolean      [description]
 	 */
 	public function is_relation_filter( $key ) {
-		return ( $this->is_children_filter( $key ) || $this->is_parents_filter( $key ) );
+		$relation_keys = apply_filters( 'jet-engine/relations/relation-filter-keys', [
+			'related_children',
+			'related_parents',
+		] );
+
+		foreach ( $relation_keys as $relation_key ) {
+			if ( false !== strpos( $key, $relation_key ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -463,7 +477,7 @@ class Filters {
 	}
 
 	/**
-	 * Adds realtion query arguments to existing filter query args
+	 * Adds relation query arguments to existing filter query args
 	 *
 	 * @param [type] $args [description]
 	 * @param [type] $data [description]
@@ -497,6 +511,14 @@ class Filters {
 			case 'related_parents':
 				$object  = $relation->get_args( 'parent_object' );
 				$rel_ids = $relation->get_parents( $data['value'], 'ids' );
+				break;
+			default:
+				$args_data = apply_filters( 'jet-engine/relations/custom-relation-args', [], $type, $relation, $data );
+
+				if ( ! empty( $args_data ) && is_array( $args_data ) ) {
+					$object  = $args_data['object'] ?? false;
+					$rel_ids = $args_data['rel_ids'] ?? false;
+				}
 				break;
 
 		}

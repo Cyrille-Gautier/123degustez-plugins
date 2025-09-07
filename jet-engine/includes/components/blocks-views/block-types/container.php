@@ -72,8 +72,18 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Container' ) ) {
 			$pos = strpos( $block_content, 'url(' . $img_url . ')' );
 
 			if ( false !== $pos ) {
-				$new_url       = wp_get_attachment_image_url( $attrs['background_image_id'], $image_size );
-				$block_content = str_replace( 'url(' . $img_url . ')', 'url(' . $new_url . ')', $block_content );
+
+				$new_url = wp_get_attachment_image_url( $attrs['background_image_id'], $image_size );
+
+				if ( ! $new_url ) {
+					return $block_content;
+				}
+
+				$block_content = str_replace(
+					'url(' . $img_url . ')',
+					'url(' . esc_url( $new_url ) . ')',
+					$block_content
+				);
 			}
 
 			return $block_content;

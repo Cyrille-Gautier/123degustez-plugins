@@ -32,7 +32,7 @@ if ( ! class_exists( 'Jet_Engine_Frontend' ) ) {
 		}
 
 		public function register_listing_deps() {
-			
+
 			wp_register_script(
 				'jquery-slick',
 				jet_engine()->plugin_url( 'assets/lib/slick/slick.min.js' ),
@@ -118,9 +118,11 @@ if ( ! class_exists( 'Jet_Engine_Frontend' ) ) {
 
 			$query = '';
 
+			// phpcs:disable
 			if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
 				$query .= '?' . $_SERVER['QUERY_STRING'];
 			}
+			// phpcs:enable
 
 			$query_args = array( 'nocache' => time() );
 
@@ -195,7 +197,7 @@ if ( ! class_exists( 'Jet_Engine_Frontend' ) ) {
 			}
 
 			if ( ! wp_script_is( $lib, 'registered' ) ) {
-				wp_register_script( 
+				wp_register_script(
 					$lib,
 					jet_engine()->plugin_url( $libs[ $lib ] ),
 					array(),
@@ -217,7 +219,7 @@ if ( ! class_exists( 'Jet_Engine_Frontend' ) ) {
 		public function enqueue_masonry_assets() {
 
 			$this->ensure_lib( 'imagesloaded' );
-			
+
 			wp_enqueue_script(
 				'jet-engine-macy',
 				jet_engine()->plugin_url( 'assets/lib/macy/macy.js' ),
@@ -283,6 +285,36 @@ if ( ! class_exists( 'Jet_Engine_Frontend' ) ) {
 
 			return $content;
 
+		}
+
+		/**
+		 * Ensures that listing item assets are loaded by getting listing item content.
+		 * Useful when you don't need to actually render the listing item,
+		 * but to make sure that scripts and styles are loaded.
+		 * 
+		 * @param  int         $listing_id
+		 * @param  object|null $object
+		 */
+		public function ensure_listing_item_assets( $listing_id, $object = null ) {
+			if ( ! ( defined('REST_REQUEST') && REST_REQUEST ) && ! wp_doing_ajax() ) {
+				$initial_listing_id = $this->listing_id;
+				$this->listing_id   = absint( $listing_id );
+
+				if ( ! $this->listing_id ) {
+					$this->listing_id = $initial_listing_id;
+					return;
+				}
+
+				$initial_object = jet_engine()->listings->data->get_current_object();
+
+				global $post;
+				$default_post = $post;
+				$this->get_listing_item( $object );
+				$post = $default_post;
+
+				$this->listing_id = $initial_listing_id;
+				jet_engine()->listings->data->set_current_object( $initial_object );
+			}
 		}
 
 		/**

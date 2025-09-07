@@ -77,6 +77,26 @@ registerBlockType( 'jet-engine/dynamic-link', {
 			if ( listing.component_style_controls_list ) {
 				delete listing.component_style_controls_list;
 			}
+			
+			const deletePostConfirmationHelp = <>
+				{ __("Only users with appropriate permissions can delete posts") + '. ' + __(
+					'You may use JetEngine ',
+					'jet-engine',
+				) } 
+				<a
+					href={ window.JetEngineListingData.adminLinks.shortcodes_generator }
+					target="_blank"
+				>
+					{ __( 'shortcodes', 'jet-engine' ) }
+				</a>
+				/
+				<a
+					href={ window.JetEngineListingData.adminLinks.macros_generator }
+					target="_blank"
+				>
+					{ __( 'macros', 'jet-engine' ) }
+				</a><br/>
+			</>;
 
 			return [
 				props.isSelected && (
@@ -148,7 +168,7 @@ registerBlockType( 'jet-engine/dynamic-link', {
 									<div>
 										<TextareaControl
 											label={ __("Confirm deletion message") }
-											help={ __("Only users with appropriate permissions can delete posts") }
+											help={ deletePostConfirmationHelp }
 											value={attributes.delete_link_dialog}
 											onChange={ newValue =>
 												props.setAttributes({ delete_link_dialog: newValue })

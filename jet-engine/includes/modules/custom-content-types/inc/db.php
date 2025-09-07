@@ -241,7 +241,7 @@ class DB extends \Jet_Engine_Base_DB {
 	}
 
 	public function get_fields_grouped_by_id( $fields_list = array() ) {
-		
+
 		$result = array();
 
 		foreach ( $fields_list as $index => $field ) {
@@ -265,7 +265,7 @@ class DB extends \Jet_Engine_Base_DB {
 		}
 
 		foreach ( $old_columns as $index => $col ) {
-			
+
 			$new_col = isset( $this->adjust_fields_map[ $col ] ) ? $this->adjust_fields_map[ $col ] : false;
 
 			if ( $new_col ) {
@@ -351,7 +351,6 @@ class DB extends \Jet_Engine_Base_DB {
 		$query .= apply_filters( 'jet-engine/custom-content-types/sql-count-query', $where, $table, $args, $this );
 
 		return self::wpdb()->get_var( $query );
-
 	}
 
 	/**
@@ -363,7 +362,7 @@ class DB extends \Jet_Engine_Base_DB {
 
 		$table = $this->table();
 		$query = array();
-		
+
 		$query['select'] = "SELECT * FROM $table";
 
 		if ( ! $rel ) {
@@ -377,7 +376,7 @@ class DB extends \Jet_Engine_Base_DB {
 		}
 
 		$where = $this->add_where_args( $args, $rel );
-		
+
 		$query['where'] = ! empty( $where ) ? $where : " WHERE 1=1";
 
 		if ( $search ) {

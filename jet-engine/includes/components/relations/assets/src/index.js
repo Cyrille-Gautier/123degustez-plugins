@@ -362,6 +362,21 @@ for ( var i = 0; i < window.JetEngineRelationsControls.length; i++ ) {
 	let control = window.JetEngineRelationsControls[ i ];
 	const controlEl = document.getElementById( control.relEl );
 
+	control.metaFields.forEach(
+		function( field, i ) {
+			if ( field.type !== 'checkbox' || ! field?.options?.length ) {
+				return;
+			}
+
+			control.metaFields[i].options = field.options.map(
+				function( opt ) {
+					opt.value = opt.value.toString instanceof Function ? opt.value.toString() : opt.value;
+					return opt;
+				}
+			);
+		}
+	);
+
 	if ( controlEl ) {
 		render(
 			<App

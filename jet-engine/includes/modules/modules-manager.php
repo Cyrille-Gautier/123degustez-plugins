@@ -188,6 +188,7 @@ if ( ! class_exists( 'Jet_Engine_Modules' ) ) {
 				'Jet_Engine_Module_Trim_Callback'                => $path . 'external-trim-callback/trim-callback.php',
 				'Jet_Engine_Module_Post_Expiration_Period'       => $path . 'external-post-expiration-period/post-expiration-period.php',
 				'Jet_Engine_Module_Layout_Switcher'              => $path . 'external-layout-switcher/layout-switcher.php',
+				'Jet_Engine_Module_Items_Number_Filter'          => $path . 'external-items-number-filter/items-number-filter.php',
 
 			) );
 

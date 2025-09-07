@@ -188,7 +188,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Data' ) ) {
 		 * @return string
 		 */
 		public function get_listing_type( $listing_id ) {
-			
+
 			$listing_type = get_post_meta( $listing_id, '_listing_type', true );
 
 			if ( ! $listing_type ) {
@@ -325,7 +325,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Data' ) ) {
 
 		/**
 		 * Return user object fields
-		 * 
+		 *
 		 * @return array
 		 */
 		public function get_user_object_fields() {
@@ -771,6 +771,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Data' ) ) {
 
 			global $post;
 
+			// phpcs:disable
 			if ( is_singular() ) {
 				$default_object = $this->current_post = $post;
 			} elseif ( is_tax() || is_category() || is_tag() || is_author() ) {
@@ -778,9 +779,9 @@ if ( ! class_exists( 'Jet_Engine_Listings_Data' ) ) {
 				$this->current_post = $post;
 			} elseif ( wp_doing_ajax() ) {
 				if ( isset( $_REQUEST['editor_post_id'] ) ) {
-					$post_id = $_REQUEST['editor_post_id'];
+					$post_id = absint( $_REQUEST['editor_post_id'] );
 				} elseif ( isset( $_REQUEST['post_id'] ) ) {
-					$post_id = $_REQUEST['post_id'];
+					$post_id = absint( $_REQUEST['post_id'] );
 				} else {
 					$post_id = false;
 				}
@@ -796,6 +797,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Data' ) ) {
 			} elseif ( $post ) {
 				$default_object = $this->current_post = $post;
 			}
+			// phpcs:enable
 
 			$this->default_object = apply_filters( 'jet-engine/listings/data/default-object', $default_object, $this );
 
@@ -982,7 +984,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Data' ) ) {
 
 		/**
 		 * Returns object publication date dependes on object type
-		 * 
+		 *
 		 * @param  [type] $object [description]
 		 * @return [type]         [description]
 		 */
@@ -1032,7 +1034,10 @@ if ( ! class_exists( 'Jet_Engine_Listings_Data' ) ) {
 				$object = $this->get_current_object();
 			}
 
-			if ( in_array( $key, $this->user_fields ) ) {
+			if (
+				in_array( $key, $this->user_fields )
+				&& ! jet_engine()->misc_settings->get_settings( 'disable_legacy_user_meta' )
+			) {
 
 				if ( $object && 'WP_User' === get_class( $object ) ) {
 					$user = $object;
@@ -1123,10 +1128,10 @@ if ( ! class_exists( 'Jet_Engine_Listings_Data' ) ) {
 					}
 
 					if ( $source ) {
-						return apply_filters( 
-							'jet-engine/listings/data/get-meta/' . $source, 
-							$result, 
-							$key, 
+						return apply_filters(
+							'jet-engine/listings/data/get-meta/' . $source,
+							$result,
+							$key,
 							$object
 						);
 					}
@@ -1198,7 +1203,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Data' ) ) {
 
 			switch ( $repeater_source ) {
 				case 'jet_engine':
-					
+
 					$meta_value = $this->get_meta( $source_field, $this->get_current_object(), 'object' );
 
 					if ( empty( $meta_value ) || ! is_array( $meta_value ) ) {

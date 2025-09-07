@@ -2,6 +2,8 @@
 /**
  * Posts query component template
  */
+
+// phpcs:disable
 ?>
 <div class="jet-engine-edit-page__fields">
 	<div class="cx-vui-collapse__heading">
@@ -16,7 +18,7 @@
 				<?php _e( '<b>Please, note!</b> Merged query may produce unexpected results in complicated cases with load more, pagination, filtering etc.', 'jet-engine' ); ?>
 			</div>
 		</div>
-		
+
 		<cx-vui-select
 			label="<?php _e( 'Query Type', 'jet-engine' ); ?>"
 			description="<?php _e( 'Merge queries of type', 'jet-engine' ); ?>"

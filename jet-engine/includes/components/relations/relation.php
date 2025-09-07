@@ -43,6 +43,9 @@ class Relation {
 	protected $query_order = array();
 
 	public $db;
+	/**
+	 * @var Storage\DB
+	 */
 	public $meta_db;
 
 	/**
@@ -948,6 +951,14 @@ class Relation {
 
 		$fields = $this->get_meta_fields( false, false, ARRAY_A );
 
+		$with_options = $this->get_meta_fields(
+			true,
+			function( $field ) {
+				return is_array( $field['options'] ?? false ) ? $field['options'] : array();
+			},
+			ARRAY_A
+		);
+
 		foreach ( $meta as $key => $value ) {
 
 			$field = isset( $fields[ $key ] ) ? $fields[ $key ] : false;
@@ -979,21 +990,13 @@ class Relation {
 					if ( $field['type'] === 'select' && empty( $field['is_multiple'] ) ) {
 						break;
 					}
-
-					$allowed = array();
 	
-					foreach ( $field['options'] ?? array() as $opt ) {
-						$allowed[ $opt['key'] ] = true;
-					}
-	
-					$value = array_filter(
-						$value,
-						function( $key ) use ( $allowed ) {
-							return isset( $allowed[ $key ] );
-						}
-					);
+					$option_values = array_column( $with_options[ $field[ 'name' ] ], 'value' );
 
+					$value = array_intersect( $value, $option_values );
+					$value = array_unique( $value );
 					$value = array_values( $value );
+					
 					break;
 
 			}
@@ -1031,19 +1034,21 @@ class Relation {
 				if ( $field['type'] === 'select' && empty( $field['is_multiple'] ) ) {
 					break;
 				}
-				
-				$allowed = array();
 
-				foreach ( $field['options'] ?? array() as $opt ) {
-					$allowed[ $opt['key'] ] = true;
-				}
-
-				$input = array_filter(
-					$input,
-					function( $key ) use ( $allowed ) {
-						return isset( $allowed[ $key ] );
-					}
+				$with_options = $this->get_meta_fields(
+					true,
+					function( $field ) {
+						return is_array( $field['options'] ?? false ) ? $field['options'] : array();
+					},
+					ARRAY_A
 				);
+				
+				$option_values = array_column( $with_options[ $field[ 'name' ] ], 'value' );
+
+				$input = array_intersect( $input, $option_values );
+				$input = array_unique( $input );
+				$input = array_values( $input );
+
 				break;
 
 		}

@@ -305,7 +305,7 @@
 						return;
 					}
 
-					query.post__in = posts;
+					query.front_store__in = posts;
 					query.is_front_store = true;
 
 					JetEngine.ajaxGetListing( {
@@ -514,7 +514,7 @@
 				if ( $container.hasClass( 'brxe-jet-engine-listing-grid' ) ) {
 					postID = window.bricksData.postId;
 				}
-				
+
 				// Context Gutenberg
 				if ( $container.hasClass( 'jet-listing-grid--blocks' )) {
 					postID = JetEngineSettings.post_id;
@@ -529,7 +529,7 @@
 						posts = [ 'is-front', args.store.type, args.store.slug ];
 					}
 
-					query.post__in = posts;
+					query.front_store__in = posts;
 					query.is_front_store = true;
 				}
 
@@ -907,14 +907,20 @@
 					}
 				}
 
-				if ( $gridItem.length ) {
+				if ( $itemObject?.length ) {
+					popupData['postId'] = $itemObject.data( 'item-object' );
+
+					filterProvider = $itemObject.data( 'render-type' );
+
+					if ( ! filterProvider && $itemObject.hasClass( 'jet-dynamic-table__row' ) ) {
+						filterProvider = 'jet-data-table';
+					}
+				} else if ( $gridItem.length ) {
 					popupData['postId'] = $gridItem.data( 'post-id' );
 					filterProvider = 'jet-engine';
 				} else if ( $calendarItem.length ) {
 					popupData['postId'] = $calendarItem.data( 'post-id' );
 					filterProvider = 'jet-engine-calendar';
-				} else if ( $itemObject ) {
-					popupData['postId'] = $itemObject.data( 'item-object' );
 				} else if ( window.elementorFrontendConfig && window.elementorFrontendConfig.post ) {
 					popupData['postId'] = window.elementorFrontendConfig.post.id;
 				}
@@ -940,6 +946,16 @@
 
 							if ( settings._element_id ) {
 								filterQueryId = settings._element_id;
+							}
+							break;
+
+						case 'jet-data-table':
+							const table = $scope.closest( '.jet-dynamic-table' );
+							const queryId = table[0].dataset.queryId;
+							const customIds = JetEngineSettings.query_builder.custom_ids;
+
+							if ( customIds.length !== 0 && customIds?.[ queryId ] ) {
+								filterQueryId = customIds[ queryId ];
 							}
 							break;
 					}
@@ -1850,7 +1866,31 @@
 				slickOptions.responsive = null;
 			}
 
+			$sliderItems.on(
+				'init.JetEngine',
+				() => {
+					$sliderItems.find( '.slick-active' ).each(
+						( i, el ) => {
+							JetEngine.rerunElementorAnimation( $( el ) );
+						}
+					);
+				}
+			);
+
+			$sliderItems.on(
+				'afterChange.JetEngine',
+				() => {
+					$sliderItems.find( '.slick-active' ).each(
+						( i, el ) => {
+							JetEngine.rerunElementorAnimation( $( el ) );
+						}
+					);
+				}
+			);
+
 			$sliderItems.slick( slickOptions );
+
+			$sliderItems.off( 'init.JetEngine' );
 		},
 
 		maybeReinitSlider: function( event, $scope ) {
@@ -1860,7 +1900,37 @@
 				$slider.each( function() {
 					JetEngine.initSlider( $( this ) );
 				} );
+
 			}
+		},
+
+		rerunElementorAnimation: function( $scope, forceRerun = false ) {
+			let selector = '.elementor-element[data-settings*="_animation"]';
+
+			if ( ! forceRerun ) {
+				selector += ':is( .elementor-invisible, :not(.jet-engine-animation-rerun) )';
+			}
+
+			$scope.find( selector ).each(
+				( i, el ) => {
+					const settings = JSON.parse( el.dataset.settings || '{}' );
+					const $el = $( el );
+
+					if ( settings._animation ) {
+						const classes = `animated ${settings._animation}`;
+						$el.removeClass( classes );
+
+						setTimeout(
+							() => {
+								$el.removeClass( 'elementor-invisible' ).addClass( classes );
+								$el.addClass( 'jet-engine-animation-rerun' );
+							},
+							settings._animation_delay
+						);
+
+					}
+				}
+			);
 		},
 
 		widgetDynamicField: function( $scope ) {
@@ -2000,27 +2070,27 @@
 			get: function ( cacheId, month ) {
 				return JetEngine.calendarCache.entries[ cacheId ]?.get( month ) || false;
 			},
-	
+
 			set: function ( cacheId, month, content, settings = {}, timestamp = false ) {
 				if ( ! JetEngine.calendarCache.entries[ cacheId ] ) {
 					JetEngine.calendarCache.entries[ cacheId ] = new Map();
 				}
-	
+
 				if ( ! JetEngine.calendarCache.entries[ cacheId ].has( month )
 					&& JetEngine.calendarCache.entries[ cacheId ].size > ( settings['max_cache'] ?? 12 ) - 1
 				) {
 					let deletedKey;
-	
+
 					const mapKeys = JetEngine.calendarCache.entries[ cacheId ].keys();
-	
+
 					if ( settings['__switch_direction'] < 0 ) {
 						let maxDate = false;
-	
+
 						JetEngine.calendarCache.iterate(
 							mapKeys,
 							function ( key ) {
 								const parsedDate = Date.parse( key );
-		
+
 								if ( ! maxDate || parsedDate > maxDate ) {
 									maxDate = parsedDate;
 									deletedKey = key;
@@ -2029,12 +2099,12 @@
 						);
 					} else {
 						let minDate = false;
-	
+
 						JetEngine.calendarCache.iterate(
 							mapKeys,
 							function ( key ) {
 								const parsedDate = Date.parse( key );
-		
+
 								if ( ! minDate || parsedDate < minDate ) {
 									minDate = parsedDate;
 									deletedKey = key;
@@ -2042,22 +2112,22 @@
 							}
 						);
 					}
-	
+
 					JetEngine.calendarCache.entries[ cacheId ].delete( deletedKey );
 				}
-	
+
 				if ( ! timestamp ) {
 					timestamp = Date.now();
 				}
-	
+
 				JetEngine.calendarCache.entries[ cacheId ].set( month, [ content, timestamp ] );
 			},
-	
+
 			update: function ( cacheId, month, content, settings = {} ) {
 				let cached = JetEngine.calendarCache.get( cacheId, month );
 				JetEngine.calendarCache.set( cacheId, month, content, settings, cached[1] ?? false );
 			},
-	
+
 			deleteExpiredEntries: function ( cacheId, cacheTimeout ) {
 				//delete possible orphaned caches
 				for ( const cacheId in JetEngine.calendarCache.entries ) {
@@ -2065,11 +2135,11 @@
 						delete JetEngine.calendarCache.entries[ cacheId ];
 					}
 				}
-	
+
 				if ( ! JetEngine.calendarCache.entries[ cacheId ] ) {
 					return;
 				}
-	
+
 				JetEngine.calendarCache.iterate(
 					JetEngine.calendarCache.entries[ cacheId ].keys(),
 					function ( month ) {
@@ -2079,28 +2149,28 @@
 					}
 				);
 			},
-	
+
 			isExpired: function ( cacheId, month, cacheTimeout ) {
 				if ( cacheTimeout < 0 ) {
 					return false;
 				}
-	
+
 				const cached = JetEngine.calendarCache.get( cacheId, month );
-	
+
 				if ( ! cached || ! Array.isArray( cached ) ) {
 					return true;
 				}
-	
+
 				return ! cached[1] || cached[1] < Date.now() - cacheTimeout;
 			},
-	
+
 			clear: function( e, $calendar ) {
 				const cacheId = $calendar.data( 'cache-id' ) || false;
-	
+
 				if ( ! cacheId ) {
 					return;
 				}
-	
+
 				JetEngine.calendarCache.entries[ cacheId ] = new Map();
 			},
 
@@ -2132,7 +2202,7 @@
 							window.JetSmartFilterSettings.settings['jet-engine-calendar'][ widgetId ]['start_from_month'] = month;
 							window.JetSmartFilterSettings.settings['jet-engine-calendar'][ widgetId ]['start_from_year'] = year;
 						}
-						
+
 						break;
 					case 'bricks':
 						widgetId = $widget.data( 'element-id' );
@@ -2240,7 +2310,7 @@
 			      cacheTimeout = ( settings['cache_timeout'] ?? 0 ) * 1000;
 
 			if ( cacheId && cacheTimeout ) {
-				
+
 				JetEngine.calendarCache.deleteExpiredEntries( cacheId, cacheTimeout );
 
 				// Remove the 'listening' and 'brx-open' classes from all matched elements to prevent
@@ -2449,7 +2519,7 @@
 			//$( 'body' ).append( scriptHtml );
 
 			var scriptsTags = scriptHtml.match( /<script[\s\S]*?<\/script>/gm );
-			
+
 			if ( scriptsTags.length ) {
 
 				for ( var i = 0; i < scriptsTags.length; i++ ) {
@@ -2615,5 +2685,81 @@
 	}
 
 	$( window ).trigger( 'jet-engine/frontend/loaded' );
+
+	const initFilterConflictHandler = function() {
+		const conflictHandler = class FilterConflictHandler {
+
+			isResolving = false;
+
+			constructor() {
+				this.init();
+			}
+
+			init( e ) {
+				JetSmartFilters.events.subscribe( 'fiter/change', ( filter ) => {
+					if ( this.isResolving || filter?.filterConflictHandlerBlocked ) {
+						return;
+					}
+
+					this.isResolving = true;
+
+					if ( ! [ 'map-sync', 'user-geolocation', 'location-distance' ].includes( filter?.name ) ) {
+						return;
+					}
+
+					let conflictingTypes = [];
+
+					switch ( filter.name ) {
+						case 'map-sync':
+							conflictingTypes = [ 'user-geolocation', 'location-distance' ];
+							break;
+						case 'location-distance':
+							conflictingTypes = [ 'map-sync', 'user-geolocation' ];
+							break;
+						default:
+							conflictingTypes = [ 'map-sync' ];
+					}
+
+					this.resetConflictingFilters( filter, conflictingTypes );
+				} );
+			}
+
+			resetConflictingFilters( filter, conflictingTypes ) {
+				for ( const conflictingFilter of this.getFilters( filter, conflictingTypes ) ) {
+					conflictingFilter.reset();
+					conflictingFilter.dataValue = false;
+					conflictingFilter.wasChanged ? conflictingFilter.wasChanged() : conflictingFilter.wasСhanged();
+				}
+
+				this.isResolving = false;
+			}
+
+			getFilters( filter, types ) {
+				if ( ! types.length ) {
+					return [];
+				}
+
+				let filters = [];
+
+				filter.filterGroup.filters.forEach(
+					( f ) => {
+						if ( ! types.includes( f.name ) ) {
+							return;
+						}
+
+						filters.push( f );
+					}
+				);
+
+				return filters;
+			}
+
+		};
+
+		new conflictHandler();
+
+	}
+
+	document.addEventListener( 'jet-smart-filters/inited', initFilterConflictHandler );
 
 }( jQuery ) );

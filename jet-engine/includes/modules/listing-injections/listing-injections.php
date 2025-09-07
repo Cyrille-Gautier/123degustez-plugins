@@ -208,8 +208,8 @@ if ( ! class_exists( 'Jet_Engine_Module_Listing_Injections' ) ) {
 		}
 
 		/**
-		 * Add class with injected listing ID to listing classes 
-		 * 
+		 * Add class with injected listing ID to listing classes
+		 *
 		 * @param  [type] $classes [description]
 		 * @return [type]          [description]
 		 */
@@ -722,13 +722,13 @@ if ( ! class_exists( 'Jet_Engine_Module_Listing_Injections' ) ) {
 
 				$result    = false;
 				$object_id = isset( $object->ID ) ? $object->ID : false;
-		
+
 				if ( ! empty( $terms ) && $object_id ) {
 					$result = has_term( $terms, $tax, $object_id );
 				}
-				
+
 				return apply_filters( 'jet-engine/listing-injections/object-has-terms', $result, $object, $tax, $terms );
-		
+
 		}
 
 		public function get_injected_hash( $item ) {
@@ -857,15 +857,24 @@ if ( ! class_exists( 'Jet_Engine_Module_Listing_Injections' ) ) {
 				'default'      => '',
 			);
 
+			$q_args = array(
+				'post_type' => jet_engine()->post_type->slug(),
+			);
+
+			$signature = null;
+
+			if ( class_exists( '\Jet_Elementor_Extension\Ajax_Handlers' ) ) {
+				$signature = \Jet_Elementor_Extension\Ajax_Handlers::create_signature( $q_args );
+			}
+
 			$items_repeater->add_control(
 				'item',
 				array(
 					'label'      => __( 'Listing template', 'jet-engine' ),
 					'type'       => 'jet-query',
 					'query_type' => 'post',
-					'query'      => array(
-						'post_type' => jet_engine()->post_type->slug(),
-					),
+					'query'      => $q_args,
+					'signature'  => $signature,
 				)
 			);
 

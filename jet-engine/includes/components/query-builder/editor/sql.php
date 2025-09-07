@@ -87,7 +87,7 @@ class SQL_Query extends Base_Query {
 	}
 
 	public function get_cast_objects() {
-		
+
 		$objects = apply_filters( 'jet-engine/query-builder/types/sql-query/cast-objects', array(
 			''                                          => __( 'Keep stdClass', 'jet-engine' ),
 			'jet_engine_maybe_unserialize_object_props' => __( 'Keep stdClass, unserialize properties', 'jet-engine' ),
@@ -226,10 +226,35 @@ class SQL_Query extends Base_Query {
 	}
 
 	/**
+	 * Print custom editor template for SQL nested fields.
+	 *
+	 * @return void
+	 */
+	public function print_custom_editor_templates() {
+
+		ob_start();
+		include Manager::instance()->component_path( 'templates/admin/sql-query-field.php' );
+		$content = ob_get_clean();
+
+		printf( '<script type="text/x-template" id="jet-engine-sql-query-field">%s</script>', $content );
+	}
+
+	/**
 	 * Constructor for the class
 	 */
 	public function __construct() {
-		add_filter( 'jet-engine/query-builder/edit-query/request', array( $this, 'update_fields_list_for_query' ) );
+
+		parent::__construct();
+
+		add_filter(
+			'jet-engine/query-builder/edit-query/request',
+			array( $this, 'update_fields_list_for_query' )
+		);
+
+		add_action(
+			'jet-engine/query-builder/editor/before-print-templates',
+			array( $this, 'print_custom_editor_templates' )
+		);
 	}
 
 }

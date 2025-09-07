@@ -85,19 +85,23 @@ class Jet_Engine_Posts_Search_Handler {
 	 */
 	public function process_posts_search() {
 
-		$type    = $_REQUEST['post_type'];
-		$query   = isset( $_GET['q'] ) ? esc_attr( $_GET['q'] ) : '';
-		$type    = explode( ',', $type );
-		$exclude = ! empty( $_GET['exclude'] ) ? explode( ',', $_GET['exclude'] ) : false;
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$post_type_raw    = isset( $_GET['post_type'] ) ? sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) : '';
+		$query_raw   = isset( $_GET['q'] ) ? sanitize_text_field( wp_unslash( $_GET['q'] ) ) : '';
+		$exclude_raw = isset( $_GET['exclude'] ) ? sanitize_text_field( wp_unslash( $_GET['exclude'] ) ) : '';
+
+		$post_type    = explode( ',', $post_type_raw );
+		$query   = $query_raw;
+		$exclude = ! empty( $exclude_raw ) ? array_map( 'absint', explode( ',', $exclude_raw ) ) : false;
 
 		wp_send_json( array(
 			'results' => $this->search_posts( array(
-				'post_type' => $type,
+				'post_type' => $post_type,
 				'exclude'   => $exclude,
 				'q'         => $query,
 			) ),
 		) );
-
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**

@@ -1,3 +1,6 @@
+<?php
+// phpcs:disable
+?>
 <div
 	class="jet-engine-edit-page jet-engine-edit-page--relations jet-engine-edit-page--loading"
 	:class="{

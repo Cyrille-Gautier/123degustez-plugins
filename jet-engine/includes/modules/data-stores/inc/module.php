@@ -69,6 +69,11 @@ class Module {
 		new Query();
 		new Compatibility();
 
+		require_once $this->module_path( 'forms/action-manager.php' );
+
+		/** Integration with JetFormBuilder */
+		new Forms\Action_Manager();
+
 	}
 
 	/**

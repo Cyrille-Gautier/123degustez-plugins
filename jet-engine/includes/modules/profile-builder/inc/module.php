@@ -14,10 +14,25 @@ class Module {
 
 	public $slug = 'profile-builder';
 
+	/**
+	 * @var Settings
+	 */
 	public $settings;
+	/**
+	 * @var Rewrite
+	 */
 	public $rewrite;
+	/**
+	 * @var Query
+	 */
 	public $query;
+	/**
+	 * @var Frontend
+	 */
 	public $frontend;
+	/**
+	 * @var Elementor_Integration
+	 */
 	public $elementor;
 
 	/**
@@ -134,7 +149,7 @@ class Module {
 	 *
 	 * @since  1.0.0
 	 * @access public
-	 * @return object
+	 * @return self
 	 */
 	public static function instance() {
 		// If the single instance hasn't been set, set it now.

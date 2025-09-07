@@ -26,19 +26,20 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 
 	public function save_component_settings() {
 
+		// phpcs:disable WordPress.Security.NonceVerification
 		$post_id = ! empty( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : false;
 
 		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
 			wp_send_json_error( __( 'You can`t edit this component', 'jet-engine' ) );
 		}
 
-		$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false;
+		$nonce = ! empty( $_REQUEST['nonce'] ) ? wp_unslash( $_REQUEST['nonce'] ) : false; // phpcs:ignore
 
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->hook ) ) {
 			wp_send_json_error( __( 'The page is expired. Please reload it and try again.', 'jet-engine' ) );
 		}
 
-		$settings = ! empty( $_REQUEST['settings'] ) ? $_REQUEST['settings'] : [];
+		$settings = ! empty( $_REQUEST['settings'] ) ? Jet_Engine_Sanitizer::sanitize_array_recursively( $_REQUEST['settings'] ) : []; // phpcs:ignore
 		$controls = ( ! empty( $settings['controls'] ) && is_array( $settings['controls'] ) ) ? $settings['controls'] : [];
 		$styles = ( ! empty( $settings['styles'] ) && is_array( $settings['styles'] ) ) ? $settings['styles'] : [];
 
@@ -52,11 +53,12 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 		$component->set_styles( $styles );
 
 		wp_send_json_success();
-
+		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
 	public function save_meta( $post_id ) {
 
+		// phpcs:disable WordPress.Security.NonceVerification
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
@@ -66,7 +68,10 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 		}
 
 		if ( isset( $_POST['_jet_engine_listing_css'] ) ) {
-			$css = esc_attr( $_POST['_jet_engine_listing_css'] );
+			$css = Jet_Engine_Sanitizer::sanitize_array_recursively(
+				wp_unslash( $_POST['_jet_engine_listing_css'] ) // phpcs:ignore
+			);
+
 			update_post_meta( $post_id, '_jet_engine_listing_css', $css );
 		}
 
@@ -102,23 +107,24 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 
 		foreach ( $settings_keys as $key ) {
 			if ( isset( $_POST[ $key ] ) ) {
+
 				$store_key = str_ireplace( 'jet_engine_listing_', '', $key );
 
+				// link settings
+				if ( isset( $keep_newlines[ $key ] ) ) {
+					$value = sanitize_textarea_field( wp_unslash( $_POST[ $key ] ) );
+				} else {
+					$value = sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
+				}
+
 				if ( in_array( $store_key, array( 'source', 'post_type', 'tax' ) ) ) {
-					$settings_to_store[ $store_key ] = esc_attr( $_POST[ $key ] );
-					$el_settings_to_store[ 'listing_' . $store_key ] = esc_attr( $_POST[ $key ] );
+					$settings_to_store[ $store_key ] = $value;
+					$el_settings_to_store[ 'listing_' . $store_key ] = $value;
 				} elseif ( false !== strpos( $store_key, 'repeater_' ) ) {
 					// repeater settings store only to `_elementor_page_settings` without `listing_` prefix
-					$el_settings_to_store[ $store_key ] = esc_attr( $_POST[ $key ] );
+					$el_settings_to_store[ $store_key ] = $value;
 				} else {
-					// link settings
-					if ( isset( $keep_newlines[ $key ] ) ) {
-						$store = sanitize_textarea_field( $_POST[ $key ] );
-					} else {
-						$store = sanitize_text_field( $_POST[ $key ] );
-					}
-					
-					$el_settings_to_store[ 'listing_' . $store_key ] = $store;
+					$el_settings_to_store[ 'listing_' . $store_key ] = $value;
 				}
 			}
 		}
@@ -145,7 +151,7 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 		}
 
 		do_action( 'jet-engine/blocks/editor/save-settings', $post_id );
-
+		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
 	/**
@@ -191,7 +197,7 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 
 	/**
 	 * Render a placeholder for component settings meta box
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function render_component_settings_box() {
@@ -208,19 +214,21 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 			return;
 		}
 
+		// phpcs:disable WordPress.Security.EscapeOutput
 		printf(
 			'<div id="jet_engine_block_component_settings" data-settings="%1$s" data-hook="%2$s" data-nonce="%3$s" data-control-types="%4$s" data-post="%5$s"></div>',
 			htmlspecialchars( wp_json_encode( [
 				'controls' => $component->get_props(),
 				'styles'   => $component->get_styles(),
-			] ) ),
-			$this->hook,
-			wp_create_nonce( $this->hook ),
+			] ), ENT_QUOTES, 'UTF-8' ),
+			esc_attr( $this->hook ),
+			esc_attr( wp_create_nonce( $this->hook ) ),
 			htmlspecialchars( wp_json_encode( Jet_Engine_Tools::prepare_list_for_js(
 				jet_engine()->listings->components->get_supported_control_types(), ARRAY_A
-			) ) ),
-			$post->ID
+			) ), ENT_QUOTES, 'UTF-8' ),
+			absint( $post->ID )
 		);
+		// phpcs:enable WordPress.Security.EscapeOutput
 	}
 
 	/**
@@ -502,13 +510,13 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 					}
 				}
 
-				echo '<div class="' . join( ' ', $field_classes ) . '">';
-					echo '<label class="components-base-control__label" for="' . $control_name . '">';
-						echo $control_args['label'];
+				echo '<div class="' . esc_attr( join( ' ', $field_classes ) ) . '">';
+					echo '<label class="components-base-control__label" for="' . esc_attr( $control_name ) . '">';
+						echo wp_kses_post( $control_args['label'] );
 					echo '</label>';
 
 					if ( ! empty( $control_args['groups'] ) || ! empty( $control_args['options'] ) ) {
-						echo '<select id="' . $control_name . '" name="' . $control_name . '" class="components-select-control__input">';
+						echo '<select id="' . esc_attr( $control_name ) . '" name="' . esc_attr( $control_name ) . '" class="components-select-control__input">';
 
 							if ( ! empty( $control_args['groups'] ) ) {
 
@@ -519,12 +527,12 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 									}
 
 									if ( ! empty( $group['options'] ) ) {
-										echo '<optgroup label="' . $group['label'] . '">';
+										echo '<optgroup label="' . esc_attr( $group['label'] ) . '">';
 
 										foreach ( $group['options'] as $option_key => $option_label ) {
 											printf( '<option value="%1$s"%3$s>%2$s</option>',
-												$option_key,
-												$option_label,
+												esc_attr( $option_key ),
+												esc_html( $option_label ),
 												selected( $control_args['value'], $option_key, false )
 											);
 										}
@@ -533,8 +541,8 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 
 									} elseif ( is_string( $group ) ) {
 										printf( '<option value="%1$s"%3$s>%2$s</option>',
-											$group_key,
-											$group,
+											esc_attr( $group_key ),
+											esc_html( $group ),
 											selected( $control_args['value'], $group_key, false )
 										);
 									}
@@ -543,8 +551,8 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 							} else {
 								foreach ( $control_args['options'] as $option_key => $option_label ) {
 									printf( '<option value="%1$s"%3$s>%2$s</option>',
-										$option_key,
-										$option_label,
+										esc_attr( $option_key ),
+										esc_html( $option_label ),
 										selected( $control_args['value'], $option_key, false )
 									);
 								}
@@ -555,21 +563,21 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 						$input_type = ! empty( $control_args['input_type'] ) ? $control_args['input_type'] : 'text';
 						if ( $input_type === 'textarea' ) {
 							printf( '<textarea id="%1$s" name="%1$s" rows="5" class="components-textarea-control__input">%2$s</textarea>',
-								$control_name,
+								esc_attr( $control_name ),
 								esc_attr( $control_args['value'] )
 							);
 						} else {
 							printf( '<input type="%1$s" id="%2$s" name="%2$s" class="components-text-control__input" value="%3$s">',
 								esc_attr( $input_type ),
-								$control_name,
+								esc_attr( $control_name ),
 								esc_attr( $control_args['value'] )
 							);
 						}
-						
+
 					}
 
 					if ( ! empty( $control_args['description'] ) ) {
-						echo '<p class="components-base-control__help">' . $control_args['description'] . '</p>';
+						echo '<p class="components-base-control__help">' . wp_kses_post( $control_args['description'] ) . '</p>';
 					}
 
 				echo '</div>';
@@ -578,58 +586,61 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 			do_action( 'jet-engine/blocks/editor/settings-meta-box', $post );
 
 			echo '<p>';
+				// phpcs:disable
 				_e( 'You need to reload page after saving to apply new settings', 'jet-engine' );
+				// phpcs:enable
 			echo '</p>';
 		echo '</div>';
 
+		// phpcs:disable
 		echo "<script>
 				var JetEngineListingConditions = " . json_encode( $conditions ) . ";
-				
+
 				jQuery( '[name^=\"jet_engine_listing_\"]' ).on( 'change', function( e ) {
 					var fieldName = jQuery( e.currentTarget ).attr('name');
-					
+
 					for ( var field in JetEngineListingConditions ) {
-						
+
 						if ( field === fieldName ) {
 							continue;
 						}
-						
+
 						var conditions = JetEngineListingConditions[ field ];
-						
+
 						if ( -1 === Object.keys( conditions ).indexOf( fieldName ) && -1 === Object.keys( conditions ).indexOf( fieldName + '!' ) ) {
 							continue;
 						}
-						
+
 						var isVisible = true,
 							fieldWrapper = jQuery( '[name=\"' + field + '\"]' ).closest( '.jet-engine-condition-setting' );
 
 						for ( var conditionField in conditions ) {
-								
+
 							var isNegative = -1 !== conditionField.indexOf( '!' ),
 								conditionFieldName = conditionField;
-							
+
 							if ( isNegative ) {
 								conditionFieldName = conditionField.replace( '!', '' );
 							}
-							
+
 							var currentValue   = jQuery( '[name=\"' + conditionFieldName + '\"]' ).val(),
 								conditionValue = conditions[ conditionField ];
-							
+
 							if ( Array.isArray( conditionValue ) ) {
 								isVisible = -1 !== conditionValue.indexOf( currentValue )
 							} else {
 								isVisible = conditionValue == currentValue;
 							}
-							
+
 							if ( isNegative ) {
 								isVisible = !isVisible;
 							}
-							
+
 							if ( !isVisible ) {
 								break;
 							}
 						}
-						
+
 						if ( isVisible )  {
 							fieldWrapper.addClass( 'jet-engine-condition-setting-show' );
 						} else {
@@ -638,6 +649,7 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 					}
 				} );
 			</script>";
+		// phpcs:enable
 	}
 
 	/**
@@ -656,13 +668,14 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 		?>
 		<div class="jet-engine-listing-css">
 			<p><?php
+				// phpcs:disable
 				_e( 'When targeting your specific element, add <code>selector</code> before the tags and classes you want to exclusively target, i.e: <code>selector a { color: red;}</code>', 'jet-engine' );
+				// phpcs:enable
 			?></p>
 			<textarea class="components-textarea-control__input jet_engine_listing_css" name="_jet_engine_listing_css" rows="16" style="width:100%"><?php
-				echo $css;
+				echo Jet_Engine_Sanitizer::sanitize_inline_css( $css ); // phpcs:ignore
 			?></textarea>
 			<div id="jet_component_css_vars">
-				
 			</div>
 		</div>
 		<?php

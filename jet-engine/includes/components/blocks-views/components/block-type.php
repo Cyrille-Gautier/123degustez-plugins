@@ -25,7 +25,7 @@ class Block_Type {
 					if ( ! empty( $attributes['component_context'] ) ) {
 						$component->set_component_context( $attributes['component_context'] );
 					}
-					
+
 					$content = $component->get_content( $attributes, false );
 
 					$result = sprintf(
@@ -44,12 +44,12 @@ class Block_Type {
 
 	/**
 	 * Setup component attributes
-	 * 
+	 *
 	 * @param  [type] $component [description]
 	 * @return [type]            [description]
 	 */
 	public function setup_attributes( $component ) {
-		
+
 		$attributes = [];
 
 		$attributes['component_context'] = [
@@ -77,7 +77,7 @@ class Block_Type {
 			if ( ! empty( $control_type['options'] ) ) {
 				$control_type['options'] = \Jet_Engine_Tools::prepare_list_for_js(
 					$control_type['options'],
-					ARRAY_A 
+					ARRAY_A
 				);
 			}
 
@@ -117,7 +117,7 @@ class Block_Type {
 
 	/**
 	 * Returns block name to register
-	 * 
+	 *
 	 * @param  [type] $component [description]
 	 * @return [type]            [description]
 	 */
@@ -127,7 +127,7 @@ class Block_Type {
 
 	/**
 	 * Returns block title to display
-	 * 
+	 *
 	 * @param  [type] $component [description]
 	 * @return [type]            [description]
 	 */
@@ -137,7 +137,7 @@ class Block_Type {
 
 	/**
 	 * Returns block attributes
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function get_attributes() {

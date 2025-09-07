@@ -50,6 +50,22 @@ if ( ! class_exists( 'Elementor\Jet_Listing_Grid_Widget' ) ) {
 				)
 			);
 
+			$q_args = array(
+				'post_type'  => jet_engine()->post_type->slug(),
+				'meta_query' => [
+					'relation' => 'or',
+					[
+						'key'     => '_entry_type',
+						'value'   => '',
+						'compare' => 'NOT EXISTS',
+					],
+					[
+						'key'     => '_entry_type',
+						'value'   => 'listing',
+					],
+				],
+			);
+
 			$this->add_control(
 				'lisitng_id',
 				array(
@@ -60,22 +76,23 @@ if ( ! class_exists( 'Elementor\Jet_Listing_Grid_Widget' ) ) {
 						'active'  => true,
 						'handler' => 'JetListings',
 					),
-					'query'         => array(
-						'post_type'  => jet_engine()->post_type->slug(),
-						'meta_query' => [
-							'relation' => 'or',
-							[
-								'key'     => '_entry_type',
-								'value'   => '',
-								'compare' => 'NOT EXISTS',
-							],
-							[
-								'key'     => '_entry_type',
-								'value'   => 'listing',
-							],
-						],
-					),
+					'query'         => $q_args,
+					'signature'     => \Jet_Elementor_Extension\Ajax_Handlers::create_signature( $q_args ),
 					'prevent_looping' => true,
+				)
+			);
+
+			$this->add_control(
+				'list_tags_selection',
+				array(
+					'label'   => __( 'Wrapper Tags', 'jet-engine' ),
+					'type'    => Controls_Manager::SELECT,
+					'default' => '',
+					'options' => array(
+						''      => __( 'Default ( DIV > DIV )', 'jet-engine' ),
+						'ul_li' => __( 'Unordered list (UL > LI)', 'jet-engine' ),
+						'ol_li' => __( 'Ordered list (OL > LI)', 'jet-engine' ),
+					),
 				)
 			);
 
@@ -472,7 +489,7 @@ if ( ! class_exists( 'Elementor\Jet_Listing_Grid_Widget' ) ) {
 						),
 					)
 				);
-				
+
 			}
 
 			do_action( 'jet-engine/listing/after-general-settings', $this );
@@ -1834,7 +1851,7 @@ if ( ! class_exists( 'Elementor\Jet_Listing_Grid_Widget' ) ) {
 					),
 				)
 			);
-			
+
 			$this->end_controls_section();
 
 		}
@@ -1875,6 +1892,18 @@ if ( ! class_exists( 'Elementor\Jet_Listing_Grid_Widget' ) ) {
 					'condition'    => array(
 						'is_masonry!' => 'yes',
 						'scroll_slider_enabled!' => 'yes',
+					),
+				)
+			);
+
+			$this->add_control(
+				'carousel_enabled_note',
+				array(
+					'type'      => Controls_Manager::RAW_HTML,
+					'raw'       => esc_html__( 'Note: You selected a list tag for the listing. The slider adds wrappers, which make the list markup invalid by W3C standards.', 'jet-engine' ),
+					'condition' => array(
+						'carousel_enabled' => 'yes',
+						'list_tags_selection' => [ 'ul_li', 'ol_li' ]
 					),
 				)
 			);
@@ -2091,8 +2120,6 @@ if ( ! class_exists( 'Elementor\Jet_Listing_Grid_Widget' ) ) {
 				foreach ( $active_devices as $breakpoint_key ) {
 					$devices_list[ $breakpoint_key ] = 'desktop' === $breakpoint_key ? __( 'Desktop', 'jet-engine' ) : $active_breakpoints[ $breakpoint_key ]->get_label();
 				}
-
-				unset( $devices_list['widescreen'] );
 			} else {
 				$devices_list = array(
 					'desktop' => __( 'Desktop', 'jet-engine' ),
@@ -2119,13 +2146,15 @@ if ( ! class_exists( 'Elementor\Jet_Listing_Grid_Widget' ) ) {
 			);
 
 			foreach ( $devices_list as $device_key => $device_label ) {
-
 				$suffix = 'desktop' !== $device_key ? '_' . $device_key : '';
 
-				$media_selector  = '(' . $device_key . '+)';
-
-				if ( 'desktop' !== $device_key ) {
-					$media_selector .= '(' . $device_key . ')';
+				if ( 'desktop' === $device_key ) {
+					$media_selector = '';
+				} else {
+					$media_selector = '(' . $device_key . '+)';
+					if ( 'widescreen' !== $device_key ) {
+						$media_selector .= '(' . $device_key . ')';
+					}
 				}
 
 				$this->add_control(
@@ -2250,7 +2279,7 @@ if ( ! class_exists( 'Elementor\Jet_Listing_Grid_Widget' ) ) {
 					),
 				)
 			);
-			
+
 			$this->add_control(
 				'arrow_z_index',
 				array(
@@ -2838,7 +2867,7 @@ if ( ! class_exists( 'Elementor\Jet_Listing_Grid_Widget' ) ) {
 			$this->register_carousel_settings();
 			$this->register_style_settings();
 			$this->register_carousel_style_settings();
-			
+
 		}
 
 		/**

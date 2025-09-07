@@ -80,13 +80,13 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Terms' ) ) {
 				case 'WP_Term':
 					$terms = array( $object );
 					break;
-				
+
 				default:
 					// Current object can`t be used with this widget. Only instances of WP_Post or WP_Term classes are allowed.
 					return;
 			}
 
-			
+
 
 			if ( empty( $terms ) || is_wp_error( $terms ) ) {
 
@@ -124,7 +124,11 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Terms' ) ) {
 			$this->render_icon( $settings );
 
 			if ( ! empty( $settings['terms_prefix'] ) ) {
-				printf( '<span class="%2$s__prefix">%1$s</span>', $settings['terms_prefix'], $this->get_name() );
+				printf(
+					'<span class="%2$s__prefix">%1$s</span>',
+					wp_kses_post( $settings['terms_prefix'] ),
+					$this->get_name() // phpcs:ignore
+				);
 			}
 
 			$item_format = '<a href="%1$s" class="%3$s__link">%2$s</a>';
@@ -138,11 +142,11 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Terms' ) ) {
 			foreach ( $terms as $term ) {
 
 				if ( $add_delimiter ) {
-					echo $delimiter;
+					echo $delimiter; // phpcs:ignore
 					$delimiter = sprintf(
 						'<span class="%2$s__delimiter">%1$s</span> ',
-						$settings['terms_delimiter'],
-						$this->get_name()
+						wp_kses_post( $settings['terms_delimiter'] ),
+						$this->get_name() // phpcs:ignore
 					);
 				}
 
@@ -164,12 +168,16 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Terms' ) ) {
 					return;
 				}
 
-				printf( $item_format, get_term_link( $term, $tax ), $name, $this->get_name() );
+				printf( $item_format, get_term_link( $term, $tax ), wp_kses_post( $name ), $this->get_name() ); // phpcs:ignore
 
 			}
 
 			if ( ! empty( $settings['terms_suffix'] ) ) {
-				printf( '<span class="%2$s__suffix">%1$s</span>', $settings['terms_suffix'], $this->get_name() );
+				printf(
+					'<span class="%2$s__suffix">%1$s</span>',
+					wp_kses_post( $settings['terms_suffix'] ),
+					$this->get_name() // phpcs:ignore
+				);
 			}
 
 		}
@@ -181,12 +189,13 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Terms' ) ) {
 			$new_icon_html = \Jet_Engine_Tools::render_icon( $new_icon, $this->get_name() . '__icon' );
 
 			if ( $new_icon_html ) {
-				echo $new_icon_html;
+				// Escaped by \Jet_Engine_Tools::render_icon()
+				echo $new_icon_html; // phpcs:ignore
 			} elseif ( $icon ) {
 				printf(
 					'<i class="%1$s %2$s__icon"></i>',
-					$icon,
-					$this->get_name()
+					esc_attr( $icon ),
+					$this->get_name() // phpcs:ignore
 				);
 			}
 
@@ -208,7 +217,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Terms' ) ) {
 
 			ob_start();
 
-			printf( '<div class="%1$s">', implode( ' ', $classes ) );
+			printf( '<div class="%1$s">', esc_attr( implode( ' ', $classes ) ) );
 
 				do_action( 'jet-engine/listing/dynamic-terms/before-terms', $this );
 
@@ -221,10 +230,8 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Terms' ) ) {
 			$content = ob_get_clean();
 
 			if ( $this->show_field ) {
-				echo $content;
+				echo $content; // phpcs:ignore
 			}
 		}
-
 	}
-
 }

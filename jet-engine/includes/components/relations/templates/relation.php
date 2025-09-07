@@ -1,3 +1,6 @@
+<?php
+// phpcs:disable
+?>
 <div>
 	<cx-vui-collapse
 		:collapsed="false"

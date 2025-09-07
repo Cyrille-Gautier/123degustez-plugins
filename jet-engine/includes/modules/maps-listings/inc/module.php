@@ -110,6 +110,11 @@ class Module {
 			new Compatibility\Jet_Form_Builder();
 		}
 
+		if ( function_exists( 'jet_smart_filters' ) ) {
+			require jet_engine()->modules->modules_path( 'maps-listings/inc/compatibility/jet-smart-filters.php' );
+			new Compatibility\Jet_Smart_Filters();
+		}
+
 		$provider = $this->providers->get_active_map_provider();
 		$provider->public_init();
 

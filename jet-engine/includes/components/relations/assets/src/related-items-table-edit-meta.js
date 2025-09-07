@@ -97,7 +97,12 @@ class EditMeta extends Component {
 				title={ 'Edit Meta' }
 				style={ style }
 				className={ modalClasses.join( ' ' ) }
+				shouldCloseOnClickOutside={ false }
 				onRequestClose={ ( event ) => {
+					
+					if ( ! event ) {
+						return;
+					}
 
 					if ( ! event.target.classList.contains( 'is-nested-modal-trigger' ) ) {
 						this.setState( {

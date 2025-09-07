@@ -11,7 +11,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 class Base_Element extends \Jet_Engine\Bricks_Views\Elements\Base {
-	
+
 	// Element properties
 	public $category = 'jetengine'; // Use predefined element category 'general'
 	public $name = null; // Make sure to prefix your elements
@@ -24,7 +24,7 @@ class Base_Element extends \Jet_Engine\Bricks_Views\Elements\Base {
 
 	public function __construct( $element = null, $component = null ) {
 
-		if ( $element && ! empty( $element['name'] ) ) {
+		if ( ! $component && $element && ! empty( $element['name'] ) ) {
 			$component = jet_engine()->listings->components->get( $element['name'] );
 		}
 
@@ -44,6 +44,11 @@ class Base_Element extends \Jet_Engine\Bricks_Views\Elements\Base {
 
 	// Return localised element label
 	public function get_label() {
+
+		if ( ! $this->jet_engine_component ) {
+			return $this->name;
+		}
+
 		return $this->jet_engine_component->get_display_name();
 	}
 
@@ -90,6 +95,10 @@ class Base_Element extends \Jet_Engine\Bricks_Views\Elements\Base {
 				'default'     => 'default_object',
 			]
 		);
+
+		if ( ! $this->jet_engine_component ) {
+			return;
+		}
 
 		$props  = $this->jet_engine_component->get_props();
 		$styles = $this->jet_engine_component->get_styles();
@@ -151,7 +160,7 @@ class Base_Element extends \Jet_Engine\Bricks_Views\Elements\Base {
 
 		$this->jet_engine_component->set_component_context( $this->get_jet_settings( 'component_context' ) );
 
-		$settings = array_merge( 
+		$settings = array_merge(
 			$this->jet_engine_component->get_default_state( false, [ 'media_format' => 'id' ] ),
 			$settings
 		);
@@ -179,26 +188,30 @@ class Base_Element extends \Jet_Engine\Bricks_Views\Elements\Base {
 
 		$this->enqueue_scripts();
 
-		echo '<div ' . $this->render_attributes( '_root' ) . ' style="' . $css_vars . '">';
+		echo '<div ' . $this->render_attributes( '_root' ) . ' style="' . esc_attr( $css_vars ) . '">'; // phpcs:ignore
 
 		/**
 		 * TMP fix: selectors when content rendered on Bricks popup AJAX call
 		 * https://github.com/Crocoblock/issues-tracker/issues/10451
 		 */
-		$content = str_replace( [ '.brx-popup.', '.brx-popup#' ], [ '.brx-popup .', '.brx-popup #' ], $content );
-
-		echo $content;
-		echo "</div>";
-
-		jet_engine()->bricks_views->listing->render->destroy_bricks_query_for_listing( 
-			$this->jet_engine_component->get_id() 
+		$content = str_replace(
+			[ '.brx-popup.', '.brx-popup#' ],
+			[ '.brx-popup .', '.brx-popup #' ],
+			$content
 		);
 
+		// $content is escaped in \Jet_Engine\Listings\Components::get_content()
+		echo $content; // phpcs:ignore
+
+		echo "</div>";
+
+		jet_engine()->bricks_views->listing->render->destroy_bricks_query_for_listing(
+			$this->jet_engine_component->get_id()
+		);
 	}
 
 	public function parse_jet_render_attributes( $attrs = [] ) {
 		$attrs['_id'] = $this->id;
-
 		return $attrs;
 	}
 }

@@ -5,21 +5,24 @@ use Jet_Engine\Query_Builder\Manager;
 
 abstract class Base_Query {
 
-	public $id            = false;
-	public $name          = false;
-	public $query         = array();
-	public $dynamic_query = array();
-	public $final_query   = null;
-	public $query_type    = null;
-	public $query_id      = null;
-	public $preview       = array();
-	public $cache_query   = true;
-	public $cache_expires = 0;
-	public $cache_group   = 'jet-engine';
+	public $id              = false;
+	public $name            = false;
+	public $query           = array();
+	public $dynamic_query   = array();
+	public $final_query     = null;
+	public $final_query_raw = null;
+	public $query_type      = null;
+	public $query_id        = null;
+	public $preview         = array();
+	public $cache_query     = true;
+	public $cache_expires   = 0;
+	public $cache_group     = 'jet-engine';
 
 	public $api_settings = [];
 
 	public $parsed_macros = array();
+
+	protected $nested_args_prefix = '_id::';
 
 	public function __construct( $args = array() ) {
 
@@ -49,7 +52,7 @@ abstract class Base_Query {
 
 	/**
 	 * Returns query type for 3rd party integrations. For any internal usage take property directly
-	 * 
+	 *
 	 * @return string
 	 */
 	public function get_query_type() {
@@ -58,7 +61,7 @@ abstract class Base_Query {
 
 	/**
 	 * Register Rest API endpoint for this query if enbaled.
-	 * 
+	 *
 	 * @return void
 	 */
 	public function maybe_register_rest_api_endpoint() {
@@ -240,6 +243,8 @@ abstract class Base_Query {
 			$this->final_query = array();
 		}
 
+		$this->final_query_raw = $this->final_query;
+
 		foreach ( $this->final_query as $key => $value ) {
 			if ( is_array( $value ) ) {
 				$reset = false;
@@ -249,21 +254,52 @@ abstract class Base_Query {
 					if ( ! $reset && is_array( $inner_value ) && ! empty( $inner_value['_id'] ) ) {
 						$reset = true;
 						$this->final_query[ $key ] = array();
+						$this->final_query_raw[ $key ] = array();
 					}
 
 					if ( $reset ) {
 
+						$inner_value_raw = $inner_value;
+
 						if ( isset( $this->dynamic_query[ $key ][ $inner_value['_id'] ] ) ) {
 
-							$inner_value = array_merge( $inner_value, $this->apply_macros( $this->dynamic_query[ $key ][ $inner_value['_id'] ] ) );
+							$_id = $inner_value['_id'];
+
+							$inner_value_raw = array_merge(
+								$inner_value_raw,
+								$this->ensure_raw_value(
+									$this->dynamic_query[ $key ][ $_id ]
+								)
+							);
+
+							$inner_value = array_merge(
+								$inner_value,
+								$this->apply_macros(
+									$this->dynamic_query[ $key ][ $_id ]
+								)
+							);
 
 							if ( ! in_array( $key, $processed_dynamics ) ) {
 								$processed_dynamics[] = $key;
 							}
-
 						}
 
-						$this->final_query[ $key ][] = $inner_value;
+						/**
+						 * Check if inner value represents a group of nested arguments
+						 * (like nested meta queries, CCT args etc.)
+						 * if yes - merge parsed dynamic argumnets into the 'args' key
+						 */
+						if (
+							is_array( $inner_value )
+							&& ! empty( $inner_value['is_group'] )
+							&& ! empty( $inner_value['args'] )
+						) {
+							$inner_value     = $this->merge_dynamic_nested_args( $inner_value );
+							$inner_value_raw = $this->merge_dynamic_nested_args( $inner_value_raw );
+						}
+
+						$this->final_query[ $key ][]     = $inner_value;
+						$this->final_query_raw[ $key ][] = $inner_value_raw;
 					}
 				}
 			}
@@ -273,7 +309,8 @@ abstract class Base_Query {
 			foreach ( $this->dynamic_query as $key => $value ) {
 				if ( ! in_array( $key, $processed_dynamics ) ) {
 					if ( ! empty( $value ) ) {
-						$this->final_query[ $key ] = $this->apply_macros( $value );
+						$this->final_query[ $key ]     = $this->apply_macros( $value );
+						$this->final_query_raw[ $key ] = $this->ensure_raw_value( $value );
 					}
 				}
 			}
@@ -315,6 +352,36 @@ abstract class Base_Query {
 
 	}
 
+	/**
+	 * Merge dynamic inner args.
+	 * Required for nested arguments like meta queries, CCT args etc.
+	 *
+	 * @param  array $args_group Query argument, which describes an additional group of nested arguments
+	 * @return array
+	 */
+	public function merge_dynamic_nested_args( $args_group = [] ) {
+
+		$args = ! empty( $args_group['args'] ) ? $args_group['args'] : [];
+
+		foreach ( $args as $index => $arg ) {
+			if (
+				! empty( $arg['_id'] )
+				&& isset( $args_group[ $this->nested_args_prefix . $arg['_id'] ] )
+			) {
+				$args[ $index ] = array_merge(
+					$arg,
+					$args_group[ $this->nested_args_prefix . $arg['_id'] ]
+				);
+
+				unset( $args_group[ $this->nested_args_prefix . $arg['_id'] ] );
+			}
+		}
+
+		$args_group['args'] = $args;
+
+		return $args_group;
+	}
+
 	public function maybe_reset_query() {
 
 		if ( null === $this->final_query ) {
@@ -346,6 +413,16 @@ abstract class Base_Query {
 
 	public function reset_query() {}
 
+	public function _set_items_number( $number = 0 ) {}
+
+	public function set_items_number( $number = 0 ) {
+		if ( ! $number || ! is_scalar( $number ) ) {
+			return;
+		}
+
+		$this->_set_items_number( $number );
+	}
+
 	/**
 	 * Apply macros by passed string
 	 *
@@ -360,16 +437,44 @@ abstract class Base_Query {
 
 			foreach ( $val as $key => $value ) {
 				if ( ! empty( $value ) ) {
-					$result[ $key ] = jet_engine()->listings->macros->do_macros( $value );
-					$this->parsed_macros[ $value ] = $result[ $key ];
+					if ( is_array( $value ) ) {
+						$result[ $this->nested_args_prefix . $key ] = $this->apply_macros( $value );
+					} else {
+						$result[ $key ] = jet_engine()->listings->macros->do_macros( $value );
+						$this->parsed_macros[ $value ] = $result[ $key ];
+					}
 				}
 			}
 
 			return $result;
-
 		} else {
 			$result = jet_engine()->listings->macros->do_macros( $val );
 			$this->parsed_macros[ $val ] = $result;
+
+			return $result;
+		}
+
+	}
+
+	public function ensure_raw_value( $val ) {
+
+		if ( is_array( $val ) ) {
+
+			$result = array();
+
+			foreach ( $val as $key => $value ) {
+				if ( ! empty( $value ) ) {
+					if ( is_array( $value ) ) {
+						$result[ $this->nested_args_prefix . $key ] = $this->ensure_raw_value( $value );
+					} else {
+						$result[ $key ] = $value;
+					}
+				}
+			}
+			
+			return $result;
+		} else {
+			$result = $val;
 
 			return $result;
 		}
@@ -532,7 +637,7 @@ abstract class Base_Query {
 	/**
 	 * Adds date range query arguments to given query parameters.
 	 * Required to allow ech query to ensure compatibility with Dynamic Calendar
-	 * 
+	 *
 	 * @param array $args [description]
 	 */
 	public function add_date_range_args( $args = array(), $dates_range = array(), $settings = array() ) {

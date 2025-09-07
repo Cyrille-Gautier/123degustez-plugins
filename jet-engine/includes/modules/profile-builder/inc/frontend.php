@@ -288,7 +288,12 @@ class Frontend {
 			return false;
 		}
 
-		$slug    = Module::instance()->query->get_queried_user_slug();
+		$slug = Module::instance()->query->get_queried_user_slug();
+
+		if ( empty( $slug ) ) {
+			return false;
+		}
+
 		$rewrite = Module::instance()->settings->get( 'user_page_rewrite', 'login' );
 		$rewrite = ( 'user_nicename' === $rewrite ) ? 'slug' : $rewrite;
 

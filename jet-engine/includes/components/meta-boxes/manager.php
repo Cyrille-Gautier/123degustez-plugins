@@ -37,7 +37,7 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes' ) ) {
 		/**
 		 * Meta fields for object
 		 *
-		 * @var null
+		 * @var null|array
 		 */
 		public $meta_fields = array();
 
@@ -458,13 +458,15 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes' ) ) {
 		 */
 		public function get_post_id() {
 
-			$post_id = isset( $_GET['post'] ) ? $_GET['post'] : false;
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended
+			$post_id = isset( $_GET['post'] ) ? absint( wp_unslash( $_GET['post'] ) ) : false;
 
 			if ( ! $post_id && isset( $_REQUEST['post_ID'] ) ) {
-				$post_id = $_REQUEST['post_ID'];
+				$post_id = absint( wp_unslash( $_REQUEST['post_ID'] ) );
 			}
 
 			return $post_id;
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		}
 
@@ -518,7 +520,7 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes' ) ) {
 		 *
 		 * @return [type] [description]
 		 */
-		public function get_fields_for_select( $context = 'plain', $where = 'elementor', $for = 'all' ) {
+		public function get_fields_for_select( $context = 'plain', $where = 'elementor', $for = 'all', $add_object_type_to_output = false ) {
 
 			$result = array();
 			$post_types = get_post_types( array(), 'objects' );
@@ -527,6 +529,7 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes' ) ) {
 			foreach ( $this->meta_fields as $object => $fields ) {
 
 				$group_label = false;
+				$group_for   = $for;
 
 				if ( isset( $post_types[ $object ] ) ) {
 
@@ -536,6 +539,8 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes' ) ) {
 
 					$group_label = $post_types[ $object ]->labels->name;
 
+					$group_for = 'post';
+
 				} elseif ( isset( $taxonomies[ $object ] ) ) {
 
 					if ( ! in_array( $for, array( 'all', 'taxonomies' ) ) ) {
@@ -544,6 +549,8 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes' ) ) {
 
 					$group_label = $taxonomies[ $object ]->labels->name;
 
+					$group_for = 'taxonomy';
+
 				} else {
 
 					if ( ! in_array( $for, array( 'all', 'user' ) ) ) {
@@ -551,6 +558,8 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes' ) ) {
 					}
 
 					$group_label = $object;
+
+					$group_for = 'user';
 				}
 
 				if ( ! $group_label ) {
@@ -669,17 +678,25 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes' ) ) {
 				}
 
 				if ( ! empty( $group ) ) {
+					$new_item = array();
+
 					if ( 'blocks' === $where ) {
-						$result[] = array(
+						$new_item = array(
 							'label'  => $group_label,
 							'values' => $blocks_group,
 						);
 					} else {
-						$result[] = array(
+						$new_item = array(
 							'label'   => $group_label,
 							'options' => $group,
 						);
 					}
+
+					if ( $add_object_type_to_output ) {
+						$new_item['for'] = $group_for;
+					}
+
+					$result[] = $new_item;
 				}
 
 			}

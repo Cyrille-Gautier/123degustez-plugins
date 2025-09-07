@@ -90,6 +90,75 @@ class Jet_Engine_Advanced_Date_Field_Data {
 		return get_post_meta( $post_id, $field, false );
 	}
 
+	public function get_date_pairs_cache_key( $post_id, $field ) {
+		return 'jet_engine_advanced_date_field_pairs_' . $post_id . '_' . $field;
+	}
+
+	/**
+	 * Returns date pairs for given advanced date field
+	 * (if date has no end date - 'end' element in array will be false)
+	 * 
+	 * @return array[] Array of date pairs. Each pair is an array with 'start' and 'end' keys.
+	 */
+	public function get_date_pairs( $post_id, $field ) {
+		global $wpdb;
+
+		$cached = wp_cache_get( $this->get_date_pairs_cache_key( $post_id, $field ), 'jet-engine' );
+
+		if ( ! empty( $cached ) ) {
+			return $cached;
+		}
+
+		$prefix = $wpdb->prefix;
+		$end_field = $this->end_date_field_name( $field );
+
+		$sql = "SELECT meta_key, meta_value 
+                FROM
+                {$prefix}postmeta
+                WHERE
+                post_id = %d
+                AND
+                meta_key IN ( %s, %s )
+                ORDER BY meta_id ASC";
+
+		$records =  $wpdb->get_results(
+			$wpdb->prepare(
+				$sql,
+				$post_id,
+				$field,
+				$end_field
+			), \ARRAY_A
+		);
+
+		$result = [];
+
+		foreach ( $records as $i => $record ) {
+			if ( $record['meta_key'] !== $field ) {
+				continue;
+			}
+
+			$next_record = isset( $records[ $i + 1 ] ) ? $records[ $i + 1 ] : false;
+
+			if ( ! $next_record || $next_record['meta_key'] !== $end_field ) {
+				$result[] = [
+					'start' => $record['meta_value'],
+					'end'   => false,
+				];
+
+				continue;
+			}
+
+			$result[] = [
+				'start' => $record['meta_value'],
+				'end'   => $next_record['meta_value'],
+			];
+		}
+
+		wp_cache_set( $this->get_date_pairs_cache_key( $post_id, $field ), $result, 'jet-engine', 1 );
+
+		return $result;
+	}
+
 	/**
 	 * Returns config subfield name for given advanced date field
 	 * 
@@ -160,6 +229,7 @@ class Jet_Engine_Advanced_Date_Field_Data {
 
 		delete_post_meta( $post_id, $field_name );
 		delete_post_meta( $post_id, $this->end_date_field_name( $field_name ) );
+		wp_cache_delete( $this->get_date_pairs_cache_key( $post_id, $field_name ), 'jet-engine' );
 
 		if ( ! empty( $update_field ) ) {
 
@@ -185,6 +255,7 @@ class Jet_Engine_Advanced_Date_Field_Data {
 
 		// process custom data if exists and return
 		if ( ! empty( $data['dates'] ) ) {
+
 			foreach ( $data['dates'] as $date_item ) {
 
 				if ( empty( $date_item['date'] ) ) {
@@ -207,13 +278,17 @@ class Jet_Engine_Advanced_Date_Field_Data {
 
 				if ( ! empty( $date_item['is_end_date'] ) ) {
 
-					$end_date_string = $date_item['end_date'];
+					$end_date_string = $date_item['end_date'] ?? '';
 
-					if ( ! empty( $date_item['end_time'] ) ) {
+					if ( ! empty( $end_date_string ) && ! empty( $date_item['end_time'] ) ) {
 						$end_date_string .= ' ' . $date_item['end_time'];
 					}
 
-					$end_date = strtotime( $end_date_string );
+					if ( ! empty( $end_date_string ) ) {
+						$end_date = strtotime( $end_date_string );
+					} else {
+						$end_date = '';
+					}
 
 					add_post_meta( $post_id, $this->end_date_field_name( $field_name ), $end_date, false );
 

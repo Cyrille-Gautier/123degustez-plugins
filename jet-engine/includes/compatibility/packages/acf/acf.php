@@ -233,7 +233,14 @@ if ( ! class_exists( 'Jet_Engine_ACF_Package' ) ) {
 			if ( 'options' === $field_id ) {
 				$field_object = get_field_object( $key, $field_id );
 			} elseif ( 'custom_meta' !== $field_id ) {
-				$field_object = get_field_object( $field_id, jet_engine()->listings->data->get_current_object() );
+				$object_context = ! empty( $settings['object_context'] ) ? $settings['object_context'] : false;
+				$object         = jet_engine()->listings->data->get_object_by_context( $object_context );
+
+				if ( ! $object ) {
+					$object = jet_engine()->listings->data->get_current_object();
+				}
+
+				$field_object   = get_field_object( $field_id, $object );
 			} else {
 				$field_object = false;
 			}
@@ -277,6 +284,15 @@ if ( ! class_exists( 'Jet_Engine_ACF_Package' ) ) {
 
 			if ( 'options' === $field_id ) {
 				$field_object = get_field_object( $key, $field_id );
+			} elseif ( 'custom_meta' !== $field_id ) {
+				$object_context = ! empty( $settings['object_context'] ) ? $settings['object_context'] : false;
+				$object         = jet_engine()->listings->data->get_object_by_context( $object_context );
+
+				if ( ! $object ) {
+					$object = jet_engine()->listings->data->get_current_object();
+				}
+
+				$field_object   = get_field_object( $field_id, $object );
 			} else {
 				$field_object = false;
 			}
@@ -284,7 +300,7 @@ if ( ! class_exists( 'Jet_Engine_ACF_Package' ) ) {
 			if ( $field_object ) {
 				$image = $field_object['value'];
 
-				if ( ! empty( $field_object['return_format'] ) ) {
+				if ( ! empty( $image ) && ! empty( $field_object['return_format'] ) ) {
 
 					switch ( $field_object['return_format'] ) {
 						case 'array':
@@ -835,13 +851,15 @@ if ( ! class_exists( 'Jet_Engine_ACF_Package' ) ) {
 
 		public function save_blocks_editor_settings( $post_id ) {
 
+			// phpcs:disable WordPress.Security.NonceVerification
 			if ( ! isset( $_POST['jet_engine_listing_link_acf_field_key'] ) ) {
 				return;
 			}
 
 			$elementor_page_settings = get_post_meta( $post_id, '_elementor_page_settings', true );
 
-			$elementor_page_settings['acf_field_key'] = esc_attr( $_POST[ 'jet_engine_listing_link_acf_field_key' ] );
+			$elementor_page_settings['acf_field_key'] = sanitize_text_field( wp_unslash( $_POST[ 'jet_engine_listing_link_acf_field_key' ] ) );
+			// phpcs:enable WordPress.Security.NonceVerification
 
 			update_post_meta( $post_id, '_elementor_page_settings', $elementor_page_settings );
 		}

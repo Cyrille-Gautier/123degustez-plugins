@@ -187,6 +187,12 @@ class Manager {
 	}
 
 	public function render_assets( $listing_id, $force = false ) {
+		$allow_render = apply_filters( 'jet-engine/bricks-views/listing/render-assets', true, $listing_id );
+
+		if ( ! $allow_render ) {
+			return;
+		}
+
 		if ( ! class_exists( '\Jet_Engine\Bricks_Views\Listing\Assets' ) ) {
 			require_once jet_engine()->bricks_views->component_path( 'listing/assets.php' );
 			new Assets();
@@ -203,7 +209,7 @@ class Manager {
 		$inline_css = Assets::generate_inline_css( $listing_id, $force );
 		$inline_css = Assets::minify_css( $inline_css );
 
-		printf( '<style>%s</style>', $inline_css );
+		printf( '<style>%s</style>', $inline_css ); // phpcs:ignore
 		Assets::jet_print_editor_fonts();
 	}
 

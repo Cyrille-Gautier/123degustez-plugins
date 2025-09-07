@@ -4,6 +4,13 @@ namespace Jet_Engine\Query_Builder\Query_Editor;
 abstract class Base_Query {
 
 	/**
+	 * Leave empty constructor in case of adding custom functionality in the future
+	 * to avoid break children classes, where constructor is not empty
+	 */
+	public function __construct() {
+	}
+
+	/**
 	 * Returns Vue component name for the Query editor for the current type.
 	 * @return [type] [description]
 	 */

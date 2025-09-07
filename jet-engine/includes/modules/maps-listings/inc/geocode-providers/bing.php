@@ -5,10 +5,14 @@ use Jet_Engine\Modules\Maps_Listings\Module;
 
 class Bing extends Base {
 
+	public function get_api_key( $for_geocoding = true ) {
+		return Module::instance()->settings->get( 'bing_key' );
+	}
+
 	public function build_api_url( $location = '' ) {
 
 		$api_url = 'https://dev.virtualearth.net/REST/v1/Locations/';
-		$api_key = Module::instance()->settings->get( 'bing_key' );
+		$api_key = $this->get_api_key();
 
 		// Do nothing if api key not provided
 		if ( ! $api_key ) {
@@ -31,7 +35,7 @@ class Bing extends Base {
 	public function build_reverse_api_url( $point = array() ) {
 		
 		$api_url = 'https://dev.virtualearth.net/REST/v1/Locations/';
-		$api_key = Module::instance()->settings->get( 'bing_key' );
+		$api_key = $this->get_api_key();
 
 		// Do nothing if api key not provided
 		if ( ! $api_key ) {
@@ -78,6 +82,11 @@ class Bing extends Base {
 	 * @return [type]       [description]
 	 */
 	public function extract_coordinates_from_response_data( $data = array() ) {
+
+		if ( $data['statusDescription'] !== 'OK' ) {
+			$this->save_error( $data, 'geocode' );
+			return false;
+		}
 
 		if ( empty( $data['resourceSets'][0]['resources'][0] ) ) {
 			return false;

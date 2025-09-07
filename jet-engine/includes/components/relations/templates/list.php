@@ -1,3 +1,6 @@
+<?php
+// phpcs:disable
+?>
 <div>
 	<cx-vui-list-table
 		:is-empty="! itemsList.length"

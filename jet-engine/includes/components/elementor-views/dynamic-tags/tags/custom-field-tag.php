@@ -54,12 +54,12 @@ class Jet_Engine_Custom_Field_Tag extends Elementor\Core\DynamicTags\Tag {
 		$value = jet_engine()->listings->data->get_meta( $meta_field );
 
 		if ( is_array( $value ) ) {
-			echo jet_engine_render_checkbox_values( $value );
+			// Escaped in jet_engine_render_checkbox_values()
+			echo jet_engine_render_checkbox_values( $value ); // phpcs:ignore
 			return $value;
 		}
 
 		echo wp_kses_post( $value );
-
 	}
 
 	private function get_meta_fields() {

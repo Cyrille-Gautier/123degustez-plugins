@@ -48,6 +48,7 @@ registerBlockType( 'jet-engine/dynamic-repeater', {
 			const attributes     = props.attributes;
 			const repeaterFields = window.JetEngineListingData.repeaterFields;
 			const optionsFields  = window.JetEngineListingData.repeaterOptionsFields;
+			const queriesList    = window.JetEngineListingData.queriesList;
 			const allowedContextList = window.JetEngineListingData.allowedContextList;
 
 			var object = window.JetEngineListingData.object_id;
@@ -94,6 +95,18 @@ registerBlockType( 'jet-engine/dynamic-repeater', {
 										props.setAttributes({
 											dynamic_field_option: newValue,
 										});
+									}}
+								/>
+							}
+
+							{
+								'je_query' === attributes.dynamic_field_source && 
+								<SelectControl
+									label={ __( 'Query ID' ) }
+									value={ attributes.je_query_id }
+									options={ queriesList }
+									onChange={ newValue => {
+										props.setAttributes({ je_query_id: newValue });
 									}}
 								/>
 							}

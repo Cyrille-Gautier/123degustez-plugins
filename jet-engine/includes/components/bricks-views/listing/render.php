@@ -73,14 +73,16 @@ class Render {
 	}
 
 	public function set_query_on_filters_ajax() {
-		$settings   = isset( $_REQUEST['settings'] ) ? $_REQUEST['settings'] : [];
+		$settings   = isset( $_REQUEST['settings'] ) ? $_REQUEST['settings'] : []; // phpcs:ignore
 		$listing_id = ! empty ( $settings['lisitng_id'] ) ? $settings['lisitng_id'] : 0;
+		$listing_id = absint( $listing_id );
 		$this->set_bricks_query( $listing_id, $settings );
 	}
 
 	public function set_query_on_listing_ajax( $ajax_handler, $request ) {
 		$settings   = $request['widget_settings'] ?? $request['settings'] ?? [];
 		$listing_id = ! empty ( $settings['lisitng_id'] ) ? $settings['lisitng_id'] : 0;
+		$listing_id = absint( $listing_id );
 		$this->set_bricks_query( $listing_id, $settings );
 	}
 
@@ -91,7 +93,7 @@ class Render {
 
 	public function destroy_bricks_query( $render ) {
 		$listing_id = $render->get_settings( 'lisitng_id' );
-		
+
 		if ( $listing_id ) {
 			$this->destroy_bricks_query_for_listing( $listing_id );
 		}
@@ -174,7 +176,6 @@ class Render {
 		}
 
 		ob_start();
-
 		jet_engine()->bricks_views->listing->render_assets( $listing_id, $is_component || $has_dynamic_value );
 		$result = ob_get_clean();
 

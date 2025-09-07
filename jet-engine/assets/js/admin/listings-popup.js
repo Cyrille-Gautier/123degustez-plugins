@@ -51,7 +51,7 @@
 		},
 
 		applyCustomOptions: function() {
-			
+
 			var $popup = $( '.jet-listings-popup' );
 
 			if ( window.JetListingsSettings.exclude ) {
@@ -67,7 +67,7 @@
 		},
 
 		ajaxSubmit: function( event ) {
-			
+
 			event.preventDefault();
 
 			var self = JetListings;
@@ -91,10 +91,10 @@
 			} ).done( function( response ) {
 
 				if ( response.success && self.editorControl ) {
-					
+
 					let options = self.editorControl.model.get( 'options' );
 					let listingID = response.data.id;
-					
+
 					options[ listingID ] = response.data.title;
 					self.editorControl.model.set( 'options', options );
 					self.editorControl.setValue( listingID );
@@ -111,7 +111,7 @@
 					} );
 
 				}
-				
+
 
 			} );
 
@@ -125,7 +125,7 @@
 		},
 
 		switchFieldsVisibility: function( $source ) {
-			
+
 			let val  = $source.find( 'option:selected' ).val();
 			let $row = $source.closest( '.jet-listings-popup__form-row' );
 
@@ -137,7 +137,7 @@
 
 			let $this    = $( this );
 			let formEl   = $this.closest( 'form' )[0];
-			
+
 			if ( window.JetPlugins ) {
 				formEl = window.JetPlugins.hooks.applyFilters( 'jetEngine.listing.formEl', formEl, $this );
 			}
@@ -248,15 +248,15 @@
 				$popup = $( '.jet-listings-popup' );
 			}
 
-			if ( $popup.hasClass( 'jet-listings-popup--new' ) 
-				|| $popup.hasClass( 'jet-listings-popup--keep-alive' ) 
+			if ( $popup.hasClass( 'jet-listings-popup--new' )
+				|| $popup.hasClass( 'jet-listings-popup--keep-alive' )
 			) {
 				$popup.removeClass( 'jet-listings-popup-active' );
 				window.history.pushState( "", document.title, window.location.pathname + window.location.search );
 			} else {
 				$popup.remove();
 			}
-			
+
 		}
 
 	};

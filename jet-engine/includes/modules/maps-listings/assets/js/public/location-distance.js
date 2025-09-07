@@ -14,6 +14,9 @@
 			$locationInput = null;
 			$locationDropdown = null;
 			$distanceInput = null;
+			xhr = false;
+			debounced = false;
+			minAutocompleteRequest = 3;
 
 			constructor( $container ) {
 				
@@ -62,7 +65,10 @@
 						this.switchLocate( true );
 					}
 
-					if ( 3 > event.target.value.length ) {
+					let minAutocompleteRequest = parseInt( this.minAutocompleteRequest );
+					minAutocompleteRequest = isFinite( minAutocompleteRequest ) ? minAutocompleteRequest : 3;
+
+					if ( minAutocompleteRequest > event.target.value.length ) {
 						this.clearDropdown();
 						return;
 					}
@@ -77,30 +83,15 @@
 						return;
 					}
 
-					$.ajax({
-						url: window.JetMapListingLocationDistanceFilterData.apiAutocomplete,
-						type: 'GET',
-						dataType: 'json',
-						data: { query: event.target.value },
-					}).done( ( response ) => {
+					if ( this.debounced ) {
+						clearTimeout( this.debounced );
+					}
 
-						this.clearDropdown();
-
-						if ( ! response || ! response.success ) {
-							return;
-						}
-
-						this.$locationDropdown.addClass( 'is-active' );
-
-						for ( var i = 0; i < response.data.length; i++ ) {
-							this.$locationDropdown.append( 
-								'<div class="jsf-location-distance__location-dropdown-item" data-address="' + response.data[ i ].address + '">'
-								+ response.data[ i ].address + 
-								'</div>'
-							);
-						}
-
-					});
+					this.debounced = setTimeout(
+						this.fillAddressDropdown.bind( this ),
+						200,
+						event.target.value
+					);
 					
 				} );
 
@@ -155,6 +146,37 @@
 
 				} );
 
+			}
+
+			fillAddressDropdown( query ) {
+				if ( this.xhr ) {
+					this.xhr.abort();
+				}
+
+				this.xhr = $.ajax({
+					url: window.JetMapListingLocationDistanceFilterData.apiAutocomplete,
+					type: 'GET',
+					dataType: 'json',
+					data: { query: query },
+				}).done( ( response ) => {
+
+					this.clearDropdown();
+
+					if ( ! response || ! response.success ) {
+						return;
+					}
+
+					this.$locationDropdown.addClass( 'is-active' );
+
+					for ( var i = 0; i < response.data.length; i++ ) {
+						this.$locationDropdown.append( 
+							'<div class="jsf-location-distance__location-dropdown-item" data-address="' + response.data[ i ].address + '">'
+							+ response.data[ i ].address + 
+							'</div>'
+						);
+					}
+
+				});
 			}
 
 			maybeApplyFilter() {

@@ -40,11 +40,11 @@ if ( ! class_exists( 'Jet_Engine_CPT_User_Meta' ) ) {
 			$this->fields = $fields;
 
 			if ( ! empty( $this->show_in_rest ) ) {
-				
+
 				if ( ! class_exists( 'Jet_Engine_Rest_User_Meta' ) ) {
 					require jet_engine()->meta_boxes->component_path( 'rest-api/fields/user-meta.php' );
 				}
-				
+
 				foreach ( $this->show_in_rest as $field ) {
 					new Jet_Engine_Rest_User_Meta( $field, null );
 				}
@@ -68,6 +68,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_User_Meta' ) ) {
 		 */
 		public function get_user_id() {
 
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended
 			global $current_screen;
 
 			if ( $current_screen && 'user-edit' === $current_screen->base ) {
@@ -77,6 +78,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_User_Meta' ) ) {
 			} else {
 				$user_id = false;
 			}
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 			return apply_filters( 'jet-engine/user-meta/current-user-id', $user_id, $this );
 		}
@@ -151,8 +153,8 @@ if ( ! class_exists( 'Jet_Engine_CPT_User_Meta' ) ) {
 			$name = ! empty( $this->args['name'] ) ? esc_attr( $this->args['name'] ) : false;
 
 			if ( $this->edit_link ) {
-				$name .= sprintf( 
-					'<a href="%s" class="jet-engine-edit-box-link" target="_blank"><span class="dashicons dashicons-admin-generic"></span></a>', 
+				$name .= sprintf(
+					'<a href="%s" class="jet-engine-edit-box-link" target="_blank"><span class="dashicons dashicons-admin-generic"></span></a>',
 					$this->edit_link
 				);
 			}
@@ -284,7 +286,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_User_Meta' ) ) {
 
 		/**
 		 * Returns date converted from timestamp
-		 * 
+		 *
 		 * @return [type] [description]
 		 */
 		public function get_date( $format, $time ) {
@@ -435,6 +437,10 @@ if ( ! class_exists( 'Jet_Engine_CPT_User_Meta' ) ) {
 		 */
 		public function update_meta( $user_id ) {
 
+			if ( ! current_user_can( 'edit_user', $user_id ) || ! check_admin_referer( "update-user_{$user_id}" ) ) {
+				return;
+			}
+
 			/**
 			 * Hook on before current metabox saving
 			 */
@@ -469,7 +475,8 @@ if ( ! class_exists( 'Jet_Engine_CPT_User_Meta' ) ) {
 					continue;
 				}
 
-				$value = $this->sanitize_meta( $field, $_POST[ $key ] );
+				// Sanitized by sanitize_meta()
+				$value = $this->sanitize_meta( $field, wp_unslash( $_POST[ $key ] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 				do_action( 'jet-engine/user-meta/before-save/' . $key, $user_id, $value, $key, $this );
 

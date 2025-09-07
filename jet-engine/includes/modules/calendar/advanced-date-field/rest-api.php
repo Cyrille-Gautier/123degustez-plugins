@@ -14,9 +14,9 @@ class Jet_Engine_Advanced_Date_Field_Rest_API extends Jet_Engine_Advanced_Date_F
 
 		$this->field_type = $field_type;
 
-		add_filter( 
-			'jet-engine/meta-boxes/rest-api/fields/field-type', 
-			array( $this, 'prepare_rest_api_field_type' ), 
+		add_filter(
+			'jet-engine/meta-boxes/rest-api/fields/field-type',
+			array( $this, 'prepare_rest_api_field_type' ),
 			10, 2
 		);
 
@@ -30,7 +30,7 @@ class Jet_Engine_Advanced_Date_Field_Rest_API extends Jet_Engine_Advanced_Date_F
 
 	/**
 	 * Adjust field type for registering advanced date field in Rest API
-	 * 
+	 *
 	 * @param  [type] $type  [description]
 	 * @param  [type] $field [description]
 	 * @return [type]        [description]
@@ -47,7 +47,7 @@ class Jet_Engine_Advanced_Date_Field_Rest_API extends Jet_Engine_Advanced_Date_F
 
 	/**
 	 * Setup advanced date field schema for rest API
-	 * 
+	 *
 	 * @param  [type] $schema     [description]
 	 * @param  [type] $field_type [description]
 	 * @param  [type] $field      [description]
@@ -59,13 +59,13 @@ class Jet_Engine_Advanced_Date_Field_Rest_API extends Jet_Engine_Advanced_Date_F
 			return $schema;
 		}
 
-		$schema = array( 
+		$schema = array(
 			'type'             => 'object',
 			'properties'       => array(
-				'rrule' => array( 
+				'rrule' => array(
 					'type' => 'string'
 				),
-				'dates' => array( 
+				'dates' => array(
 					'type'  => 'array',
 					'items' => array(
 						'type' => 'object',
@@ -77,7 +77,7 @@ class Jet_Engine_Advanced_Date_Field_Rest_API extends Jet_Engine_Advanced_Date_F
 				),
 			),
 			'prepare_callback' => function( $value, $request, $args ) {
-				
+
 				global $post;
 
 				$result = array( 'rrule' => '', 'dates' => [] );
@@ -142,88 +142,16 @@ class Jet_Engine_Advanced_Date_Field_Rest_API extends Jet_Engine_Advanced_Date_F
 
 	public function generate_rrule_from_config( $config ) {
 
-		$result = [];
-
 		if ( ! $config ) {
 			return null;
 		}
 
-		$result[] = 'DTSTART:' . $this->prepare_date_for_rrule( $config->date );
-
-		if ( $config && ! empty( $config->is_end_date ) && $config->end_date ) {
-			$result[] = 'DTEND:' . $this->prepare_date_for_rrule( $config->end_date );
+		if ( ! class_exists( 'Jet_Engine_Advanced_Date_Recurring_Dates' ) ) {
+			require_once jet_engine()->plugin_path( 'includes/modules/calendar/advanced-date-field/recurring-dates.php' );
 		}
 
-		if ( ! empty( $config->is_recurring ) ) {
+		$recurring_dates = new Jet_Engine_Advanced_Date_Recurring_Dates( (array) $config );
 
-			if ( ! class_exists( 'Jet_Engine_Advanced_Date_Recurring_Dates' ) ) {
-				require_once jet_engine()->plugin_path( 'includes/modules/calendar/advanced-date-field/recurring-dates.php' );
-			}
-
-			$recurring_dates = new Jet_Engine_Advanced_Date_Recurring_Dates( (array) $config );
-
-			$rrule = [];
-
-			$rrule[] = 'FREQ=' . strtoupper( $config->recurring );
-			$rrule[] = 'INTERVAL=' . $config->recurring_period;
-
-			switch ( $config->recurring ) {
-
-				case 'weekly':
-
-					$days = [];
-
-					foreach ( $config->week_days as $day ) {
-						$days[] = $recurring_dates->get_shorten_weekday( $day );
-					}
-
-					$rrule[] = 'BYDAY=' . implode( ',', $days );
-
-					break;
-
-				case 'monthly':
-				case 'yearly':
-
-					$days = [];
-
-					if ( 'day' === $config->month_day_type_value ) {
-						for ( $i = 1; $i <= 7; $i++ ) {
-							$days[] = $recurring_dates->get_shorten_weekday( $i );
-						}
-					} else {
-						$days[] = $recurring_dates->get_shorten_weekday( $config->month_day_type_value );
-					}
-
-					if ( 'on_day_type' === $config->monthly_type ) {
-						$rrule[] = 'BYSETPOS=' . $recurring_dates->date_type_to_num( $config->month_day_type ) . ';BYDAY=' . implode( ',',  $days );
-					} else {
-						$rrule[] = 'BYMONTHDAY=' . $config->month_day;
-					}
-
-					if ( 'yearly' === $config->recurring ) {
-						$rrule[] = 'BYMONTH=' . $config->month;
-					}
-
-					break;
-
-				
-			}
-			
-			if ( 'on_date' === $config->end ) {
-				$rrule[] = 'UNTIL:' . $this->prepare_date_for_rrule( $config->end_after_date );
-			} else {
-				$rrule[] = 'COUNT:' . $config->end_after;
-			}
-
-			$result[] = 'RRULE:' . implode( ';', $rrule );
-		}
-
-		return implode( ';', $result );
-
+		return $recurring_dates->generate_rrule();
 	}
-
-	public function prepare_date_for_rrule( $date ) {
-		return date( 'Ymd', strtotime( $date) ) . 'T000000Z';
-	}
-
 }

@@ -173,7 +173,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Meta' ) ) {
 			$link = ! empty( $settings['date_link'] ) ? esc_attr( $settings['date_link'] ) : 'archive';
 
 			if ( 'no-link' === $link ) {
-				printf( '<span class="%1$s__item-val">%2$s</span>', $this->get_name(), $date );
+				printf( '<span class="%1$s__item-val">%2$s</span>', esc_attr( $this->get_name() ), wp_kses_post( $date ) );
 			} else {
 
 				if ( 'archive' === $link ) {
@@ -182,7 +182,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Meta' ) ) {
 					$url = get_permalink();
 				}
 
-				printf( '<a href="%3$s" class="%1$s__item-val">%2$s</a>', $this->get_name(), $date, $url );
+				printf( '<a href="%3$s" class="%1$s__item-val">%2$s</a>', esc_attr( $this->get_name() ), wp_kses_post( $date ), esc_url( $url ) );
 			}
 
 			$this->render_suffix( $item );
@@ -224,10 +224,10 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Meta' ) ) {
 			}
 
 			if ( 'no-link' === $link ) {
-				printf( '<span class="%1$s__item-val">%2$s</span>', $this->get_name(), $result );
+				printf( '<span class="%1$s__item-val">%2$s</span>', $this->get_name(), $result ); // phpcs:ignore
 			} else {
 				$url = get_comments_link();
-				printf( '<a href="%3$s" class="%1$s__item-val">%2$s</a>', $this->get_name(), $result, $url );
+				printf( '<a href="%3$s" class="%1$s__item-val">%2$s</a>', $this->get_name(), $result, esc_url( $url ) ); // phpcs:ignore
 			}
 
 			$this->render_suffix( $item );
@@ -268,7 +268,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Meta' ) ) {
 			}
 
 			if ( 'no-link' === $link ) {
-				printf( '<span class="%1$s__item-val">%2$s</span>', $this->get_name(), $author );
+				printf( '<span class="%1$s__item-val">%2$s</span>', $this->get_name(), wp_kses_post( $author ) ); // phpcs:ignore
 			} else {
 
 				if ( 'archive' === $link ) {
@@ -278,7 +278,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Meta' ) ) {
 					$url = get_permalink();
 				}
 
-				printf( '<a href="%3$s" class="%1$s__item-val">%2$s</a>', $this->get_name(), $author, $url );
+				printf( '<a href="%3$s" class="%1$s__item-val">%2$s</a>', $this->get_name(), wp_kses_post( $author ), esc_url( $url ) ); // phpcs:ignore
 			}
 
 			$this->render_suffix( $item );
@@ -296,8 +296,8 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Meta' ) ) {
 		public function open_item_wrap( $meta_name ) {
 			printf(
 				'<div class="%1$s__%2$s %1$s__item">',
-				$this->get_name(),
-				$meta_name
+				$this->get_name(), // phpcs:ignore
+				esc_attr( $meta_name )
 			);
 		}
 
@@ -327,8 +327,8 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Meta' ) ) {
 
 			printf(
 				'<span class="%2$s__prefix">%1$s</span>',
-				$prefix,
-				$this->get_name()
+				wp_kses_post( $prefix ),
+				$this->get_name() // phpcs:ignore
 			);
 		}
 
@@ -348,8 +348,8 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Meta' ) ) {
 
 			printf(
 				'<span class="%2$s__suffix">%1$s</span>',
-				$suffix,
-				$this->get_name()
+				wp_kses_post( $suffix ),
+				$this->get_name() // phpcs:ignore
 			);
 		}
 
@@ -366,12 +366,13 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Meta' ) ) {
 			$new_icon_html = \Jet_Engine_Tools::render_icon( $new_icon, $this->get_name() . '__icon' );
 
 			if ( $new_icon_html ) {
-				echo $new_icon_html;
+				// Escaped by \Jet_Engine_Tools::render_icon
+				echo $new_icon_html; // phpcs:ignore
 			} elseif ( $icon ) {
 				printf(
 					'<i class="%1$s %2$s__icon"></i>',
-					$icon,
-					$this->get_name()
+					esc_attr( $icon ),
+					$this->get_name() // phpcs:ignore
 				);
 			}
 
@@ -381,7 +382,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Meta' ) ) {
 		 * Show notice if source is terms
 		 */
 		public function wrong_source_notice() {
-			_e( 'Dynamic Meta widget allowed only for Posts listing source or in Post context', 'jet-engine' );
+			esc_html_e( 'Dynamic Meta widget allowed only for Posts listing source or in Post context', 'jet-engine' );
 		}
 
 		public function render() {
@@ -400,7 +401,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Meta' ) ) {
 				$classes[] = esc_attr( $settings['className'] );
 			}
 
-			printf( '<div class="%1$s">', implode( ' ', $classes ) );
+			printf( '<div class="%1$s">', esc_attr( implode( ' ', $classes ) ) );
 
 				do_action( 'jet-engine/listing/dynamic-terms/before-terms', $this );
 
@@ -409,9 +410,6 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Meta' ) ) {
 				do_action( 'jet-engine/listing/dynamic-terms/after-terms', $this );
 
 			echo '</div>';
-
 		}
-
 	}
-
 }

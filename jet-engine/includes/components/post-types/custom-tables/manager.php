@@ -168,7 +168,7 @@ class Manager {
 	 */
 	public function register_storage( $object_type = 'post', $object_slug = '', $fields = [] ) {
 
-		$fields_data = $this->prepare_fields( $fields );
+		$fields_data = $this->prepare_fields( $fields, $object_slug );
 
 		$this->storages[] = apply_filters( 'jet-engine/custom-meta-tables/storage-data', [
 			'object_type' => $object_type,
@@ -185,7 +185,7 @@ class Manager {
 	 * @param  array  $fields [description]
 	 * @return array  $prepared_fields        [description]
 	 */
-	public function prepare_fields( $fields = [] ) {
+	public function prepare_fields( $fields = [], $object_slug = '' ) {
 
 		$prepared_fields = [
 			'as_columns' => [],
@@ -212,7 +212,7 @@ class Manager {
 			}
 		}
 
-		$prepared_fields = apply_filters( 'jet-engine/custom-meta-tables/prepared_fields', $prepared_fields );
+		$prepared_fields = apply_filters( 'jet-engine/custom-meta-tables/prepared_fields', $prepared_fields, $object_slug );
 
 		$prepared_fields['as_columns'] = array_unique( $prepared_fields['as_columns'], SORT_STRING );
 

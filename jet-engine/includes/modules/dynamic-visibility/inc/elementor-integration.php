@@ -22,7 +22,7 @@ class Elementor_Integration extends Condition_Checker {
 		if ( ! jet_engine()->has_elementor() ) {
 			return;
 		}
-		
+
 		require jet_engine()->modules->modules_path( 'dynamic-visibility/inc/elementor-settings.php' );
 		new Settings();
 
@@ -82,6 +82,10 @@ class Elementor_Integration extends Condition_Checker {
 				if ( $is_inline_css_mode && ! in_array( $element->get_name(), $element::$registered_inline_css_widgets ) ) {
 					$this->need_unregistered_inline_css_widget = true;
 				}
+			}
+
+			if ( is_callable( array( $element, 'jet_on_hide' ) ) ) {
+				$element->jet_on_hide();
 			}
 
 			$this->hidden_elements_ids[] = $element->get_id();

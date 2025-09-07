@@ -27,6 +27,7 @@ class Settings {
 			wp_send_json_error( array( 'message' => __( 'Access denied', 'jet-engine' ) ) );
 		}
 
+		//phpcs:ignore
 		$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false;
 
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->nonce_key ) ) {
@@ -60,12 +61,14 @@ class Settings {
 			wp_send_json_error( array( 'message' => __( 'Access denied', 'jet-engine' ) ) );
 		}
 
+		//phpcs:ignore
 		$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false;
 
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->nonce_key ) ) {
 			wp_send_json_error( array( 'message' => __( 'Nonce validation failed', 'jet-engine' ) ) );
 		}
 
+		//phpcs:ignore
 		$item    = ! empty( $_REQUEST['item'] ) ? $_REQUEST['item'] : array();
 		$item_id = ! empty( $_REQUEST['item_id'] ) ? absint( $_REQUEST['item_id'] ) : false;
 
@@ -113,12 +116,14 @@ class Settings {
 			wp_send_json_error( array( 'message' => __( 'Access denied', 'jet-engine' ) ) );
 		}
 
+		//phpcs:ignore
 		$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false;
 
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->nonce_key ) ) {
 			wp_send_json_error( array( 'message' => __( 'Nonce validation failed', 'jet-engine' ) ) );
 		}
 
+		//phpcs:ignore
 		$orders = ! empty( $_REQUEST['orders'] ) ? $_REQUEST['orders'] : array();
 		$done   = update_option( $this->order_option_name, $orders );
 
@@ -140,12 +145,14 @@ class Settings {
 			wp_send_json_error( array( 'message' => __( 'Access denied', 'jet-engine' ) ) );
 		}
 
+		//phpcs:ignore
 		$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false;
 
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->nonce_key ) ) {
 			wp_send_json_error( array( 'message' => __( 'Nonce validation failed', 'jet-engine' ) ) );
 		}
 
+		//phpcs:ignore
 		$item   = ! empty( $_REQUEST['item'] ) ? $_REQUEST['item'] : array();
 		$fields = jet_engine()->glossaries->data->get_fields_from_file( $item );
 
@@ -252,8 +259,8 @@ class Settings {
 										<div class="cx-vui-repeater-item__clean" @click="deleteID = item.id">
 											<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="16" transform="matrix(1 0 0 -1 0 16)" fill="white"></rect><path d="M2.28564 14.192V3.42847H13.7142V14.192C13.7142 14.6685 13.5208 15.0889 13.1339 15.4533C12.747 15.8177 12.3005 15.9999 11.7946 15.9999H4.20529C3.69934 15.9999 3.25291 15.8177 2.866 15.4533C2.4791 15.0889 2.28564 14.6685 2.28564 14.192Z"></path><path d="M14.8571 1.14286V2.28571H1.14282V1.14286H4.57139L5.56085 0H10.4391L11.4285 1.14286H14.8571Z"></path></svg>
 											<div class="cx-vui-tooltip" v-if="deleteID === item.id">
-												<?php _e( 'Are you sure?', 'jet-engine' ); ?>
-												<br><span class="cx-vui-repeater-item__confrim-del" @click.stop="deleteItem( item.id, index )"><?php _e( 'Yes', 'jet-engine' ); ?></span>&nbsp;/&nbsp;<span class="cx-vui-repeater-item__cancel-del" @click.stop="deleteID = false"><?php _e( 'No', 'jet-engine' ); ?></span>
+												<?php esc_html_e( 'Are you sure?', 'jet-engine' ); ?>
+												<br><span class="cx-vui-repeater-item__confrim-del" @click.stop="deleteItem( item.id, index )"><?php esc_html_e( 'Yes', 'jet-engine' ); ?></span>&nbsp;/&nbsp;<span class="cx-vui-repeater-item__cancel-del" @click.stop="deleteID = false"><?php esc_html_e( 'No', 'jet-engine' ); ?></span>
 											</div>
 										</div>
 									</div>
@@ -273,7 +280,7 @@ class Settings {
 							>
 								<span
 									slot="label"
-									v-html="'<?php _e( '+ New Glossary', 'jet-engine' ); ?>'"
+									v-html="'<?php esc_attr_e( '+ New Glossary', 'jet-engine' ); ?>'"
 								></span>
 							</cx-vui-button>
 						</div>
@@ -291,40 +298,40 @@ class Settings {
 				>
 					<span
 						slot="label"
-					><?php _e( 'Select file', 'jet-engine' ); ?></span>
+					><?php esc_attr_e( 'Select file', 'jet-engine' ); ?></span>
 				</cx-vui-button>
 			</div>
 		</script>
 		<script type="text/x-template" id="jet_engine_glossary">
 			<div>
 				<cx-vui-input
-					label="<?php _e( 'Name', 'jet-engine' ); ?>"
-					description="<?php _e( 'Human-readable name for the glossary', 'jet-engine' ); ?>"
+					label="<?php esc_attr_e( 'Name', 'jet-engine' ); ?>"
+					description="<?php esc_attr_e( 'Human-readable name for the glossary', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					size="fullwidth"
 					v-model="settings.name"
 				></cx-vui-input>
 				<cx-vui-select
-					label="<?php _e( 'Data Source', 'jet-engine' ); ?>"
-					description="<?php _e( 'The way to get the data for glossary', 'jet-engine' ); ?>"
+					label="<?php esc_attr_e( 'Data Source', 'jet-engine' ); ?>"
+					description="<?php esc_attr_e( 'The way to get the data for glossary', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					size="fullwidth"
 					v-model="settings.source"
 					:options-list="[
 						{
 							value: 'manual',
-							label: '<?php _e( 'Set items manually', 'jet-engine' ); ?>'
+							label: '<?php esc_html_e( 'Set items manually', 'jet-engine' ); ?>'
 						},
 						{
 							value: 'file',
-							label: '<?php _e( 'Get items from uploaded file', 'jet-engine' ); ?>'
+							label: '<?php esc_html_e( 'Get items from uploaded file', 'jet-engine' ); ?>'
 						},
 					]"
 				>
 				</cx-vui-select>
 				<cx-vui-component-wrapper
-					label="<?php _e( 'File to Get Data From', 'jet-engine' ); ?>"
-					description="<?php _e( 'Select file from the media library to get data from. At the moment supports only JSON or CSV files', 'jet-engine' ); ?>"
+					label="<?php esc_attr_e( 'File to Get Data From', 'jet-engine' ); ?>"
+					description="<?php esc_attr_e( 'Select file from the media library to get data from. At the moment supports only JSON or CSV files', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					size="fullwidth"
 					v-if="'file' === settings.source"
@@ -334,24 +341,24 @@ class Settings {
 					></jet-engine-media>
 				</cx-vui-component-wrapper>
 				<cx-vui-input
-					label="<?php _e( 'Value Column', 'jet-engine' ); ?>"
-					description="<?php _e( 'Get value from the column (or key for JSON objects). Leave empty to detect automatically. <b>Please note:</b> columns names are case-sensitive.', 'jet-engine' ); ?>"
+					label="<?php esc_attr_e( 'Value Column', 'jet-engine' ); ?>"
+					description="<?php esc_attr_e( 'Get value from the column (or key for JSON objects). Leave empty to detect automatically. <b>Please note:</b> columns names are case-sensitive.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					size="fullwidth"
 					v-if="'file' === settings.source"
 					v-model="settings.value_col"
 				></cx-vui-input>
 				<cx-vui-input
-					label="<?php _e( 'Label Column', 'jet-engine' ); ?>"
-					description="<?php _e( 'Get label from the column (or key for JSON objects). Leave empty to detect automatically. <b>Please note:</b> columns names are case-sensitive.', 'jet-engine' ); ?>"
+					label="<?php esc_attr_e( 'Label Column', 'jet-engine' ); ?>"
+					description="<?php esc_attr_e( 'Get label from the column (or key for JSON objects). Leave empty to detect automatically. <b>Please note:</b> columns names are case-sensitive.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					size="fullwidth"
 					v-if="'file' === settings.source"
 					v-model="settings.label_col"
 				></cx-vui-input>
 				<cx-vui-component-wrapper
-					label="<?php _e( 'Convert to Manual Source', 'jet-engine' ); ?>"
-					description="<?php _e( 'Convert to manual source to be able to edit the glossary fields.<br> <b>Please note:</b> save settings after converting.', 'jet-engine' ); ?>"
+					label="<?php esc_attr_e( 'Convert to Manual Source', 'jet-engine' ); ?>"
+					description="<?php esc_attr_e( 'Convert to manual source to be able to edit the glossary fields.<br> <b>Please note:</b> save settings after converting.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					v-if="'file' === settings.source && settings.source_file && settings.source_file.id"
 				>
@@ -364,7 +371,7 @@ class Settings {
 					>
 						<span
 							slot="label"
-							v-html="'<?php _e( 'Convert', 'jet-engine' ); ?>'"
+							v-html="'<?php esc_attr_e( 'Convert', 'jet-engine' ); ?>'"
 						></span>
 					</cx-vui-button>
 				</cx-vui-component-wrapper>
@@ -374,7 +381,7 @@ class Settings {
 				>
 					<div class="cx-vui-inner-panel">
 						<cx-vui-repeater
-							:button-label="'<?php _e( 'New field', 'jet-engine' ); ?>'"
+							:button-label="'<?php esc_attr_e( 'New field', 'jet-engine' ); ?>'"
 							:button-style="'accent'"
 							:button-size="'mini'"
 							v-model="settings.fields"
@@ -393,8 +400,8 @@ class Settings {
 								:key="'field' + fieldIndex"
 							>
 								<cx-vui-input
-									:label="'<?php _e( 'Field Value', 'jet-engine' ); ?>'"
-									:description="'<?php _e( 'This value will be saved into Database', 'jet-engine' ); ?>'"
+									:label="'<?php esc_attr_e( 'Field Value', 'jet-engine' ); ?>'"
+									:description="'<?php esc_attr_e( 'This value will be saved into Database', 'jet-engine' ); ?>'"
 									:wrapper-css="[ 'equalwidth' ]"
 									:size="'fullwidth'"
 									:value="settings.fields[ fieldIndex ].value"
@@ -404,7 +411,7 @@ class Settings {
 										type="warning"
 										:value="isInvalidValue( settings.fields[ fieldIndex ].value )"
 									><?php
-										_e( 'It is recommended that all values contain only lowercase Latin 
+										esc_html_e( 'It is recommended that all values contain only lowercase Latin 
 											letters and numbers, without spaces and special characters for better 
 											compatibility with forms, filters and queries. Use hyphens and 
 											underscores to separate words. But if everything is working fine for 
@@ -412,16 +419,16 @@ class Settings {
 									?></cx-vui-alert>
 								</cx-vui-input>
 								<cx-vui-input
-									:label="'<?php _e( 'Field Label', 'jet-engine' ); ?>'"
-									:description="'<?php _e( 'This will be shown for the user', 'jet-engine' ); ?>'"
+									:label="'<?php esc_attr_e( 'Field Label', 'jet-engine' ); ?>'"
+									:description="'<?php esc_attr_e( 'This will be shown for the user', 'jet-engine' ); ?>'"
 									:wrapper-css="[ 'equalwidth' ]"
 									:size="'fullwidth'"
 									:value="settings.fields[ fieldIndex ].label"
 									@input="setFieldProp( fieldIndex, 'label', $event )"
 								></cx-vui-input>
 								<cx-vui-switcher
-									label="<?php _e( 'Is checked (selected)', 'jet-engine' ); ?>"
-									description="<?php _e( 'Check this to make this field checked or selected by default.', 'jet-engine' ); ?>"
+									label="<?php esc_attr_e( 'Is checked (selected)', 'jet-engine' ); ?>"
+									description="<?php esc_attr_e( 'Check this to make this field checked or selected by default.', 'jet-engine' ); ?>"
 									:wrapper-css="[ 'equalwidth' ]"
 									:value="settings.fields[ fieldIndex ].is_checked"
 									@input="setFieldProp( fieldIndex, 'is_checked', $event )"
@@ -576,7 +583,7 @@ class Settings {
 		?>
 		<cx-vui-tabs-panel
 			name="glossaries"
-			label="<?php _e( 'Glossaries', 'jet-engine' ); ?>"
+			label="<?php esc_attr_e( 'Glossaries', 'jet-engine' ); ?>"
 			key="glossaries"
 		>
 			<keep-alive>

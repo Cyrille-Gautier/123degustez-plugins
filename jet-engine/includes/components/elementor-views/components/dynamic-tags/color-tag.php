@@ -50,7 +50,10 @@ class Color_Tag extends \Elementor\Core\DynamicTags\Tag {
 			return;
 		}
 
-		printf( 'var(%1$s%2$s)', Component::css_var_prefix(), $control_name );
-
+		printf(
+			'var(%1$s%2$s)',
+			esc_attr( Component::css_var_prefix() ),
+			esc_attr( $control_name )
+		);
 	}
 }

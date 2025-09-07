@@ -91,9 +91,9 @@ if ( ! class_exists( 'Jet_Engine_WCFM_Package' ) ) {
 				$icon = ! empty( $args['wcfm_icon'] ) ? $args['wcfm_icon'] : 'fa-cogs';
 
 				?>
-				<div class="page_collapsible" id="<?php echo $id; ?>">
-					<label class="wcfmfa <?php echo $icon; ?>"></label>
-					<?php echo $name; ?><span></span>
+				<div class="page_collapsible" id="<?php echo esc_attr( $id ); ?>">
+					<label class="wcfmfa <?php echo esc_attr( $icon ); ?>"></label>
+					<?php echo wp_kses_post( $name ); ?><span></span>
 				</div>
 				<div class="wcfm-container wcfm_marketplace_store_settings">
 					<div class="wcfm-content"><?php
@@ -204,9 +204,9 @@ if ( ! class_exists( 'Jet_Engine_WCFM_Package' ) ) {
 						value: 'wcfm',
 					}
 				]"
-				label='<?php _e( 'Note:', 'jet-engine' ); ?>'
+				label='<?php esc_html_e( 'Note:', 'jet-engine' ); ?>'
 				description='<?php
-					_e( 'This option will add created field as new tab into WCFM marketplace front-end settings. Fields will be added using WCFM UI, thats why some restrictions are exists: <ul><li>- WCFM supports only Field Object Type</li><li>- Repeater, Switcher, Iconpicker, Gallery and Posts fields are not supported</li></ul>', 'jet-engine' );
+					esc_html_e( 'This option will add created field as new tab into WCFM marketplace front-end settings. Fields will be added using WCFM UI, thats why some restrictions are exists: <ul><li>- WCFM supports only Field Object Type</li><li>- Repeater, Switcher, Iconpicker, Gallery and Posts fields are not supported</li></ul>', 'jet-engine' );
 				?>'
 			></cx-vui-component-wrapper>
 			</cx-vui-repeater-item>
@@ -218,32 +218,32 @@ if ( ! class_exists( 'Jet_Engine_WCFM_Package' ) ) {
 						value: 'wcfm',
 					}
 				]"
-				:label="'<?php _e( 'Custom tab position', 'jet-engine' ); ?>'"
-				:description="'<?php _e( 'Select where you want to add custom marketplace settings tab', 'jet-engine' ); ?>'"
+				:label="'<?php esc_html_e( 'Custom tab position', 'jet-engine' ); ?>'"
+				:description="'<?php esc_html_e( 'Select where you want to add custom marketplace settings tab', 'jet-engine' ); ?>'"
 				:options-list="[
 					{
 						value: 'wcfm_vendor_settings_after_location',
-						label: '<?php _e( 'After location', 'jet-engine' ); ?>',
+						label: '<?php esc_html_e( 'After location', 'jet-engine' ); ?>',
 					},
 					{
 						value: 'wcfm_vendor_settings_after_payment',
-						label: '<?php _e( 'After payment', 'jet-engine' ); ?>',
+						label: '<?php esc_html_e( 'After payment', 'jet-engine' ); ?>',
 					},
 					{
 						value: 'wcfm_vendor_settings_after_shipping',
-						label: '<?php _e( 'After shipping', 'jet-engine' ); ?>',
+						label: '<?php esc_html_e( 'After shipping', 'jet-engine' ); ?>',
 					},
 					{
 						value: 'wcfm_vendor_settings_after_seo',
-						label: '<?php _e( 'After SEO', 'jet-engine' ); ?>',
+						label: '<?php esc_html_e( 'After SEO', 'jet-engine' ); ?>',
 					},
 					{
 						value: 'wcfm_vendor_settings_after_customer_support',
-						label: '<?php _e( 'After customer support', 'jet-engine' ); ?>',
+						label: '<?php esc_html_e( 'After customer support', 'jet-engine' ); ?>',
 					},
 					{
 						value: 'end_wcfm_marketplace_settings',
-						label: '<?php _e( 'After all', 'jet-engine' ); ?>',
+						label: '<?php esc_html_e( 'After all', 'jet-engine' ); ?>',
 					},
 				]"
 				:wrapper-css="[ 'equalwidth' ]"

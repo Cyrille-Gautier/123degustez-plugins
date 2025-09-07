@@ -132,6 +132,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views' ) ) {
 		 */
 		public function inject_listing_settings( $template_data ) {
 
+			// phpcs:disable WordPress.Security.NonceVerification
 			if ( empty( $_REQUEST['listing_view_type'] ) || 'blocks' !== $_REQUEST['listing_view_type'] ) {
 				return $template_data;
 			}
@@ -139,6 +140,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views' ) ) {
 			if ( ! isset( $_REQUEST['listing_source'] ) ) {
 				return $template_data;
 			}
+			// phpcs:enable WordPress.Security.NonceVerification
 
 			return $template_data;
 

@@ -77,7 +77,7 @@ if ( ! class_exists( 'Jet_Engine_Seo_Package' ) ) {
 			?>
 			<cx-vui-tabs-panel
 				name="seo_settings"
-				label="<?php _e( 'SEO', 'jet-engine' ); ?>"
+				label="<?php esc_html_e( 'SEO', 'jet-engine' ); ?>"
 				key="seo_settings"
 			>
 				<keep-alive>
@@ -133,8 +133,8 @@ if ( ! class_exists( 'Jet_Engine_Seo_Package' ) ) {
 			<script type="text/x-template" id="jet_engine_seo_settings">
 				<div>
 					<cx-vui-component-wrapper
-						label="<?php _e( 'Fields to parse', 'jet-engine' ); ?>"
-						description="<?php _e( 'Select meta fields you want to be parsed by SEO plugins ( Rank Math, Yoast or SEOPress )', 'jet-engine' ); ?>"
+						label="<?php esc_html_e( 'Fields to parse', 'jet-engine' ); ?>"
+						description="<?php esc_html_e( 'Select meta fields you want to be parsed by SEO plugins ( Rank Math, Yoast or SEOPress )', 'jet-engine' ); ?>"
 						:wrapper-css="[ 'vertical-fullwidth' ]"
 					>
 						<div class="cx-vui-inner-panel">
@@ -162,7 +162,7 @@ if ( ! class_exists( 'Jet_Engine_Seo_Package' ) ) {
 						>
 							<span
 								slot="label"
-								v-html="'<?php _e( 'Save', 'jet-engine' ); ?>'"
+								v-html="'<?php esc_html_e( 'Save', 'jet-engine' ); ?>'"
 							></span>
 						</cx-vui-button>
 						&nbsp;&nbsp;&nbsp;&nbsp;
@@ -282,17 +282,17 @@ if ( ! class_exists( 'Jet_Engine_Seo_Package' ) ) {
 		 */
 		public function save_settings() {
 
+			// phpcs:disable
+			if ( empty( $_REQUEST['nonce'] ) || ! wp_verify_nonce( $_REQUEST['nonce'], $this->settings_key ) ) {
+				wp_send_json_error( array( 'message' => __( 'Nonce validation failed', 'jet-engine' ) ) );
+			}
+			// phpcs:enable
+
 			if ( ! current_user_can( 'manage_options' ) ) {
 				wp_send_json_error( array( 'message' => __( 'Access denied', 'jet-engine' ) ) );
 			}
 
-			$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false;
-
-			if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->settings_key ) ) {
-				wp_send_json_error( array( 'message' => __( 'Nonce validation failed', 'jet-engine' ) ) );
-			}
-
-			$settings = ! empty( $_REQUEST['settings'] ) ? $_REQUEST['settings'] : array();
+			$settings = ! empty( $_REQUEST['settings'] ) ? $_REQUEST['settings'] : array(); // phpcs:ignore
 
 			if ( ! empty( $settings['fields'] ) ) {
 				$settings['fields'] = $this->prepared_fields_setting_for_db( $settings['fields'] );
@@ -338,9 +338,11 @@ if ( ! class_exists( 'Jet_Engine_Seo_Package' ) ) {
 
 		public function admin_enqueue_scripts( $hook ) {
 
+			// phpcs:disable WordPress.Security.NonceVerification
 			if ( isset( $_GET['action'] ) && 'elementor' === $_GET['action'] ) {
 				return;
 			}
+			// phpcs:enable WordPress.Security.NonceVerification
 
 			if ( ! $this->is_rank_math_activated() && ! $this->is_yoast_activated() ) {
 				return;

@@ -62,6 +62,9 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 	public $custom_query_ids_mapping = array();
 	public $listings;
 	public $editor;
+	/**
+	 * @var null|Frontend_Editor
+	 */
 	public $frontend_editor = null;
 
 	/**
@@ -100,8 +103,66 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 
 		add_filter( 'jet-engine/listing-injections/item-meta-value', array( $this, 'get_injection_repeater_field_value' ), 10, 3 );
 
+		add_filter( 'jet-engine/listing/frontend/js-settings', array( $this, 'modify_js_settings' ) );
+
 		$this->init_admin_pages();
 
+		add_filter( 'jet-engine/listings/dynamic-repeater/pre-get-saved', array( $this, 'inject_query_to_dynamic_repeater' ), 10, 2 );
+		add_filter( 'jet-engine/blocks-views/editor-data', array( $this, 'add_block_editor_source' ) );
+
+	}
+
+	public function add_block_editor_source( $config ) {
+		$config['repeaterFields'][] = array(
+			'label' => esc_html__( 'JetEngine Query' ),
+			'values' => array(
+				array(
+					'label' => esc_html__( 'JetEngine Query' ),
+					'value' => 'je_query',
+				)
+			),
+		);
+
+		return $config;
+	}
+
+	public function inject_query_to_dynamic_repeater( $items, $settings ) {
+		$source = $settings['dynamic_field_source'] ?? '';
+
+		if ( $source !== 'je_query' ) {
+			return $items;
+		}
+
+		if ( empty( $settings['je_query_id'] ) ) {
+			return $items;
+		}
+
+		$query = $this->get_query_by_id( $settings['je_query_id'] );
+
+		if ( ! $query ) {
+			return $items;
+		}
+
+		$query_items = $query->get_items();
+
+		return is_array( $query_items ) ? $query_items : array();
+	}
+
+	public function modify_js_settings( $settings ) {
+
+		$queries = array();
+
+		foreach ( $this->get_queries() as $query ) {
+			if ( empty( $query->query_id ) ) {
+				continue;
+			}
+
+			$queries[ $query->id ] = $query->query_id;
+		}
+
+		$settings['query_builder']['custom_ids'] = $queries;
+
+		return $settings;
 	}
 
 	public function get_injection_repeater_field_value( $value, $post, $meta_key ) {
@@ -149,6 +210,7 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 		require_once $this->component_path( 'rest-api/get-queries.php' );
 		require_once $this->component_path( 'rest-api/search-preview.php' );
 		require_once $this->component_path( 'rest-api/update-preview.php' );
+		require_once $this->component_path( 'rest-api/convert-to-advanced.php' );
 		require_once $this->component_path( 'rest-api/search-query-field-options.php' );
 
 		$api_manager->register_endpoint( new Rest\Add_Query() );
@@ -158,8 +220,23 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 		$api_manager->register_endpoint( new Rest\Get_Queries() );
 		$api_manager->register_endpoint( new Rest\Search_Preview() );
 		$api_manager->register_endpoint( new Rest\Update_Preview() );
+		$api_manager->register_endpoint( new Rest\Convert_To_Advanced() );
 		$api_manager->register_endpoint( new Rest\Search_Query_Field_Options() );
 
+		/**
+		 * Expose custom headers for the query endpoint
+		 * to allow front-end handlers create pagination links
+		 * and display total items count.
+		 */
+		add_filter( 'rest_exposed_cors_headers', function( $headers ) {
+
+			$custom_headers = [
+				'Jet-Query-Total',
+				'Jet-Query-Pages',
+			];
+
+			return array_merge( $headers, $custom_headers );
+		} );
 	}
 
 	/**
@@ -198,7 +275,10 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 		$this->editor   = new Query_Editor();
 		$this->listings = new Listings\Manager();
 
-		if ( is_user_logged_in() && apply_filters( 'jet-engine/query-builder/frontend-editor/is-enabled', current_user_can( 'manage_options' ) ) ) {
+		if ( is_user_logged_in()
+		     && apply_filters( 'jet-engine/query-builder/frontend-editor/is-enabled', current_user_can( 'manage_options' )
+		     && ! jet_engine()->misc_settings->get_settings( 'disable_frontend_query_editor' ) )
+		) {
 			$this->frontend_editor = new Frontend_Editor();
 		}
 
@@ -309,7 +389,7 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 				$avoid_duplicates->watch_posts();
 			}
 		}
-		
+
 		do_action( 'jet-engine/query-builder/after-queries-setup' );
 
 		// Enable this only if need from theme or plugin
@@ -505,7 +585,7 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 					),
 				);
 				break;
-			
+
 			case 'users':
 				$result = array(
 					array(

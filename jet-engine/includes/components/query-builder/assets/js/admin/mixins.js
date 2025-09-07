@@ -34,7 +34,7 @@ window.JetQueryTabInUseMixin = {
 
 window.JetQueryRepeaterMixin = {
 	methods: {
-		addNewField: function( event, props, parent, callback ) {
+		addNewField: function( event, props, parent, callback, defaultData ) {
 
 			props = props || [];
 
@@ -52,12 +52,15 @@ window.JetQueryRepeaterMixin = {
 			field._id = Math.round( Math.random() * 1000000 );
 			field.collapsed = false;
 
+			if ( defaultData ) {
+				field = { ...defaultData, ...field };
+			}
+
 			parent.push( field );
 
 			if ( callback && 'function' === typeof callback ) {
 				callback( field, parent );
 			}
-
 		},
 		setFieldProp: function( id, key, value, parent ) {
 
@@ -74,6 +77,20 @@ window.JetQueryRepeaterMixin = {
 			parent.splice( index, 1, field );
 
 		},
+		setFieldData: function( id, data, parent ) {
+
+			let index = this.searchByID( id, parent );
+
+			if ( false === index ) {
+				return;
+			}
+
+			let field = parent[ index ];
+
+			field = { ...field, ...data };
+
+			parent.splice( index, 1, field );
+		},
 		cloneField: function( index, id, parent, callback ) {
 
 			let field = JSON.parse( JSON.stringify( parent[ index ] ) );
@@ -86,7 +103,6 @@ window.JetQueryRepeaterMixin = {
 			if ( callback && 'function' === typeof callback ) {
 				callback( field, parent, id );
 			}
-
 		},
 		deleteField: function( index, id, parent, callback ) {
 
@@ -101,7 +117,6 @@ window.JetQueryRepeaterMixin = {
 			if ( callback && 'function' === typeof callback ) {
 				callback( id, index, parent );
 			}
-
 		},
 		isCollapsed: function( parent ) {
 			if ( undefined === parent.collapsed || true === parent.collapsed ) {
@@ -123,6 +138,109 @@ window.JetQueryRepeaterMixin = {
 		}
 	}
 }
+
+window.JetEngineQueryMetaField = {
+	template: '#jet-meta-field',
+	props: [ 'field', 'metaQuery', 'dynamicQuery' ],
+	mixins: [ window.JetQueryRepeaterMixin ],
+	data: function() {
+		return {
+			operators: window.JetEngineQueryConfig.operators_list,
+			dataTypes: window.JetEngineQueryConfig.data_types,
+			showPopup: false,
+			currentField: { ...this.field },
+		};
+	},
+	methods: {
+		switchPopup: function( newVal ) {
+
+			this.showPopup = newVal;
+
+			if ( this.showPopup ) {
+				document.body.style.overflow = 'hidden';
+			} else {
+				document.body.style.overflow = '';
+			}
+		},
+		setDynamicMeta: function( id, data ) {
+			this.dynamicQuery[ id ] = data;
+			this.emitDynamicQuery( this.dynamicQuery );
+		},
+		setFieldProp: function( key, value ) {
+
+			this.currentField = {
+				...this.currentField,
+				[ key ]: value,
+			};
+
+			this.$emit( 'input', this.currentField );
+		},
+		getDynamicValue: function() {
+
+			if ( undefined === this.dynamicQuery ) {
+				console.log( this );
+			}
+
+			return this.dynamicQuery.value;
+		},
+		setDynamicQueryProp: function( key, value ) {
+
+			this.$set( this.dynamicQuery, key, value );
+
+			this.emitDynamicQuery( {
+				...this.dynamicQuery,
+				[ key ]: value,
+			} );
+
+			this.$forceUpdate();
+		},
+		emitDynamicQuery: function( query ) {
+			this.$emit( 'dynamic-input', query );
+		},
+		onAddNewField: function( newClause, metaQuery, prevID ) {
+
+			this.$emit( 'input', this.currentField );
+
+			let newItem = {};
+			let args = this.dynamicQuery || { isDynamic: true };
+
+			if ( prevID && args[ prevID ] ) {
+				newItem = { ...args[ prevID ] };
+			}
+
+			args[ newClause._id ] = newItem;
+
+			this.emitDynamicQuery( args );
+		},
+		onDeleteField: function( id ) {
+
+			this.$emit( 'input', this.currentField );
+
+			let args = {};
+
+			if ( this.dynamicQuery[ id ] ) {
+				args = this.dynamicQuery || {};
+				this.$delete( this.dynamicQuery, id );
+			} else {
+				args = this.dynamicQuery.args || {};
+
+				if (
+					this.dynamicQuery
+					&& this.dynamicQuery[ args ]
+					&& this.dynamicQuery[ args ][ id ]
+				) {
+					this.$delete( this.dynamicQuery[ args ], id );
+				}
+			}
+
+			delete args[ id ];
+
+			this.emitDynamicQuery( args );
+		}
+	},
+};
+
+Vue.component( 'jet-engine-query-meta-field', window.JetEngineQueryMetaField );
 
 window.JetQueryMetaParamsMixin = {
 	methods: {
@@ -152,11 +270,20 @@ window.JetQueryMetaParamsMixin = {
 			}
 
 			this.$set( this.dynamicQuery.meta_query, newClause._id, newItem );
-
+		},
+		setDynamicMeta: function( id, data ) {
+			this.$set( this.dynamicQuery.meta_query, id, data );
 		},
 		deleteDynamicMeta: function( id ) {
 			this.$delete( this.dynamicQuery.meta_query, id );
 		},
+		addNewMetaGroup( event ) {
+			this.addNewField( event, [], this.query.meta_query, this.newDynamicMeta, {
+				is_group: true,
+				relation: 'and',
+				args: [],
+			} );
+		}
 	}
 }
 

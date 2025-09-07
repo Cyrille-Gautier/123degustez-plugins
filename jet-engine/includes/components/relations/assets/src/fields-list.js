@@ -1,8 +1,8 @@
 import MediaControl from 'media-control';
 import CheckboxGroupControl from 'checkbox-group-control';
+import validators from './control-validators';
 
 const {
-	Button,
 	TextControl,
 	TextareaControl,
 	RadioControl,
@@ -25,9 +25,14 @@ class FieldsList extends Component {
 		super( props );
 
 		if ( this.props.values ) {
-			this.state = assign( {}, this.props.values );
+			this.state = {
+				...this.props.values,
+				errors: {}
+			};
 		} else {
-			this.state = {};
+			this.state = {
+				errors: {}
+			};
 		}
 
 	}
@@ -80,6 +85,15 @@ class FieldsList extends Component {
 					{ ...commonProps }
 					options={ field.options }
 					multiple={ field.multiple }
+				/>;
+
+			case 'stepper':
+				return <TextControl
+					type="number"
+					{ ...commonProps }
+					min={ field.min_value ? field.min_value : '' }
+					max={ field.max_value ? field.max_value : '' }
+					step={ field.step_value ? field.step_value : 1 }
 				/>;
 
 			case 'radio':
@@ -156,13 +170,46 @@ class FieldsList extends Component {
 
 	}
 
+	validateValue = ( field, value ) => {
+		const validator = validators[ field.type ];
+		if ( typeof validator !== 'function' ) return '';
+		return validator( field, value );
+	}
+
+	validateFields = () => {
+		const errors = {};
+
+		this.props.fields.forEach( ( field ) => {
+			const fieldError = this.validateValue( field, this.state[ field.name ] );
+			if ( fieldError ) {
+				errors[ field.name ] = fieldError;
+			}
+		} );
+
+		this.setState( { errors } ); // store errors in state for displaying
+
+		return Object.keys( errors ).length === 0;
+	}
+
 	render() {
 
-		return ( <Fragment>
-			{ this.props.fields.map( ( field ) => {
-				return this.fieldTemplate( field );
-			} ) }
-		</Fragment> );
+		return (
+			<Fragment>
+				{ this.props.fields.map( ( field ) => (
+					<Fragment key={ 'field_' + field.name }>
+						{/*Render control*/}
+						{ this.fieldTemplate( field ) }
+
+						{/*Render error*/}
+						{ this.state.errors && this.state.errors[ field.name ] && (
+							<p className="error-message">
+								{ this.state.errors[ field.name ] }
+							</p>
+						) }
+					</Fragment>
+				) ) }
+			</Fragment>
+		);
 	}
 
 }

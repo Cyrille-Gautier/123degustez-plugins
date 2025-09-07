@@ -10,7 +10,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 $required_class = ! empty( $args['required'] ) ? ' cx-control-required' : '';
 ?>
-<div class="cx-ui-kit cx-control cx-control-<?php echo esc_attr( $args['type'] ); ?><?php echo $required_class; ?>" data-control-name="<?php echo esc_attr( $args['id'] ); ?>">
+<div class="cx-ui-kit cx-control cx-control-<?php echo esc_attr( $args['type'] ); ?><?php echo esc_attr( $required_class ); ?>" data-control-name="<?php echo esc_attr( $args['id'] ); ?>">
 	<?php if ( ! empty( $args['title'] ) || ! empty( $args['description'] ) ) { ?>
 		<div class="cx-control__info">
 			<?php if ( ! empty( $args['title'] ) ) { ?>
@@ -23,10 +23,10 @@ $required_class = ! empty( $args['required'] ) ? ' cx-control-required' : '';
 	<?php } ?>
 	<?php if ( ! empty( $args['children'] ) ) { ?>
 		<div class="cx-ui-kit__content cx-control__content" role="group" >
-			<?php echo $args['children']; ?>
+			<?php echo $args['children']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
 	<?php } ?>
 	<?php if ( ! empty( $args['description'] ) ) { ?>
-		<?php echo wc_help_tip( wp_kses_post( $args['description'] ) ); ?>
+		<?php echo wc_help_tip( wp_kses_post( $args['description'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	<?php } ?>
 </div>

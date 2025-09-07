@@ -37,11 +37,11 @@ if ( ! class_exists( 'Jet_Engine_CPT_Tax_Meta' ) ) {
 			$fields = $this->prepare_meta_fields( $meta_box );
 
 			if ( ! empty( $this->show_in_rest ) ) {
-				
+
 				if ( ! class_exists( 'Jet_Engine_Rest_Term_Meta' ) ) {
 					require jet_engine()->meta_boxes->component_path( 'rest-api/fields/term-meta.php' );
 				}
-				
+
 				foreach ( $this->show_in_rest as $field ) {
 					new Jet_Engine_Rest_Term_Meta( $field, $taxonomy );
 				}
@@ -51,12 +51,12 @@ if ( ! class_exists( 'Jet_Engine_CPT_Tax_Meta' ) ) {
 				return;
 			}
 
-			new Cherry_X_Term_Meta( array(
+			new Cherry_X_Term_Meta( apply_filters( 'jet-engine/meta-boxes/register/tax/args', array(
 				'id'         => $this->get_box_id(),
 				'tax'        => $taxonomy,
 				'builder_cb' => array( $this, 'get_builder_for_meta' ),
 				'fields'     => $fields,
-			) );
+			), $this ) );
 
 			add_action( 'admin_enqueue_scripts', array( $this, 'maybe_enqueue_custom_css' ), 0 );
 			add_action( 'admin_enqueue_scripts', array( $this, 'maybe_enqueue_inline_js' ), 20 );
@@ -65,11 +65,11 @@ if ( ! class_exists( 'Jet_Engine_CPT_Tax_Meta' ) ) {
 		}
 
 		public function maybe_render_edit_link( $args ) {
-			
+
 			if ( $this->edit_link && ! empty( $args['id'] ) && $this->get_box_id() === $args['id'] ) {
-				printf( 
-					'<a href="%s" class="jet-engine-edit-box-link" target="_blank"><span class="dashicons dashicons-admin-generic"></span></a>', 
-					$this->edit_link
+				printf(
+					'<a href="%s" class="jet-engine-edit-box-link" target="_blank"><span class="dashicons dashicons-admin-generic"></span></a>',
+					esc_url( $this->edit_link )
 				);
 			}
 

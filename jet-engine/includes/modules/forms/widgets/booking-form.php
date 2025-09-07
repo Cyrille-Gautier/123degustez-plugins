@@ -46,15 +46,18 @@ class Jet_Engine_Booking_Form_Widget extends Widget_Base {
 			)
 		);
 
+		$q_args = array(
+			'post_type' => jet_engine()->forms->slug(),
+		);
+
 		$this->add_control(
 			'_form_id',
 			array(
 				'label'      => __( 'Select form', 'jet-engine' ),
 				'type'       => 'jet-query',
 				'query_type' => 'post',
-				'query'      => array(
-					'post_type' => jet_engine()->forms->slug(),
-				),
+				'query'      => $q_args,
+				'signature'  => \Jet_Elementor_Extension\Ajax_Handlers::create_signature( $q_args ),
 				'edit_button' => array(
 					'active' => true,
 					'label'  => __( 'Edit Form', 'jet-engine' ),

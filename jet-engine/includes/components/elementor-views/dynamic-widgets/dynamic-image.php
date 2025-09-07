@@ -348,6 +348,7 @@ class Jet_Listing_Dynamic_Image_Widget extends \Jet_Listing_Dynamic_Widget {
 				'selectors'  => [
 					$this->css_selector() => 'justify-content: {{VALUE}};',
 					$this->css_selector( '__figure' ) => 'align-items: {{VALUE}};',
+					$this->css_selector( ' a' ) => 'display:flex;justify-content: {{VALUE}};',
 				],
 			]
 		);

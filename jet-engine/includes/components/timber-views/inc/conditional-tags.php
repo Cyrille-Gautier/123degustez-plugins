@@ -45,9 +45,10 @@ class Conditional_Tags {
 		}
 
 		$checker = new \Jet_Engine\Modules\Dynamic_Visibility\Condition_Checker();
+
 		$result  = $checker->check_cond( [
 			'jedv_enabled' => true,
-		], [ 
+		], [
 			'jedv_conditions' => [ $args ]
 		] );
 
@@ -57,31 +58,31 @@ class Conditional_Tags {
 
 	/**
 	 * Enqueue conditions-specific assets
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function conditions_assets() {
 
 		wp_enqueue_script(
-			'jet-engine-timber-editor-conditions', 
+			'jet-engine-timber-editor-conditions',
 			Package::instance()->package_url( 'assets/js/conditions-editor.js' ),
 			[ 'jquery', 'cx-vue-ui' ],
 			jet_engine()->get_version(),
 			true
 		);
 
-		wp_localize_script( 
-			'jet-engine-timber-editor-conditions', 
+		wp_localize_script(
+			'jet-engine-timber-editor-conditions',
 			'JetEngineDynamicVisibilityData',
 			[
 				'controls'        => $this->get_prepared_controls(),
 				'function_name'   => $this->function_name,
 				'is_enabled'      => jet_engine()->modules->is_module_active( 'dynamic-visibility' ),
-				'disabled_notice' => sprintf( 
+				'disabled_notice' => sprintf(
 					__( 'To use enhanced conditions, you need to activate <a href="%s" target="_blank">Dynamic Visibility</a> module', 'jet-engine' ),
 					jet_engine()->dashboard->dashboard_url( 'modules' ),
 				),
-				'macros_notice'   => sprintf( 
+				'macros_notice'   => sprintf(
 					__( 'You can use <a href="%s" target="_blank">macros</a> on any text field', 'jet-engine' ),
 					jet_engine()->dashboard->dashboard_url( 'macros_generator' ),
 				),
@@ -98,7 +99,7 @@ class Conditional_Tags {
 
 	public function register_conditional_tags_action() {
 		?>
-		<jet-engine-timber-editor-conditions 
+		<jet-engine-timber-editor-conditions
 			@insert="insertDynamicData"
 		></jet-engine-timber-editor-conditions>
 		<?php

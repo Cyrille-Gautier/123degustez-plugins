@@ -104,6 +104,7 @@ class RelatedItemModal extends Component {
 			title={ this.modalTitle() }
 			style={ style }
 			className={ modalClasses.join( ' ' ) }
+			shouldCloseOnClickOutside={ false }
 			onRequestClose={ ( event ) => {
 				if ( ! event.target.classList.contains( 'is-nested-modal-trigger' ) ) {
 					this.props.onClose( this.state.relatedList );

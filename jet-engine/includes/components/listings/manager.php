@@ -68,7 +68,7 @@ if ( ! class_exists( 'Jet_Engine_Listings' ) ) {
 		/**
 		 * Listings post type object
 		 *
-		 * @var null
+		 * @var \Jet_Engine_Listings_Post_Type
 		 */
 		public $post_type = null;
 
@@ -184,8 +184,10 @@ if ( ! class_exists( 'Jet_Engine_Listings' ) ) {
 		}
 
 		public function register_callbacks() {
-			require jet_engine()->plugin_path( 'includes/components/listings/callbacks.php' );
-			$this->callbacks = new Jet_Engine_Listings_Callbacks();
+			if ( ! $this->callbacks ) {
+				require jet_engine()->plugin_path( 'includes/components/listings/callbacks.php' );
+				$this->callbacks = new Jet_Engine_Listings_Callbacks();
+			}
 		}
 
 		/**
@@ -502,6 +504,11 @@ if ( ! class_exists( 'Jet_Engine_Listings' ) ) {
 		 * @return [type] [description]
 		 */
 		public function get_allowed_callbacks() {
+
+			if ( ! $this->callbacks ) {
+				$this->register_callbacks();
+			}
+
 			return $this->callbacks ? $this->callbacks->get_cllbacks_for_options() : array();
 		}
 
@@ -511,6 +518,11 @@ if ( ! class_exists( 'Jet_Engine_Listings' ) ) {
 		 * @return [type] [description]
 		 */
 		public function get_callbacks_args( $for = 'elementor' ) {
+
+			if ( ! $this->callbacks ) {
+				$this->register_callbacks();
+			}
+
 			return $this->callbacks ? $this->callbacks->get_callbacks_args( $for ) : array();
 		}
 

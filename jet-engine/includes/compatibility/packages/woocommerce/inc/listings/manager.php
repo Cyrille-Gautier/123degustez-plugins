@@ -154,7 +154,7 @@ class Manager {
 		add_filter(
 			'jet-engine/listings/dynamic-link/custom-url',
 			[ $this, 'maybe_set_custom_url' ],
-			10, 2
+			20, 2
 		);
 
 		add_filter(
@@ -197,9 +197,12 @@ class Manager {
 
 		require_once Package::instance()->package_path( 'listings/blocks-views/integration.php' );
 		require_once Package::instance()->package_path( 'listings/elementor-views/integration.php' );
+		require_once Package::instance()->package_path( 'listings/bricks-views/integration.php' );
 		require_once Package::instance()->package_path( 'listings/query.php' );
+		require_once Package::instance()->package_path( 'listings/data-render.php' );
 
 		new Blocks_Views\Integration();
+		new Bricks_Views\Integration();
 		new Elementor_Views\Integration();
 		new Query();
 
@@ -220,6 +223,7 @@ class Manager {
 	public function register_dynamic_link_option( $options ) {
 
 		$options['add_to_cart'] = __( 'Add to Cart', 'jet-engine' );
+		$options['remove_from_cart'] = __( 'Remove from Cart', 'jet-engine' );
 
 		return $options;
 
@@ -244,8 +248,14 @@ class Manager {
 
 		$source = ! empty( $settings['dynamic_link_source'] ) ? $settings['dynamic_link_source'] : '_permalink';
 
-		if ( 'add_to_cart' === $source ) {
-			$result = $this->add_to_cart_link( $result, $settings, $base_class, $render );
+		switch ( $source ) {
+			case 'add_to_cart':
+				$result = $this->add_to_cart_link( $result, $settings, $base_class, $render );
+				break;
+
+			case 'remove_from_cart':
+				$result = $this->remove_from_cart_link( $result, $settings, $base_class, $render );
+
 		}
 
 		return $result;
@@ -256,7 +266,7 @@ class Manager {
 	 * Return only URL of add to cart link or WC product image, not whole HTMl
 	 *
 	 * This callback used where we need only plain URL, for example Twig templates
-	 * 
+	 *
 	 * @param  bool|string $result   [description]
 	 * @param  array  $settings [description]
 	 * @return bool|string
@@ -264,8 +274,13 @@ class Manager {
 	public function maybe_set_custom_url( $result = false, $settings = [] ) {
 
 		$source = ! empty( $settings['dynamic_link_source'] ) ? $settings['dynamic_link_source'] : '_permalink';
+		$catch_sources = [
+			'add_to_cart',
+			'get_product_image_url',
+			'remove_from_cart',
+		];
 
-		if ( ! in_array( $source, [ 'add_to_cart', 'get_product_image_url' ] ) ) {
+		if ( ! in_array( $source, $catch_sources ) ) {
 			return $result;
 		}
 
@@ -275,6 +290,8 @@ class Manager {
 			$product = jet_engine()->listings->data->get_current_object();
 		}
 
+		$product = $this->maybe_convert_object_to_wc_product( $product );
+		
 		// If product is not found - abort early
 		if ( ! $product || ! is_a( $product, 'WC_Product' ) ) {
 			return $result;
@@ -283,7 +300,10 @@ class Manager {
 		switch ( $source ) {
 			case 'add_to_cart':
 				return esc_url( $product->add_to_cart_url() );
-			
+
+			case 'remove_from_cart':
+				return esc_url( $this->remove_from_cart_url_by_product_id( $product->get_id() ) );
+
 			case 'get_product_image_url':
 
 				$image_url = '';
@@ -301,7 +321,7 @@ class Manager {
 				if ( ! $image_url ) {
 					$image_url = wc_placeholder_img_src( $size );
 				}
-				
+
 				return $image_url;
 		}
 
@@ -340,6 +360,77 @@ class Manager {
 
 		return esc_url( $product->add_to_cart_url() );
 
+	}
+
+	/**
+	 * Return functional remove from cart link.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param string $result     Dynamic link markup.
+	 * @param array  $settings   List of widget settings.
+	 * @param string $base_class Widget name.
+	 * @param object $render     Dynamic link render instance.
+	 *
+	 * @return string
+	 */
+	public function remove_from_cart_link( $result, $settings, $base_class, $render ) {
+
+		$current_object = jet_engine()->listings->data->get_current_object();
+
+		if ( ! isset( $current_object ) ) {
+			return false;
+		}
+
+		$product = $this->maybe_convert_object_to_wc_product( $current_object );
+
+		if ( ! $product || ! is_a( $product, 'WC_Product' ) ) {
+			return $result;
+		}
+
+		$url       = $this->remove_from_cart_url_by_product_id( $product->get_id() );
+		$label     = $render->get_link_label( $settings, $base_class, $url );
+		$icon      = $render->get_link_icon( $settings, $base_class );
+		$data_list = array(
+			'product_id'  => $product->get_id(),
+			'product_sku' => $product->get_sku(),
+		);
+
+		$data_string = '';
+
+		foreach ( $data_list as $key => $value ) {
+			$data_string .= sprintf( 'data-%1$ss="%2$ss" ', esc_attr( $key ), esc_attr( $value ) );
+		}
+
+		return sprintf(
+			'<a href="%1$s" class="%6$s__link" aria-label="%3$s" %5$s>%4$s%2$s</a>',
+			$url,
+			$label,
+			wp_strip_all_tags( $label ),
+			$icon,
+			$data_string,
+			$base_class
+		);
+	}
+
+	/**
+	 * Get the "remove from cart" URL for the first instance of a product in the cart.
+	 *
+	 * @param  int $product_id
+	 * @return string|false  Remove URL if found, or false if not in cart.
+	 */
+	public function remove_from_cart_url_by_product_id( $product_id ) {
+		if ( ! WC()->cart ) {
+			return false;
+		}
+
+		foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+			if ( intval( $cart_item['product_id'] ) === intval( $product_id ) ) {
+				return wc_get_cart_remove_url( $cart_item_key );
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -407,12 +498,17 @@ class Manager {
 		$enable_qty_input = isset( $settings['dynamic_link_enable_quantity_input'] ) ? filter_var( $settings['dynamic_link_enable_quantity_input'], FILTER_VALIDATE_BOOLEAN ) : false;
 
 		if ( $enable_qty_input && $product->is_type( 'simple' ) && $product->is_purchasable() && $product->is_in_stock() && ! $product->is_sold_individually() ) {
+			$quantity_input_replacement = '__woocommerce_quantity_input__' . microtime( true );
+
 			$format = '<form action="%1$s" class="cart" method="post" enctype="multipart/form-data">';
-			$format .= woocommerce_quantity_input( [
+			
+			$quantity_input_html = woocommerce_quantity_input( [
 				'min_value'   => apply_filters( 'woocommerce_quantity_input_min', $product->get_min_purchase_quantity(), $product ),
 				'max_value'   => apply_filters( 'woocommerce_quantity_input_max', $product->get_max_purchase_quantity(), $product ),
-				'input_value' => '%2$s',
+				'input_value' => esc_attr( $args['quantity'] ?? $product->get_min_purchase_quantity() ),
 			], $product, false );
+			
+			$format .= $quantity_input_replacement;
 			$format .= '<button type="submit" data-quantity="%2$s" class="%3$s alt" %4$s >%5$s %6$s</button>';
 			$format .= '</form>';
 		} else {
@@ -428,6 +524,14 @@ class Manager {
 			$icon,
 			$label
 		);
+
+		if ( ! empty( $quantity_input_html ) ) {
+			$result = str_replace(
+				$quantity_input_replacement,
+				$quantity_input_html,
+				$result
+			);
+		}
 
 		return $result;
 
@@ -499,7 +603,7 @@ class Manager {
 			$notices = wc_print_notices( true );
 
 			if ( $notices ) {
-				printf( '<div class="woocommerce" style="flex: 1 1 100%%;">%s</div>', $notices );
+				printf( '<div class="woocommerce" style="flex: 1 1 100%%;">%s</div>', $notices ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 
 		}
@@ -740,7 +844,7 @@ class Manager {
 		if ( is_callable( [ $_product, $image ] ) ) {
 			ob_start();
 
-			echo call_user_func( [ $_product, $image ], $size );
+			echo wp_kses_post( call_user_func( [ $_product, $image ], $size ) );
 
 			return ob_get_clean();
 		}
@@ -824,7 +928,6 @@ class Manager {
 		}
 
 		return $result;
-
 	}
 
 	/**

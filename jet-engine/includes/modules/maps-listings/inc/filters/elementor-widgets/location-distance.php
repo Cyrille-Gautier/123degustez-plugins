@@ -110,6 +110,19 @@ class Location_Distance extends \Elementor\Jet_Smart_Filters_Base_Widget {
 				),
 			)
 		);
+
+		$this->add_control(
+			'show_label',
+			array(
+				'label'        => esc_html__( 'Show filter label', 'jet-engine' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'description'  => '',
+				'label_on'     => esc_html__( 'Yes', 'jet-engine' ),
+				'label_off'    => esc_html__( 'No', 'jet-engine' ),
+				'return_value' => 'yes',
+				'default'      => '',
+			)
+		);
 	
 		$this->add_control(
 			'placeholder',
@@ -226,29 +239,40 @@ class Location_Distance extends \Elementor\Jet_Smart_Filters_Base_Widget {
 			)
 		);
 
-		$this->add_responsive_control(
-			'location_width',
-			array(
-				'label'       => esc_html__( 'Location Input Width', 'jet-engine' ),
-				'description' => esc_html__( 'Distance control will automatically fill the rest of space in the line', 'jet-engine' ),
-				'type'        => Controls_Manager::SLIDER,
-				'size_units'  => array(
-					'%',
+		$location_width_config = array(
+			'label'       => esc_html__( 'Location Input Width', 'jet-engine' ),
+			'description' => esc_html__( 'Distance control will automatically fill the rest of space in the line', 'jet-engine' ),
+			'type'        => Controls_Manager::SLIDER,
+			'size_units'  => array( '%', 'px', 'custom' ),
+			'range'      => array(
+				'%'  => array(
+					'min' => 10,
+					'max' => 95,
 				),
-				'range'      => array(
-					'%'  => array(
-						'min' => 10,
-						'max' => 95,
-					),
-				),
-				'default'    => array(
+			),
+			'default'    => array(
+				'unit' => '%',
+				'size' => 80,
+			),
+			'selectors'  => array(
+				'{{WRAPPER}} .jsf-location-distance__location' => 'flex-basis: {{SIZE}}{{UNIT}}',
+			),
+		);
+
+		if ( method_exists( '\Elementor\Core\Breakpoints\Manager', 'get_default_config' ) ) {
+			$breakpoints = array_keys( \Elementor\Core\Breakpoints\Manager::get_default_config() );
+
+			foreach ( $breakpoints as $name ) {
+				$location_width_config[ $name . '_default' ] = array(
 					'unit' => '%',
 					'size' => 80,
-				),
-				'selectors'  => array(
-					'{{WRAPPER}} .jsf-location-distance__location' => 'flex-basis: {{SIZE}}{{UNIT}}',
-				),
-			)
+				);
+			}
+		}
+
+		$this->add_responsive_control(
+			'location_width',
+			$location_width_config
 		);
 
 		$this->add_responsive_control(
@@ -370,7 +394,7 @@ class Location_Distance extends \Elementor\Jet_Smart_Filters_Base_Widget {
 		$this->add_control(
 			'location_control_icons',
 			array(
-				'label'     => esc_html__( 'Icons', 'jet-smart-filters' ),
+				'label'     => esc_html__( 'Icons', 'jet-engine' ),
 				'type'      => Controls_Manager::HEADING,
 				'separator' => 'before',
 			)
@@ -381,14 +405,14 @@ class Location_Distance extends \Elementor\Jet_Smart_Filters_Base_Widget {
 		$this->start_controls_tab(
 			'location_icons_default',
 			array(
-				'label' => esc_html__( 'Default', 'jet-smart-filters' ),
+				'label' => esc_html__( 'Default', 'jet-engine' ),
 			)
 		);
 
 		$this->add_control(
 			'location_icons_color',
 			array(
-				'label'     => esc_html__( 'Color', 'jet-smart-filters' ),
+				'label'     => esc_html__( 'Color', 'jet-engine' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					'{{WRAPPER}} .jsf-location-distance__location-icon path' => 'fill: {{VALUE}}',
@@ -425,14 +449,14 @@ class Location_Distance extends \Elementor\Jet_Smart_Filters_Base_Widget {
 		$this->start_controls_tab(
 			'location_icons_hover',
 			array(
-				'label' => esc_html__( 'Hover', 'jet-smart-filters' ),
+				'label' => esc_html__( 'Hover', 'jet-engine' ),
 			)
 		);
 
 		$this->add_control(
 			'location_icons_color_hover',
 			array(
-				'label'     => esc_html__( 'Color', 'jet-smart-filters' ),
+				'label'     => esc_html__( 'Color', 'jet-engine' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					'{{WRAPPER}} .jsf-location-distance__location-control:hover .jsf-location-distance__location-icon path' => 'fill: {{VALUE}}',
@@ -471,7 +495,7 @@ class Location_Distance extends \Elementor\Jet_Smart_Filters_Base_Widget {
 		$this->add_control(
 			'locations_dropdown',
 			array(
-				'label'     => esc_html__( 'Locations Dropdown', 'jet-smart-filters' ),
+				'label'     => esc_html__( 'Locations Dropdown', 'jet-engine' ),
 				'type'      => Controls_Manager::HEADING,
 				'separator' => 'before',
 			)
@@ -480,7 +504,7 @@ class Location_Distance extends \Elementor\Jet_Smart_Filters_Base_Widget {
 		$this->add_control(
 			'location_dropdown_color',
 			array(
-				'label'     => esc_html__( 'Text Color', 'jet-smart-filters' ),
+				'label'     => esc_html__( 'Text Color', 'jet-engine' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					'{{WRAPPER}} .jsf-location-distance__location-dropdown' => 'color: {{VALUE}}',
@@ -491,7 +515,7 @@ class Location_Distance extends \Elementor\Jet_Smart_Filters_Base_Widget {
 		$this->add_control(
 			'location_dropdown_bg_color',
 			array(
-				'label'     => esc_html__( 'Background Color', 'jet-smart-filters' ),
+				'label'     => esc_html__( 'Background Color', 'jet-engine' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					'{{WRAPPER}} .jsf-location-distance__location-dropdown' => 'background-color: {{VALUE}}',
@@ -502,7 +526,7 @@ class Location_Distance extends \Elementor\Jet_Smart_Filters_Base_Widget {
 		$this->add_control(
 			'location_dropdown_color_hover',
 			array(
-				'label'     => esc_html__( 'Hover Text Color', 'jet-smart-filters' ),
+				'label'     => esc_html__( 'Hover Text Color', 'jet-engine' ),
 				'type'      => Controls_Manager::COLOR,
 				'separator' => 'before',
 				'selectors' => array(
@@ -514,7 +538,7 @@ class Location_Distance extends \Elementor\Jet_Smart_Filters_Base_Widget {
 		$this->add_control(
 			'location_dropdown_bg_color_hover',
 			array(
-				'label'     => esc_html__( 'Hover Background Color', 'jet-smart-filters' ),
+				'label'     => esc_html__( 'Hover Background Color', 'jet-engine' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					'{{WRAPPER}} .jsf-location-distance__location-dropdown-item:hover' => 'background-color: {{VALUE}}',

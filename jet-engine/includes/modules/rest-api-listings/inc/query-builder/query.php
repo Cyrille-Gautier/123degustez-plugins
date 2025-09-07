@@ -22,19 +22,12 @@ class REST_API_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 		}
 
 		$endpoint = Module::instance()->settings->get( $eid );
-		$query_args = array();
 
 		if ( ! $endpoint ) {
 			return $result;
 		}
 
-		if ( ! empty( $this->final_query['args'] ) ) {
-			foreach ( $this->final_query['args'] as $arg ) {
-				if ( ! empty( $arg['field'] ) ) {
-					$query_args[ $arg['field'] ] = jet_engine()->listings->macros->do_macros( $arg['value'] );
-				}
-			}
-		}
+		$query_args = $this->get_query_args_from_query();
 
 		$result = Module::instance()->request->set_endpoint( $endpoint )->get_items( $query_args );
 
@@ -49,6 +42,36 @@ class REST_API_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 
 		return $result;
 
+	}
+
+	/**
+	 * Returns parsed query arguments
+	 *
+	 * @return array
+	 */
+	public function get_query_args_from_query() {
+
+		$query_args = array();
+
+		if ( ! empty( $this->final_query['args'] ) ) {
+			foreach ( $this->final_query['args'] as $arg ) {
+
+				$value = jet_engine()->listings->macros->do_macros( $arg['value'] );
+
+				$exclude_empty = ! empty( $arg['exclude_empty'] ) ? $arg['exclude_empty'] : false;
+				$exclude_empty = filter_var( $exclude_empty, FILTER_VALIDATE_BOOLEAN );
+
+				if ( $exclude_empty && \Jet_Engine_Tools::is_empty( $value ) ) {
+					continue;
+				}
+
+				if ( ! empty( $arg['field'] ) ) {
+					$query_args[ $arg['field'] ] = $value;
+				}
+			}
+		}
+
+		return $query_args;
 	}
 
 	public function get_current_items_page() {
@@ -147,7 +170,27 @@ class REST_API_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 		}
 
 		$this->final_query['args'][] = $row;
+	}
 
+	public function before_preview_body() {
+
+		$eid = ! empty( $this->final_query['endpoint'] ) ? absint( $this->final_query['endpoint'] ) : false;
+
+		if ( ! $eid ) {
+			return;
+		}
+
+		$endpoint = Module::instance()->settings->get( $eid );
+
+		if ( ! $endpoint ) {
+			return;
+		}
+
+		$query_args = $this->get_query_args_from_query();
+		$url = Module::instance()->request->set_endpoint( $endpoint )->get_url_with_query_args( $query_args );
+
+		print_r( esc_html__( 'REQUEST URL:' ) . "\n" );
+		print_r( $url . "\n\n" );
 	}
 
 }

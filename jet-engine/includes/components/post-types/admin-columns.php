@@ -287,7 +287,12 @@ if ( ! class_exists( 'Jet_Engine_CPT_Admin_Columns' ) ) {
 			$suffix = isset( $column_data['suffix'] ) ? do_shortcode( $column_data['suffix'] ) : '';
 
 			if ( $result ) {
-				echo $prefix . $result . $suffix;
+				if ( is_scalar( $result ) ) {
+					$result = wp_kses_post( $result );
+					echo $prefix . $result . $suffix;
+				} else {
+					echo 'The output value is not a string.<br>Please, check the admin column settings.';
+				}
 			}
 
 		}

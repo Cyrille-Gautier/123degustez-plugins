@@ -101,11 +101,11 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 
 				if ( $user && 'WP_User' === get_class( $user ) ) {
 					$this->full_image_src = get_avatar_url( $user->ID, array( 'size' => $size * 2 ) );
-					echo str_replace( 'avatar ', 'jet-avatar ', get_avatar( $user->ID, $size, '', $alt, $args ) );
+					echo str_replace( 'avatar ', 'jet-avatar ', get_avatar( $user->ID, $size, '', $alt, $args ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				} elseif ( $user && 'WP_User' !== get_class( $user ) && is_user_logged_in() ) {
 					$user = wp_get_current_user();
 					$this->full_image_src = get_avatar_url( $user->ID, array( 'size' => $size * 2 ) );
-					echo str_replace( 'avatar ', 'jet-avatar ', get_avatar( $user->ID, $size, '', $alt, $args ) );
+					echo str_replace( 'avatar ', 'jet-avatar ', get_avatar( $user->ID, $size, '', $alt, $args ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				} else {
 					return $this->process_fallback_image( $settings );
 				}
@@ -143,7 +143,11 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 				'class' => $this->get_image_caption_css_class(),
 			);
 
-			return sprintf( '<figcaption %1$s>%2$s</figcaption>', \Jet_Engine_Tools::get_attr_string( $attr ), $caption );
+			return sprintf(
+				'<figcaption %1$s>%2$s</figcaption>',
+				\Jet_Engine_Tools::get_attr_string( $attr ),
+				wp_kses_post( $caption )
+			);
 		}
 
 		/**
@@ -167,9 +171,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 				}
 
 				echo wp_get_attachment_image( $attachment_id, $size, false, array( 'alt' => $this->get_image_alt( $attachment_id, $settings ) ) );
-
 			}
-
 		}
 
 		public function render_image_by_meta_field( $field = null, $size = 'full', $settings = array() ) {
@@ -191,7 +193,8 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 			}
 
 			if ( $custom_output ) {
-				echo $custom_output;
+				// Escaped by callbacks
+				echo $custom_output; // phpcs:ignore
 				return;
 			}
 
@@ -268,7 +271,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 
 			$this->full_image_src = $src;
 
-			printf( '<img %s>', Jet_Engine_Tools::get_attr_string( $attr ) );
+			printf( '<img %s>', Jet_Engine_Tools::get_attr_string( $attr ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		public function get_image_css_class() {
@@ -384,9 +387,9 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 			$custom_image_styles = ! empty( $settings['custom_image_styles'] ) ? $settings['custom_image_styles'] : array();
 			$custom_styles = $this->get_parsed_custom_styles( $custom_image_styles, true );
 
-			$custom_styles_attr = ! empty( $custom_styles['width'] ) ? 'style="' . $custom_styles['width'] . '"' : '';
+			$custom_styles_attr = ! empty( $custom_styles['width'] ) ? 'style="' . esc_attr( $custom_styles['width'] ) . '"' : '';
 
-			printf( '<div class="%1$s" %2$s>', implode( ' ', $classes ), $custom_styles_attr );
+			printf( '<div class="%1$s" %2$s>', esc_attr( implode( ' ', $classes ) ), $custom_styles_attr ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 				do_action( 'jet-engine/listing/dynamic-image/before-image', $this );
 
@@ -412,10 +415,11 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 
 					$link_attr = apply_filters( 'jet-engine/listings/dynamic-image/link-attr', $link_attr, $settings );
 
-					printf( '<a %s>', Jet_Engine_Tools::get_attr_string( $link_attr ) );
+					printf( '<a %s>', Jet_Engine_Tools::get_attr_string( $link_attr ) ); // phpcs:ignore
 				}
 
-				echo $image_html;
+				// Escaped while generatin $image_html
+				echo $image_html; // phpcs:ignore
 
 				if ( $image_url ) {
 					echo '</a>';
@@ -424,7 +428,6 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 				do_action( 'jet-engine/listing/dynamic-image/after-image', $this );
 
 			echo '</div>';
-
 		}
 
 		public function get_image_html( $settings ) {
@@ -497,7 +500,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Image' ) ) {
 				) ? $styles['custom_scale'] : 'cover';
 				$aspect_ratio = str_replace( ':', ' / ', $styles['aspect_ratio'] );
 
-				$parsed_styles['object-fit'] = 'object-fit: ' . $scale;
+				$parsed_styles['object-fit'] = 'object-fit: ' . esc_attr( $scale );
 				$parsed_styles['aspect-ratio'] = 'aspect-ratio: ' . esc_attr( $aspect_ratio );
 			}
 

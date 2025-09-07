@@ -85,6 +85,11 @@ class Shortcode {
 		$prepared_controls = [];
 
 		foreach ( $controls as $control ) {
+			// Change the description for JetEngine Shortcode Generator
+			if ( $control['name'] === 'jedv_field' ) {
+				$control['description'] = __( 'Enter meta field name to compare value against.', 'jet-engine' );
+			}
+
 			$prepared_controls[ $control['name'] ] = $control;
 		}
 

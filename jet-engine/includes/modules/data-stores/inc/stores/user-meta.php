@@ -74,6 +74,15 @@ class User_Meta_Store extends Base_Store {
 
 		$user_id = get_current_user_id();
 
+		if ( is_array( $store ) ) {
+			$store = array_map(
+				function( $item ) {
+					return is_scalar( $item ) ? strval( $item ) : $item;
+				},
+				$store
+			);
+		}
+
 		update_user_meta( $user_id, $this->prefix . $store_id, $store );
 
 	}

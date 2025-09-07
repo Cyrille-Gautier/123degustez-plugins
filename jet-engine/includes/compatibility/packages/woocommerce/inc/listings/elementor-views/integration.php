@@ -1,6 +1,9 @@
 <?php
-
 namespace Jet_Engine\Compatibility\Packages\Jet_Engine_Woo_Package\Listings\Elementor_Views;
+
+use Jet_Engine\Compatibility\Packages\Jet_Engine_Woo_Package\Package;
+use Jet_Engine\Compatibility\Packages\Jet_Engine_WPML_Package\Package as Jet_Engine_WPML_PackagePackage;
+use Jet_Engine\Website_Builder\Handlers\Woo;
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -10,8 +13,32 @@ if ( ! defined( 'WPINC' ) ) {
 class Integration {
 
 	public function __construct() {
-		add_action( 'jet-engine/listings/dynamic-link/source-controls', [ $this, 'register_dynamic_link_controls' ] );
-		add_action( 'elementor/element/jet-listing-dynamic-link/section_link_style/after_section_end', [ $this, 'register_dynamic_link_style_controls' ] );
+
+		add_action(
+			'jet-engine/listings/dynamic-link/source-controls',
+			[ $this, 'register_dynamic_link_controls' ]
+		);
+
+		add_action(
+			'elementor/element/jet-listing-dynamic-link/section_link_style/after_section_end',
+			[ $this, 'register_dynamic_link_style_controls' ]
+		);
+
+		add_action(
+			'jet-engine/elementor-views/widgets/register',
+			[ $this, 'register_widgets' ]
+		);
+	}
+
+	/**
+	 * Register separate widget to render additional Woo data
+	 *
+	 * @param object $widgets_manager
+	 * @return void
+	 */
+	public function register_widgets( $widgets_manager ) {
+		require_once Package::instance()->package_path( 'listings/elementor-views/widgets/woo-data.php' );
+		$widgets_manager->register( new Widgets\Woo_Data_Widget() );
 	}
 
 	/**

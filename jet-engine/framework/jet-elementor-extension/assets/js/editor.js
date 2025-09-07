@@ -12,7 +12,7 @@
 				loadEditUrl: false,
 
 				ui: function() {
-					
+
 					var ui = elementor.modules.controls.Select2.prototype.ui.apply( this, arguments );
 
 					_.extend( ui, {
@@ -31,7 +31,7 @@
 					} );
 
 					return events;
-	
+
 				},
 
 				getQueryArgs: function() {
@@ -81,6 +81,7 @@
 									action:     'jet_query_control_options',
 									query_type: self.model.get( 'query_type' ),
 									query:      self.getQueryArgs(),
+									signature:  self.model.get( 'signature' ),
 								};
 							},
 							processResults: function( response ) {
@@ -116,7 +117,8 @@
 							action:     'jet_query_control_options',
 							query_type: self.model.get( 'query_type' ),
 							query:      self.getQueryArgs(),
-							ids:        query_ids
+							ids:        query_ids,
+							signature:  self.model.get( 'signature' ),
 						},
 						beforeSend: function() {
 							self.ui.select.prop( 'disabled', true );
@@ -222,7 +224,7 @@
 					if ( ! createButton ) {
 						return;
 					}
-					
+
 					var $createHandler = jQuery( '<br><span style="display: flex; justify-content: flex-end;"><a href="#" class="jet-engine-create-listing">Create new listing item</a><span>' );
 					this.$el.find( '.elementor-control-field' ).after( $createHandler );
 
@@ -231,7 +233,7 @@
 				},
 
 				onCreateButtonClick: function( event ) {
-					
+
 					event.preventDefault();
 					var createButton = this.model.get( 'create_button' );
 					var handler = createButton.handler || 'JetListings';
@@ -239,7 +241,7 @@
 					if ( window[ handler ] && window[ handler ].onEditorCreateClick ) {
 						window[ handler ].onEditorCreateClick( this );
 					}
-					
+
 				},
 
 				onInputChange: function() {

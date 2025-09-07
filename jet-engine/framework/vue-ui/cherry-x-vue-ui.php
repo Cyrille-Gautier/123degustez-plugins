@@ -2,7 +2,7 @@
 /**
  * Vue.js based Interface Builder module
  *
- * Version: 1.5.2
+ * Version: 1.7.0
  */
 
 // If this file is called directly, abort.
@@ -51,7 +51,7 @@ if ( ! class_exists( 'CX_Vue_UI' ) ) {
 		 *
 		 * @var string
 		 */
-		protected $version = '1.5.2';
+		protected $version = '1.7.0';
 
 		/**
 		 * [$assets_enqueued description]
@@ -224,13 +224,13 @@ if ( ! class_exists( 'CX_Vue_UI' ) ) {
 				}
 
 				ob_start();
-				
+
 				if ( self::$templates_path && file_exists( self::$templates_path . basename( $file ) ) ) {
 					include self::$templates_path . basename( $file );
 				} else {
 					include $file;
 				}
-				
+
 				$template = ob_get_clean();
 
 				printf(

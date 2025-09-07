@@ -94,8 +94,13 @@ abstract class Base {
 							$current_value = get_user_meta( $object_id, $args['field_raw'], true );
 							break;
 
-						default:
+						case 'WP_Post':
+						case 'WC_Product':
 							$current_value = get_post_meta( $object_id, $args['field_raw'], true );
+							break;
+
+						default:
+							$current_value = jet_engine()->listings->data->get_prop( $args['field_raw'], $object );
 							break;
 
 					}
@@ -152,11 +157,11 @@ abstract class Base {
 			case 'datetime':
 			case 'date':
 
-				if ( ! \Jet_Engine_Tools::is_valid_timestamp( $current_value ) ) {
+				if ( ! \Jet_Engine_Tools::is_valid_timestamp( $current_value ) && ! \Jet_Engine_Tools::is_empty( $current_value ) ) {
 					$current_value = strtotime( $current_value );
 				}
 
-				if ( ! \Jet_Engine_Tools::is_valid_timestamp( $value_to_compare ) ) {
+				if ( ! \Jet_Engine_Tools::is_valid_timestamp( $value_to_compare ) && ! \Jet_Engine_Tools::is_empty( $value_to_compare ) ) {
 					$value_to_compare = strtotime( $value_to_compare );
 				}
 

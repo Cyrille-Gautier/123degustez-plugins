@@ -16,7 +16,10 @@ class Filters_Switch_Query extends Filters_Options_Source {
 		add_action( 'jet-smart-filters/admin/register-dynamic-query', array( $this, 'register_query_var' ) );
 		add_action( 'jet-smart-filters/query/final-query', array( $this, 'store_switched_query' ) );
 		add_action( 'jet-engine/query-builder/listings/query-id', array( $this, 'switch_query' ), 10, 3 );
-		add_action( 'jet-engine/bricks-views/query-builder/query-id', array( $this, 'switch_query' ), 10 );
+
+		// Bricks loop
+		add_action( 'jet-engine/bricks-views/query-builder/query-id', array( $this, 'switch_query_in_bricks_loop' ), 10 );
+		add_action( 'bricks/query/after_loop', array( $this, 'reset_switched_query_id' ), 10, 2 );
 
 		add_filter( 'jet-smart-filters/service/filter/serialized-keys', array( $this, 'add_key_to_serialize' ) );
 		add_filter( 'jet-smart-filters/filters/indexed-data/query-type-data', array( $this, 'index_data' ), 0, 4 );
@@ -58,7 +61,7 @@ class Filters_Switch_Query extends Filters_Options_Source {
 
 		if ( ! empty( $query['meta_query'] ) ) {
 			foreach ( $query['meta_query'] as $index => $row ) {
-				if ( isset( $row['key'] ) && $this->query_var === $row['key'] ) {
+				if ( isset( $row['key'] ) && $this->query_var === $row['key'] && ! is_array( $row['value'] ) ) {
 					$this->set_query_id( $row['value'] );
 					do_action( 'jet-engine/query-builder/filters/switch-query', $this->new_query_id );
 					unset( $query['meta_query'][ $index ] );
@@ -105,6 +108,25 @@ class Filters_Switch_Query extends Filters_Options_Source {
 
 		return $query_id;
 
+	}
+
+	public function switch_query_in_bricks_loop( $query_id ) {
+		$query = Manager::instance()->get_query_by_id( $query_id );
+
+		if ( $this->new_query_id && Manager::instance()->listings->filters->is_filters_request( $query ) ) {
+			$query_id = $this->new_query_id;
+		}
+
+		return $query_id;
+	}
+
+	public function reset_switched_query_id($query, $args) {
+		// Hooked to 'bricks/query/after_loop', which also runs during style generation.
+		// We check for 'themeStyleSettings' to ensure the reset happens only after actual rendering,
+		// as there's no dedicated Bricks hook for this stage.
+		if ( isset( $args[0]['themeStyleSettings'] ) ) {
+			$this->new_query_id = null;
+		}
 	}
 
 	/**

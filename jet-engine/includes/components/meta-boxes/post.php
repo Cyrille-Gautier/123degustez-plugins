@@ -67,11 +67,11 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 			$fields = $this->prepare_meta_fields( $meta_box );
 
 			if ( ! empty( $this->show_in_rest ) ) {
-				
+
 				if ( ! class_exists( 'Jet_Engine_Rest_Post_Meta' ) ) {
 					require jet_engine()->meta_boxes->component_path( 'rest-api/fields/post-meta.php' );
 				}
-				
+
 				foreach ( $this->show_in_rest as $field ) {
 					new Jet_Engine_Rest_Post_Meta( $field, $post_type );
 				}
@@ -85,7 +85,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 				$title = esc_html__( 'Settings', 'jet-engine' );
 			}
 
-			new Cherry_X_Post_Meta( array(
+			new Cherry_X_Post_Meta( apply_filters( 'jet-engine/meta-boxes/register/post/args', array(
 				'id'            => $this->get_box_id(),
 				'title'         => apply_filters( 'jet-engine/compatibility/translate-string', $title ),
 				'page'          => array( $post_type ),
@@ -94,12 +94,11 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 				'callback_args' => false,
 				'builder_cb'    => array( $this, 'get_builder_for_meta' ),
 				'fields'        => $fields,
-			) );
+			), $this ) );
 
 			add_action( 'admin_enqueue_scripts', array( $this, 'maybe_enqueue_custom_css' ), 0 );
 			add_action( 'admin_enqueue_scripts', array( $this, 'maybe_enqueue_inline_js' ), 20 );
 			add_filter( 'cx_post_meta/custom_box', array( $this, 'maybe_hook_render_link' ), 10, 3 );
-
 		}
 
 		/**
@@ -138,7 +137,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 
 			printf(
 				'<a href="%s" class="jet-engine-edit-box-link" target="_blank"><span class="dashicons dashicons-admin-generic"></span></a>',
-				$this->edit_link
+				esc_url( $this->edit_link )
 			);
 
 			remove_action( 'cx_post_meta/meta_box/before', array( $this, 'render_edit_link' ) );
@@ -389,8 +388,8 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 						$prepared_options = $this->prepare_select_options( $field );
 						$result[ $field['name'] ]['options'] = $prepared_options['options'];
 
-						if ( ! empty( $prepared_options['options_callback'] ) 
-							&& is_callable( $prepared_options['options_callback'] ) 
+						if ( ! empty( $prepared_options['options_callback'] )
+							&& is_callable( $prepared_options['options_callback'] )
 						) {
 							$result[ $field['name'] ]['options_callback'] = $prepared_options['options_callback'];
 						}
@@ -417,8 +416,8 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 
 						$prepared_options = $this->prepare_select_options( $field );
 
-						if ( ! empty( $prepared_options['options_callback'] ) 
-							&& is_callable( $prepared_options['options_callback'] ) 
+						if ( ! empty( $prepared_options['options_callback'] )
+							&& is_callable( $prepared_options['options_callback'] )
 						) {
 							$result[ $field['name'] ]['options_callback'] = $prepared_options['options_callback'];
 						}
@@ -449,8 +448,8 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 
 						$prepared_options = $this->prepare_radio_options( [], $field );
 
-						if ( ! empty( $prepared_options['options_callback'] ) 
-							&& is_callable( $prepared_options['options_callback'] ) 
+						if ( ! empty( $prepared_options['options_callback'] )
+							&& is_callable( $prepared_options['options_callback'] )
 						) {
 							$result[ $field['name'] ]['options_callback'] = $prepared_options['options_callback'];
 						}
@@ -559,6 +558,13 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 							}
 						}
 
+						$restrict_mimes = ! empty( $field['restrict_mime_types'] ) ? $field['restrict_mime_types'] : false;
+						$restrict_mimes = filter_var( $restrict_mimes, FILTER_VALIDATE_BOOLEAN );
+
+						if ( $restrict_mimes && ! empty( $field['allowed_mime_types'] ) && is_array( $field['allowed_mime_types'] ) ) {
+							$result[ $field['name'] ]['library_type'] = implode( ',', $field['allowed_mime_types'] );
+						}
+
 						break;
 
 					case 'gallery':
@@ -573,6 +579,13 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 							if ( 'both' === $field['value_format'] ) {
 								$result[ $field['name'] ]['sanitize_callback'] = 'jet_engine_sanitize_media_json';
 							}
+						}
+
+						$restrict_mimes = ! empty( $field['restrict_mime_types'] ) ? $field['restrict_mime_types'] : false;
+						$restrict_mimes = filter_var( $restrict_mimes, FILTER_VALIDATE_BOOLEAN );
+
+						if ( $restrict_mimes && ! empty( $field['allowed_mime_types'] ) && is_array( $field['allowed_mime_types'] ) ) {
+							$result[ $field['name'] ]['library_type'] = implode( ',', $field['allowed_mime_types'] );
 						}
 
 						break;
@@ -668,13 +681,13 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 				$result[ $field['name'] ] = apply_filters( 'jet-engine/meta-fields/field/args', $result[ $field['name'] ], $field, $this );
 
 				if ( ! empty( $field['show_in_rest'] ) ) {
-					
+
 					if ( ! $this->show_in_rest ) {
 						$this->show_in_rest = array();
 					}
 
 					$this->show_in_rest[] = array_merge( array( 'name' => $field['name'] ), $result[ $field['name'] ] );
-					
+
 				}
 
 				if ( $this->post_type && ! empty( $field['quick_editable'] ) ) {
@@ -791,25 +804,25 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 			$inline_js = "
 				(function( $ ) {
 					if ( undefined !== navigator.clipboard && undefined !== navigator.clipboard.writeText ) {
-	
+
 						$( document ).on( 'click', '.je-field-name', function( event ) {
 							var field = $( event.target ),
 								fieldName = field.text();
-	
+
 							navigator.clipboard.writeText( fieldName ).then( function() {
 								// clipboard successfully set
-								
+
 								field.addClass( 'je-copied' );
-								
+
 								setTimeout( function() {
 									field.removeClass( 'je-copied' );
 								}, 1500 );
-							
+
 							}, function() {
 								// clipboard write failed
 							} );
 						} );
-				
+
 					}
 				})( jQuery );
 			";
@@ -845,7 +858,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 		}
 
 		public function date_assets() {
-			
+
 			wp_enqueue_script( 'jquery-ui-datepicker' );
 			wp_enqueue_script( 'jquery-ui-slider' );
 
@@ -1074,8 +1087,8 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 
 						$prepared_options = $this->prepare_select_options( $field );
 
-						if ( ! empty( $prepared_options['options_callback'] ) 
-							&& is_callable( $prepared_options['options_callback'] ) 
+						if ( ! empty( $prepared_options['options_callback'] )
+							&& is_callable( $prepared_options['options_callback'] )
 						) {
 							$field['options_callback'] = $prepared_options['options_callback'];
 						}
@@ -1108,8 +1121,8 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 
 						$prepared_options = $this->prepare_select_options( $field );
 
-						if ( ! empty( $prepared_options['options_callback'] ) 
-							&& is_callable( $prepared_options['options_callback'] ) 
+						if ( ! empty( $prepared_options['options_callback'] )
+							&& is_callable( $prepared_options['options_callback'] )
 						) {
 							$field['options_callback'] = $prepared_options['options_callback'];
 						}
@@ -1142,9 +1155,9 @@ if ( ! class_exists( 'Jet_Engine_CPT_Meta' ) ) {
 						}
 
 						$prepared_options = $this->prepare_radio_options( $field['options'], $field );
-						
-						if ( ! empty( $prepared_options['options_callback'] ) 
-							&& is_callable( $prepared_options['options_callback'] ) 
+
+						if ( ! empty( $prepared_options['options_callback'] )
+							&& is_callable( $prepared_options['options_callback'] )
 						) {
 							$field['options_callback'] = $prepared_options['options_callback'];
 						}

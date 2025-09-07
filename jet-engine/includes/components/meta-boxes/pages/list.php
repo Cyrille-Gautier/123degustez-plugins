@@ -37,8 +37,8 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes_Page_List' ) ) {
 			}
 
 			?>
-			<a class="page-title-action" href="<?php echo $this->manager->get_page_link( 'add' ); ?>"><?php
-				_e( 'Add New', 'jet-engine' );
+			<a class="page-title-action" href="<?php echo esc_url( $this->manager->get_page_link( 'add' ) ); ?>"><?php
+				_e( 'Add New', 'jet-engine' ); // phpcs:ignore
 			?></a>
 			<?php
 
@@ -129,12 +129,12 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes_Page_List' ) ) {
 			ob_start();
 			include jet_engine()->plugin_path( 'includes/components/meta-boxes/templates/list.php' );
 			$content = ob_get_clean();
-			printf( '<script type="text/x-template" id="jet-cpt-list">%s</script>', $content );
+			printf( '<script type="text/x-template" id="jet-cpt-list">%s</script>', $content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- content is safe Vue template
 
 			ob_start();
 			include jet_engine()->plugin_path( 'includes/components/meta-boxes/templates/delete-dialog.php' );
 			$content = ob_get_clean();
-			printf( '<script type="text/x-template" id="jet-cpt-delete-dialog">%s</script>', $content );
+			printf( '<script type="text/x-template" id="jet-cpt-delete-dialog">%s</script>', $content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- content is safe Vue template
 
 		}
 

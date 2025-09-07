@@ -117,10 +117,12 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Pro_Package' ) ) {
 				return $default_object;
 			}
 
+			// phpcs:disable
 			if ( ElementorPro\Modules\Forms\Classes\Ajax_Handler::is_form_submitted() && ! empty( $_REQUEST['queried_id'] ) ) {
-				$post_id = $_REQUEST['queried_id'];
+				$post_id = absint( $_REQUEST['queried_id'] );
 				$default_object = get_post( $post_id );
 			}
+			// phpcs:enable
 
 			return $default_object;
 		}
@@ -170,6 +172,7 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Pro_Package' ) ) {
 				return $default_object;
 			}
 
+			// phpcs:disable
 			if ( empty( $_REQUEST['action'] ) || 'elementor_ajax' !== $_REQUEST['action'] ) {
 				return $default_object;
 			}
@@ -205,6 +208,7 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Pro_Package' ) ) {
 				return $term;
 			}
 
+			// phpcs:enable
 			return $default_object;
 		}
 

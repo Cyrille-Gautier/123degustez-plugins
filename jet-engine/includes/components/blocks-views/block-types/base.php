@@ -35,7 +35,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Base' ) ) {
 				do_action( 'jet-engine/blocks-views/' . $this->get_name() . '/add-extra-style-options', $this );
 
 				//add_action( 'enqueue_block_editor_assets', array( $this, 'add_style_manager_options' ), -1 );
-				
+
 				if ( $this->prevent_wrap() ) {
 					add_filter(
 						'jet_style_manager/gutenberg/prevent_block_wrap/' . $this->get_block_name(),
@@ -166,7 +166,9 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Base' ) ) {
 		 * @return boolean [description]
 		 */
 		public function is_edit_mode() {
+			// phpcs:disable
 			return ( isset( $_GET['context'] ) && 'edit' === $_GET['context'] && isset( $_GET['attributes'] ) && $_GET['_locale'] );
+			// phpcs:enable
 		}
 
 		/**
@@ -223,7 +225,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Base' ) ) {
 		}
 
 		public function get_root_attr_string() {
-			
+
 			$result = [];
 
 			foreach ( $this->_root as $attr => $value ) {
@@ -238,11 +240,13 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Base' ) ) {
 
 		public function render_callback( $attributes = array() ) {
 
+			// phpcs:disable WordPress.Security.NonceVerification
 			$item       = $this->get_name();
-			$listing    = isset( $_REQUEST['listing'] ) ? $_REQUEST['listing'] : false;
+			$listing    = isset( $_REQUEST['listing'] ) ? Jet_Engine_Sanitizer::sanitize_array_recursively( $_REQUEST['listing'] ) : false; // phpcs:ignore
 			$listing_id = isset( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : false;
 			$object_id  = isset( $_REQUEST['object'] ) ? absint( $_REQUEST['object'] ) : jet_engine()->listings->data->get_current_object();
 			$attributes = $this->prepare_attributes( $attributes );
+			// phpcs:enable WordPress.Security.NonceVerification
 
 			if ( $this->is_edit_mode() ) {
 				do_action( 'jet-engine/blocks-views/render-block-preview', $this, $attributes );

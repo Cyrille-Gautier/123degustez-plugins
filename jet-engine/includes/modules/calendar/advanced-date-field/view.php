@@ -31,7 +31,7 @@ class Jet_Engine_Advanced_Date_Field_View {
 
 	/**
 	 * Register field type for JetEngine options
-	 * 
+	 *
 	 * @param  [type] $config [description]
 	 * @return [type]         [description]
 	 */
@@ -67,7 +67,7 @@ class Jet_Engine_Advanced_Date_Field_View {
 
 	/**
 	 * Prepare field arguments before registering field in the actual meta box
-	 * 
+	 *
 	 * @param  [type] $args     [description]
 	 * @param  [type] $field    [description]
 	 * @param  [type] $instance [description]
@@ -110,7 +110,7 @@ class Jet_Engine_Advanced_Date_Field_View {
 
 	/**
 	 * Enqueue field specific assets for editor
-	 * 
+	 *
 	 * @param  boolean $hook [description]
 	 * @return [type]        [description]
 	 */
@@ -119,6 +119,13 @@ class Jet_Engine_Advanced_Date_Field_View {
 		wp_enqueue_style(
 			'jet-engine-advanced-date-field',
 			jet_engine()->plugin_url( 'includes/modules/calendar/assets/css/advanced-date-field.css' ),
+			array(),
+			jet_engine()->get_version()
+		);
+
+		wp_enqueue_style(
+			'jet-engine-advanced-date-field-admin',
+			jet_engine()->plugin_url( 'includes/modules/calendar/assets/css/advanced-date-field-admin.css' ),
 			array(),
 			jet_engine()->get_version()
 		);
@@ -141,7 +148,7 @@ class Jet_Engine_Advanced_Date_Field_View {
 
 	/**
 	 * JS template of field for editor
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function print_field_js_template_rrule() {
@@ -149,12 +156,12 @@ class Jet_Engine_Advanced_Date_Field_View {
 		<script type="text/html" id="tmpl-jet-engine-advanced-date-field-rrule">
 			<?php $this->print_field_js_template_base_date(); ?>
 			<div class="jet-engine-advanced-date-field__is-recurring">
-				<span class="jet-engine-advanced-date-field__label"><?php 
+				<span class="jet-engine-advanced-date-field__label"><?php
 					_e( 'Is recurring', 'jet-engine' );
 				?></span>
 				<label class="jet-engine-advanced-date-field__switch">
-					<input 
-						type="checkbox" 
+					<input
+						type="checkbox"
 						class="jet-engine-advanced-date-field__switch-input"
 						name="{{ data.fieldName }}[is_recurring]"
 						value="1"
@@ -171,8 +178,8 @@ class Jet_Engine_Advanced_Date_Field_View {
 					?></div>
 					<div class="jet-engine-advanced-date-field__recurring-content">
 						<select name="{{ data.fieldName }}[recurring]" class="cx-ui-select">
-							<# _.each( data.recurrings, function( recurring ) { #> 
-								<option 
+							<# _.each( data.recurrings, function( recurring ) { #>
+								<option
 									value="{{ recurring.value }}"
 									<# if ( data.recurring == recurring.value ) { #>selected<# } #>
 								>{{ recurring.label }}</option>
@@ -184,11 +191,11 @@ class Jet_Engine_Advanced_Date_Field_View {
 						<input
 							type="number"
 							name="{{ data.fieldName }}[recurring_period]"
-							min="1" 
+							min="1"
 							value="{{ data.recurringPeriod }}"
 							class="cx-ui-text"
 						>
-						<# _.each( data.recurrings, function( recurring ) { #> 
+						<# _.each( data.recurrings, function( recurring ) { #>
 							<# if ( data.recurring == recurring.value ) { #>
 								<div class="jet-engine-advanced-date-field__recurring-label">{{ recurring.sublabel }}</div>
 							<# } #>
@@ -201,11 +208,11 @@ class Jet_Engine_Advanced_Date_Field_View {
 					<div class="jet-engine-advanced-date-field__recurring-content">
 					<# if ( 'weekly' == data.recurring ) { #>
 						<div class="jet-engine-advanced-date-field__weekdays">
-							<# _.each( data.weekdaysConfig, function( day ) { #> 
+							<# _.each( data.weekdaysConfig, function( day ) { #>
 								<label>
-									<input 
-										type="checkbox" 
-										value="{{ day.value }}" 
+									<input
+										type="checkbox"
+										value="{{ day.value }}"
 										name="{{ data.fieldName }}[week_days][]"
 										<# if ( data.weekDays.includes( '' + day.value ) ) { #>checked<# } #>
 									>
@@ -219,7 +226,7 @@ class Jet_Engine_Advanced_Date_Field_View {
 						<div class="jet-engine-advanced-date-field__monthly">
 							<div class="jet-engine-advanced-date-field__monthly-row">
 								<label>
-									<input 
+									<input
 										type="radio"
 										value="on_day"
 										name="{{ data.fieldName }}[monthly_type]"
@@ -228,11 +235,11 @@ class Jet_Engine_Advanced_Date_Field_View {
 									<?php _e( 'on day', 'jet-engine' ); ?>
 								</label>
 								<# if ( 'yearly' == data.recurring ) { #>
-									<select 
+									<select
 										name="{{ data.fieldName }}[month]"
 										class="cx-ui-select"
 									>
-									<# _.each( data.months, function( month ) { #> 
+									<# _.each( data.months, function( month ) { #>
 										<option
 											value="{{ month.value }}"
 											<# if ( month.value == data.month ) { #>selected<# } #>
@@ -240,11 +247,11 @@ class Jet_Engine_Advanced_Date_Field_View {
 									<# } ); #>
 									</select>
 								<# } #>
-								<select 
+								<select
 									name="{{ data.fieldName }}[month_day]"
 									class="cx-ui-select"
 								>
-								<# for ( var i = 1; i <= 31; i++ ) { #> 
+								<# for ( var i = 1; i <= 31; i++ ) { #>
 									<option
 										value="{{ i }}"
 										<# if ( i == data.monthDay ) { #>selected<# } #>
@@ -254,7 +261,7 @@ class Jet_Engine_Advanced_Date_Field_View {
 							</div>
 							<div class="jet-engine-advanced-date-field__monthly-row">
 								<label>
-									<input 
+									<input
 										type="radio"
 										value="on_day_type"
 										name="{{ data.fieldName }}[monthly_type]"
@@ -262,7 +269,7 @@ class Jet_Engine_Advanced_Date_Field_View {
 									>
 									<?php _e( 'on the', 'jet-engine' ); ?>
 								</label>
-								<select 
+								<select
 									name="{{ data.fieldName }}[month_day_type]"
 									class="cx-ui-select"
 								>
@@ -287,11 +294,11 @@ class Jet_Engine_Advanced_Date_Field_View {
 										<# if ( 'last' == data.monthDayType ) { #>selected<# } #>
 									><?php _e( 'Last', 'jet-engine' ); ?></option>
 								</select>
-								<select 
+								<select
 									name="{{ data.fieldName }}[month_day_type_value]"
 									class="cx-ui-select"
 								>
-									<# _.each( data.weekdaysConfig, function( day ) { #> 
+									<# _.each( data.weekdaysConfig, function( day ) { #>
 									<option
 										value="{{ day.value }}"
 										<# if ( day.value == data.monthDayTypeValue ) { #>selected<# } #>
@@ -303,11 +310,11 @@ class Jet_Engine_Advanced_Date_Field_View {
 									><?php _e( 'Day', 'jet-engine' ); ?></option>
 								</select>
 								<# if ( 'yearly' == data.recurring ) { #>
-									<select 
+									<select
 										name="{{ data.fieldName }}[month]"
 										class="cx-ui-select"
 									>
-									<# _.each( data.months, function( month ) { #> 
+									<# _.each( data.months, function( month ) { #>
 										<option
 											value="{{ month.value }}"
 											<# if ( month.value == data.month ) { #>selected<# } #>
@@ -327,11 +334,11 @@ class Jet_Engine_Advanced_Date_Field_View {
 					?></div>
 					<div class="jet-engine-advanced-date-field__recurring-content">
 						<select name="{{ data.fieldName }}[end]" class="cx-ui-select">
-							<option 
+							<option
 								value="after"
 								<# if ( 'after' == data.end ) { #>selected<# } #>
 							><?php _e( 'After', 'jet-engine' ); ?></option>
-							<option 
+							<option
 								value="on_date"
 								<# if ( 'on_date' == data.end ) { #>selected<# } #>
 							><?php _e( 'On date', 'jet-engine' ); ?></option>
@@ -340,18 +347,18 @@ class Jet_Engine_Advanced_Date_Field_View {
 						<input
 							type="number"
 							name="{{ data.fieldName }}[end_after]"
-							min="2" 
+							min="2"
 							value="{{ data.endAfter }}"
 							class="cx-ui-text"
 						>
-						<div class="jet-engine-advanced-date-field__recurring-label"><?php 
-							_e( 'iterations', 'jet-engine' ); 
+						<div class="jet-engine-advanced-date-field__recurring-label"><?php
+							_e( 'iterations', 'jet-engine' );
 						?></div>
 						<# } #>
 						<# if ( 'on_date' == data.end ) { #>
-						<input 
+						<input
 							type="date"
-							class="jet-engine-advanced-date-field__date" 
+							class="jet-engine-advanced-date-field__date"
 							name="{{ data.fieldName }}[end_after_date]"
 							placeholder="Select date..."
 							value="{{ data.endAfterDate }}"
@@ -368,7 +375,7 @@ class Jet_Engine_Advanced_Date_Field_View {
 
 	/**
 	 * JS template of field for editor
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function print_field_js_template_custom() {
@@ -382,13 +389,13 @@ class Jet_Engine_Advanced_Date_Field_View {
 	public function print_field_js_template_base_date() {
 		?>
 		<div class="jet-engine-advanced-date-field__date">
-			<span class="jet-engine-advanced-date-field__label"><?php 
+			<span class="jet-engine-advanced-date-field__label"><?php
 				_e( 'Start date', 'jet-engine' );
 			?></span>
 			<div class="jet-engine-advanced-date-field__date-warp <# if ( data.required ) { #>cx-control-required<# } #>" data-control-name="{{ data.fieldName }}[date]">
 				<div class="jet-engine-advanced-date-field__date-controls">
-					<input 
-						type="date" 
+					<input
+						type="date"
 						class="jet-engine-advanced-date-field__date jet-engine-advanced-date-field--control"
 						name="{{ data.fieldName }}[date]"
 						placeholder="Select date..."
@@ -397,8 +404,8 @@ class Jet_Engine_Advanced_Date_Field_View {
 						<# if ( data.required ) { #>required<# } #>
 					>
 					<# if ( data.allowTime ) { #>
-						<input 
-							type="time" 
+						<input
+							type="time"
 							class="jet-engine-advanced-date-field__time jet-engine-advanced-date-field--control"
 							name="{{ data.fieldName }}[time]"
 							placeholder="Set time..."
@@ -412,14 +419,14 @@ class Jet_Engine_Advanced_Date_Field_View {
 			</div>
 		</div>
 		<div class="jet-engine-advanced-date-field__date">
-			<span class="jet-engine-advanced-date-field__label"><?php 
+			<span class="jet-engine-advanced-date-field__label"><?php
 				_e( 'Has end date', 'jet-engine' );
 			?></span>
 			<div class="jet-engine-advanced-date-field__end-date-controls">
 				<div class="jet-engine-advanced-date-field__switch-wrap">
 					<label class="jet-engine-advanced-date-field__switch">
-						<input 
-							type="checkbox" 
+						<input
+							type="checkbox"
 							class="jet-engine-advanced-date-field__switch-input jet-engine-advanced-date-field--switcher"
 							name="{{ data.fieldName }}[is_end_date]"
 							data-key="isEndDate"
@@ -431,8 +438,8 @@ class Jet_Engine_Advanced_Date_Field_View {
 				</div>
 				<# if ( data.isEndDate ) { #>
 					<div class="jet-engine-advanced-date-field__date-warp <# if ( data.required ) { #>cx-control-required<# } #>" data-control-name="{{ data.fieldName }}[end_date]">
-						<input 
-							type="date" 
+						<input
+							type="date"
 							class="jet-engine-advanced-date-field__end-date jet-engine-advanced-date-field--control"
 							name="{{ data.fieldName }}[end_date]"
 							placeholder="Select date..."
@@ -443,8 +450,8 @@ class Jet_Engine_Advanced_Date_Field_View {
 						<div class="cx-control__error"></div>
 					</div>
 					<# if ( data.allowTime ) { #>
-						<input 
-							type="time" 
+						<input
+							type="time"
 							class="jet-engine-advanced-date-field__end-time jet-engine-advanced-date-field--control"
 							name="{{ data.fieldName }}[end_time]"
 							placeholder="Set time..."

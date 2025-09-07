@@ -273,10 +273,10 @@ class Meta_Storage {
 		$has_meta = isset( $obj_row[ $meta_key ] );
 
 		if ( ! $has_meta ) {
-			return [];
+			return $single ? '' : [];
 		}
 
-		$result = $has_meta ? maybe_unserialize( $obj_row[ $meta_key ] ) : false;
+		$result = maybe_unserialize( $obj_row[ $meta_key ] );
 
 		// We always need to return an array here, because result of "get_{$meta_type}_metadata" filter processed as an array in the WP core
 		return [ $result ];

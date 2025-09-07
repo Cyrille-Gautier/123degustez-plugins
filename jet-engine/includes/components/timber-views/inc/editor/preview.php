@@ -30,7 +30,7 @@ class Preview {
 	}
 
 	public function verify_request() {
-		
+
 		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], $this->nonce_action ) ) {
 			wp_send_json_error( [
 				'message' => __( 'Link is expired', 'jet-engine' ),
@@ -46,12 +46,28 @@ class Preview {
 		return true;
 	}
 
+	/**
+	 * Sanitize settings array
+	 *
+	 * @param array $settings Settings to sanitize.
+	 *
+	 * @return array Sanitized settings.
+	 */
+	public function sanitize_settings( $settings ) {
+
+		if ( ! is_array( $settings ) ) {
+			return [];
+		}
+
+		return \Jet_Engine_Tools::sanitize_array_recursively( $settings );
+	}
+
 	public function do_action() {
 
 		$this->verify_request();
 
-		$settings   = ! empty( $_POST['settings'] ) ? $_POST['settings'] : [];
-		$listing_id = ! empty( $_POST['id'] ) ? $_POST['id'] : false;
+		$settings   = ! empty( $_POST['settings'] ) ? $this->sanitize_settings( $_POST['settings'] ) : [];
+		$listing_id = ! empty( $_POST['id'] ) ? absint( $_POST['id'] ) : false;
 		$preview    = new \Jet_Engine_Listings_Preview( $settings, $listing_id );
 
 		$preview_object = $preview->get_preview_object();
@@ -63,15 +79,21 @@ class Preview {
 
 		do_action( 'jet-engine/twig-views/editor/before-render-preview', $preview_object, $this );
 
-		$preview_html = Package::instance()->render_html(
-			$_POST['html'], 
-			Package::instance()->get_context_for_object( $preview_object )
-		);
+		try {
+			$preview_html = Package::instance()->render_html(
+				// Content is sanitized inside the render_html() by Package::sanitize_twig_content().
+				wp_unslash( $_POST['html'] ),
+				Package::instance()->get_context_for_object( $preview_object )
+			);
+		} catch ( \Exception $e ) {
+			wp_send_json_error( [
+				'message' => __( 'Error rendering preview: ', 'jet-engine' ) . $e->getMessage(),
+			] );
+			return;
+		}
 
 		wp_send_json_success( [
 			'preview' => $preview_html
 		] );
-
 	}
-
 }

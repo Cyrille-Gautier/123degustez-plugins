@@ -128,10 +128,16 @@ class Maps_Listings extends Listing_Grid {
 			[
 				'tab'            => 'content',
 				'label'          => esc_html__( 'Map Height', 'jet-engine' ),
-				'type'           => 'text',
-				'hasDynamicData' => false,
+				'type'           => 'number',
+				'units'          => true,
 				'default'        => 300,
-				'description'    => esc_html__( 'Set height of the map in pixels', 'jet-engine' ),
+				'description'    => esc_html__( 'Set the height of the map. Allowed units: px, vh.', 'jet-engine' ),
+				'css'   => [
+					[
+						'property' => 'height',
+						'selector' => '.jet-map-listing',
+					],
+				],
 			]
 		);
 
@@ -274,6 +280,11 @@ class Maps_Listings extends Listing_Grid {
 				'default'  => [
 					'library' => 'fontawesomeSolid',
 					'icon'    => 'fas fa-location-dot',
+				],
+				'css'     => [
+					[
+						'selector' => '.jet-map-marker.jet-map-marker-default svg', // Use to target SVG file
+					],
 				],
 			]
 		);
@@ -475,9 +486,15 @@ class Maps_Listings extends Listing_Grid {
 		$markers_repeater->add_control(
 			'marker_icon',
 			[
-				'label'    => esc_html__( 'Icon', 'jet-engine' ),
-				'type'     => 'icon',
-				'required' => [ 'marker_type', '=', 'icon' ],
+				'label'       => esc_html__( 'Icon', 'jet-engine' ),
+				'type'        => 'icon',
+				'required'    => [ 'marker_type', '=', 'icon' ],
+				'description' => esc_html__( 'Note: SVG customization settings (e.g. width, height, fill, stroke) won\'t apply to map markers when using repeater icons. This is due to the way styles are generated using :nth-child, which is incompatible with the map structure.', 'jet-engine' ),
+				'css'     => [
+					[
+						'selector' => '.jet-map-marker.jet-map-marker-condition svg', // Use to target SVG file
+					],
+				],
 			]
 		);
 
@@ -835,7 +852,8 @@ class Maps_Listings extends Listing_Grid {
 					],
 					[
 						'property' => 'fill',
-						'selector' => '.jet-map-marker path',
+						'selector' => '.jet-map-marker.is-svg-icon path',
+						'value'    => 'inherit',
 					],
 				],
 			]
@@ -900,14 +918,15 @@ class Maps_Listings extends Listing_Grid {
 			);
 		}
 
+		add_filter( 'jet-engine/bricks-views/listing/render-assets', '__return_false' );
 		add_filter( 'jet-engine/maps-listings/marker-data', array( $this, 'prepare_marker_data' ) );
 
-		echo "<div {$this->render_attributes( '_root' )}>";
-
+		echo "<div {$this->render_attributes( '_root' )}>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		$render->render_content();
 		echo "</div>";
 
 		remove_filter( 'jet-engine/maps-listings/marker-data', array( $this, 'prepare_marker_data' ) );
+		remove_filter( 'jet-engine/bricks-views/listing/render-assets', '__return_false' );
 
 	}
 
@@ -931,7 +950,14 @@ class Maps_Listings extends Listing_Grid {
 
 		if ( ! empty( $attrs['multiple_markers'] ) ) {
 			foreach ( $attrs['multiple_markers'] as &$value ) {
-				$value['marker_icon'] = ! empty( $value['marker_icon'] ) ? Element::render_icon( $value['marker_icon'] ) : null;
+				$marker_icon_raw = $value['marker_icon'] ?? [];
+
+				if ( empty( $marker_icon_raw ) ) {
+					continue;
+				}
+
+				$value['marker_icon_raw'] = $marker_icon_raw;
+				$value['marker_icon'] = Element::render_icon( $marker_icon_raw );
 			}
 		}
 

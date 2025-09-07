@@ -27,6 +27,8 @@ class Author_Id extends \Jet_Engine_Base_Macros {
 
 		$author_id = null;
 
+		$macros_object = $this->get_macros_object();
+
 		global $authordata;
 
 		if ( $authordata ) {
@@ -39,6 +41,8 @@ class Author_Id extends \Jet_Engine_Base_Macros {
 				$author_id = get_the_author_meta( 'ID', $post->post_author );
 			}
 		}
+
+		$author_id = apply_filters( 'jet-engine/listings/macros/author-id', $author_id, $macros_object );
 
 		return $author_id;
 	}

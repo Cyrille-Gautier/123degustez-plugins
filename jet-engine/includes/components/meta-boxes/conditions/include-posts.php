@@ -66,14 +66,15 @@ class Include_Posts extends Base {
 	 */
 	public function get_post_id() {
 
-		$post_id = isset( $_GET['post'] ) ? $_GET['post'] : false;
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$post_id = isset( $_GET['post'] ) ? absint( wp_unslash( $_GET['post'] ) ) : false;
 
 		if ( ! $post_id && isset( $_REQUEST['post_ID'] ) ) {
-			$post_id = $_REQUEST['post_ID'];
+			$post_id = absint( wp_unslash( $_REQUEST['post_ID'] ) );
 		}
 
 		return $post_id;
-
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -82,6 +83,8 @@ class Include_Posts extends Base {
 	 * @return array
 	 */
 	public function get_control() {
+
+		// phpcs:disable
 		ob_start();
 		?>
 		<cx-vui-f-select
@@ -92,25 +95,26 @@ class Include_Posts extends Base {
 			:remote-callback="getPosts"
 			size="fullwidth"
 			:multiple="true"
-			:style="conditionControlsInlineCSS( '<?php echo $this->get_key(); ?>' )"
+			:style="conditionControlsInlineCSS( '<?php echo esc_js( $this->get_key() ); ?>' )"
 			:conditions="[
 				{
 					input: this.generalSettings.object_type,
 					compare: 'in',
-					value: <?php echo htmlentities( json_encode( $this->allowed_sources() ) ) ?>,
+					value: <?php echo esc_html( wp_json_encode( $this->allowed_sources() ) ) ?>,
 				},
 				{
-					input: '<?php echo $this->get_key() ?>',
+					input: '<?php echo esc_html( $this->get_key() ) ?>',
 					compare: 'in',
 					value: this.generalSettings.active_conditions,
 				}
 			]"
-			v-model="generalSettings.<?php echo $this->get_key() ?>"
-			ref="<?php echo $this->get_key() ?>"
-		><?php echo $this->remove_button(); ?></cx-vui-f-select>
+			v-model="generalSettings.<?php echo esc_attr( $this->get_key() ) ?>"
+			ref="<?php echo esc_attr( $this->get_key() ) ?>"
+		><?php echo $this->remove_button(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></cx-vui-f-select>
 		<?php
 
 		return ob_get_clean();
+		// phpcs:enable
 
 	}
 

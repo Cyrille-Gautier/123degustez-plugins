@@ -1,6 +1,8 @@
 <?php
 namespace Jet_Engine\Blocks_Views;
 
+use Jet_Engine_Sanitizer;
+
 /**
  * Make core blocks styles compatible with ajax-loaded listings.
  *
@@ -57,8 +59,8 @@ class Core_Styles {
 
 				printf(
 					'<style type="text/css" id="jet-listing-grid-%s-styles">%s</style>',
-					$listing_renderer->listing_id,
-					$listing_styles
+					absint( $listing_renderer->listing_id ),
+					Jet_Engine_Sanitizer::sanitize_inline_css( $listing_styles ) // phpcs:ignore
 				);
 			}
 		}

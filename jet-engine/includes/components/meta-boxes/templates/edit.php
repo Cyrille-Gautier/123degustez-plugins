@@ -8,11 +8,11 @@
 		<cx-vui-collapse
 			:collapsed="false"
 		>
-			<h3 class="cx-vui-subtitle" slot="title"><?php _e( 'General Settings', 'jet-engine' ); ?></h3>
+			<h3 class="cx-vui-subtitle" slot="title"><?php _e( 'General Settings', 'jet-engine' ); // phpcs:ignore ?></h3>
 			<div class="cx-vui-panel" slot="content">
 				<cx-vui-input
-					:label="'<?php _e( 'Meta Box Title', 'jet-engine' ); ?>'"
-					:description="'<?php _e( 'Title will be shown ar the top of Meta Box on edit Post page. Eg. `Settings`', 'jet-engine' ); ?>'"
+					:label="'<?php _e( 'Meta Box Title', 'jet-engine' ); // phpcs:ignore ?>'"
+					:description="'<?php _e( 'Title will be shown ar the top of Meta Box on edit Post page. Eg. `Settings`', 'jet-engine' ); // phpcs:ignore ?>'"
 					:wrapper-css="[ 'equalwidth' ]"
 					:size="'fullwidth'"
 					:error="errors.name"
@@ -20,8 +20,8 @@
 					@on-focus="handleFocus( 'name' )"
 				></cx-vui-input>
 				<cx-vui-select
-					:label="'<?php _e( 'Meta Box for', 'jet-engine' ); ?>'"
-					:description="'<?php _e( 'Select to add this meta box to posts, taxonomies or users', 'jet-engine' ); ?>'"
+					:label="'<?php _e( 'Meta Box for', 'jet-engine' ); // phpcs:ignore ?>'"
+					:description="'<?php _e( 'Select to add this meta box to posts, taxonomies or users', 'jet-engine' ); // phpcs:ignore ?>'"
 					:options-list="allowedSources"
 					:wrapper-css="[ 'equalwidth' ]"
 					:size="'fullwidth'"
@@ -31,14 +31,14 @@
 				<?php do_action( 'jet-engine/meta-boxes/source-custom-controls' ); ?>
 
 				<cx-vui-switcher
-					label="<?php _e( '`Edit meta box` link', 'jet-engine' ); ?>"
-					description="<?php _e( 'Add `Edit meta box` link to post/term/user edit page', 'jet-engine' ); ?>"
+					label="<?php _e( '`Edit meta box` link', 'jet-engine' ); // phpcs:ignore ?>"
+					description="<?php _e( 'Add `Edit meta box` link to post/term/user edit page', 'jet-engine' ); // phpcs:ignore ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					v-model="generalSettings.show_edit_link"
 				></cx-vui-switcher>
 				<cx-vui-switcher
-					label="<?php _e( 'Hide meta field names', 'jet-engine' ); ?>"
-					description="<?php _e( 'Hide meta field names on post/term/user edit page.', 'jet-engine' ); ?>"
+					label="<?php _e( 'Hide meta field names', 'jet-engine' ); // phpcs:ignore ?>"
+					description="<?php _e( 'Hide meta field names on post/term/user edit page.', 'jet-engine' ); // phpcs:ignore ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					v-model="generalSettings.hide_field_names"
 				></cx-vui-switcher>
@@ -47,11 +47,11 @@
 		<cx-vui-collapse
 			:collapsed="false"
 		>
-			<h3 class="cx-vui-subtitle" slot="title"><?php _e( 'Visibility Conditions', 'jet-engine' ); ?></h3>
+			<h3 class="cx-vui-subtitle" slot="title"><?php _e( 'Visibility Conditions', 'jet-engine' ); // phpcs:ignore ?></h3>
 			<div class="cx-vui-panel" slot="content">
 				<cx-vui-f-select
-					:label="'<?php _e( 'Enable For Post Types', 'jet-engine' ); ?>'"
-					:description="'<?php _e( 'Select post types where this meta box should be shown', 'jet-engine' ); ?>'"
+					:label="'<?php _e( 'Enable For Post Types', 'jet-engine' ); // phpcs:ignore ?>'"
+					:description="'<?php _e( 'Select post types where this meta box should be shown', 'jet-engine' ); // phpcs:ignore ?>'"
 					:wrapper-css="[ 'equalwidth' ]"
 					:options-list="postTypes"
 					:size="'fullwidth'"
@@ -66,8 +66,8 @@
 					v-model="generalSettings.allowed_post_type"
 				></cx-vui-f-select>
 				<cx-vui-f-select
-					:label="'<?php _e( 'Enable For Taxonomies', 'jet-engine' ); ?>'"
-					:description="'<?php _e( 'Select taxonomies where this meta box should be shown', 'jet-engine' ); ?>'"
+					:label="'<?php _e( 'Enable For Taxonomies', 'jet-engine' ); // phpcs:ignore ?>'"
+					:description="'<?php _e( 'Select taxonomies where this meta box should be shown', 'jet-engine' ); // phpcs:ignore ?>'"
 					:wrapper-css="[ 'equalwidth' ]"
 					:options-list="taxonomies"
 					:size="'fullwidth'"
@@ -85,16 +85,16 @@
 					<?php do_action( 'jet-engine/meta-boxes/condition-controls' ); ?>
 				</div>
 				<cx-vui-select
-					:label="'<?php _e( 'Visible at', 'jet-engine' ); ?>'"
-					description="<?php _e( 'If selected `Edit User` meta fields will be visible only for website administrator on Edit User page, if `Edit User & Profile` - fields also will be visible at user Profile page and can be edited by user', 'jet-engine' ); ?>"
+					:label="'<?php _e( 'Visible at', 'jet-engine' ); // phpcs:ignore ?>'"
+					description="<?php _e( 'If selected `Edit User` meta fields will be visible only for website administrator on Edit User page, if `Edit User & Profile` - fields also will be visible at user Profile page and can be edited by user', 'jet-engine' ); // phpcs:ignore ?>"
 					:options-list="[
 						{
 							value: 'edit',
-							label: '<?php _e( 'Edit User', 'jet-engine' ) ?>',
+							label: '<?php _e( 'Edit User', 'jet-engine' ); // phpcs:ignore ?>',
 						},
 						{
 							value: 'edit-profile',
-							label: '<?php _e( 'Edit User & Profile', 'jet-engine' ) ?>',
+							label: '<?php _e( 'Edit User & Profile', 'jet-engine' ); // phpcs:ignore ?>',
 						},
 					]"
 					:conditions="[
@@ -109,8 +109,8 @@
 					v-model="generalSettings.allowed_user_screens"
 				></cx-vui-select>
 				<cx-vui-select
-					label="<?php _e( 'Add new condition', 'jet-engine' ); ?>"
-					description="<?php _e( 'Select a condition to add', 'jet-engine' ); ?>"
+					label="<?php _e( 'Add new condition', 'jet-engine' ); // phpcs:ignore ?>"
+					description="<?php _e( 'Select a condition to add', 'jet-engine' ); // phpcs:ignore ?>"
 					:options-list="allowedConditions"
 					v-if="addingNewCondition"
 					:wrapper-css="[ 'equalwidth' ]"
@@ -124,8 +124,8 @@
 						size="mini"
 						@click="showConditionDialog()"
 					>
-						<span slot="label" v-if="! addingNewCondition">+ <?php _e( 'New condition', 'jet-engine' ); ?></span>
-						<span slot="label" v-else><?php _e( 'Cancel', 'jet-engine' ); ?></span>
+						<span slot="label" v-if="! addingNewCondition">+ <?php _e( 'New condition', 'jet-engine' ); // phpcs:ignore ?></span>
+						<span slot="label" v-else><?php _e( 'Cancel', 'jet-engine' ); // phpcs:ignore ?></span>
 					</cx-vui-button>
 				</cx-vui-component-wrapper>
 			</div>
@@ -134,9 +134,9 @@
 	</div>
 	<div class="jet-engine-edit-page__actions">
 		<div class="jet-engine-edit-page__actions-panel">
-			<div class="cx-vui-subtitle"><?php _e( 'Actions', 'jet-engine' ); ?></div>
+			<div class="cx-vui-subtitle"><?php _e( 'Actions', 'jet-engine' ); // phpcs:ignore ?></div>
 			<div class="cx-vui-text"><?php
-				_e( 'If you are not sure where to start, please check tutorials list below this block', 'jet-engine' );
+				_e( 'If you are not sure where to start, please check tutorials list below this block', 'jet-engine' ); // phpcs:ignore
 			?></div>
 			<div class="jet-engine-edit-page__actions-buttons">
 				<div class="jet-engine-edit-page__actions-save">
@@ -160,7 +160,7 @@
 						@click="showDeleteDialog = true"
 					>
 						<svg slot="label" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.28564 14.1921V3.42857H13.7142V14.1921C13.7142 14.6686 13.5208 15.089 13.1339 15.4534C12.747 15.8178 12.3005 16 11.7946 16H4.20529C3.69934 16 3.25291 15.8178 2.866 15.4534C2.4791 15.089 2.28564 14.6686 2.28564 14.1921Z"/><path d="M14.8571 1.14286V2.28571H1.14282V1.14286H4.57139L5.56085 0H10.4391L11.4285 1.14286H14.8571Z"/></svg>
-						<span slot="label"><?php _e( 'Delete', 'jet-engine' ); ?></span>
+						<span slot="label"><?php _e( 'Delete', 'jet-engine' ); // phpcs:ignore ?></span>
 					</cx-vui-button>
 				</div>
 			</div>
@@ -184,13 +184,13 @@
 							:prevent-wrap="true"
 							v-model="generalSettings.delete_metadata"
 						></cx-vui-switcher>
-						<div class="cx-vui-component__label"><?php _e( 'Delete metadata', 'jet-engine' ); ?></div>
+						<div class="cx-vui-component__label"><?php _e( 'Delete metadata', 'jet-engine' ); // phpcs:ignore ?></div>
 					</div>
-					<div class="cx-vui-component__desc"><?php _e( 'Toggle this option to delete metadata from the database for the deleted meta fields or when deleting the Meta Box.', 'jet-engine' ); ?></div>
+					<div class="cx-vui-component__desc"><?php _e( 'Toggle this option to delete metadata from the database for the deleted meta fields or when deleting the Meta Box.', 'jet-engine' ); // phpcs:ignore ?></div>
 				</div>
 			</div>
 			<div class="cx-vui-hr"></div>
-			<div class="cx-vui-subtitle jet-engine-help-list-title"><?php _e( 'Need Help?', 'jet-engine' ); ?></div>
+			<div class="cx-vui-subtitle jet-engine-help-list-title"><?php _e( 'Need Help?', 'jet-engine' ); // phpcs:ignore ?></div>
 			<div class="cx-vui-panel">
 				<div class="jet-engine-help-list">
 					<div class="jet-engine-help-list__item" v-for="link in helpLinks">

@@ -77,6 +77,12 @@ JetGMInfoBox.prototype.createJetGMInfoBoxDiv_ = function () {
 	var events;
 	var bw;
 	var me = this;
+	var clickableElements = [
+		'A',
+		'BUTTON',
+		'INPUT',
+		'TEXTAREA'
+	];
 
 	// This handler prevents an event in the JetGMInfoBox from being passed on to the map.
 	//
@@ -84,6 +90,16 @@ JetGMInfoBox.prototype.createJetGMInfoBoxDiv_ = function () {
 		var hasListingOverlay = 'click' === e.type && e.currentTarget.querySelector('.jet-engine-listing-overlay-wrap');
 
 		if ( hasListingOverlay ) {
+			return;
+		}
+
+		/**
+		 * @see https://github.com/Crocoblock/issues-tracker/issues/15546
+		 * 
+		 * do not stop event propagation for clickable elements
+		 */
+
+		if ( 'click' === e.type && clickableElements.includes( e.target.tagName ) ) {
 			return;
 		}
 
@@ -786,7 +802,20 @@ JetGMInfoBox.prototype.open = function (map, anchor) {
 
 	this.setMap(map);
 
+	map.jeActiveInfoWindow = this;
+
 	if ( this.div_ ) {
+
+		window.dispatchEvent(
+			new CustomEvent(
+				'jet-engine/maps/google/info-box-open',
+				{
+					detail: {
+						container: this.div_,
+					},
+				}
+			)
+		);
 
 		this.panBox_(this.disableAutoPan_); // BUG FIX 2/17/2018: add missing parameter
 
@@ -825,6 +854,10 @@ JetGMInfoBox.prototype.close = function () {
 
 		this.removeEventListener(this.contextListener_);
 		this.contextListener_ = null;
+	}
+
+	if ( this.map?.jeActiveInfoWindow ) {
+		this.map.jeActiveInfoWindow = false;
 	}
 
 	this.setMap(null);
@@ -897,6 +930,33 @@ window.JetEngineMapsProvider = function() {
 		let map = new google.maps.Map( container, settings );
 
 		this.initSync( map );
+
+		/**
+		 * @see https://github.com/Crocoblock/issues-tracker/issues/15546
+		 * 
+		 * stop map click event if clicked POI is behind map popup
+		 */
+		map.addListener( 'click', function( e ) {
+			if ( e.placeId && map.jeActiveInfoWindow ) {
+				const poiScreenX = e.domEvent?.screenX;
+				const poiScreenY = e.domEvent?.screenY;
+
+				if ( ! poiScreenX || ! poiScreenY ) {
+					return;
+				}
+
+				const infoBoxDivRect = map.jeActiveInfoWindow.div_.getBoundingClientRect();
+
+				if (
+					poiScreenX >= infoBoxDivRect.left &&
+					poiScreenX <= infoBoxDivRect.right &&
+					poiScreenY >= infoBoxDivRect.top &&
+					poiScreenY <= infoBoxDivRect.bottom
+				) {
+					e.stop();
+				}
+			}
+		} );
 		
 		return map;
 	}

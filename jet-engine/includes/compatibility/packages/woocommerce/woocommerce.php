@@ -264,10 +264,11 @@ if ( ! class_exists( 'Jet_Engine_Woo_Package' ) ) {
 		 * @return bool
 		 */
 		public function add_inline_css( $add_inline_css ) {
-
+			// phpcs:disable
 			if ( isset( $_REQUEST['removed_item'] ) && $_REQUEST['removed_item'] ) {
 				return true;
 			}
+			// phpcs:enable
 
 			return $add_inline_css;
 		}
@@ -331,6 +332,7 @@ if ( ! class_exists( 'Jet_Engine_Woo_Package' ) ) {
 
 		public function modify_order_post_object( $post, $post_meta ) {
 
+			// phpcs:disable WordPress.Security.NonceVerification
 			if ( is_object( $post ) ) {
 				return $post;
 			}
@@ -351,7 +353,8 @@ if ( ! class_exists( 'Jet_Engine_Woo_Package' ) ) {
 				return $post;
 			}
 
-			$id = esc_attr( $_GET['id'] );
+			$id = absint( $_GET['id'] );
+			// phpcs:enable WordPress.Security.NonceVerification
 
 			return get_post( $id );
 		}

@@ -122,7 +122,7 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 
 		/**
 		 * Ensure that needed assets loaded for controls
-		 * 
+		 *
 		 * @param \CX_Controls_Base Control instance
 		 */
 		public function ensure_control_assets( $control ) {
@@ -149,9 +149,9 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 			if ( ! is_object( $this->icons_manager ) || ! method_exists( $this->icons_manager, 'get_icon_type_object' ) ) {
 				return;
 			}
-			
+
 			$font_awesome_pro = $this->icons_manager->get_icon_type_object( 'font-awesome-pro' );
-			
+
 			if ( $font_awesome_pro ) {
 				$font_awesome_pro->enqueue_kit_js();
 			}
@@ -159,11 +159,11 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 
 		/**
 		 * Ensure listing document type is always set.
-		 * In some cases Elementor\Core\Base\Document::TYPE_META_KEY was empty for listing, 
+		 * In some cases Elementor\Core\Base\Document::TYPE_META_KEY was empty for listing,
 		 * this caused conflicts between Listing Items and Components
-		 * 
+		 *
 		 * Fix for https://github.com/Crocoblock/issues-tracker/issues/10125
-		 * 
+		 *
 		 * @param  [type] $result   [description]
 		 * @param  [type] $post_id  [description]
 		 * @param  [type] $meta_key [description]
@@ -193,11 +193,11 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 		 * Reset given listing type if Elementor is not installed
 		 */
 		public function reset_listing_types( $listing_type ) {
-			
+
 			if ( 'elementor' === $listing_type ) {
 				$listing_type = 'blocks';
 			}
-			
+
 			return $listing_type;
 		}
 
@@ -273,6 +273,7 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 		 */
 		public function set_listing_on_ajax( $ajax_manager ) {
 
+			// phpcs:disable
 			if ( empty( $_REQUEST['actions'] ) ) {
 				return;
 			}
@@ -284,8 +285,9 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 			if ( empty( $_REQUEST['editor_post_id'] ) ) {
 				return;
 			}
+			// phpcs:enable
 
-			$post_id = $_REQUEST['editor_post_id'];
+			$post_id = absint( $_REQUEST['editor_post_id'] ); // phpcs:ignore
 
 			$this->setup_listing_doc( $post_id );
 		}
@@ -330,11 +332,11 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 			?>
 			<div class="notice notice-warning">
 				<p><?php
-					_e( 'You need an <b>Elementor Page Builder</b> plugin to create and edit listing items', 'jet-engine' );
+					esc_html_e( 'You need an <b>Elementor Page Builder</b> plugin to create and edit listing items', 'jet-engine' );
 				?></p>
 				<p>
-					<a href="<?php echo $install_url; ?>">
-						<b><?php _e( 'Install Elementor Page Builder', 'jet-engine' ); ?></b>
+					<a href="<?php echo esc_url( $install_url ); ?>">
+						<b><?php esc_html_e( 'Install Elementor Page Builder', 'jet-engine' ); ?></b>
 					</a>
 				</p>
 			</div>
@@ -352,7 +354,7 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 				'jet-engine-icons',
 				jet_engine()->plugin_url( 'assets/lib/jetengine-icons/icons.css' ),
 				array(),
-				jet_engine()->get_version() . '-icons'
+				jet_engine()->get_version() . '-03062025'
 			);
 
 		}
@@ -425,7 +427,7 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 		}
 
 		public function include_base_widget() {
-		
+
 			if ( ! class_exists( '\Jet_Elementor_Widgets_Storage' ) ) {
 				require jet_engine()->plugin_path( 'includes/components/elementor-views/widgets-storage.php' );
 			}
@@ -433,7 +435,7 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 			if ( ! class_exists( '\Jet_Listing_Dynamic_Widget' ) ) {
 				require jet_engine()->plugin_path( 'includes/components/elementor-views/dynamic-widgets/dynamic-widget.php' );
 			}
-			
+
 		}
 
 		/**
@@ -540,6 +542,7 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 		 */
 		public function inject_listing_settings( $template_data ) {
 
+			// phpcs:disable
 			if ( empty( $_REQUEST['listing_view_type'] ) || 'elementor' !== $_REQUEST['listing_view_type'] ) {
 				return $template_data;
 			}
@@ -550,6 +553,7 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 					__( 'Elementor missed', 'jet-engine' )
 				);
 			}
+			// phpcs:enable
 
 			$documents = Elementor\Plugin::instance()->documents;
 			$doc_type  = $documents->get_document_type( jet_engine()->listings->get_id() );
@@ -561,9 +565,11 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 				);
 			}
 
+			// phpcs:disable
 			if ( ! isset( $_REQUEST['listing_source'] ) ) {
 				return $template_data;
 			}
+			// phpcs:enable
 
 			$template_data['meta_input']['_elementor_edit_mode'] = 'builder';
 			$template_data['meta_input'][ $doc_type::TYPE_META_KEY ] = jet_engine()->listings->get_id();
@@ -589,7 +595,9 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 		 * @return bool
 		 */
 		public function is_editor_ajax() {
+			// phpcs:disable
 			return is_admin() && isset( $_REQUEST['action'] ) && 'elementor_ajax' === $_REQUEST['action'];
+			// phpcs:enable
 		}
 
 		/**
@@ -696,7 +704,7 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 			$attr['data-elementor-open-lightbox'] = 'yes';
 
 			if ( ! empty( $gallery_id ) ) {
-				$attr['data-elementor-lightbox-slideshow='] = $gallery_id;
+				$attr['data-elementor-lightbox-slideshow'] = $gallery_id;
 			}
 
 			if ( ! empty( $img_data['id'] ) ) {

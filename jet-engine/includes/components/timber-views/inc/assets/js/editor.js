@@ -12,7 +12,7 @@
 		methods: {
 			prependVars( css ) {
 				let result = 'selector {';
-				
+
 				for ( var i = 0; i < window.JetEngineTimberEditor.css_variables.length; i++ ) {
 					let varName = this.getVarName( window.JetEngineTimberEditor.css_variables[ i ].var );
 					result += varName + ': ' + window.JetEngineTimberEditor.css_variables[ i ].value + ';';
@@ -87,9 +87,9 @@
 		},
 		computed: {
 			optionsList() {
-				
+
 				const result = [];
-				
+
 				for ( const child in this.children ) {
 					result.push( {
 						value: child,
@@ -145,7 +145,7 @@
 	} );
 
 	Vue.component( 'jet-engine-timber-css-vars-helper', {
-		template: `<div 
+		template: `<div
 				class="jet-engine-timber-css-vars-helper"
 				v-click-outside.capture="closePopup"
 				v-click-outside:mousedown.capture="closePopup"
@@ -155,7 +155,7 @@
 			<a href="#" class="jet-engine-timber-css-vars-trigger" @click.prevent="isActive = ! isActive">{{ buttonLabel }}</a>
 			<div v-if="isActive" class="jet-engine-timber-dynamic-data__popup jet-engine-timber-editor-popup align-left">
 				<div class="jet-engine-timber-css-vars">
-					<div 
+					<div
 						class="jet-engine-timber-css-var"
 						v-for="( varItem ) in mergedVars()"
 						@click="submitVar( varItem.var )"
@@ -242,7 +242,7 @@
 				if ( null === this.currentMediaControl ) {
 					return;
 				}
-				
+
 				const attachment = this.mediaFrame.state().get( 'selection' ).toJSON();
 
 				let imgURL;
@@ -255,7 +255,7 @@
 				} else {
 					imgThumb = attachment[0].sizes.full.url;
 				}
-				
+
 				this.setControlProp( 'component_controls_list', 'control_default_image', {
 					id: attachment[0].id,
 					url: imgURL,
@@ -282,7 +282,7 @@
 		},
 		methods: {
 			hasControlDefaultImage( control ) {
-				
+
 				if ( ! control.control_default_image ) {
 					return false;
 				}
@@ -318,14 +318,14 @@
 			addNewControl( where, defaultControl ) {
 
 				var control = defaultControl;
-				
+
 				control.collapsed = false;
 				control.id        = this.getRandomID();
 
 				this.settings[ where ].push( control );
 
 			},
-			
+
 			cloneControl( index, where ) {
 
 				var newControl = JSON.parse( JSON.stringify( this.settings[ where ][ index ] ) );
@@ -428,7 +428,7 @@
 			selectFunction( functionData ) {
 				this.currentFunction = functionData;
 				for ( const controlID in this.currentFunction.args ) {
-					
+
 					let control = this.currentFunction.args[ controlID ];
 
 					if ( control.default ) {
@@ -440,7 +440,7 @@
 			selectFilter( filterData ) {
 				this.currentFilter = filterData;
 				for ( const controlID in this.currentFilter.args ) {
-					
+
 					let control = this.currentFilter.args[ controlID ];
 
 					if ( undefined !== control.default ) {
@@ -450,7 +450,7 @@
 				}
 			},
 			resetEdit( switchToMode ) {
-				
+
 				if ( 'functions' === this.currentMode || ! this.currentMode ) {
 					this.currentFunction = false;
 					this.result = {};
@@ -479,7 +479,7 @@
 
 			},
 			getFunctionToInsert() {
-				
+
 				if ( ! this.currentFunction ) {
 					return '';
 				}
@@ -488,7 +488,7 @@
 					return '{{ ' + this.getChainedFunctionToInsert() + ' }}';
 				}
 
-				let result = '{{ ' 
+				let result = '{{ '
 				result += this.currentFunction.name + '(args=';
 				result += this.getArgsString( this.result, this.defaults );
 				result += ') }}';
@@ -497,11 +497,11 @@
 
 			},
 			getArgsString( values, defaults ) {
-				
+
 				let args = [];
 
 				for ( const arg in values ) {
-					
+
 					if ( values[ arg ] !== defaults[ arg ] ) {
 						args.push( arg + ":'" + values[ arg ] + "'" );
 					}
@@ -520,7 +520,7 @@
 					let args = Object.values( this.chainedResult[ i ].args );
 
 					if ( args.length ) {
-						
+
 						let argsStr = args.map( ( item ) => {
 							if ( 'string' === typeof item ) {
 								item = "'" + item + "'";
@@ -547,11 +547,11 @@
 				if ( ! this.currentFilter ) {
 					return '';
 				}
-				
+
 				let args = {};
 
 				for ( const arg in this.filterResult ) {
-					
+
 					if ( this.filterResult[ arg ] !== this.filterDefaults[ arg ] ) {
 						args[ arg ] = this.filterResult[ arg ];
 					}
@@ -563,12 +563,12 @@
 					args = { ...this.filterDefaults, ...args };
 				}
 
-				let result = '|' 
+				let result = '|'
 				result += this.currentFilter.name
-				
+
 				if ( this.currentFilter.args ) {
 					result += '(';
-					
+
 					if ( this.currentFilter.variadic ) {
 						result += 'args=' + this.getArgsString( this.filterResult, this.filterDefaults );
 					} else {
@@ -596,7 +596,7 @@
 	} );
 
 	Vue.component( 'jet-engine-timber-presets', {
-		template: `<div 
+		template: `<div
 			class="jet-engine-timber-editor-presets jet-engine-timber-dynamic-data"
 			v-click-outside.capture="closePopup"
 			v-click-outside:mousedown.capture="closePopup"
@@ -608,8 +608,8 @@
 				button-style="link-accent"
 				size="link"
 			>
-				<svg 
-					xmlns="http://www.w3.org/2000/svg" 
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
 					width="16"
 					height="16"
 					viewBox="0 0 24 24"
@@ -629,15 +629,15 @@
 						:class="{
 							'jet-engine-timber-presets-list__item': true,
 							'jet-engine-timber-presets-list__item--active': presetIndex === currentPreset
-						}" 
+						}"
 						v-for="( preset, presetIndex ) in presets"
 					>
-						<div 
+						<div
 							class="jet-engine-timber-presets-list__item-preview"
-							@click.prevent="currentPreset = presetIndex" 
+							@click.prevent="currentPreset = presetIndex"
 							v-html="preset.preview"
 						></div>
-						<div 
+						<div
 							class="jet-engine-timber-presets-list__item-cover"
 							v-if="presetIndex === currentPreset"
 						>
@@ -726,8 +726,8 @@
 			} );
 
 			this.$refs.previewBody.addEventListener( 'click', ( event ) => {
-				if ( ( 'A' === event.target.nodeName && ! event.target.classList.contains( 'clickable' ) ) 
-					|| event.target.closest( 'a:not(.clickable)' ) 
+				if ( ( 'A' === event.target.nodeName && ! event.target.classList.contains( 'clickable' ) )
+					|| event.target.closest( 'a:not(.clickable)' )
 				) {
 					event.preventDefault();
 					return false;
@@ -856,21 +856,17 @@
 					}
 				}).done( ( response ) => {
 
-					this.previewHTML = response.data.preview;
+					if ( ! response.success ) {
+						this.$CXNotice.add( {
+							message: response.data.message,
+							type: 'error',
+							duration: 8000,
+						} );
+					} else {
+						this.previewHTML = response.data.preview;
+					}
+
 					this.reloading = false;
-
-					/*
-					
-					Disable scripts init in preview for now
-					
-					setTimeout( () => { 
-						window.JetPlugins.init( jQuery( this.$refs.previewBody ), [ {
-							block: 'jet-engine/dynamic-field',
-							callback: window.JetEngine.widgetDynamicField
-						} ] );
-					} );
-					*/
-
 				} ).fail( ( jqXHR, textStatus, errorThrown ) => {
 					this.reloading = false;
 					alert( errorThrown );

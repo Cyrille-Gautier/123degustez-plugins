@@ -2,6 +2,8 @@
 /**
  * Posts query component template
  */
+
+// phpcs:disable
 ?>
 <div class="jet-engine-edit-page__fields">
 	<div class="cx-vui-collapse__heading">

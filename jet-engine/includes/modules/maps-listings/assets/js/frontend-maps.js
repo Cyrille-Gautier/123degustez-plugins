@@ -22,6 +22,11 @@
 				window.elementorFrontend?.hooks?.addAction( 'frontend/element_ready/' + widget, callback );
 			});
 
+			window.addEventListener(
+				'jet-engine/maps/google/info-box-open',
+				JetEngineMaps.initHandlersOnEvent
+			);
+
 		},
 
 		initBlocks: function( $scope ) {
@@ -139,6 +144,8 @@
 					}
 
 					activeInfoWindow = false;
+
+					map.jetPlugins.isOpeningPopup = false;
 				}, map );
 
 				mapProvider.openPopup( marker, function( event ) {
@@ -146,6 +153,9 @@
 					if ( event && event.stopPropagation ) {
 						event.stopPropagation();
 					}
+
+					map.jetPlugins.isOpeningPopup = true;
+					clearTimeout( map.jetPlugins?.isOpeningPopupTimer );
 
 					if ( infowindow.contentIsSet() ) {
 
@@ -157,6 +167,8 @@
 							activeInfoWindow.close();
 						}
 
+						setCenterByMarker( marker );
+
 						infowindow.setMap( map );
 						infowindow.draw();
 						infowindow.open( map, marker );
@@ -165,7 +177,10 @@
 
 						activeInfoWindow = infowindow;
 
-						setCenterByMarker( marker );
+						map.jetPlugins.isOpeningPopupTimer = setTimeout(
+							() =>  map.jetPlugins.isOpeningPopup = false,
+							+( JetEngineSettings?.mapSyncFilter?.debounceTime ?? 500 ) + 10
+						);
 
 						return;
 
@@ -248,6 +263,11 @@
 
 						activeInfoWindow = infowindow;
 
+						map.jetPlugins.isOpeningPopupTimer = setTimeout(
+							() =>  map.jetPlugins.isOpeningPopup = false,
+							+( JetEngineSettings?.mapSyncFilter?.debounceTime ?? 500 ) + 10
+						);
+
 						// Re-init Bricks scripts
 						JetEngineMaps.reinitBricksScripts( mapID );
 
@@ -262,6 +282,11 @@
 
 						activeInfoWindow = infowindow;
 
+						map.jetPlugins.isOpeningPopupTimer = setTimeout(
+							() =>  map.jetPlugins.isOpeningPopup = false,
+							+( JetEngineSettings?.mapSyncFilter?.debounceTime ?? 500 ) + 10
+						);
+
 					});
 
 					setCenterByMarker( marker );
@@ -272,11 +297,15 @@
 
 			var setCenterByMarker = function( marker ) {
 
+				if ( ! general.centeringOnOpen ) {
+					return;
+				}
+
 				if ( JetEngineMaps.preventPanToMarker ) {
 					return;
 				}
 
-				if ( ! general.centeringOnOpen ) {
+				if ( map.jetPlugins.autoCenterBlock ) {
 					return;
 				}
 
@@ -356,7 +385,9 @@
 
 			}
 
-			map    = mapProvider.initMap( $container[0], mapSettings );
+			map = mapProvider.initMap( $container[0], mapSettings );
+
+			map.jetPlugins ??= {};
 			
 			bounds = mapProvider.initBounds();
 			width  = parseInt( general.width, 10 );
@@ -407,7 +438,7 @@
 
 				bounds = mapProvider.initBounds();
 
-				if ( response.markers.length ) {
+				if ( response.markers?.length ) {
 
 					for ( var i = 0; i < response.markers.length; i++ ) {
 						let marker = response.markers[ i ];
@@ -421,9 +452,11 @@
 
 				}
 
-				if ( ! map.jeFiltersAutoCenterBlock && ( autoCenter || ! customCenter ) ) {
+				if ( ! map.jetPlugins.autoCenterBlock && ( autoCenter || ! customCenter ) ) {
 					setAutoCenter();
 				}
+
+				map.jetPlugins.autoCenterBlock = false;
 
 			} );
 
@@ -562,6 +595,14 @@
 
 		},
 
+		initHandlersOnEvent: function( event ) {
+			if ( ! event.detail || ! event.detail.container ) {
+				return;
+			}
+
+			JetEngineMaps.initHandlers( $( event.detail.container ) );
+		},
+
 		// Restart the map when it is displayed
 		initMapAfterDisplayingWidgets: function( node ) {
 			const observer = new IntersectionObserver((entries, observer) => {
@@ -616,6 +657,10 @@
 		dispatchMapSyncEventImmediate: function( mapDiv, bounds, map ) {
 			if ( map.isInternalInteraction ) {
 				map.isInternalInteraction = false;
+				return;
+			}
+
+			if ( map.jetPlugins.isOpeningPopup ) {
 				return;
 			}
 

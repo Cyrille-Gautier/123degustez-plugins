@@ -22,6 +22,30 @@ trait Meta_Query_Trait {
 
 		foreach ( $raw as $query_row ) {
 
+			if (
+				! empty( $query_row['is_group'] )
+				&& ! empty( $query_row['args'] )
+			) {
+
+				$relation = ! empty( $query_row['relation'] ) ? $query_row['relation'] : 'AND';
+
+				$meta_query[] = array_merge(
+					[ 'relation' => strtoupper( $relation ) ],
+					$this->prepare_meta_query_args( [
+						'meta_query' => $query_row['args']
+					] )
+				);
+
+				continue;
+			}
+
+			$exclude_empty = ! empty( $query_row['exclude_empty'] ) ? $query_row['exclude_empty'] : false;
+			$exclude_empty = filter_var( $exclude_empty, FILTER_VALIDATE_BOOLEAN );
+
+			if ( $exclude_empty && \Jet_Engine_Tools::is_empty( $query_row, 'value' ) ) {
+				continue;
+			}
+
 			if ( ! empty( $query_row['compare'] )
 				 && in_array( $query_row['compare'], array( 'IN', 'NOT IN' ) )
 				 && ! is_array( $query_row['value'] )
@@ -73,8 +97,9 @@ trait Meta_Query_Trait {
 	 */
 	public function replace_meta_query_row( $rows = array() ) {
 
-		// Added to remove slash from regex meta-query
-		$rows = wp_unslash( $rows );
+		foreach ( $rows as $row_index => $row ) {
+			$rows[ $row_index ] = $this->maybe_unslash_regexp_meta_query_row( $row );
+		}
 
 		$replaced_rows = array();
 
@@ -85,7 +110,10 @@ trait Meta_Query_Trait {
 			if ( $replace_rows ) {
 				foreach ( $this->final_query['meta_query'] as $index => $existing_row ) {
 					foreach ( $rows as $row_index => $row ) {
-						if ( isset( $row['key'] ) && $existing_row['key'] === $row['key'] ) {
+						if ( isset( $row['key'] )
+							&& isset( $existing_row['key'] )
+							&& $existing_row['key'] === $row['key']
+						) {
 
 							if ( ! empty( $existing_row['clause_name'] ) ) {
 								$row['clause_name'] = $existing_row['clause_name'];
@@ -169,4 +197,28 @@ trait Meta_Query_Trait {
 
 	}
 
+	/**
+	 * Maybe unslash meta query row if the 'compare' operator is 'REGEXP'.
+	 *
+	 * Added by Photon to fix an issue with regex meta queries.
+	 * Previous fix only addressed filtering by checkbox meta fields.
+	 *
+	 * @see https://github.com/Crocoblock/issues-tracker/issues/1199
+	 * @see https://github.com/Crocoblock/issues-tracker/issues/16249
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $row Meta query row.
+	 * @return array Processed meta query row.
+	 */
+	public function maybe_unslash_regexp_meta_query_row( $row ) {
+		$has_regexp_compare = isset( $row['compare'] ) && 'REGEXP' === $row['compare'];
+		$has_relation       = ! empty( $row['relation'] );
+
+		if ( $has_regexp_compare || $has_relation ) {
+			$row = wp_unslash( $row );
+		}
+
+		return $row;
+	}
 }

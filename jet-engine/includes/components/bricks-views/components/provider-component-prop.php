@@ -37,7 +37,7 @@ class Provider_Component_Prop extends \Bricks\Integrations\Dynamic_Data\Provider
 	}
 
 	public static function get_fields() {
-		
+
 		$fields     = [];
 		$components = jet_engine()->listings->components->registry->get_components();
 
@@ -121,7 +121,11 @@ class Provider_Component_Prop extends \Bricks\Integrations\Dynamic_Data\Provider
 
 				case 'color':
 
-					$value = sprintf( 'var(%1$s%2$s)', Component::css_var_prefix(), $field['name'] );
+					$value = sprintf(
+						'var(%1$s%2$s)',
+						Component::css_var_prefix(),
+						esc_attr( $field['name'] )
+					);
 
 					break;
 

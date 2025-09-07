@@ -42,13 +42,13 @@ class Forms {
 		<div class="jet-form-editor__row"
 			v-if="inArray( currentItem.settings.type, [ 'select', 'checkboxes', 'radio' ] ) && 'glossary' === currentItem.settings.field_options_from"
 		>
-			<div class="jet-form-editor__row-label"><?php _e( 'Select Glossary:', 'jet-engine' ); ?></div>
+			<div class="jet-form-editor__row-label"><?php esc_html_e( 'Select Glossary:', 'jet-engine' ); ?></div>
 			<div class="jet-form-editor__row-control">
 				<select v-model="currentItem.settings.glossary_id">
-					<option value=""><?php _e( 'Select glossary...', 'jet-engine' ); ?></option>
+					<option value=""><?php esc_html_e( 'Select glossary...', 'jet-engine' ); ?></option>
 					<?php
 						foreach ( jet_engine()->glossaries->settings->get() as $glossary ) {
-							printf( '<option value="%1$s">%2$s</option>', $glossary['id'], $glossary['name'] );
+							printf( '<option value="%1$s">%2$s</option>', esc_attr( $glossary['id'] ), esc_html( $glossary['name'] ) );
 						}
 					?>
 				</select>

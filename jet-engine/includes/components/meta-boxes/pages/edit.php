@@ -48,7 +48,7 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes_Page_Edit' ) ) {
 		 * @return [type] [description]
 		 */
 		public function item_id() {
-			return isset( $_GET['id'] ) ? esc_attr( $_GET['id'] ) : false;
+			return isset( $_GET['id'] ) ? esc_attr( wp_unslash( $_GET['id'] ) ) : false; // phpcs:ignore
 		}
 
 		/**
@@ -359,12 +359,12 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes_Page_Edit' ) ) {
 			include jet_engine()->plugin_path( 'includes/components/meta-boxes/templates/edit.php' );
 			$content = ob_get_clean();
 
-			printf( '<script type="text/x-template" id="jet-mb-form">%s</script>', $content );
+			printf( '<script type="text/x-template" id="jet-mb-form">%s</script>', $content );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- content is safe Vue template
 
 			ob_start();
 			include jet_engine()->plugin_path( 'includes/components/meta-boxes/templates/delete-dialog.php' );
 			$content = ob_get_clean();
-			printf( '<script type="text/x-template" id="jet-cpt-delete-dialog">%s</script>', $content );
+			printf( '<script type="text/x-template" id="jet-cpt-delete-dialog">%s</script>', $content );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- content is safe Vue template
 
 		}
 
@@ -377,25 +377,25 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes_Page_Edit' ) ) {
 			include jet_engine()->plugin_path( 'includes/components/meta-boxes/templates/field-conditions-dialog.php' );
 			$conditions_template = ob_get_clean();
 
-			printf( '<script type="text/x-template" id="jet-meta-field-conditions-dialog">%s</script>', $conditions_template );
+			printf( '<script type="text/x-template" id="jet-meta-field-conditions-dialog">%s</script>', $conditions_template );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- content is safe Vue template
 
 			ob_start();
 			include jet_engine()->plugin_path( 'includes/components/meta-boxes/templates/fields.php' );
 			$content = ob_get_clean();
 
-			printf( '<script type="text/x-template" id="jet-meta-fields">%s</script>', $content );
+			printf( '<script type="text/x-template" id="jet-meta-fields">%s</script>', $content );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- content is safe Vue template
 
 			ob_start();
 			include jet_engine()->plugin_path( 'includes/components/meta-boxes/templates/field.php' );
 			$content = ob_get_clean();
 
-			printf( '<script type="text/x-template" id="jet-meta-field">%s</script>', $content );
+			printf( '<script type="text/x-template" id="jet-meta-field">%s</script>', $content );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- content is safe Vue template
 
 			ob_start();
 			include jet_engine()->plugin_path( 'includes/components/meta-boxes/templates/field-options.php' );
 			$content = ob_get_clean();
 
-			printf( '<script type="text/x-template" id="jet-meta-field-options">%s</script>', $content );
+			printf( '<script type="text/x-template" id="jet-meta-field-options">%s</script>', $content );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- content is safe Vue template
 
 		}
 

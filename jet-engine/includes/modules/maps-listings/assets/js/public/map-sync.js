@@ -17,6 +17,8 @@
 				
 				super( $container, $filter );
 				
+				this.$container = $container;
+
 				const mapId = $container.data( 'query-id' );
 				
 				if ( mapId && mapId !== 'default' ) {
@@ -38,9 +40,16 @@
 					this.saveDefaults( e );
 				}
 
-				this.mapDefaults.map.jeFiltersAutoCenterBlock = true;
+				this.mapDefaults.map.jetPlugins.autoCenterBlock = true;
+
+				let prevValue = this.dataValue || {};
 				
 				this.dataValue = e.detail.bounds;
+
+				if ( JSON.stringify( prevValue ) === JSON.stringify( this.dataValue ) ) {
+					this.mapDefaults.map.jetPlugins.autoCenterBlock = false;
+				}
+
 				this.wasChanged ? this.wasChanged() : this.wasСhanged();
 			}
 
@@ -61,7 +70,7 @@
 				super.reset();
 
 				if ( this.mapDefaults ) {
-					this.mapDefaults.map.jeFiltersAutoCenterBlock = false;
+					this.mapDefaults.map.jetPlugins.autoCenterBlock = false;
 				}
 
 				// if ( this.mapDefaults === null ) {
@@ -86,79 +95,8 @@
 
 	}
 
-	const initFilterConflictHandler = function() {
-		const conflictHandler = class FilterConflictHandler {
-
-			isResolving = false;
-
-			constructor() {
-				this.init();
-			}
-
-			init( e ) {
-				JetSmartFilters.events.subscribe( 'fiter/change', ( filter ) => {
-					if ( this.isResolving ) {
-						return;
-					}
-
-					this.isResolving = true;
-
-					if ( ! [ 'map-sync', 'user-geolocation', 'location-distance' ].includes( filter?.name ) ) {
-						return;
-					}
-
-					let conflictingTypes = [];
-		
-					if ( filter.name === 'map-sync' ) {
-						conflictingTypes = [ 'user-geolocation', 'location-distance' ];
-					} else {
-						conflictingTypes = [ 'map-sync' ];
-					}
-
-					this.resetConflictingFilters( filter, conflictingTypes );
-				} );
-			}
-			
-			resetConflictingFilters( filter, conflictingTypes ) {
-				for ( const conflictingFilter of this.getFilters( filter, conflictingTypes ) ) {
-					conflictingFilter.reset();
-					conflictingFilter.dataValue = false;
-					conflictingFilter.wasChanged ? conflictingFilter.wasChanged() : conflictingFilter.wasСhanged();
-				}
-
-				this.isResolving = false;
-			}
-
-			getFilters( filter, types ) {
-				if ( ! types.length ) {
-					return [];
-				}
-
-				let filters = [];
-
-				filter.filterGroup.filters.forEach(
-					( f ) => {
-						if ( ! types.includes( f.name ) ) {
-							return;
-						}
-
-						filters.push( f );
-					}
-				);
-
-				return filters;
-			}
-
-		};
-
-		new conflictHandler();
-
-	}
-
 	document.addEventListener( 'DOMContentLoaded', ( e ) => {
 		initMapSyncFilter();
 	});
-
-	document.addEventListener( 'jet-smart-filters/inited', initFilterConflictHandler );
 
 }( jQuery ) );

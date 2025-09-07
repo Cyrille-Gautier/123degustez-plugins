@@ -115,6 +115,14 @@ if ( ! class_exists( 'Jet_Engine_Listings_Macros' ) ) {
 			return $this->handler->get_after();
 		}
 
+		public function set_filter( $filter = null ) {
+			$this->handler->set_filter( $filter );
+		}
+
+		public function get_filter() {
+			return $this->handler->get_filter();
+		}
+
 		/**
 		 * Is $str is array - returns 0, in other cases returns $str
 		 *
@@ -185,7 +193,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Macros' ) ) {
 			switch ( $class ) {
 
 				case 'WP_Post':
-					return jet_engine()->listings->data->get_meta( $meta_key );
+					return jet_engine()->listings->data->get_meta( $meta_key, $object );
 
 				case 'WP_Term':
 					return get_term_meta( $object->term_id, $meta_key, true );

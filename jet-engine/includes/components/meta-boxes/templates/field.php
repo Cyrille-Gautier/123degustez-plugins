@@ -1,7 +1,7 @@
 <div>
 	<cx-vui-input
-		label="<?php _e( 'Label', 'jet-engine' ); ?>"
-		description="<?php _e( 'Meta field label. It will be displayed on Post edit page', 'jet-engine' ); ?>"
+		label="<?php _e( 'Label', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Meta field label. It will be displayed on Post edit page', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:value="field.title"
@@ -9,8 +9,8 @@
 		@on-input-change="preSetFieldName()"
 	></cx-vui-input>
 	<cx-vui-input
-		label="<?php _e( 'Name/ID', 'jet-engine' ); ?>"
-		description="<?php _e( 'Meta field name/key/ID. Under this name field will be stored in the database. Should contain only Latin letters, numbers, `-` or `_` chars', 'jet-engine' ); ?>"
+		label="<?php _e( 'Name/ID', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Meta field name/key/ID. Under this name field will be stored in the database. Should contain only Latin letters, numbers, `-` or `_` chars', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:value="field.name"
@@ -20,26 +20,26 @@
 		@on-input-change="sanitizeFieldName()"
 	></cx-vui-input>
 	<cx-vui-select
-		label="<?php _e( 'Object type', 'jet-engine' ); ?>"
-		description="<?php _e( 'Current meta box object type: field or layout element. To close the action of previously selected Tab or Accordion group, use the `Endpoint` option', 'jet-engine' ); ?>"
+		label="<?php _e( 'Object type', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Current meta box object type: field or layout element. To close the action of previously selected Tab or Accordion group, use the `Endpoint` option', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:options-list="getFilteredObjectTypes( [
 			{
 				value: 'field',
-				label: '<?php _e( 'Field', 'jet-engine' ); ?>'
+				label: '<?php _e( 'Field', 'jet-engine' ); // phpcs:ignore ?>'
 			},
 			{
 				value: 'tab',
-				label: '<?php _e( 'Tab', 'jet-engine' ); ?>'
+				label: '<?php _e( 'Tab', 'jet-engine' ); // phpcs:ignore ?>'
 			},
 			{
 				value: 'accordion',
-				label: '<?php _e( 'Accordion', 'jet-engine' ); ?>'
+				label: '<?php _e( 'Accordion', 'jet-engine' ); // phpcs:ignore ?>'
 			},
 			{
 				value: 'endpoint',
-				label: '<?php _e( 'Endpoint', 'jet-engine' ); ?>'
+				label: '<?php _e( 'Endpoint', 'jet-engine' ); // phpcs:ignore ?>'
 			},
 		] )"
 		:value="field.object_type"
@@ -58,8 +58,8 @@
 		], 'object_type' )"
 	></cx-vui-select>
 	<cx-vui-select
-		label="<?php _e( 'Field type', 'jet-engine' ); ?>"
-		description="<?php _e( 'Meta field type. Defines the way field to be displayed on Post edit page', 'jet-engine' ); ?>"
+		label="<?php _e( 'Field type', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Meta field type. Defines the way field to be displayed on Post edit page', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:options-list="getFilteredFieldTypes( fieldTypes )"
@@ -74,18 +74,18 @@
 		@input="setFieldProp( 'type', $event )"
 	></cx-vui-select>
 	<cx-vui-select
-		label="<?php _e( 'Layout', 'jet-engine' ); ?>"
-		description="<?php _e( 'Select tab layout. Note, layout selected on first tab in set will be automatically applied to all other tabs', 'jet-engine' ); ?>"
+		label="<?php _e( 'Layout', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Select tab layout. Note, layout selected on first tab in set will be automatically applied to all other tabs', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:options-list="[
 			{
 				value: 'horizontal',
-				label: '<?php _e( 'Horizontal', 'jet-engine' ); ?>'
+				label: '<?php _e( 'Horizontal', 'jet-engine' ); // phpcs:ignore ?>'
 			},
 			{
 				value: 'vertical',
-				label: '<?php _e( 'Vertical', 'jet-engine' ); ?>'
+				label: '<?php _e( 'Vertical', 'jet-engine' ); // phpcs:ignore ?>'
 			},
 		]"
 		:value="field.tab_layout"
@@ -99,8 +99,8 @@
 		@input="setFieldProp( 'tab_layout', $event )"
 	></cx-vui-select>
 	<cx-vui-switcher
-		label="<?php _e( 'Allow Custom', 'jet-engine' ); ?>"
-		description="<?php _e( 'Allow \'custom\' values to be added', 'jet-engine' ); ?>"
+		label="<?php _e( 'Allow Custom', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Allow \'custom\' values to be added', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:value="field.allow_custom"
 		:conditions="getFilteredFieldConditions( [
@@ -128,8 +128,8 @@
 		@input="setFieldProp( 'allow_custom', $event )"
 	></cx-vui-switcher>
 	<cx-vui-switcher
-		label="<?php _e( 'Save Custom', 'jet-engine' ); ?>"
-		description="<?php _e( 'Save \'custom\' values to the field\'s options', 'jet-engine' ); ?>"
+		label="<?php _e( 'Save Custom', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Save \'custom\' values to the field\'s options', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:value="field.save_custom"
 		:conditions="getFilteredFieldConditions( [
@@ -162,8 +162,8 @@
 		@input="setFieldProp( 'save_custom', $event )"
 	></cx-vui-switcher>
 	<cx-vui-select
-		label="<?php _e( 'Source', 'jet-engine' ); ?>"
-		description="<?php _e( 'Select source to get field options from', 'jet-engine' ); ?>"
+		label="<?php _e( 'Source', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Select source to get field options from', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:options-list="allowedSources"
@@ -183,8 +183,8 @@
 		@input="setFieldProp( 'options_source', $event )"
 	></cx-vui-select>
 	<cx-vui-select
-		label="<?php _e( 'Glossary', 'jet-engine' ); ?>"
-		description="<?php _e( 'Select exact glossary to get options from', 'jet-engine' ); ?>"
+		label="<?php _e( 'Glossary', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Select exact glossary to get options from', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:options-list="glossariesList"
@@ -209,8 +209,8 @@
 		@input="setFieldProp( 'glossary_id', $event )"
 	></cx-vui-select>
 	<cx-vui-select
-		label="<?php _e( 'Query', 'jet-engine' ); ?>"
-		description="<?php _e( 'Select exact query to get options from', 'jet-engine' ); ?>"
+		label="<?php _e( 'Query', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Select exact query to get options from', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:options-list="queriesList"
@@ -235,8 +235,8 @@
 		@input="setFieldProp( 'query_id', $event )"
 	></cx-vui-select>
 	<cx-vui-input
-		label="<?php _e( 'Value Field', 'jet-engine' ); ?>"
-		description="<?php _e( 'Query result field to use as option value. If empty, we`ll try to use most obvious value. For example ID for posts.', 'jet-engine' ); ?>"
+		label="<?php _e( 'Value Field', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Query result field to use as option value. If empty, we`ll try to use most obvious value. For example ID for posts.', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:value="field.query_value_field"
@@ -260,8 +260,8 @@
 		], 'query_value_field' )"
 	></cx-vui-input>
 	<cx-vui-input
-		label="<?php _e( 'Label Field', 'jet-engine' ); ?>"
-		description="<?php _e( 'Query result field to use as option label. If empty, we`ll try to use most obvious value. For example post_title for posts.', 'jet-engine' ); ?>"
+		label="<?php _e( 'Label Field', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Query result field to use as option label. If empty, we`ll try to use most obvious value. For example post_title for posts.', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:value="field.query_label_field"
@@ -285,11 +285,8 @@
 		], 'query_label_field' )"
 	></cx-vui-input>
 	<cx-vui-textarea
-		label="<?php _e( 'Bulk Options', 'jet-engine' ); ?>"
-		description="<?php _e( 'One option per line. Allowed formats:<br>
-			<i>value</i> - value and label will be the same<br>
-			<i>value::label</i> - separate value and label<br>
-			<i>value::label::checked</i> - separate value and label, checked by default', 'jet-engine' ); ?>"
+		label="<?php _e( 'Bulk Options', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'One option per line. Allowed formats:<br><i>value</i> - value and label will be the same<br><i>value::label</i> - separate value and label<br><i>value::label::checked</i> - separate value and label, checked by default', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:rows="Number(8)"
@@ -342,18 +339,18 @@
 		</div>
 	</cx-vui-component-wrapper>
 	<cx-vui-select
-		label="<?php _e( 'Layout', 'jet-engine' ); ?>"
-		description="<?php _e( 'Select layout orientation of inputs', 'jet-engine' ); ?>"
+		label="<?php _e( 'Layout', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Select layout orientation of inputs', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:options-list="[
 			{
 				value: 'vertical',
-				label: '<?php _e( 'Vertical', 'jet-engine' ); ?>'
+				label: '<?php _e( 'Vertical', 'jet-engine' ); // phpcs:ignore ?>'
 			},
 			{
 				value: 'horizontal',
-				label: '<?php _e( 'Horizontal', 'jet-engine' ); ?>'
+				label: '<?php _e( 'Horizontal', 'jet-engine' ); // phpcs:ignore ?>'
 			},
 		]"
 		:value="field.check_radio_layout"
@@ -372,8 +369,8 @@
 		], 'check_radio_layout' )"
 	></cx-vui-select>
 	<cx-vui-switcher
-		label="<?php _e( 'Save as timestamp', 'jet-engine' ); ?>"
-		description="<?php _e( 'If this option is enabled date will be saved in database Unix timestamp. Toggle it if you need to sort or query posts by date', 'jet-engine' ); ?>"
+		label="<?php _e( 'Save as timestamp', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'If this option is enabled date will be saved in database Unix timestamp. Toggle it if you need to sort or query posts by date', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:value="field.is_timestamp"
 		@input="setFieldProp( 'is_timestamp', $event )"
@@ -391,8 +388,8 @@
 		], 'is_timestamp' )"
 	></cx-vui-switcher>
 	<cx-vui-input
-		label="<?php _e( 'Placeholder', 'jet-engine' ); ?>"
-		description="<?php _e( 'Placeholder text', 'jet-engine' ); ?>"
+		label="<?php _e( 'Placeholder', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Placeholder text', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:value="field.placeholder"
@@ -416,8 +413,8 @@
 		], 'placeholder' )"
 	></cx-vui-input>
 	<cx-vui-switcher
-		label="<?php _e( 'Save as array', 'jet-engine' ); ?>"
-		description="<?php _e( 'If this option is enabled checked values will be stored as plain PHP array. Use this option if this meta value will be edited from front-end form', 'jet-engine' ); ?>"
+		label="<?php _e( 'Save as array', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'If this option is enabled checked values will be stored as plain PHP array. Use this option if this meta value will be edited from front-end form', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:value="field.is_array"
 		@input="setFieldProp( 'is_array', $event )"
@@ -440,8 +437,8 @@
 		], 'is_array' )"
 	></cx-vui-switcher>
 	<cx-vui-f-select
-		label="<?php _e( 'Search in post types', 'jet-engine' ); ?>"
-		description="<?php _e( 'Select post types available to search in', 'jet-engine' ); ?>"
+		label="<?php _e( 'Search in post types', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Select post types available to search in', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:options-list="postTypes"
 		size="fullwidth"
@@ -462,8 +459,8 @@
 		@input="setFieldProp( 'search_post_type', $event )"
 	></cx-vui-f-select>
 	<cx-vui-input
-		label="<?php _e( 'Min characters to search', 'jet-engine' ); ?>"
-		description="<?php _e( 'Set a minimum number of characters that will trigger post search', 'jet-engine' ); ?>"
+		label="<?php _e( 'Min characters to search', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Set a minimum number of characters that will trigger post search', 'jet-engine' ); // phpcs:ignore ?>"
 		type="number"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
@@ -484,8 +481,8 @@
 		], 'min_input' )"
 	></cx-vui-input>
 	<cx-vui-switcher
-		label="<?php _e( 'Multiple', 'jet-engine' ); ?>"
-		description="<?php _e( 'Allow to select multiple values', 'jet-engine' ); ?>"
+		label="<?php _e( 'Multiple', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Allow to select multiple values', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:value="field.is_multiple"
 		@input="setFieldProp( 'is_multiple', $event )"
@@ -503,8 +500,8 @@
 		], 'is_multiple' )"
 	></cx-vui-switcher>
 	<cx-vui-input
-		label="<?php _e( 'Min value', 'jet-engine' ); ?>"
-		description="<?php _e( 'Set a minimum value for a number field', 'jet-engine' ); ?>"
+		label="<?php _e( 'Min value', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Set a minimum value for a number field', 'jet-engine' ); // phpcs:ignore ?>"
 		type="number"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
@@ -524,8 +521,8 @@
 		], 'min_value' )"
 	></cx-vui-input>
 	<cx-vui-input
-		label="<?php _e( 'Max value', 'jet-engine' ); ?>"
-		description="<?php _e( 'Set a maximum value for a number field', 'jet-engine' ); ?>"
+		label="<?php _e( 'Max value', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Set a maximum value for a number field', 'jet-engine' ); // phpcs:ignore ?>"
 		type="number"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
@@ -545,8 +542,8 @@
 		], 'max_value' )"
 	></cx-vui-input>
 	<cx-vui-input
-		label="<?php _e( 'Step value', 'jet-engine' ); ?>"
-		description="<?php _e( 'Set a stepping interval for a number field', 'jet-engine' ); ?>"
+		label="<?php _e( 'Step value', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Set a stepping interval for a number field', 'jet-engine' ); // phpcs:ignore ?>"
 		type="number"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
@@ -566,22 +563,22 @@
 		], 'step_value' )"
 	></cx-vui-input>
 	<cx-vui-select
-		label="<?php _e( 'Value format', 'jet-engine' ); ?>"
-		description="<?php _e( 'Set the format of the value will be stored in the database', 'jet-engine' ); ?>"
+		label="<?php _e( 'Value format', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Set the format of the value will be stored in the database', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:options-list="[
 			{
 				value: 'id',
-				label: '<?php _e( 'Media ID', 'jet-engine' ); ?>'
+				label: '<?php _e( 'Media ID', 'jet-engine' ); // phpcs:ignore ?>'
 			},
 			{
 				value: 'url',
-				label: '<?php _e( 'Media URL', 'jet-engine' ); ?>'
+				label: '<?php _e( 'Media URL', 'jet-engine' ); // phpcs:ignore ?>'
 			},
 			{
 				value: 'both',
-				label: '<?php _e( 'Array with media ID and URL', 'jet-engine' ); ?>'
+				label: '<?php _e( 'Array with media ID and URL', 'jet-engine' ); // phpcs:ignore ?>'
 			},
 		]"
 		:value="field.value_format"
@@ -616,7 +613,7 @@
 	>
 		<div class="cx-vui-inner-panel">
 			<cx-vui-repeater
-				button-label="<?php _e( 'New Repeater Field', 'jet-engine' ); ?>"
+				button-label="<?php _e( 'New Repeater Field', 'jet-engine' ); // phpcs:ignore ?>"
 				button-style="accent"
 				button-size="mini"
 				:value="field['repeater-fields']"
@@ -650,12 +647,12 @@
 							<path d="M53.938 40.156l-5.25-5.25c-.376-.375-.938-.562-1.313-.562-.563 0-.938.187-1.312.562-.75.75-.75 1.875 0 2.625l2.062 2.063h-4.313c-3.75 0-7.5-1.5-10.125-4.125-.374-.375-.937-.563-1.312-.563-.563 0-.938.188-1.312.563-.75.75-.75 1.875 0 2.625 3.374 3.375 7.874 5.25 12.75 5.25h4.312l-2.063 2.062c-.75.75-.75 1.875 0 2.625s1.876.75 2.625 0l5.25-5.25c.75-.562.75-1.875 0-2.625z" fill-rule="nonzero"/>
 						</svg>
 
-						<div class="cx-vui-tooltip"><?php _e( 'Conditional Logic', 'jet-engine' ); ?></div>
+						<div class="cx-vui-tooltip"><?php _e( 'Conditional Logic', 'jet-engine' ); // phpcs:ignore ?></div>
 					</div>
 
 					<cx-vui-input
-						label="<?php _e( 'Label', 'jet-engine' ); ?>"
-						description="<?php _e( 'Repeater field label. Will be displayed on Post edit page', 'jet-engine' ); ?>"
+						label="<?php _e( 'Label', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Repeater field label. Will be displayed on Post edit page', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						:value="field['repeater-fields'][ rFieldIndex ].title"
@@ -663,8 +660,8 @@
 						@on-input-change="preSetRepeaterFieldName( rFieldIndex )"
 					></cx-vui-input>
 					<cx-vui-input
-						label="<?php _e( 'Name', 'jet-engine' ); ?>"
-						description="<?php _e( 'Repeater field name/ID. Should contain only latin letters, numbers, `-` or `_` chars', 'jet-engine' ); ?>"
+						label="<?php _e( 'Name', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Repeater field name/ID. Should contain only latin letters, numbers, `-` or `_` chars', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						:value="field['repeater-fields'][ rFieldIndex ].name"
@@ -672,8 +669,8 @@
 						@on-input-change="sanitizeRepeaterFieldName( rFieldIndex )"
 					></cx-vui-input>
 					<cx-vui-select
-						label="<?php _e( 'Type', 'jet-engine' ); ?>"
-						description="<?php _e( 'Repeater field type. Defines the way field be displayed on Post edit page', 'jet-engine' ); ?>"
+						label="<?php _e( 'Type', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Repeater field type. Defines the way field be displayed on Post edit page', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						:options-list="repeaterFieldTypes"
@@ -681,8 +678,8 @@
 						@input="setRepeaterFieldProp( rFieldIndex, 'type', $event )"
 					></cx-vui-select>
 					<cx-vui-select
-						label="<?php _e( 'Source', 'jet-engine' ); ?>"
-						description="<?php _e( 'Select source to get field options from', 'jet-engine' ); ?>"
+						label="<?php _e( 'Source', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Select source to get field options from', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						:options-list="allowedSources"
@@ -697,8 +694,8 @@
 						]"
 					></cx-vui-select>
 					<cx-vui-select
-						label="<?php _e( 'Glossary', 'jet-engine' ); ?>"
-						description="<?php _e( 'Select exact glossary to get options from', 'jet-engine' ); ?>"
+						label="<?php _e( 'Glossary', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Select exact glossary to get options from', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						:options-list="glossariesList"
@@ -717,8 +714,8 @@
 						]"
 					></cx-vui-select>
 					<cx-vui-select
-						label="<?php _e( 'Query', 'jet-engine' ); ?>"
-						description="<?php _e( 'Select exact query to get options from', 'jet-engine' ); ?>"
+						label="<?php _e( 'Query', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Select exact query to get options from', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						:options-list="queriesList"
@@ -737,8 +734,8 @@
 						]"
 					></cx-vui-select>
 					<cx-vui-input
-						label="<?php _e( 'Value Field', 'jet-engine' ); ?>"
-						description="<?php _e( 'Query result field to use as option value. If empty, we`ll try to use most obvious value. For example ID for posts.', 'jet-engine' ); ?>"
+						label="<?php _e( 'Value Field', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Query result field to use as option value. If empty, we`ll try to use most obvious value. For example ID for posts.', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						v-model="field['repeater-fields'][ rFieldIndex ].query_value_field"
@@ -756,8 +753,8 @@
 						], 'query_value_field' )"
 					></cx-vui-input>
 					<cx-vui-input
-						label="<?php _e( 'Label Field', 'jet-engine' ); ?>"
-						description="<?php _e( 'Query result field to use as option label. If empty, we`ll try to use most obvious value. For example post_title for posts.', 'jet-engine' ); ?>"
+						label="<?php _e( 'Label Field', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Query result field to use as option label. If empty, we`ll try to use most obvious value. For example post_title for posts.', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						v-model="field['repeater-fields'][ rFieldIndex ].query_label_field"
@@ -775,11 +772,8 @@
 						], 'query_label_field' )"
 					></cx-vui-input>
 					<cx-vui-textarea
-						label="<?php _e( 'Bulk Options', 'jet-engine' ); ?>"
-						description="<?php _e( 'One option per line. Allowed formats:<br>
-							<i>value</i> - value and label will be the same<br>
-							<i>value::label</i> - separate value and label<br>
-							<i>value::label::checked</i> - separate value and label, checked by default', 'jet-engine' ); ?>"
+						label="<?php _e( 'Bulk Options', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'One option per line. Allowed formats:<br><i>value</i> - value and label will be the same<br><i>value::label</i> - separate value and label<br><i>value::label::checked</i> - separate value and label, checked by default', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						:rows="Number(8)"
@@ -820,18 +814,18 @@
 						</div>
 					</cx-vui-component-wrapper>
 					<cx-vui-select
-						label="<?php _e( 'Layout', 'jet-engine' ); ?>"
-						description="<?php _e( 'Select layout orientation of inputs', 'jet-engine' ); ?>"
+						label="<?php _e( 'Layout', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Select layout orientation of inputs', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						:options-list="[
 							{
 								value: 'vertical',
-								label: '<?php _e( 'Vertical', 'jet-engine' ); ?>'
+								label: '<?php _e( 'Vertical', 'jet-engine' ); // phpcs:ignore ?>'
 							},
 							{
 								value: 'horizontal',
-								label: '<?php _e( 'Horizontal', 'jet-engine' ); ?>'
+								label: '<?php _e( 'Horizontal', 'jet-engine' ); // phpcs:ignore ?>'
 							},
 						]"
 						:value="field['repeater-fields'][ rFieldIndex ].check_radio_layout"
@@ -845,8 +839,8 @@
 						]"
 					></cx-vui-select>
 					<cx-vui-switcher
-						label="<?php _e( 'Save as timestamp', 'jet-engine' ); ?>"
-						description="<?php _e( 'If this option is enabled date will be saved in database Unix timestamp. Toggle it if you need to sort or query posts by date', 'jet-engine' ); ?>"
+						label="<?php _e( 'Save as timestamp', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'If this option is enabled date will be saved in database Unix timestamp. Toggle it if you need to sort or query posts by date', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						:value="field['repeater-fields'][ rFieldIndex ].is_timestamp"
 						@input="setRepeaterFieldProp( rFieldIndex, 'is_timestamp', $event )"
@@ -859,8 +853,8 @@
 						]"
 					></cx-vui-switcher>
 					<cx-vui-input
-						label="<?php _e( 'Min value', 'jet-engine' ); ?>"
-						description="<?php _e( 'Set a minimum value for a number field', 'jet-engine' ); ?>"
+						label="<?php _e( 'Min value', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Set a minimum value for a number field', 'jet-engine' ); // phpcs:ignore ?>"
 						type="number"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
@@ -875,8 +869,8 @@
 						]"
 					></cx-vui-input>
 					<cx-vui-input
-						label="<?php _e( 'Max value', 'jet-engine' ); ?>"
-						description="<?php _e( 'Set a maximum value for a number field', 'jet-engine' ); ?>"
+						label="<?php _e( 'Max value', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Set a maximum value for a number field', 'jet-engine' ); // phpcs:ignore ?>"
 						type="number"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
@@ -891,8 +885,8 @@
 						]"
 					></cx-vui-input>
 					<cx-vui-input
-						label="<?php _e( 'Step value', 'jet-engine' ); ?>"
-						description="<?php _e( 'Set a stepping interval for a number field', 'jet-engine' ); ?>"
+						label="<?php _e( 'Step value', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Set a stepping interval for a number field', 'jet-engine' ); // phpcs:ignore ?>"
 						type="number"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
@@ -907,8 +901,8 @@
 						]"
 					></cx-vui-input>
 					<cx-vui-f-select
-						label="<?php _e( 'Search in post types', 'jet-engine' ); ?>"
-						description="<?php _e( 'Select post types available to search in', 'jet-engine' ); ?>"
+						label="<?php _e( 'Search in post types', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Select post types available to search in', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						:options-list="postTypes"
 						size="fullwidth"
@@ -925,8 +919,8 @@
 						v-model="field['repeater-fields'][ rFieldIndex ].search_post_type"
 					></cx-vui-f-select>
 					<cx-vui-input
-						label="<?php _e( 'Placeholder', 'jet-engine' ); ?>"
-						description="<?php _e( 'Placeholder text', 'jet-engine' ); ?>"
+						label="<?php _e( 'Placeholder', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Placeholder text', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						v-model="field['repeater-fields'][ rFieldIndex ].placeholder"
@@ -939,8 +933,8 @@
 						]"
 					></cx-vui-input>
 					<cx-vui-switcher
-						label="<?php _e( 'Multiple', 'jet-engine' ); ?>"
-						description="<?php _e( 'Allow to select multiple values', 'jet-engine' ); ?>"
+						label="<?php _e( 'Multiple', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Allow to select multiple values', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						:value="field['repeater-fields'][ rFieldIndex ].is_multiple"
 						@input="setRepeaterFieldProp( rFieldIndex, 'is_multiple', $event )"
@@ -953,8 +947,8 @@
 						]"
 					></cx-vui-switcher>
 					<cx-vui-switcher
-						label="<?php _e( 'Save as array', 'jet-engine' ); ?>"
-						description="<?php _e( 'If this option is enabled checked values will be stored as plain PHP array. Use this option if this meta value will be edited from front-end form', 'jet-engine' ); ?>"
+						label="<?php _e( 'Save as array', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'If this option is enabled checked values will be stored as plain PHP array. Use this option if this meta value will be edited from front-end form', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						:value="field['repeater-fields'][ rFieldIndex ].is_array"
 						@input="setRepeaterFieldProp( rFieldIndex, 'is_array', $event )"
@@ -967,22 +961,22 @@
 						]"
 					></cx-vui-switcher>
 					<cx-vui-select
-						label="<?php _e( 'Value format', 'jet-engine' ); ?>"
-						description="<?php _e( 'Set the format of the value will be stored in the database', 'jet-engine' ); ?>"
+						label="<?php _e( 'Value format', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Set the format of the value will be stored in the database', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						:options-list="[
 							{
 								value: 'id',
-								label: '<?php _e( 'Media ID', 'jet-engine' ); ?>'
+								label: '<?php _e( 'Media ID', 'jet-engine' ); // phpcs:ignore ?>'
 							},
 							{
 								value: 'url',
-								label: '<?php _e( 'Media URL', 'jet-engine' ); ?>'
+								label: '<?php _e( 'Media URL', 'jet-engine' ); // phpcs:ignore ?>'
 							},
 							{
 								value: 'both',
-								label: '<?php _e( 'Array with media ID and URL', 'jet-engine' ); ?>'
+								label: '<?php _e( 'Array with media ID and URL', 'jet-engine' ); // phpcs:ignore ?>'
 							},
 						]"
 						:value="field['repeater-fields'][ rFieldIndex ].value_format"
@@ -996,8 +990,8 @@
 						]"
 					></cx-vui-select>
 					<cx-vui-switcher
-						label="<?php _e( 'Alpha mode', 'jet-engine' ); ?>"
-						description="<?php _e( 'Toggle this option to enabled Alpha channel in Colorpicker', 'jet-engine' ); ?>"
+						label="<?php _e( 'Alpha mode', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Toggle this option to enabled Alpha channel in Colorpicker', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						:value="field['repeater-fields'][ rFieldIndex ].alpha_mode"
 						@input="setRepeaterFieldProp( rFieldIndex, 'alpha_mode', $event )"
@@ -1010,8 +1004,8 @@
 						]"
 					></cx-vui-switcher>
 					<cx-vui-select
-						label="<?php _e( 'Icon Library', 'jet-engine' ); ?>"
-						description="<?php _e( 'Select an icon library for iconpicker field', 'jet-engine' ); ?>"
+						label="<?php _e( 'Icon Library', 'jet-engine' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Select an icon library for iconpicker field', 'jet-engine' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						:options-list="iconsLibraries"
@@ -1034,8 +1028,8 @@
 	</cx-vui-component-wrapper>
 
 	<cx-vui-switcher
-		label="<?php _e( 'Save as separate fields', 'jet-engine' ); ?>"
-		description="<?php _e( 'Toggle this option to store the value of each repeater field as a separate field', 'jet-engine' ); ?>"
+		label="<?php _e( 'Save as separate fields', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Toggle this option to store the value of each repeater field as a separate field', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:value="field.repeater_save_separate"
 		@input="setFieldProp( 'repeater_save_separate', $event )"
@@ -1063,8 +1057,8 @@
 		], 'repeater_save_separate' )"
 	></cx-vui-switcher>
 	<cx-vui-switcher
-		label="<?php _e( 'Collapsed', 'jet-engine' ); ?>"
-		description="<?php _e( 'Toggle this option to collapse repeater items on page load', 'jet-engine' ); ?>"
+		label="<?php _e( 'Collapsed', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Toggle this option to collapse repeater items on page load', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:value="field.repeater_collapsed"
 		@input="setFieldProp( 'repeater_collapsed', $event )"
@@ -1082,8 +1076,8 @@
 		], 'repeater_collapsed' )"
 	></cx-vui-switcher>
 	<cx-vui-select
-		label="<?php _e( 'Title Field', 'jet-engine' ); ?>"
-		description="<?php _e( 'Select a repeater field to show as a repeater item title', 'jet-engine' ); ?>"
+		label="<?php _e( 'Title Field', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Select a repeater field to show as a repeater item title', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:options-list="getRepeaterTitleFields( index )"
@@ -1103,8 +1097,8 @@
 		], 'repeater_title_field' )"
 	></cx-vui-select>
 	<cx-vui-switcher
-		label="<?php _e( 'Alpha mode', 'jet-engine' ); ?>"
-		description="<?php _e( 'Toggle this option to enabled Alpha channel in Colorpicker', 'jet-engine' ); ?>"
+		label="<?php _e( 'Alpha mode', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Toggle this option to enabled Alpha channel in Colorpicker', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:value="field.alpha_mode"
 		@input="setFieldProp( 'alpha_mode', $event )"
@@ -1122,8 +1116,8 @@
 		], 'alpha_mode' )"
 	></cx-vui-switcher>
 	<cx-vui-select
-		label="<?php _e( 'Icon Library', 'jet-engine' ); ?>"
-		description="<?php _e( 'Select an icon library for iconpicker field', 'jet-engine' ); ?>"
+		label="<?php _e( 'Icon Library', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Select an icon library for iconpicker field', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:options-list="iconsLibraries"
@@ -1143,8 +1137,8 @@
 		], 'iconpicker_library' )"
 	></cx-vui-select>
 	<cx-vui-textarea
-		label="<?php _e( 'Description', 'jet-engine' ); ?>"
-		description="<?php _e( 'Meta field description to be shown on Post edit page', 'jet-engine' ); ?>"
+		label="<?php _e( 'Description', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Meta field description to be shown on Post edit page', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:value="field.description"
@@ -1163,7 +1157,7 @@
 		], 'description' )"
 	></cx-vui-textarea>
 	<cx-vui-textarea
-		label="<?php _e( 'HTML Code', 'jet-engine' ); ?>"
+		label="<?php _e( 'HTML Code', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:value="field.html"
@@ -1182,7 +1176,7 @@
 		], 'html' )"
 	></cx-vui-textarea>
 	<cx-vui-input
-		label="<?php _e( 'CSS Classes', 'jet-engine' ); ?>"
+		label="<?php _e( 'CSS Classes', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:value="field.html_css_class"
@@ -1202,8 +1196,8 @@
 		], 'html_css_class' )"
 	></cx-vui-input>
 	<cx-vui-select
-		label="<?php _e( 'Field width', 'jet-engine' ); ?>"
-		description="<?php _e( 'Select meta field width from the dropdown list for Post edit page', 'jet-engine' ); ?>"
+		label="<?php _e( 'Field width', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Select meta field width from the dropdown list for Post edit page', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:options-list="[
@@ -1248,8 +1242,8 @@
 		@input="setFieldProp( 'width', $event )"
 	></cx-vui-select>
 	<cx-vui-input
-		label="<?php _e( 'Character limit', 'jet-engine' ); ?>"
-		description="<?php _e( 'Max field value length. Leave empty for no limit', 'jet-engine' ); ?>"
+		label="<?php _e( 'Character limit', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Max field value length. Leave empty for no limit', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:value="field.max_length"
@@ -1274,8 +1268,8 @@
 		], 'max_length' )"
 	></cx-vui-input>
 	<cx-vui-input
-		label="<?php _e( 'Default value', 'jet-engine' ); ?>"
-		description="<?php _e( 'Set default value for current field. <b>Note</b> For date field you can set any value could be processed by strtotime() function.', 'jet-engine' ); ?>"
+		label="<?php _e( 'Default value', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Set default value for current field. <b>Note</b> For date field you can set any value could be processed by strtotime() function.', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		size="fullwidth"
 		:value="field.default_val"
@@ -1299,8 +1293,8 @@
 		@input="setFieldProp( 'default_val', $event )"
 	></cx-vui-input>
 	<cx-vui-switcher
-		label="<?php _e( 'On by default', 'jet-engine' ); ?>"
-		description="<?php _e( 'Make switcher On by default', 'jet-engine' ); ?>"
+		label="<?php _e( 'On by default', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Make switcher On by default', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:value="field.on_by_default"
 		@input="setFieldProp( 'on_by_default', $event )"
@@ -1318,8 +1312,8 @@
 		], 'on_by_default' )"
 	></cx-vui-switcher>
 	<cx-vui-switcher
-		label="<?php _e( 'Is required', 'jet-engine' ); ?>"
-		description="<?php _e( 'Toggle this option to make this field as required one', 'jet-engine' ); ?>"
+		label="<?php _e( 'Is required', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Toggle this option to make this field as required one', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:value="field.is_required"
 		@input="setFieldProp( 'is_required', $event )"
@@ -1340,8 +1334,8 @@
 		v-if="( 'checkbox' !== field.type ) || ( 'checkbox' === field.type && field.is_array )"
 	>
 		<cx-vui-switcher
-			label="<?php _e( 'Quick edit support', 'jet-engine' ); ?>"
-			description="<?php _e( 'Toggle this option to make this field available in the Quick Edit section', 'jet-engine' ); ?>"
+			label="<?php _e( 'Quick edit support', 'jet-engine' ); // phpcs:ignore ?>"
+			description="<?php _e( 'Toggle this option to make this field available in the Quick Edit section', 'jet-engine' ); // phpcs:ignore ?>"
 			:wrapper-css="[ 'equalwidth' ]"
 			:value="field.quick_editable"
 			@input="setFieldProp( 'quick_editable', $event )"
@@ -1370,8 +1364,8 @@
 		></cx-vui-switcher>
 	</template>
 	<cx-vui-switcher
-		label="<?php _e( 'Revision support', 'jet-engine' ); ?>"
-		description="<?php _e( 'Toggle this option to make this field available in the Revisions', 'jet-engine' ); ?>"
+		label="<?php _e( 'Revision support', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Toggle this option to make this field available in the Revisions', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:value="field.revision_support"
 		@input="setFieldProp( 'revision_support', $event )"
@@ -1399,11 +1393,60 @@
 		], 'revision_support' )"
 	></cx-vui-switcher>
 
+	<cx-vui-switcher
+		label="<?php _e( 'Restrict MIME Types', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Toggle this option to set a list of MIME types allowed in this field', 'jet-engine' ); // phpcs:ignore ?>"
+		:wrapper-css="[ 'equalwidth' ]"
+		:value="field.restrict_mime_types"
+		@input="setFieldProp( 'restrict_mime_types', $event )"
+		:conditions="getFilteredFieldConditions( [
+			{
+				'input':   field.type,
+				'compare': 'in',
+				'value':   [ 'media', 'gallery' ],
+			},
+			{
+				'input':   field.object_type,
+				'compare': 'equal',
+				'value':   'field',
+			},
+		], 'restrict_mime_types' )"
+	></cx-vui-switcher>
+
+	<cx-vui-f-select
+		label="<?php _e( 'Allowed MIME Types', 'jet-engine' ); // phpcs:ignore ?>"
+		name="allowed_mime_types"
+		description="<?php _e( 'Leave empty to allow all MIME types.', 'jet-engine' ); // phpcs:ignore ?>"
+		:wrapper-css="[ 'equalwidth' ]"
+		:options-list="window.JetEngineMediaConfig.mime_types"
+		size="fullwidth"
+		:multiple="true"
+		:value="field.allowed_mime_types"
+		:conditions="getFilteredFieldConditions( [
+			{
+				'input':   field.type,
+				'compare': 'in',
+				'value':   [ 'media', 'gallery' ],
+			},
+			{
+				'input':   field.restrict_mime_types,
+				'compare': 'equal',
+				'value':   true,
+			},
+			{
+				'input':   field.object_type,
+				'compare': 'equal',
+				'value':   'field',
+			},
+		], 'value_format' )"
+		@input="setFieldProp( 'allowed_mime_types', $event )"
+	></cx-vui-f-select>
+
 	<?php do_action( 'jet-engine/meta-boxes/templates/fields/controls' ); ?>
 
 	<cx-vui-switcher
-		label="<?php _e( 'Show in Rest API', 'jet-engine' ); ?>"
-		description="<?php _e( 'Allow to get/update this field with WordPress Rest API', 'jet-engine' ); ?>"
+		label="<?php _e( 'Show in Rest API', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Allow to get/update this field with WordPress Rest API', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:value="field.show_in_rest"
 		@input="setFieldProp( 'show_in_rest', $event )"
@@ -1431,8 +1474,8 @@
 		], 'show_in_rest' )"
 	></cx-vui-switcher>
 	<cx-vui-component-wrapper
-		label="<?php _e( 'Conditional Logic', 'jet-engine' ); ?>"
-		description="<?php _e( 'Click on button to set meta field display rules.', 'jet-engine' ); ?>"
+		label="<?php _e( 'Conditional Logic', 'jet-engine' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Click on button to set meta field display rules.', 'jet-engine' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		v-if="showCondition( field )"
 	>
@@ -1443,9 +1486,8 @@
 		>
 			<span
 				slot="label"
-				v-html="hasConditions( field ) ? '<?php _e( 'Edit conditional rules', 'jet-engine' ); ?>' : '<?php _e( 'Set up conditional rules', 'jet-engine' ); ?>'"
+				v-html="hasConditions( field ) ? '<?php _e( 'Edit conditional rules', 'jet-engine' ); // phpcs:ignore ?>' : '<?php _e( 'Set up conditional rules', 'jet-engine' ); // phpcs:ignore ?>'"
 			></span>
 		</cx-vui-button>
 	</cx-vui-component-wrapper>
-
 </div>

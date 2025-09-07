@@ -67,7 +67,7 @@ class Google extends Base {
 	public function build_autocomplete_api_url( $query = '' ) {
 
 		$api_url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-		$api_key = $this->get_api_key();
+		$api_key = $this->get_api_key( true );
 
 		if ( ! $api_key ) {
 			return false;
@@ -127,15 +127,18 @@ class Google extends Base {
 		
 		$api_url = 'https://places.googleapis.com/v1/places:autocomplete';
 		
-		$api_key = $this->get_api_key();
+		$api_key = $this->get_api_key( true );
 		
 		$body = array(
 			'input'        => $query,
 			'languageCode' => substr( get_bloginfo( 'language' ), 0, 2 ),
 		);
 
+		$body = json_encode( apply_filters( 'jet-engine/maps-listings/autocomplete-request-body/google', $body ) );
+
 		$args['headers'] = array(
 			'X-Goog-Api-Key' => $api_key,
+			'Content-Type'   => 'application/json',
 		);
 
 		$response = wp_remote_post( $api_url, array(
@@ -187,7 +190,7 @@ class Google extends Base {
 		return $status;
 	}
 
-	public function get_legacy_status( $type = 'autocomplete' ) {
+	public function get_legacy_status( $type = 'autocomplete', $get_original = false ) {
 		$value = get_option( $this->places_api_status_key, false );
 
 		if ( ! $value ) {
@@ -199,7 +202,7 @@ class Google extends Base {
 		$time   = ( int ) $value[0];
 		$status = $value[1];
 
-		if ( time() - $time > $this->get_legacy_status_timeout( $type ) ) {
+		if ( ! $get_original && time() - $time > $this->get_legacy_status_timeout( $type ) ) {
 			return 'needs_updating';
 		}
 
@@ -219,25 +222,31 @@ class Google extends Base {
 			return false;
 		}
 
-		$data = $this->get_new_autocomplete_data( $query );
+		$status = $this->get_legacy_status( 'autocomplete', true );
 
+		if ( $status === 'none' ) {
+			$status = 'new';
+		}
 		$status = 'new';
-
-		if ( $this->has_error( 'autocomplete' ) ) {
-			$status = 'legacy';
-			$this->clear_error( 'autocomplete' );
+		if ( $status === 'new' ) {
+			$data = $this->get_new_autocomplete_data( $query );
 		} else {
-			$this->set_legacy_status( $status );
-			return $data;
+			$data = $this->get_legacy_autocomplete_data( $query );
 		}
 
-		$data = $this->get_legacy_autocomplete_data( $query );
+		if ( false === $data && $this->has_error( 'autocomplete' ) ) {
+			$status = $status === 'new' ? 'legacy' : 'new';
+
+			$this->clear_error( 'autocomplete' );
+
+			if ( $status === 'new' ) {
+				$data = $this->get_new_autocomplete_data( $query );
+			} else {
+				$data = $this->get_legacy_autocomplete_data( $query );
+			}
+		}
 		
-		if ( $this->has_error( 'autocomplete' ) ) {
-			$status = 'none';
-		}
-
-		$this->set_legacy_status( $status );
+		$this->set_legacy_status( false === $data && $this->has_error( 'autocomplete' ) ? 'none' : $status );
 
 		return $data;
 	}
@@ -259,6 +268,11 @@ class Google extends Base {
 	 * @return [type]       [description]
 	 */
 	public function extract_coordinates_from_response_data( $data = array() ) {
+
+		if ( isset( $data['error'] ) || isset( $data['error_message'] ) ) {
+			$this->save_error( $data, 'geocode' );
+			return false;
+		}
 
 		$coord = isset( $data['results'][0]['geometry']['location'] )
 			? $data['results'][0]['geometry']['location']

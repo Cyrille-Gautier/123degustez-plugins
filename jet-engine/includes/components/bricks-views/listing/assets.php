@@ -113,9 +113,11 @@ class Assets extends \Bricks\Assets {
 		self::$css_looping_elements = [];
 
 		// Set the $post_id during Rest API request
+		// phpcs:disable
 		if ( defined( 'REST_REQUEST' ) && ! empty( $_REQUEST['post_id'] ) ) {
-			self::$post_id = $_REQUEST['post_id'];
+			self::$post_id = absint( $_REQUEST['post_id'] );
 		}
+		// phpcs:enable
 
 		// STEP: Content
 		self::generate_css_from_elements( $elements, 'content' );
@@ -489,7 +491,7 @@ class Assets extends \Bricks\Assets {
             })';
 
 				if ( $has_webfonts_js ) {
-					printf( '<script>%s</script>', $webfonts_js );
+					printf( '<script>%s</script>', $webfonts_js ); // phpcs:ignore
 				} else {
 					wp_enqueue_script( 'bricks-webfont' );
 					wp_add_inline_script( 'bricks-webfont', $webfonts_js );
@@ -528,7 +530,7 @@ class Assets extends \Bricks\Assets {
 		}
 
 		foreach ( self::$editor_fonts_to_load as $font_url ) {
-			printf( '<link href="%s" rel="stylesheet">', $font_url );
+			printf( '<link href="%s" rel="stylesheet">', esc_url( $font_url ) );
 		}
 	}
 
@@ -553,7 +555,8 @@ class Assets extends \Bricks\Assets {
 		}
 
 		if ( jet_engine()->listings->is_listing_ajax( 'listing_load_more' ) ) {
-			$query_args['paged'] = $_REQUEST['page'] ?? 1;
+			$page = isset( $_REQUEST['page'] ) ? absint( $_REQUEST['page'] ) : 1; // phpcs:ignore
+			$query_args['paged'] = $page;
 		}
 
 		return $query_args;

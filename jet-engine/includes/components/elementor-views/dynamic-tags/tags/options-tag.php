@@ -61,7 +61,8 @@ class Jet_Engine_Options_Tag extends Elementor\Core\DynamicTags\Tag {
 		$value = jet_engine()->listings->data->get_option( $option_field );
 
 		if ( is_array( $value ) ) {
-			echo jet_engine_render_checkbox_values( $value );
+			// Escaped in jet_engine_render_checkbox_values()
+			echo jet_engine_render_checkbox_values( $value ); // phpcs:ignore
 			return $value;
 		}
 

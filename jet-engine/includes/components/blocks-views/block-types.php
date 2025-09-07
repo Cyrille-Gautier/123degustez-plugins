@@ -45,6 +45,10 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Types' ) ) {
 		 */
 		public function register_block_types() {
 
+			if ( ! empty( $this->_types ) ) {
+				return;
+			}
+
 			$types_dir = jet_engine()->plugin_path( 'includes/components/blocks-views/block-types/' );
 
 			require $types_dir . 'base.php';
@@ -75,7 +79,6 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Types' ) ) {
 			}
 
 			do_action( 'jet-engine/blocks-views/register-block-types', $this );
-
 		}
 
 		public function register_block_type( $block_type ) {

@@ -9,10 +9,20 @@ class Lat_Lng {
 	public $failures          = array();
 	public $current_source    = null;
 
+	private $error_prefix = 'je-coord-error';
+	private $geocode_provider = null;
+	private $error_timeout = DAY_IN_SECONDS;
+
 	/**
 	 * Constructor for the class
 	 */
 	public function __construct() {
+		$this->error_timeout = apply_filters( 'jet-engine/maps-listing/error_timeout', $this->error_timeout );
+
+		if ( ! is_numeric( $this->error_timeout ) || $this->error_timeout < 300 ) {
+			$this->error_timeout = 300;
+		}
+		
 		add_action( 'init', array( $this, 'hook_preload' ) );
 	}
 
@@ -30,6 +40,15 @@ class Lat_Lng {
 	 */
 	public function not_done() {
 		$this->done = false;
+	}
+
+	/**
+	 * Get error prefix
+	 * 
+	 * @return string Error prefix
+	 */
+	public function get_error_prefix() {
+		return $this->error_prefix;
 	}
 
 	/**
@@ -220,6 +239,22 @@ class Lat_Lng {
 	}
 
 	/**
+	 * Get geocode provider
+	 * 
+	 * @return Geocode_Providers\Base|false
+	 */
+	public function get_geocode_provider() {
+		if ( isset( $this->geocode_provider ) ) {
+			return $this->geocode_provider;
+		}
+
+		$provider_id            = Module::instance()->settings->get( 'geocode_provider' );
+		$this->geocode_provider = Module::instance()->providers->get_providers( 'geocode', $provider_id );
+
+		return $this->geocode_provider;
+	}
+
+	/**
 	 * Returns remote coordinates by location
 	 *
 	 * @param  [type] $location [description]
@@ -227,14 +262,13 @@ class Lat_Lng {
 	 */
 	public function get_remote( $location ) {
 
-		$provider_id      = Module::instance()->settings->get( 'geocode_provider' );
-		$geocode_provider = Module::instance()->providers->get_providers( 'geocode', $provider_id );
-
 		$decoded_location = json_decode( htmlspecialchars_decode( $location ), true );
 
 		if ( $decoded_location && $decoded_location['lat'] && $decoded_location['lng'] ) {
 			return $decoded_location;
 		}
+
+		$geocode_provider = $this->get_geocode_provider();
 
 		if ( ! $geocode_provider ) {
 			return false;
@@ -300,6 +334,10 @@ class Lat_Lng {
 
 	public function maybe_add_offset( $coordinates = array() ) {
 
+		if ( ! $this->is_valid_coordinates( $coordinates ) ) {
+			return false;
+		}
+
 		$add_offset = Module::instance()->settings->get( 'add_offset' );
 
 		if ( ! $add_offset ) {
@@ -323,6 +361,71 @@ class Lat_Lng {
 
 	}
 
+	public function is_error_coordinates( $coordinates ) {
+		if ( ! is_array( $coordinates ) || ! isset( $coordinates['lat'] ) || ! isset( $coordinates['lng'] ) ) {
+			return false;
+		}
+
+		$lat = $coordinates['lat'];
+
+		return false !== strpos( $lat, $this->error_prefix );
+	}
+
+	/**
+	 * Make array of invalid values, signifying empty result or provider API error
+	 * 
+	 * @param array $type 'empty' or 'api_error'
+	 * 
+	 * @return array{lat: string, lng: string}
+	 */
+	public function make_error_coordinates_array( $type = '', $timestamp = false ) {
+		$result = array(
+			'lat' => $this->error_prefix,
+			'lng' => $this->error_prefix,
+		);
+
+		$geocode_provider = $this->get_geocode_provider();
+
+		if ( ! $geocode_provider ) {
+			return $result;
+		}
+
+		$provider_id = $geocode_provider->get_id();
+
+		switch ( $type ) {
+			case 'empty':
+				$result['lat'] .= ":{$provider_id}:empty";
+				$result['lng'] .= ":{$provider_id}:empty";
+				break;
+			case 'api_error':
+				$t = ! empty( $timestamp ) ? $timestamp : time();
+				$result['lat'] .= ":{$provider_id}:{$t}";
+				$result['lng'] .= ":{$provider_id}:{$t}";
+				break;
+		}
+
+		return $result;
+	}
+
+	public function is_valid_coordinates( $coordinates ) {
+		if ( ! is_array( $coordinates ) || ! isset( $coordinates['lat'] ) || ! isset( $coordinates['lng'] ) ) {
+			return false;
+		}
+
+		$lat = $coordinates['lat'];
+		$lng = $coordinates['lng'];
+
+		if ( ! is_numeric( $lat ) || ! is_numeric( $lng ) ) {
+			return false;
+		}
+
+		if ( abs( $lat ) > 90 || abs( $lng ) > 180 ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	/**
 	 * Returns lat and lang for passed address
 	 *
@@ -332,6 +435,10 @@ class Lat_Lng {
 	 * @return array|bool
 	 */
 	public function get( $post, $location, $field_name = '' ) {
+
+		if ( ! $location ) {
+			return false;
+		}
 
 		if ( is_array( $location ) ) {
 			return $this->maybe_add_offset( $location );
@@ -347,18 +454,55 @@ class Lat_Lng {
 		$field_name = apply_filters( 'jet-engine/maps-listing/preload/field-name', $field_name, $post );
 
 		$meta = $source->get_field_coordinates( $post, $location, $field_name );
-		
-		if ( ! empty( $meta ) && $location_hash === $meta['key'] ) {
-			return $this->maybe_add_offset( $meta['coord'] );
+
+		$stored_hash        = $meta['key'] ?? false;
+		$stored_coordinates = $meta['coord'] ?? array();
+
+		if ( ! empty( $meta ) && $location_hash === $stored_hash && $this->is_valid_coordinates( $stored_coordinates ) ) {
+			return $this->maybe_add_offset( $stored_coordinates );
 		}
 
-		$coord = $this->get_remote( $location );
+		$coord = false;
+		$try   = ! $this->is_error_coordinates( $stored_coordinates );
+
+		$retry        = false;
+		$last_request = false;
+		$retry_type   = 'empty';
+
+		$geocode_provider = $this->get_geocode_provider();
+
+		if ( ! $try && ! empty( $stored_coordinates['lat'] ) && $geocode_provider ) {
+			$parts = explode( ':', $stored_coordinates['lat'] );
+
+			if ( ( $parts[2] ?? '' ) === 'empty' ) {
+				$retry = $geocode_provider->get_id() !== $parts[1];
+			} else {
+				$retry = $geocode_provider->get_id() !== $parts[1]
+					       || ( \Jet_Engine_Tools::is_valid_timestamp( $parts[2] ?? '' ) && time() - $parts[2] > $this->error_timeout );
+				$retry_type = 'api_error';
+				
+				if ( $retry ) {
+					$last_request = time();
+				} else {
+					$last_request = $parts[2] ?? false;
+				}
+			}
+
+			$try = $retry || $stored_hash !== $location_hash;
+		}
+
+		if ( $try ) {
+			$coord = $this->get_remote( $location );
+		}
 
 		if ( ! $coord ) {
-			if ( $location ) {
-				$this->add_failure( $post, $location );
+			$this->add_failure( $post, $location );
+				
+			if ( $geocode_provider && ! empty( $geocode_provider->get_error( 'geocode' ) ) || $retry_type === 'api_error' ) {
+				$coord = $this->make_error_coordinates_array( 'api_error', $last_request );
+			} else {
+				$coord = $this->make_error_coordinates_array( 'empty' );
 			}
-			return false;
 		}
 
 		if ( ! $field_name ) {

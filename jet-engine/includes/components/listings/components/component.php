@@ -19,12 +19,12 @@ class Component {
 	protected $render_view;
 	protected $category;
 	protected $status;
-	
+
 	protected $raw_meta   = null;
 	protected $tmp_object = null;
 
 	public function __construct( $post ) {
-		
+
 		$this->id          = $post->ID;
 		$this->name        = $post->post_title;
 		$this->status      = $post->post_status;
@@ -39,7 +39,7 @@ class Component {
 
 	/**
 	 * Allow to export component as array
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function to_array() {
@@ -57,7 +57,7 @@ class Component {
 
 	/**
 	 * Returns ID
-	 * 
+	 *
 	 * @return int Component post ID
 	 */
 	public function get_id() {
@@ -66,7 +66,7 @@ class Component {
 
 	/**
 	 * Returns component status
-	 * 
+	 *
 	 * @return string Component post status
 	 */
 	public function get_status() {
@@ -75,7 +75,7 @@ class Component {
 
 	/**
 	 * Returns unique element name for current component
-	 * 
+	 *
 	 * @return string Component element name
 	 */
 	public function get_element_name() {
@@ -84,7 +84,7 @@ class Component {
 
 	/**
 	 * Returns name
-	 * 
+	 *
 	 * @return string Component post title
 	 */
 	public function get_display_name() {
@@ -103,7 +103,7 @@ class Component {
 	 * 	'control_default'       => 'Default Value',
 	 * 	'control_default_image' => false,
 	 * ]
-	 * 
+	 *
 	 * @return array Component props
 	 */
 	public function get_props() {
@@ -119,7 +119,7 @@ class Component {
 	 * 	'control_name'          => 'text_control',
 	 * 	'control_default'       => 'Default Value',
 	 * ]
-	 * 
+	 *
 	 * @return array Component styles
 	 */
 	public function get_styles() {
@@ -128,12 +128,12 @@ class Component {
 
 	/**
 	 * Sanitize props
-	 * 
+	 *
 	 * @param  array  $props Props to sanitize
 	 * @return array         Sanitized props
 	 */
 	public function sanitize_props( $props = [], $default_type = 'text' ) {
-		
+
 		if ( ! empty( $props ) ) {
 			foreach ( $props as $i => $prop ) {
 				$prop['control_type'] = ! empty( $prop['control_type'] ) ? $prop['control_type'] : $default_type;
@@ -146,7 +146,7 @@ class Component {
 
 	/**
 	 * Returns views
-	 * 
+	 *
 	 * @return array Supported views
 	 */
 	public function get_views() {
@@ -155,7 +155,7 @@ class Component {
 
 	/**
 	 * Returns render view
-	 * 
+	 *
 	 * @return string Render view name
 	 */
 	public function get_render_view() {
@@ -164,7 +164,7 @@ class Component {
 
 	/**
 	 * Returns category of the component
-	 * 
+	 *
 	 * @return string Category slug for editor
 	 */
 	public function get_category() {
@@ -173,17 +173,17 @@ class Component {
 
 	/**
 	 * Get component meta
-	 * 
+	 *
 	 * @param  string $key     Meta key
 	 * @param  mixed  $default Default value if meta not found
 	 * @return mixed           Meata value or default value
 	 */
 	public function get_meta( $key = null, $default = false ) {
-		
+
 		if ( null === $this->raw_meta ) {
-			
+
 			$this->raw_meta = get_post_meta( $this->get_id() );
-			
+
 			// unset meta to not stroe big amount of not needed information
 			$unset_meta = [ '_elementor_data', '_elementor_controls_usage' ];
 
@@ -205,10 +205,10 @@ class Component {
 
 	/**
 	 * Returns prop data formatted to use as appropriate control definition
-	 * 
+	 *
 	 * @param  array $prop      Property data
 	 * @param  array $types_map Optional - map of control type names for appropriate builder
-	 * @return array 
+	 * @return array
 	 */
 	public function get_prop_for_control( $prop = [], $types_map = [] ) {
 
@@ -234,8 +234,8 @@ class Component {
 
 	/**
 	 * Parse options string into PHP array
-	 * 
-	 * @param  string $options_string 
+	 *
+	 * @param  string $options_string
 	 * @return [type]                 [description]
 	 */
 	public function get_prop_options( $options_string = '' ) {
@@ -258,7 +258,7 @@ class Component {
 
 	/**
 	 * Get default value of the prop depending on prop type
-	 * 
+	 *
 	 * @param  array  $prop [description]
 	 * @return [type]       [description]
 	 */
@@ -272,7 +272,7 @@ class Component {
 
 		switch ( $type ) {
 			case 'media':
-				
+
 				$image = isset( $prop['control_default_image'] ) ? $prop['control_default_image'] : false;
 
 				if ( $image && ! is_array( $image ) ) {
@@ -288,7 +288,7 @@ class Component {
 				$default = ( $default && is_array( $default ) ) ? $default : false;
 
 				break;
-			
+
 			default:
 				$default = isset( $prop['control_default'] ) ? $prop['control_default'] : '';
 				break;
@@ -310,7 +310,7 @@ class Component {
 	 * 	'control_default'       => 'Default Value',
 	 * 	'control_default_image' => false,
 	 * ]
-	 * 
+	 *
 	 * @param array $props [description]
 	 */
 	public function set_props( $props = [] ) {
@@ -327,7 +327,7 @@ class Component {
 	 * 	'control_name'          => 'text_control',
 	 * 	'control_default'       => 'Default Value',
 	 * ]
-	 * 
+	 *
 	 * @param array $props [description]
 	 */
 	public function set_styles( $props = [] ) {
@@ -345,12 +345,12 @@ class Component {
 
 	/**
 	 * Returns default state of the component
-	 * 
+	 *
 	 * @param  boolean|array $props Array of component props to use for default state
 	 * @return array                Default state
 	 */
 	public function get_default_state( $props = false, $args = [] ) {
-		
+
 		if ( false === $props ) {
 			$props = array_merge( $this->get_props(), $this->get_styles() );
 		}
@@ -370,7 +370,7 @@ class Component {
 
 	/**
 	 * Check if given view is allowed by component
-	 * 
+	 *
 	 * @return boolean [description]
 	 */
 	public function is_view_supported( $view ) {
@@ -379,7 +379,7 @@ class Component {
 
 	/**
 	 * Set compoonent object by given context
-	 * 
+	 *
 	 * @param string $context [description]
 	 */
 	public function set_component_context( $context = '' ) {
@@ -387,7 +387,7 @@ class Component {
 		if ( ! $context ) {
 			$context = jet_engine()->listings->components->state->get( 'component_context' );
 		}
-		
+
 		$this->tmp_object = null;
 
 		if ( $context && 'default_object' !== $context ) {
@@ -407,13 +407,25 @@ class Component {
 
 		}
 	}
-	
+
+	/**
+	 * Trigger a hook to allow 3rd parties perform some actions
+	 * when we known that component is going to be hidden by dynamic visibility
+	 * or similar logic.
+	 *
+	 * @return void
+	 */
+	public function on_hide() {
+		do_action( 'jet-engine/listing/on-hide', $this->get_id() );
+	}
+
 	/**
 	 * Get component content
-	 * 
+	 *
 	 * @return string Rendered component content
 	 */
 	public function get_content( $settings = [], $with_context = false ) {
+
 		$stack = jet_engine()->listings->components->stack;
 
 		if ( ! $stack->increase_stack( $this ) ) {
@@ -438,7 +450,7 @@ class Component {
 		 */
 		$component_id = apply_filters( 'jet-engine/component/render-id', $this->get_id(), $this );
 
-		echo jet_engine()->frontend->get_listing_item_content( $component_id );
+		echo jet_engine()->frontend->get_listing_item_content( $component_id ); // phpcs:ignore
 
 		// Reset current object to initial if component context was used
 		if ( $this->tmp_object ) {
@@ -462,8 +474,8 @@ class Component {
 		jet_engine()->admin_bar->register_item( 'edit_post_' . $this->get_id(), array(
 			'title'     => get_the_title( $this->get_id() ),
 			'sub_title' => esc_html__( 'Component', 'jet-engine' ),
-			'href'      => jet_engine()->post_type->admin_screen->get_edit_url( 
-				$this->get_render_view(), $this->get_id() 
+			'href'      => jet_engine()->post_type->admin_screen->get_edit_url(
+				$this->get_render_view(), $this->get_id()
 			),
 		) );
 
@@ -471,12 +483,13 @@ class Component {
 
 		$stack->decrease_stack();
 
-		return $content;
+		// Content is generated dynamically, user input escaped by appropriate generator functions
+		return $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
 	 * Returns style tag with allowed CSS variables
-	 * 
+	 *
 	 * @param  [type] $settings     [description]
 	 * @param  [type] $css_selector [description]
 	 * @return [type]               [description]
@@ -486,16 +499,20 @@ class Component {
 		$css_string = $this->css_variables_string( $settings );
 
 		if ( ! empty( $css_string ) ) {
-			return sprintf( '<style type="text/css">%1$s {%2$s}</style>', $css_selector, $css_string );
+			return sprintf(
+				'<style type="text/css">%1$s {%2$s}</style>',
+				esc_attr( $css_selector ),
+				esc_attr( $css_string )
+			);
 		} else {
 			return '';
 		}
-		
+
 	}
 
 	/**
 	 * Get prefix of CSS variable
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public static function css_var_prefix() {
@@ -504,7 +521,7 @@ class Component {
 
 	/**
 	 * Get component CSS varaiabled string based on settings to use as inline attribue or in style tag
-	 * 
+	 *
 	 * @param  array  $settings [description]
 	 * @return [type]           [description]
 	 */

@@ -199,7 +199,7 @@ class Map_Sync extends \Elementor\Jet_Smart_Filters_Base_Widget {
 		$this->add_render_attribute(
 			'_wrapper',
 			array(
-				'style' => 'display: none;',
+				'style' => 'height: 0; margin: 0; width: 0;',
 			)
 		);
 

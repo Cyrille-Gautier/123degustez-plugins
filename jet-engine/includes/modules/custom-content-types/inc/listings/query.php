@@ -60,7 +60,7 @@ class Query {
 		$args = array();
 
 		if ( ! empty( $query_args['meta_query'] ) ) {
-			
+
 			$result = array();
 
 			foreach ( $query_args['meta_query'] as $row ) {
@@ -125,17 +125,37 @@ class Query {
 			'meta_query' => array(),
 		);
 
-		if ( ! empty( $query_args ) && ! empty( $query_args[ $provider_name ] ) && ! empty( $query_args[ $provider_name ][ $provider_id ] ) ) {
+		if ( ! empty( $query_args )
+			&& ! empty( $query_args[ $provider_name ] )
+			&& ! empty( $query_args[ $provider_name ][ $provider_id ] ) )
+		 {
 			// setup front-end query args
 			$query_args = $query_args[ $provider_name ][ $provider_id ];
-		} elseif ( ! empty( $query_args['meta_query'] ) && $query_object ) {
+		} elseif (
+			! empty( $query_args['meta_query'] )
+			&& $query_object
+		) {
 			// setup AJAX query args
 			$query_object->set_filtered_prop( 'meta_query', $query_args['meta_query'] );
 			$query_args['args'] = $query_object->final_query['args'];
 			unset($query_args['meta_query'] );
 		}
 
-		$args  = $content_type->prepare_query_args( $this->format_filter_args( $query_args ) );
+		$args = $this->format_filter_args( $query_args );
+
+		/**
+		 * @since 3.7.0
+		 * $args can contain nested query args.
+		 * Query builder can extract them to format which could be correctly processed
+		 * by prepare_query_args() method.
+		 *
+		 * In the future possibly we need to move extract_nested() method to the prepare_query_args()
+		 */
+		if ( $query_object && is_callable( array( $query_object, 'extract_nested' ) ) ) {
+			$args = $query_object->extract_nested( $args );
+		}
+
+		$args  = $content_type->prepare_query_args( $args );
 		$where = $content_type->db->add_where_args( $args, 'AND', false );
 		$table = $content_type->db->table();
 
@@ -243,7 +263,7 @@ class Query {
 		} else {
 			$where = 'WHERE 1=1 ';
 		}
-		
+
 		if ( $status ) {
 			$status = esc_sql( $status );
 			$where .= " AND cct_status = '$status' ";
@@ -482,7 +502,7 @@ class Query {
 		$query = json_decode( wp_unslash( $query ), true );
 
 		if ( ! empty( $_REQUEST['action'] ) && 'jet_engine_ajax' === $_REQUEST['action'] && isset( $_REQUEST['query'] ) ) {
-			$query = wp_unslash( $_REQUEST['query'] );
+			$query = $_REQUEST['query'];
 			$page  = isset( $_REQUEST['page'] ) ? absint( $_REQUEST['page'] ) : 1;
 		}
 
@@ -623,6 +643,7 @@ class Query {
 	 * @param [type] $query [description]
 	 */
 	public function add_filter_row( $row, $query ) {
+		$row = $this->maybe_unslash_regexp_meta_query_row( $row );
 
 		if ( ! empty( $row['relation'] ) ) {
 
@@ -664,6 +685,7 @@ class Query {
 	}
 
 	public function prepare_multi_relation_row( $row ) {
+		$row = $this->maybe_unslash_regexp_meta_query_row( $row );
 
 		if ( ! empty( $row['relation'] ) ) {
 
@@ -687,6 +709,28 @@ class Query {
 		}
 
 		return $new_row;
+	}
+
+	/**
+	 * Maybe unslash meta query row if the 'compare' operator is 'REGEXP'.
+	 *
+	 * Added by Photon to fix an issue with regex meta queries.
+	 * Previous fix only addressed filtering by checkbox meta fields.
+	 * This applies the same logic for CCT meta queries as done for CPT.
+	 *
+	 * @see https://github.com/Crocoblock/issues-tracker/issues/833
+	 * @see https://github.com/Crocoblock/issues-tracker/issues/15446
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $row Meta query row.
+	 * @return array Processed meta query row.
+	 */
+	public function maybe_unslash_regexp_meta_query_row( $row ) {
+		if ( isset( $row['compare'] ) && 'REGEXP' === $row['compare'] ) {
+			$row = wp_unslash( $row );
+		}
+		return $row;
 	}
 
 }

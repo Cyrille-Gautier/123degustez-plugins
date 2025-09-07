@@ -1,3 +1,6 @@
+<?php
+// phpcs:disable
+?>
 <cx-vui-popup
 	v-model="isVisible"
 	:ok-label="'<?php _e( 'Delete', 'jet-engine' ) ?>'"

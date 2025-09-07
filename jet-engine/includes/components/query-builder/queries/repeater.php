@@ -249,7 +249,7 @@ class Repeater_Query extends Base_Query {
 	/**
 	 * Check if item meets requested meta query args
 	 *
-	 * @param  array $item Repeater item.
+	 * @param  object $item Repeater item.
 	 * @param  array $args Query arguments to check the item against.
 	 * @return array
 	 */
@@ -493,6 +493,14 @@ class Repeater_Query extends Base_Query {
 						$object = get_post( $object );
 					}
 
+				}
+
+				if ( ! empty( $field_data['2'] ) && $field_data['2'] === 'user' ) {
+					$user = get_user_by( 'ID', $this->object_id );
+					
+					if ( $user->ID ?? false ) {
+						$object = $user;
+					}
 				}
 			}
 
@@ -754,6 +762,10 @@ class Repeater_Query extends Base_Query {
 
 			case '_page':
 				$this->final_query['page'] = $value;
+				break;
+
+			case '_items_per_page':
+				$this->final_query['per_page'] = $value;
 				break;
 
 			case 'meta_query':

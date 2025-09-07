@@ -433,34 +433,32 @@ if ( ! class_exists( 'Jet_Engine_CPT_Admin_Filters' ) ) {
 
 			$formatted_result = array();
 
-			$result = $this->sanitize_meta_values( $result );
-
 			foreach ( $result as $key => $value ) {
 
 				if ( is_array( $value ) ) {
 					if ( isset( $value['value'] ) && isset( $value['label'] ) ) {
 						$formatted_result[] = array(
-							'value' => apply_filters( 'jet-engine/admin-filters/filter-value', $value['value'], $filter, $this ),
-							'label' => apply_filters( 'jet-engine/admin-filters/filter-label', $value['label'], $filter, $this ),
+							'value' => apply_filters( 'jet-engine/admin-filters/filter-value', $this->sanitize_meta_value( $value['value'] ), $filter, $this ),
+							'label' => apply_filters( 'jet-engine/admin-filters/filter-label', $this->sanitize_meta_value( $value['label'] ), $filter, $this ),
 						);
 					} elseif ( ! isset( $value['value'] ) && isset( $value['label'] ) ) { // condition for radio fields.
 						$formatted_result[] = array(
-							'value' => apply_filters( 'jet-engine/admin-filters/filter-value', $key, $filter, $this ),
-							'label' => apply_filters( 'jet-engine/admin-filters/filter-label', $value['label'], $filter, $this ),
+							'value' => apply_filters( 'jet-engine/admin-filters/filter-value', $this->sanitize_meta_value( $key ), $filter, $this ),
+							'label' => apply_filters( 'jet-engine/admin-filters/filter-label', $this->sanitize_meta_value( $value['label'] ), $filter, $this ),
 						);
 					} else {
 						$value = array_values( $value );
 						if ( '' !== $value[0] ) {
 							$formatted_result[] = array(
-								'value' => apply_filters( 'jet-engine/admin-filters/filter-value', $value[0], $filter, $this ),
-								'label' => apply_filters( 'jet-engine/admin-filters/filter-label', isset( $value[1] ) ? $value[1] : $value[0], $filter, $this ),
+								'value' => apply_filters( 'jet-engine/admin-filters/filter-value', $this->sanitize_meta_value( $value[0] ), $filter, $this ),
+								'label' => apply_filters( 'jet-engine/admin-filters/filter-label', $this->sanitize_meta_value( isset( $value[1] ) ? $value[1] : $value[0] ), $filter, $this ),
 							);
 						}
 					}
 				} else {
 					$formatted_result[] = array(
-						'value' => apply_filters( 'jet-engine/admin-filters/filter-value', $key, $filter, $this ),
-						'label' => apply_filters( 'jet-engine/admin-filters/filter-label', $value, $filter, $this ),
+						'value' => apply_filters( 'jet-engine/admin-filters/filter-value', $this->sanitize_meta_value( $key ), $filter, $this ),
+						'label' => apply_filters( 'jet-engine/admin-filters/filter-label', $this->sanitize_meta_value( $value ), $filter, $this ),
 					);
 				}
 
@@ -470,26 +468,17 @@ if ( ! class_exists( 'Jet_Engine_CPT_Admin_Filters' ) ) {
 
 		}
 
-		function sanitize_meta_values( $options ) {
-			foreach ( $options as &$option ) {
-				foreach ( $option as $key => $value ) {
-					if ( is_string( $value ) ) {
-						// Remove tags
-						$value = strip_tags( $value );
+		function sanitize_meta_value( $value ) {
+			// Remove tags
+			$value = strip_tags( $value );
 
-						// Replace " to avoid breaking HTML select tags
-						// Example: meta_value => Info about &amp; Mercedes "
-						// It becomes: <option value="Info about &amp; Mercedes " "="">Info about &amp; Mercedes "</option>
-						// Do not use htmlspecialchars() because I have &amp; in the input
-						$value = str_replace('"', '&quot;', $value);
+			// Replace " to avoid breaking HTML select tags
+			// Example: meta_value => Info about &amp; Mercedes "
+			// It becomes: <option value="Info about &amp; Mercedes " "="">Info about &amp; Mercedes "</option>
+			// Do not use htmlspecialchars() because I have &amp; in the input
+			$value = str_replace('"', '&quot;', $value);
 
-						$option[ $key ] = $value;
-					}
-				}
-			}
-			unset( $option );
-
-			return $options;
+			return $value;
 		}
 
 	}

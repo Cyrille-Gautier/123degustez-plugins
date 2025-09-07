@@ -19,7 +19,7 @@ class Query_Endpoint {
 	 * @return [type]          [description]
 	 */
 	public function get_settings( $setting = '', $default = false ) {
-		
+
 		if ( ! $setting ) {
 			return $this->settings;
 		}
@@ -30,7 +30,7 @@ class Query_Endpoint {
 
 	public function register_route() {
 
-		register_rest_route( 
+		register_rest_route(
 			sanitize_text_field( $this->get_settings( 'api_namespace' ) ),
 			sanitize_text_field( $this->get_settings( 'api_path' ) ),
 			[
@@ -45,7 +45,7 @@ class Query_Endpoint {
 
 	/**
 	 * Returns query arguments
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function get_args() {
@@ -73,7 +73,7 @@ class Query_Endpoint {
 
 	/**
 	 * Check if user from request has access to this endpoint
-	 * 
+	 *
 	 * @param  [type] $request [description]
 	 * @return [type]          [description]
 	 */
@@ -99,7 +99,7 @@ class Query_Endpoint {
 
 	/**
 	 * Check if current user has access by user role
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function check_access_by_role() {
@@ -131,7 +131,7 @@ class Query_Endpoint {
 
 	/**
 	 * Check if current user has access by user capability
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function check_access_by_capability() {
@@ -162,7 +162,7 @@ class Query_Endpoint {
 
 	/**
 	 * Returns query result
-	 * 
+	 *
 	 * @param  [type]   $request [description]
 	 * @return function          [description]
 	 */
@@ -190,8 +190,12 @@ class Query_Endpoint {
 			}
 		}
 
-		return new \WP_REST_Response( $query->get_items(), 200 );
+		$response = new \WP_REST_Response( $query->get_items(), 200 );
 
+		$response->header( 'Jet-Query-Total', $query->get_items_total_count() );
+		$response->header( 'Jet-Query-Pages', $query->get_items_pages_count() );
+
+		return $response;
 	}
 
 }

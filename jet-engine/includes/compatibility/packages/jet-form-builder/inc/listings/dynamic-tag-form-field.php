@@ -61,8 +61,7 @@ class Dynamic_Tag_Form_Field extends \Elementor\Core\DynamicTags\Tag {
 			return;
 		}
 
-		echo Manager::instance()->get_form_record_field( $field_name, false );
-
+		echo wp_kses_post( Manager::instance()->get_form_record_field( $field_name, false ) );
 	}
 
 }

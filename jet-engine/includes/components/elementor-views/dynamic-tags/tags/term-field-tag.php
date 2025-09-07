@@ -124,12 +124,13 @@ class Jet_Engine_Term_Field_Tag extends Elementor\Core\DynamicTags\Tag {
 			case 'meta_field':
 
 				if ( !  empty( $meta_field ) ) {
+
 					$meta = get_term_meta( $term->term_id, $meta_field, true );
 
 					if ( is_array( $meta ) ) {
-						echo implode( ', ', $meta );
+						echo wp_kses_post( implode( ', ', $meta ) );
 					} else {
-						echo $meta;
+						echo wp_kses_post( $meta );
 					}
 
 				}
@@ -144,15 +145,14 @@ class Jet_Engine_Term_Field_Tag extends Elementor\Core\DynamicTags\Tag {
 					$term_url = '';
 				}
 
-				echo $term_url;
+				echo esc_url( $term_url );
 				break;
 
 			default:
 
 				if ( isset( $term->$field ) ) {
-					echo $term->$field;
+					echo wp_kses_post( $term->$field );
 				}
-
 				break;
 		}
 

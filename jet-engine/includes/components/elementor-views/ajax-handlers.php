@@ -21,9 +21,13 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Ajax_Handlers' ) ) {
 		 */
 		public function listing_load_more() {
 
+			// Now is unused, will be removed in the future, so no need to check with PHPCS
+
+			// phpcs:disable
 			$query           = ! empty( $_REQUEST['query'] ) ? $_REQUEST['query'] : array();
 			$widget_settings = ! empty( $_REQUEST['widget_settings'] ) ? $_REQUEST['widget_settings'] : array();
 			$response        = array();
+			// phpcs:enable
 
 			$data = array(
 				'id'         => 'jet-listing-grid',
@@ -54,9 +58,11 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Ajax_Handlers' ) ) {
 				Elementor\Plugin::$instance->documents->get_doc_for_frontend( $widget_settings['lisitng_id'] )
 			);
 
+			// phpcs:disable
 			$listing_source = jet_engine()->listings->data->get_listing_source();
 			$page           = ! empty( $_REQUEST['page'] ) ? absint( $_REQUEST['page'] ) : 1;
 			$query['paged'] = $page;
+			// phpcs:enable
 
 			$render_instance = jet_engine()->listings->get_render_instance( 'listing-grid', $widget_settings );
 
@@ -127,9 +133,6 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Ajax_Handlers' ) ) {
 			}
 
 			wp_send_json_success( $response );
-
 		}
-
 	}
-
 }

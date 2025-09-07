@@ -25,7 +25,7 @@ class Manager {
 
 	/**
 	 * Listing manager instance
-	 * 
+	 *
 	 * @var null
 	 */
 	public $listing = null;
@@ -34,7 +34,7 @@ class Manager {
 	 * Constructor for the class
 	 */
 	function __construct() {
-		
+
 		if ( ! $this->has_bricks() ) {
 			return;
 		}
@@ -68,7 +68,7 @@ class Manager {
 					'jet-engine-icons',
 					jet_engine()->plugin_url( 'assets/lib/jetengine-icons/icons.css' ),
 					array(),
-					jet_engine()->get_version()
+					jet_engine()->get_version() . '-03062025'
 				);
 			}
 		} );
@@ -140,7 +140,7 @@ class Manager {
 		if ( ! class_exists( '\Jet_Engine\Bricks_Views\Elements\Base' ) ) {
 			require $this->component_path( 'elements/base.php' );
 		}
-		
+
 		require $this->component_path( 'helpers/options-converter.php' );
 		require $this->component_path( 'helpers/controls-converter/base.php' );
 		require $this->component_path( 'helpers/controls-converter/control-text.php' );
@@ -152,13 +152,14 @@ class Manager {
 		require $this->component_path( 'helpers/preview.php' );
 		require $this->component_path( 'helpers/repeater.php' );
 		require $this->component_path( 'helpers/controls-hook-bridge.php' );
-		
+
 		$element_files = array(
 			$this->component_path( 'elements/listing-grid.php' ),
 			$this->component_path( 'elements/dynamic-field.php' ),
 			$this->component_path( 'elements/dynamic-image.php' ),
 			$this->component_path( 'elements/dynamic-link.php' ),
 			$this->component_path( 'elements/dynamic-terms.php' ),
+			$this->component_path( 'elements/dynamic-repeater.php' ),
 		);
 
 		foreach ( $element_files as $file ) {
@@ -170,10 +171,11 @@ class Manager {
 
 	/**
 	 * Check if is Bricks editor render request
-	 * 
+	 *
 	 * @return boolean [description]
 	 */
 	public function is_bricks_editor() {
+		// phpcs:disable
 		// is API request
 		$bricks_request_str = 'wp-json/bricks/v1/render_element';
 		$is_api = ( ! empty( $_SERVER['REQUEST_URI'] ) && false !== strpos( $_SERVER['REQUEST_URI'], $bricks_request_str ) );
@@ -183,7 +185,7 @@ class Manager {
 
 		// Is editor iframe
 		$is_editor = ( ! empty( $_REQUEST['bricks'] ) && 'run' === $_REQUEST['bricks'] );
-
+		// phpcs:enable
 		return $is_api || $is_ajax || $is_editor;
 	}
 
@@ -200,11 +202,13 @@ class Manager {
 	public function get_request_data() {
 		$data = false;
 
+		// phpcs:disable
 		if ( bricks_is_rest_call() ) {
 			$data = file_get_contents( 'php://input' );
 		} elseif ( wp_doing_ajax() && isset( $_REQUEST['action'] ) && 'bricks_render_element' === $_REQUEST['action'] ) {
 			$data = $_REQUEST;
 		}
+		// phpcs:enable
 
 		if ( ! $data ) {
 			return false;
@@ -224,12 +228,12 @@ class Manager {
 	public function compat_tweaks() {
 		// fix slider arrows bug for the listing grid
 		add_filter( 'jet-engine/listing/grid/slider-options', function( $options ) {
-			
+			// phpcs:disable
 			if ( ! empty( $_REQUEST['action'] ) && 'bricks_get_element_html' === $_REQUEST['action'] ) {
 				$options['prevArrow'] = wp_slash( $options['prevArrow'] );
 				$options['nextArrow'] = wp_slash( $options['nextArrow'] );
 			}
-
+			// phpcs:enable
 			return $options;
 		} );
 	}

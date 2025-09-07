@@ -8,9 +8,17 @@ class Jet_Engine_Delete_Post {
 	public $query_var = 'jet_engine_delete_post';
 
 	public function __construct() {
+
+		/**
+		 * Allow to make unique query var for your website
+		 */
+		$this->query_var = apply_filters( 'jet-engine/listings/delete-post/query-var', $this->query_var );
+
+		// phpcs:disable
 		if ( ! empty( $_GET[ $this->query_var ] ) ) {
 			add_action( 'wp_loaded', array( $this, 'delete_post' ), -1 );
 		}
+		// phpcs:enable
 	}
 
 	/**
@@ -22,7 +30,7 @@ class Jet_Engine_Delete_Post {
 		$type     = ! empty( $args['type'] ) ? $args['type'] : 'trash';
 		$redirect = ! empty( $args['redirect'] ) ? esc_url( $args['redirect'] ) : home_url( '/' );
 
-		return add_query_arg( 
+		return add_query_arg(
 			apply_filters( 'jet-engine/listings/delete-post/query-args', array(
 				$this->query_var => $post_id,
 				'type' => $type,
@@ -36,10 +44,12 @@ class Jet_Engine_Delete_Post {
 
 	public function delete_post() {
 
+		// phpcs:disable
 		$nonce    = ! empty( $_GET['nonce'] ) ? $_GET['nonce'] : false;
 		$type     = ! empty( $_GET['type'] ) ? $_GET['type'] : 'trash';
 		$redirect = ! empty( $_GET['redirect'] ) ? esc_url( $_GET['redirect'] ) : home_url( '/' );
-		$post_id  = ! empty( $_GET[ $this->query_var ] ) ? $_GET[ $this->query_var ] : false;
+		$post_id  = ! empty( $_GET[ $this->query_var ] ) ? absint( $_GET[ $this->query_var ] ) : false;
+		// phpcs:enable
 
 		if ( ! $post_id ) {
 			return;
@@ -47,15 +57,15 @@ class Jet_Engine_Delete_Post {
 
 		if ( ! is_user_logged_in() ) {
 			wp_die(
-				__( 'Only logged-in user can delete posts', 'jet-engine' ),
-				__( 'Error!', 'jet-engine' )
+				__( 'Only logged-in user can delete posts', 'jet-engine' ), // phpcs:ignore
+				__( 'Error!', 'jet-engine' ) // phpcs:ignore
 			);
 		}
 
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->query_var ) ) {
 			wp_die(
-				__( 'The link is expired, please return to the previous page and try again.', 'jet-engine' ),
-				__( 'Error!', 'jet-engine' )
+				__( 'The link is expired, please return to the previous page and try again.', 'jet-engine' ), // phpcs:ignore
+				__( 'Error!', 'jet-engine' ) // phpcs:ignore
 			);
 		}
 
@@ -69,8 +79,8 @@ class Jet_Engine_Delete_Post {
 
 			if ( $current_user_id !== $post_author ) {
 				wp_die(
-					__( 'You don`t have access to this post.', 'jet-engine' ),
-					__( 'Error!', 'jet-engine' )
+					__( 'You don`t have access to this post.', 'jet-engine' ), // phpcs:ignore
+					__( 'Error!', 'jet-engine' ) // phpcs:ignore
 				);
 			}
 		}
@@ -86,10 +96,8 @@ class Jet_Engine_Delete_Post {
 		if ( $redirect ) {
 			// Fixed '&' encoding
 			$redirect = str_replace( '&#038;', '&', $redirect );
-			wp_redirect( $redirect );
+			wp_safe_redirect( $redirect );
 			die();
 		}
-
 	}
-
 }

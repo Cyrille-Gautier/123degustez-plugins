@@ -55,9 +55,33 @@ class Request {
 			$args['timeout'] = 30;
 		}
 
-		$args       = apply_filters( 'jet-engine/rest-api-listings/request/args', $args, $this );
-		$query_args = apply_filters( 'jet-engine/rest-api-listings/request/query-args', $query_args, $this );
-		$type       = apply_filters( 'jet-engine/rest-api-listings/request/type', $type, $this );
+		$args = apply_filters( 'jet-engine/rest-api-listings/request/args', $args, $this );
+		$type = apply_filters( 'jet-engine/rest-api-listings/request/type', $type, $this );
+
+		$url = $this->get_url_with_query_args( $query_args );
+
+		switch ( $type ) {
+			case 'post':
+				return wp_remote_post( $url, $args );
+
+			default:
+				return wp_remote_get( $url, $args );
+		}
+
+	}
+
+	/**
+	 * Returns endpoint URL with query args applied
+	 *
+	 * @param  array|string $query_args Query args list or string.
+	 * @return string
+	 */
+	public function get_url_with_query_args( $query_args = array() ) {
+
+		$query_args = apply_filters(
+			'jet-engine/rest-api-listings/request/query-args',
+			$query_args, $this
+		);
 
 		$url = $this->get_url();
 
@@ -69,13 +93,7 @@ class Request {
 			}
 		}
 
-		switch ( $type ) {
-			case 'post':
-				return wp_remote_post( $url, $args );
-
-			default:
-				return wp_remote_get( $url, $args );
-		}
+		return $url;
 
 	}
 

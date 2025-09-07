@@ -127,8 +127,8 @@ class Filters_Options_Source {
 
 		foreach ( $items as $item ) {
 
-			$value = isset( $item->$value_field ) ? $item->$value_field : false;
-			$label = isset( $item->$label_field ) ? $item->$label_field : false;
+			$value = isset( $item->$value_field ) ? wp_kses( $item->$value_field, array() ) : false;
+			$label = isset( $item->$label_field ) ? wp_kses( $item->$label_field, array() ) : false;
 
 			if ( ! $this->is_valid_value( $value ) || ! $this->is_valid_value( $label ) ) {
 				continue;
@@ -147,13 +147,13 @@ class Filters_Options_Source {
 					$image = $this->is_valid_value( $item->$image_field ) ? $item->$image_field : false;
 				}
 
-				$new_options[ $item->$value_field ] = array(
-					'label' => $item->$label_field,
+				$new_options[ $value ] = array(
+					'label' => $label,
 					'color' => $color,
 					'image' => $image,
 				);
 			} else {
-				$new_options[ $item->$value_field ] = $item->$label_field;
+				$new_options[ $value ] = $label;
 			}
 
 		}

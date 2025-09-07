@@ -38,7 +38,7 @@ class Public_Controller {
 				'permission_callback' => array( $this, 'get_items_permissions_check' ),
 				'args'                => $this->prepare_get_args( $base ),
 			);
-	
+
 			$ids_routes[] = array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_item' ),
@@ -207,8 +207,59 @@ class Public_Controller {
 		if ( ! empty( $params['_filters'] ) ) {
 
 			$query = json_decode( $params['_filters'], true );
+
 			if ( isset( $query['args'] ) ) {
 				$query = $query['args'];
+			}
+
+			/**
+			 * For checkbox fields used in the query we need to use like operator
+			 * to match the value, because checkbox field values are stored as serialized array
+			 */
+			foreach ( $query as $key => $value ) {
+
+				if ( isset( $fields[ $key ] ) && 'checkbox' === $fields[ $key ]['type'] ) {
+
+					$is_array = ! empty( $fields[ $key ]['is_array'] ) ? $fields[ $key ]['is_array'] : false;
+					$is_array = filter_var( $is_array, FILTER_VALIDATE_BOOLEAN );
+
+					if ( is_array( $value ) ) {
+
+						$prepared_values = array();
+
+						foreach ( $value as $v ) {
+
+							if ( $is_array ) {
+								$like_value = '%' . $v . '%';
+							} else {
+								$like_value = '%"' . $v . '";s:4:"true";%';
+							}
+
+							$prepared_values[] = array(
+								'field'    => $key,
+								'value'    => $like_value,
+								'operator' => 'LIKE',
+							);
+						}
+
+						$query[ $key ] = array_merge( array(
+							'relation' => 'OR',
+						), $prepared_values );
+					} else {
+
+						if ( $is_array ) {
+							$like_value = '%' . $value . '%';
+						} else {
+							$like_value = '%"' . $value . '";s:4:"true";%';
+						}
+
+						$query[ $key ] = array(
+							'field'    => $key,
+							'value'    => $like_value,
+							'operator' => 'LIKE',
+						);
+					}
+				}
 			}
 
 			unset( $params['_filters'] );
@@ -281,7 +332,7 @@ class Public_Controller {
 			$query['_cct_search'] = $search_data;
 		}
 
-		$query = apply_filters( 
+		$query = apply_filters(
 			'jet-engine/custom-content-types/rest-api/' . $content_type->get_arg( 'slug' ) . '/get-items/query',
 			$query,
 			$content_type,
@@ -289,7 +340,7 @@ class Public_Controller {
 			$this
 		);
 
-		$limit = apply_filters( 
+		$limit = apply_filters(
 			'jet-engine/custom-content-types/rest-api/' . $content_type->get_arg( 'slug' ) . '/get-items/limit',
 			$limit,
 			$content_type,
@@ -297,7 +348,7 @@ class Public_Controller {
 			$this
 		);
 
-		$offset = apply_filters( 
+		$offset = apply_filters(
 			'jet-engine/custom-content-types/rest-api/' . $content_type->get_arg( 'slug' ) . '/get-items/offset',
 			$offset,
 			$content_type,
@@ -305,7 +356,7 @@ class Public_Controller {
 			$this
 		);
 
-		$order = apply_filters( 
+		$order = apply_filters(
 			'jet-engine/custom-content-types/rest-api/' . $content_type->get_arg( 'slug' ) . '/get-items/order',
 			$order,
 			$content_type,
@@ -316,8 +367,16 @@ class Public_Controller {
 		$data = $content_type->db->query( $query, $limit, $offset, $order );
 		$data = $this->filter_data( $data, $content_type, false );
 
-		return new \WP_REST_Response( $data, 200 );
+		$response = new \WP_REST_Response( $data, 200 );
 
+		if ( $limit > 0 ) {
+			$total = $content_type->db->count( $query );
+			$pages = $total > 0 ? ceil( $total / $limit ) : 0;
+			$response->header( 'Jet-Query-Total',$total );
+			$response->header( 'Jet-Query-Pages', $pages );
+		}
+
+		return $response;
 	}
 
 	public function filter_data( $data, $content_type, $single ) {

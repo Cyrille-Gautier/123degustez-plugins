@@ -292,15 +292,15 @@ class Query {
 		switch ( Module::instance()->settings->get( 'user_page_rewrite' ) ) {
 
 			case 'login':
-				$slug = $user->data->user_login;
+				$slug = $user->data->user_login ?? false;
 				break;
 
 			case 'user_nicename':
-				$slug = $user->data->user_nicename;
+				$slug = $user->data->user_nicename ?? false;
 				break;
 
 			case 'id':
-				$slug = $user->data->ID;
+				$slug = $user->data->ID ?? false;
 				break;
 		}
 

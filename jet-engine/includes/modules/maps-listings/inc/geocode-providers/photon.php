@@ -43,6 +43,11 @@ class Photon extends Base {
 	 */
 	public function extract_coordinates_from_response_data( $data = array() ) {
 
+		if ( count( $data ) === 1 && isset( $data['error'] ) ) {
+			$this->save_error( $data, 'geocode' );
+			return false;
+		}
+
 		if ( empty( $data['features'][0] ) ) {
 			return false;
 		}

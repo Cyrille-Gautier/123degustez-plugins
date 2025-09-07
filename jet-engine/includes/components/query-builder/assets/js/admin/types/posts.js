@@ -55,6 +55,37 @@
 				return result;
 			},
 		},
+		methods: {
+			isShowMultipleMetaOrderNotice: function( clauseId ) {
+				let metaOrderCount = 0;
+				let foundClause = false;
+				let isMultipleMetaOrder = false;
+
+				for ( const clause of this.query.orderby ) {
+					if ( clause?.orderby?.includes( 'meta_value' ) ) {
+						metaOrderCount++;
+					}
+
+					if ( ! foundClause && clauseId === clause._id ) {
+						foundClause = clause;
+					}
+
+					if ( metaOrderCount > 1 ) {
+						isMultipleMetaOrder = true;
+
+						if ( foundClause ) {
+							break;
+						}
+					}
+				}
+
+				if ( ! foundClause || ! isMultipleMetaOrder ) {
+					return false;
+				}
+
+				return foundClause?.orderby?.includes?.( 'meta_value' );
+			}
+		},
 		created: function() {
 
 			this.query = { ...this.value };
@@ -67,8 +98,6 @@
 			this.presetMeta();
 			this.presetTax();
 			this.presetDate();
-
-		}
+		},
 	} );
-
 })( jQuery );

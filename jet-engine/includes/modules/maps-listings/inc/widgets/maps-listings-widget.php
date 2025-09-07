@@ -33,9 +33,9 @@ class Maps_Listings_Widget extends \Elementor\Jet_Listing_Grid_Widget {
 	}
 
 	protected function register_controls() {
-		
+
 		$this->register_general_settings();
-		
+
 		// If legacy disabled, register map settings after general
 		if ( ! jet_engine()->listings->legacy->is_disabled() ) {
 			$this->register_marker_and_popup_settings();
@@ -66,15 +66,18 @@ class Maps_Listings_Widget extends \Elementor\Jet_Listing_Grid_Widget {
 			)
 		);
 
+		$q_args = array(
+			'post_type' => jet_engine()->post_type->slug(),
+		);
+
 		$this->add_control(
 			'lisitng_id',
 			array(
 				'label'   => __( 'Listing', 'jet-engine' ),
 				'type'       => 'jet-query',
 				'query_type' => 'post',
-				'query'      => array(
-					'post_type' => jet_engine()->post_type->slug(),
-				),
+				'query'      => $q_args,
+				'signature'  => \Jet_Elementor_Extension\Ajax_Handlers::create_signature( $q_args ),
 				'edit_button' => array(
 					'active' => true,
 					'label'  => __( 'Edit Listing', 'jet-engine' ),
@@ -1155,7 +1158,7 @@ class Maps_Listings_Widget extends \Elementor\Jet_Listing_Grid_Widget {
 	}
 
 	public function add_provider_controls( $section = null ) {
-		
+
 		$provider = Module::instance()->providers->get_active_map_provider();
 		$settings = $provider->provider_settings();
 

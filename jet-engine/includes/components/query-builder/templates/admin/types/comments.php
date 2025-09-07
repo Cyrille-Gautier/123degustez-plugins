@@ -2,6 +2,8 @@
 /**
  * Posts query component template
  */
+
+// phpcs:disable
 ?>
 <div class="jet-engine-edit-page__fields">
 	<div class="cx-vui-collapse__heading">
@@ -129,6 +131,13 @@
 							button-size="mini"
 							v-model="query.meta_query"
 							@add-new-item="addNewField( $event, [], query.meta_query, newDynamicMeta )"
+							:custom-actions="[
+								{
+									buttonLabel: '<?php _e( 'Add new group', 'jet-engine' ); ?>',
+									buttonStyle: 'accent-border',
+									callback: addNewMetaGroup,
+								}
+							]"
 						>
 							<cx-vui-repeater-item
 								v-for="( clause, index ) in query.meta_query"
@@ -138,39 +147,13 @@
 								@delete-item="deleteField( $event, clause._id, query.meta_query, deleteDynamicMeta )"
 								:key="clause._id"
 							>
-								<cx-vui-input
-									label="<?php _e( 'Field key/name', 'jet-engine' ); ?>"
-									description="<?php _e( 'You can use `JetEngine meta field` macros to get name of the field created by JetEngine', 'jet-engine' ); ?>"
-									:wrapper-css="[ 'equalwidth', 'has-macros' ]"
-									size="fullwidth"
-									:value="query.meta_query[ index ].key"
-									@input="setFieldProp( clause._id, 'key', $event, query.meta_query )"
-								><jet-query-dynamic-args v-model="dynamicQuery.meta_query[ clause._id ].key"></jet-query-dynamic-args></cx-vui-input>
-								<cx-vui-select
-									label="<?php _e( 'Compare', 'jet-engine' ); ?>"
-									description="<?php _e( 'Operator to test', 'jet-engine' ); ?>"
-									:wrapper-css="[ 'equalwidth' ]"
-									:options-list="operators"
-									size="fullwidth"
-									:value="query.meta_query[ index ].compare"
-									@input="setFieldProp( clause._id, 'compare', $event, query.meta_query )"
-								></cx-vui-select>
-								<cx-vui-input
-									label="<?php _e( 'Value', 'jet-engine' ); ?>"
-									:wrapper-css="[ 'equalwidth', 'has-macros' ]"
-									size="fullwidth"
-									:value="query.meta_query[ index ].value"
-									@input="setFieldProp( clause._id, 'value', $event, query.meta_query )"
-								><jet-query-dynamic-args v-model="dynamicQuery.meta_query[ clause._id ].value"></jet-query-dynamic-args></cx-vui-input>
-								<cx-vui-select
-									label="<?php _e( 'Type', 'jet-engine' ); ?>"
-									description="<?php _e( 'Data type stored in the given field', 'jet-engine' ); ?>"
-									:wrapper-css="[ 'equalwidth' ]"
-									:options-list="dataTypes"
-									size="fullwidth"
-									:value="query.meta_query[ index ].type"
-									@input="setFieldProp( clause._id, 'type', $event, query.meta_query )"
-								></cx-vui-select>
+								<jet-engine-query-meta-field
+									:field="clause"
+									:meta-query="query.meta_query"
+									:dynamic-query="dynamicQuery.meta_query[ clause._id ]"
+									@input="setFieldData( clause._id, $event, query.meta_query )"
+									@dynamic-input="setDynamicMeta( clause._id, $event )"
+								></jet-engine-query-meta-field>
 							</cx-vui-repeater-item>
 						</cx-vui-repeater>
 					</div>

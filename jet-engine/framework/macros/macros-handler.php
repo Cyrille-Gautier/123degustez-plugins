@@ -2,7 +2,7 @@
 /**
  * Macros handler module
  *
- * Version: 1.0.0
+ * Version: 2.0.0
  */
 namespace Crocoblock;
 
@@ -19,14 +19,15 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 		private $fallback            = null;
 		private $before              = null;
 		private $after               = null;
+		private $filter              = null;
 		private $macros_list         = null;
 		private $escaped_macros_list = null;
 		private $namespace           = null;
 
 		/**
 		 * Setup namespace
-		 * 
-		 * @param string $namespace Namespace of the current instance, 
+		 *
+		 * @param string $namespace Namespace of the current instance,
 		 * which allows to call unique custom registration hooks
 		 */
 		public function __construct( $namespace = null ) {
@@ -58,7 +59,7 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 		 *
 		 * Triggers hook $this->namespace . '/register-macros' to register custom macros for you handler instance
 		 * On hook you need to register macros by using Macros_Handler::register_macros();
-		 * 
+		 *
 		 * @param  array  $macros_list array of macros list to register
 		 * @return void
 		 */
@@ -95,7 +96,7 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 		/**
 		 * Register single macros into the current handler instance.
 		 * This Method should be used to adding any new macros for your instance after bul registration is done
-		 * 
+		 *
 		 * @param  object $macros_object Macros object
 		 * @return [type]                [description]
 		 */
@@ -118,12 +119,12 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 
 		/**
 		 * Returns plain $this->macros_list.
-		 * 
-		 * If you added any arguments where options is set as callback function - 
+		 *
+		 * If you added any arguments where options is set as callback function -
 		 * this options will return not preapred to use in UI.
-		 * 
+		 *
 		 * This method should be used anywhere where you need to get macros list without macros insertion UI
-		 * 
+		 *
 		 * @return array
 		 */
 		public function get_raw_list() {
@@ -133,9 +134,9 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 		/**
 		 * Returns macros list where arguments options already prepared to use in UI.
 		 *
-		 * This method requires more resources, so should be used only in cases when you need macros list 
+		 * This method requires more resources, so should be used only in cases when you need macros list
 		 * with prepared arguments to use in some macros insertion UI
-		 * 
+		 *
 		 * @return array
 		 */
 		public function get_escaped_list() {
@@ -178,7 +179,7 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 
 		/**
 		 * Returns macros list prepared to use as JS options list
-		 * 
+		 *
 		 * @return array
 		 */
 		public function get_macros_for_js() {
@@ -210,11 +211,11 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 
 		/**
 		 * Set context to get current macros data in.
-		 * This method is usable in combination with jet_engine plugin, 
+		 * This method is usable in combination with jet_engine plugin,
 		 * which could process custom contexts by string name
 		 *
 		 * Without jet_engine, when using this method you need to pass $context as object to use it later
-		 * 
+		 *
 		 * @param string|object $context [description]
 		 */
 		public function set_macros_context( $context = null ) {
@@ -223,7 +224,7 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 
 		/**
 		 * Returns macros context saved in the current instance.
-		 * 
+		 *
 		 * @return string|object $context Context object or a context name for JetEngine
 		 */
 		public function get_macros_context() {
@@ -232,7 +233,7 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 
 		/**
 		 * Set fallback value for macros. Fallback will be returned if macros itself return nothing
-		 * 
+		 *
 		 * @param string $fallback Value to return if macros return an empty value
 		 */
 		public function set_fallback( $fallback = null ) {
@@ -241,7 +242,7 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 
 		/**
 		 * Return fallback value stored in the current instance
-		 * 
+		 *
 		 * @return string $fallback Value to return if macros value is empty
 		 */
 		public function get_fallback() {
@@ -250,7 +251,7 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 
 		/**
 		 * Set text to add before raw macros value when returning macros result
-		 * 
+		 *
 		 * @param string $before Text to add
 		 */
 		public function set_before( $before = null ) {
@@ -259,7 +260,7 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 
 		/**
 		 * Return text to add before macros value stored in the current handler instance
-		 * 
+		 *
 		 * @return string
 		 */
 		public function get_before() {
@@ -268,7 +269,7 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 
 		/**
 		 * Set text to add after raw macros value when returning macros result
-		 * 
+		 *
 		 * @param string $after Text to add
 		 */
 		public function set_after( $after = null ) {
@@ -277,11 +278,29 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 
 		/**
 		 * Return text to add after macros value stored in the current handler instance
-		 * 
+		 *
 		 * @return string
 		 */
 		public function get_after() {
 			return $this->after;
+		}
+
+		/**
+		 * Get filter callback and parameters
+		 *
+		 * @param string $filter Filter to apply
+		 */
+		public function set_filter( $filter = null ) {
+			$this->filter = $filter;
+		}
+
+		/**
+		 * Get filter callback and parameters
+		 *
+		 * @param string Filter to apply
+		 */
+		public function get_filter() {
+			return $this->filter;
 		}
 
 		/**
@@ -412,7 +431,7 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 
 		/**
 		 * Check if given value is empty
-		 * 
+		 *
 		 * @param  [type]  $source [description]
 		 * @param  [type]  $key    [description]
 		 * @return boolean         [description]
@@ -447,6 +466,22 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 			}
 
 			return $string;
+		}
+
+		/**
+		 * Apply filtered function to value
+		 *
+		 * @param mixed $value Value to filter
+		 * @param mixed        Filtered value
+		 */
+		public function get_filtered_value( $value, $filter ) {
+			if ( $filter && function_exists( 'jet_engine' ) ) {
+				$value = jet_engine()->listings->filters->apply_filters( $value, $filter );
+			} elseif ( is_callable( $filter ) ) {
+				$value = call_user_func( $filter, $value );
+			}
+
+			return $value;
 		}
 
 		/**
@@ -496,11 +531,13 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 					$initial_context  = $this->get_macros_context();
 					$initial_before   = $this->get_before();
 					$initial_after    = $this->get_after();
+					$initial_filter   = $this->get_filter();
 
 					// Reset the configs except macros context.
 					$this->set_fallback( null );
 					$this->set_before( null );
 					$this->set_after( null );
+					$this->set_filter( null );
 
 					// Set the config of current macro
 					if ( $config ) {
@@ -521,12 +558,19 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 							$this->set_after( $config['after'] );
 						}
 
+						if ( ! $this->is_empty( $config, 'filter' ) ) {
+							$this->set_filter( $config['filter'] );
+						}
+
 					}
-					
+
 					$result   = call_user_func( $cb, $field_value, $args );
 					$fallback = $this->get_fallback();
 					$before   = $this->get_before();
 					$after    = $this->get_after();
+					$filter   = $this->get_filter();
+
+					$result = $this->get_filtered_value( $result, $filter );
 
 					$is_empty_result = empty( $result );
 
@@ -567,8 +611,9 @@ if ( ! class_exists( '\Crocoblock\Macros_Handler' ) ) {
 					$this->set_macros_context( $initial_context );
 					$this->set_before( $initial_before );
 					$this->set_after( $initial_after );
+					$this->set_filter( $initial_filter );
 
-					return $result;
+					return apply_filters( 'jet-engine/macros/macros-result', $result, $cb );
 
 				}, $string
 			);

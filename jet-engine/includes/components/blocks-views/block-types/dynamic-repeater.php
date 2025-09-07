@@ -104,6 +104,10 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Repeater' ) ) {
 					'type'    => 'string',
 					'default' => 'default_object',
 				),
+				'je_query_id' => array(
+					'type'    => 'string',
+					'default' => '',
+				),
 			) );
 		}
 

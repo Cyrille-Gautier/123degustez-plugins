@@ -136,9 +136,11 @@ class Fixer {
 
 		$nonce_action = sprintf( $this->nonce, esc_attr( $this->args['glossary_id'] ) );
 
-		if ( ! wp_verify_nonce( $_GET['_nonce'], $nonce_action ) ) {
+		// phpcs:disable
+		if ( ! wp_verify_nonce( wp_unslash( $_GET['_nonce'] ), $nonce_action ) ) {
 			return false;
 		}
+		// phpcs:enable
 		
 		return true;
 	}
@@ -158,8 +160,8 @@ class Fixer {
 				$this->notice_title();
 				printf(
 					'Glossary ID: %s is broken. Check %s or press the button to try fixing it.',
-					$this->args['glossary_id'],
-					sprintf( '<a href="%s">glossary settings</a>', admin_url( 'admin.php?page=jet-engine#glossaries' ) )
+					absint( $this->args['glossary_id'] ),
+					sprintf( '<a href="%s">glossary settings</a>', esc_html( admin_url( 'admin.php?page=jet-engine#glossaries' ) ) )
 				);
 			echo '</p>';
 			echo '<p>';
@@ -172,7 +174,7 @@ class Fixer {
 		echo '<div class="notice notice-success is-dismissible">';
 			echo '<p>';
 				$this->notice_title();
-				printf( 'Glossary %s successfully restored.', $this->args['glossary_id'] );
+				printf( 'Glossary %s successfully restored.', absint( $this->args['glossary_id'] ) );
 			echo '</p>';
 		echo '</div>';
 	}
@@ -180,21 +182,22 @@ class Fixer {
 	private function notice_submit() {
 
 		$format = '<a href="%1s" class="button button-primary">%2$s</a>';
-		$label  = __( 'Fix', 'jet-engine' );
-		$url    = add_query_arg(
+		$label  = esc_html__( 'Fix', 'jet-engine' );
+		$url    = esc_html( add_query_arg(
 			array(
-				'je_glossary_fix' => $this->args['glossary_id'],
+				'je_glossary_fix' => absint( $this->args['glossary_id'] ),
 				'_nonce'          => $this->create_nonce(),
 			),
 			esc_url( admin_url( 'index.php' ) )
-		);
+		) );
 
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		printf( $format, $url, $label );
 
 	}
 
 	private function create_nonce() {
-		return wp_create_nonce( sprintf( $this->nonce, $this->args['glossary_id'] ) );
+		return wp_create_nonce( sprintf( $this->nonce, absint( $this->args['glossary_id'] ) ) );
 	}
 
 	private function notice_title() {

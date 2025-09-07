@@ -85,9 +85,8 @@ if ( ! class_exists( 'Jet_Engine_Img_Gallery' ) ) {
 			}
 
 			$slider_atts = apply_filters( 'jet-engine/gallery/slider/atts', $slider_atts );
-			$slider_atts = htmlspecialchars( json_encode( $slider_atts ) );
 
-			echo '<div class="' . implode( ' ', $args['css_classes'] ) . '" data-atts="' . $slider_atts . '">';
+			echo '<div class="' . esc_attr( implode( ' ', $args['css_classes'] ) ) . '" data-atts="' . esc_attr( wp_json_encode( $slider_atts ) ) . '">';
 
 			$gallery_id = self::get_gallery_id();
 
@@ -109,9 +108,10 @@ if ( ! class_exists( 'Jet_Engine_Img_Gallery' ) ) {
 
 					$lightbox_attr = apply_filters( 'jet-engine/gallery/lightbox-attr', $lightbox_attr, $img_data, $gallery_id );
 
-					echo '<a ' . Jet_Engine_Tools::get_attr_string( $lightbox_attr ) . '>';
+					// Escaped by Jet_Engine_Tools::get_attr_string()
+					echo '<a ' . Jet_Engine_Tools::get_attr_string( $lightbox_attr ) . '>'; // phpcs:ignore
 
-					echo \Jet_Engine_Tools::render_icon(
+					$icon = \Jet_Engine_Tools::render_icon(
 						apply_filters(
 							'jet-engine/gallery/lightbox-trigger-icon',
 							array(
@@ -120,13 +120,15 @@ if ( ! class_exists( 'Jet_Engine_Img_Gallery' ) ) {
 							), $args
 						), 'jet-engine-lightbox-icon'
 					);
+
+					echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				} else {
 					echo '<span class="jet-engine-gallery-slider__item-wrap jet-engine-gallery-item-wrap">';
 				}
 
 				$alt = get_post_meta( $img_id, '_wp_attachment_image_alt', true );
 
-				echo '<img src="' . $img_url . '" alt="' . $alt . '" class="jet-engine-gallery-slider__item-img">';
+				echo '<img src="' . esc_attr( $img_url ) . '" alt="' . esc_attr( $alt ) . '" class="jet-engine-gallery-slider__item-img">';
 
 				if ( $args['lightbox'] ) {
 					echo '</a>';
@@ -217,7 +219,8 @@ if ( ! class_exists( 'Jet_Engine_Img_Gallery' ) ) {
 
 			$attr = apply_filters( 'jet-engine/gallery/grid/attr', $attr, $args, $gallery_id );
 
-			echo '<div ' . Jet_Engine_Tools::get_attr_string( $attr ) . '>';
+			// Escaped by Jet_Engine_Tools::get_attr_string()
+			echo '<div ' . Jet_Engine_Tools::get_attr_string( $attr ) . '>'; // phpcs:ignore
 
 			foreach ( $images as $img_data ) {
 
@@ -237,9 +240,10 @@ if ( ! class_exists( 'Jet_Engine_Img_Gallery' ) ) {
 
 					$lightbox_attr = apply_filters( 'jet-engine/gallery/lightbox-attr', $lightbox_attr, $img_data, $gallery_id );
 
-					echo '<a ' . Jet_Engine_Tools::get_attr_string( $lightbox_attr ) . '>';
+					// Escaped by Jet_Engine_Tools::get_attr_string()
+					echo '<a ' . Jet_Engine_Tools::get_attr_string( $lightbox_attr ) . '>';  // phpcs:ignore
 
-					echo \Jet_Engine_Tools::render_icon(
+					$icon = \Jet_Engine_Tools::render_icon(
 						apply_filters(
 							'jet-engine/grid/lightbox-trigger-icon',
 							array(
@@ -248,13 +252,15 @@ if ( ! class_exists( 'Jet_Engine_Img_Gallery' ) ) {
 							), $args
 						), 'jet-engine-lightbox-icon'
 					);
+
+					echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				} else {
 					echo '<span class="jet-engine-gallery-grid__item-wrap jet-engine-gallery-item-wrap">';
 				}
 
 				$alt = get_post_meta( $img_id, '_wp_attachment_image_alt', true );
 
-				echo '<img src="' . $img_url . '" alt="' . $alt . '" class="jet-engine-gallery-grid__item-img">';
+				echo '<img src="' . esc_attr( $img_url ) . '" alt="' . esc_attr( $alt ) . '" class="jet-engine-gallery-grid__item-img">';
 
 				if ( $args['lightbox'] ) {
 					echo '</a>';

@@ -11,16 +11,29 @@ class Register {
 
 	public function __construct() {
 
-		add_filter( 'jet-engine/bricks-views/dynamic_data/register_providers', [ $this, 'add_dynamic_data_provider' ] );
-		add_filter( 'jet-engine/listings/dynamic-image/image-data', [ $this, 'adjust_dynamic_image_data' ], 1, 2 );
-		
-		add_action( 'jet-engine/bricks-views/setup-preview', [ $this, 'setup_preview_state' ] );
-		add_action( 'jet-engine/listings/components/register-component-elements', [ $this, 'register_component_el' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'print_preview_vars' ], 10 );
+		// Loaded again on WP hook to ensure that elements are loaded with the correct data
 		add_action( 'wp', [ $this, 'load_component_el' ], 11 );
-		add_action( 'rest_api_init', [ $this, 'rest_load_component_el' ] );
+
+		add_action(
+			'jet-engine/listings/components/register-component-elements',
+			[ $this, 'register_component_el' ]
+		);
+
+		add_filter(
+			'jet-engine/bricks-views/dynamic_data/register_providers',
+			[ $this, 'add_dynamic_data_provider' ]
+		);
+
+		add_filter(
+			'jet-engine/listings/dynamic-image/image-data',
+			[ $this, 'adjust_dynamic_image_data' ], 1, 2
+		);
 
 		add_filter( 'bricks/dynamic_data/format_value', [ $this, 'process_dynamic_tag' ], 10, 3 );
+
+		add_action( 'jet-engine/bricks-views/setup-preview', [ $this, 'setup_preview_state' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'print_preview_vars' ], 10 );
+
 
 		/**
 		 * Fix Ajax popups rendering, when popup trggered from component
@@ -41,6 +54,7 @@ class Register {
 			return;
 		}
 
+		// phpcs:disable
 		if ( isset( Listing_Assets::$unique_inline_css )
 			&& ! empty( Listing_Assets::$unique_inline_css )
 		) {
@@ -49,6 +63,7 @@ class Register {
 				str_replace( '.brx-popup', '', implode( '', Listing_Assets::$unique_inline_css ) )
 			);
 		}
+		// phpcs:enable
 	}
 
 
@@ -94,16 +109,16 @@ class Register {
 
 	/**
 	 * Print variables for component preview
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function print_preview_vars() {
-		
+
 		if ( ! bricks_is_builder_iframe() ) {
 			return;
 		}
 
-		$post_id   = get_the_ID();
+		$post_id = get_the_ID();
 
 		if ( ! $post_id ) {
 			return;
@@ -115,14 +130,14 @@ class Register {
 			return;
 		}
 
-		echo $component->css_variables_tag();
-
+		// Escaped in \Jet_Engine\Listings\Components\Component::css_variables_tag()
+		echo $component->css_variables_tag(); // phpcs:ignore
 	}
 
 	/**
 	 * Adjust dynamic image data returned by Bricks dynamic tokens
-	 * 
-	 * @return [type] [description]
+	 *
+	 * @return array
 	 */
 	public function adjust_dynamic_image_data( $result, $settings ) {
 		if ( is_array( $result ) && ! empty( $result['useDynamicData'] ) ) {
@@ -136,11 +151,11 @@ class Register {
 
 	/**
 	 * Get payload of current request
-	 * 
-	 * @return [type] [description]
+	 *
+	 * @return mixed
 	 */
 	public function get_payload() {
-		
+
 		if ( null === $this->payload ) {
 			$this->payload = file_get_contents( 'php://input' );
 		}
@@ -149,13 +164,13 @@ class Register {
 	}
 
 	/**
-	 * Check if component is rendered by Bricks and supports blocks view 
+	 * Check if component is rendered by Bricks and supports blocks view
 	 * and block editor assets not enqueued yet - we need to enqueue bricks assets inside block editor
 	 * to make sure component preview will be rendered correctly
 	 */
 	public function maybe_enqueue_block_editor_assets( $component ) {
 
-		if ( 
+		if (
 			! $component->is_view_supported( 'blocks' )
 			|| 'bricks' !== $component->get_render_view()
 			|| $this->block_editor_assets_enqueued
@@ -180,7 +195,7 @@ class Register {
 
 	/**
 	 * Register component elements
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function register_component_el( $component ) {
@@ -203,36 +218,12 @@ class Register {
 
 		$this->_component_elements[] = $element_instance;
 
-		// Regsiter early for the correct component rendering on editor AJAX calls
-		$payload = $this->get_payload();
-
-		if ( $payload && ( 
-			str_contains( $payload, 'bricks_render_data' ) 
-			|| ( str_contains( $payload, 'action=' ) 
-				&& ( str_contains( $payload, 'bricks_' ) || str_contains( $payload, 'jet_' ) )
-		) ) ) {
-
-			add_action( 'init', function() use ( $element_instance ) {
-				// Set controls
-				$element_instance->load();
-
-				\Bricks\Elements::$elements[ $element_instance->name ] = [
-					'class'         => '\Jet_Engine\Bricks_Views\Components\Base_Element',
-					'name'          => $element_instance->name,
-					'label'         => $element_instance->label,
-					'controls'      => $element_instance->controls,
-					'controlGroups' => $element_instance->control_groups,
-					'scripts'       => $element_instance->scripts,
-				];
-			}, 100 );
-
-		}
-
+		$this->register_el( $element_instance );
 	}
 
 	/**
 	 * Load elements on rest API request
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function rest_load_component_el() {
@@ -243,74 +234,113 @@ class Register {
 
 	/**
 	 * Load component elements
-	 * 
+	 *
 	 * @return [type] [description]
 	 */
 	public function load_component_el() {
 
 		if ( ! empty( $this->_component_elements ) ) {
-			
+
 			foreach ( $this->_component_elements as $element_instance ) {
-
-				// Set controls
-				$element_instance->load();
-
-				\Bricks\Elements::$elements[ $element_instance->name ] = [
-					'class'            => '\Jet_Engine\Bricks_Views\Components\Base_Element',
-					'name'             => $element_instance->name,
-					'icon'             => $element_instance->icon,
-					'category'         => $element_instance->category,
-					'label'            => $element_instance->label,
-					'keywords'         => $element_instance->keywords,
-					'tag'              => $element_instance->tag,
-					'controls'         => $element_instance->controls,
-					'controlGroups'    => $element_instance->control_groups,
-					'scripts'          => $element_instance->scripts,
-					'block'            => $element_instance->block ? $element_instance->block : null,
-					'draggable'        => $element_instance->draggable,
-					'deprecated'       => $element_instance->deprecated,
-					'panelCondition'   => $element_instance->panel_condition,
-
-					// @since 1.5 (= Nestable element)
-					'nestable'         => $element_instance->nestable,
-					'nestableItem'     => $element_instance->nestable_item,
-					'nestableChildren' => $element_instance->nestable_children,
-				];
-
-				/**
-				 * Rendered HTML output for nestable non-layout elements (slider, accordion, tabs, etc.)
-				 *
-				 * To use inside BricksNestable.vue on mount()
-				 *
-				 * @since 1.5
-				 */
-
-				// Use specific Vue component to render element on canvas (@since 1.5)
-				if ( $element_instance->vue_component ) {
-					\Bricks\Elements::$elements[ $element_instance->name ]['component'] = $element_instance->vue_component;
-				}
-
-				// To distinguish non-layout nestables (slider-nested, etc.) in Vue render (@since 1.5)
-				if ( ! $element_instance->is_layout_element() ) {
-					\Bricks\Elements::$elements[ $element_instance->name ]['nestableHtml'] = $element_instance->nestable_html;
-				}
-
-				// Nestable element (@since 1.5)
-				if ( $element_instance->nestable ) {
-					// Always run certain scripts
-					\Bricks\Elements::$elements[ $element_instance->name ]['scripts'][] = 'bricksBackgroundVideoInit';
-				}
-
-				// Provide 'attributes' data in builder
-				if ( count( $element_instance->attributes ) ) {
-					\Bricks\Elements::$elements[ $element_instance->name ]['attributes'] = $element_instance->attributes;
-				}
-
-				// Enqueue elements scripts in the builder iframe
-				if ( bricks_is_builder_iframe() ) {
-					$element_instance->enqueue_scripts();
-				}
+				$this->load_el( $element_instance );
 			}
+		}
+	}
+
+	/**
+	 * Register element
+	 *
+	 * @param object $element_instance Element instance.
+	 */
+	public function register_el( $element_instance ) {
+
+		if ( ! $element_instance->name ) {
+			return;
+		}
+
+		\Bricks\Elements::$elements[ $element_instance->name ] = [
+			'class' => 'Jet_Engine\Bricks_Views\Components\Base_Element',
+			'name'  => $element_instance->name,
+			'label' => $element_instance->get_label(),
+		];
+	}
+
+	/**
+	 * Load element
+	 *
+	 * @param object $element_instance Element instance.
+	 */
+	public function load_el( $element_instance ) {
+
+		if ( isset( \Bricks\Elements::$elements[ $element_instance->name ] )
+			&& ! empty( \Bricks\Elements::$elements[ $element_instance->name ]['isComponentLoaded'] )
+		) {
+			return; // Element already registered
+		}
+
+		$element_instance->load();
+
+		if ( ! $element_instance->name ) {
+			return;
+		}
+
+		\Bricks\Elements::$elements[ $element_instance->name ] = [
+			'class'            => 'Jet_Engine\Bricks_Views\Components\Base_Element',
+			'name'             => $element_instance->name,
+			'icon'             => $element_instance->icon,
+			'category'         => $element_instance->category,
+			'label'            => $element_instance->label,
+			'keywords'         => $element_instance->keywords,
+			'tag'              => $element_instance->tag,
+			'controls'         => $element_instance->controls,
+			'controlGroups'    => $element_instance->control_groups,
+			'scripts'          => $element_instance->scripts,
+			'block'            => $element_instance->block ? $element_instance->block : null,
+			'draggable'        => $element_instance->draggable,
+			'deprecated'       => $element_instance->deprecated,
+			'panelCondition'   => $element_instance->panel_condition,
+
+			// @since 1.5 (= Nestable element)
+			'nestable'          => $element_instance->nestable,
+			'nestableItem'      => $element_instance->nestable_item,
+			'nestableChildren'  => $element_instance->nestable_children,
+
+			// JetEngine Component specific data
+			'isComponentLoaded' => true,
+		];
+
+		/**
+		 * Rendered HTML output for nestable non-layout elements (slider, accordion, tabs, etc.)
+		 *
+		 * To use inside BricksNestable.vue on mount()
+		 *
+		 * @since 1.5
+		 */
+
+		// Use specific Vue component to render element on canvas (@since 1.5)
+		if ( $element_instance->vue_component ) {
+			\Bricks\Elements::$elements[ $element_instance->name ]['component'] = $element_instance->vue_component;
+		}
+
+		// To distinguish non-layout nestables (slider-nested, etc.) in Vue render (@since 1.5)
+		if ( ! $element_instance->is_layout_element() ) {
+			\Bricks\Elements::$elements[ $element_instance->name ]['nestableHtml'] = $element_instance->nestable_html;
+		}
+
+		// Nestable element (@since 1.5)
+		if ( $element_instance->nestable ) {
+			// Always run certain scripts
+			\Bricks\Elements::$elements[ $element_instance->name ]['scripts'][] = 'bricksBackgroundVideoInit';
+		}
+
+		// Provide 'attributes' data in builder
+		if ( count( $element_instance->attributes ) ) {
+			\Bricks\Elements::$elements[ $element_instance->name ]['attributes'] = $element_instance->attributes;
+		}
+
+		// Enqueue elements scripts in the builder iframe
+		if ( bricks_is_builder_iframe() ) {
+			$element_instance->enqueue_scripts();
 		}
 	}
 
@@ -329,7 +359,7 @@ class Register {
 
 	/**
 	 * Set preview state for components
-	 * 
+	 *
 	 * @param int $post_id Rendered listing/component ID
 	 */
 	public function setup_preview_state( $post_id ) {
@@ -340,8 +370,8 @@ class Register {
 
 		$component = jet_engine()->listings->components->get( $post_id, 'id' );
 
-		jet_engine()->listings->components->state->set( 
-			$component->get_default_state( false, [ 'media_format' => 'id' ] ) 
+		jet_engine()->listings->components->state->set(
+			$component->get_default_state( false, [ 'media_format' => 'id' ] )
 		);
 
 	}

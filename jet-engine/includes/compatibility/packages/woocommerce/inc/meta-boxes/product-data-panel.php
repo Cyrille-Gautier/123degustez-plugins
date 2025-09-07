@@ -26,6 +26,18 @@ class Product_Data_Panel extends \Jet_Engine_CPT_Meta {
 	public $args;
 
 	/**
+	 * Args.
+	 *
+	 * Meta box id holder.
+	 *
+	 * @since  3.7.1
+	 * @access private
+	 *
+	 * @var string
+	 */
+	private $id = '';
+
+	/**
 	 * Fields.
 	 *
 	 * Meta box fields holder.
@@ -52,6 +64,7 @@ class Product_Data_Panel extends \Jet_Engine_CPT_Meta {
 	public function __construct( $meta_box ) {
 
 		$this->args = $meta_box['args'];
+		$this->id   = $meta_box['id'];
 
 		$object_name = $this->args['name'] . ' ' . __( '( WC product data fields)', 'jet-engine' );
 
@@ -145,6 +158,12 @@ class Product_Data_Panel extends \Jet_Engine_CPT_Meta {
 
 	}
 
+	public function sanitize_id( $id ) {
+		//CSS identifiers shall contain only the following characters: [a-zA-Z0-9-_]
+		$id = preg_replace( '/[^a-zA-Z0-9-_]/', '', $id );
+		return sprintf( 'je-%s-%s', $this->id, $id );
+	}
+
 	/**
 	 * Add meta box product data tab.
 	 *
@@ -173,10 +192,7 @@ class Product_Data_Panel extends \Jet_Engine_CPT_Meta {
 
 		$name = $this->args['name'] ?? __( 'JetEngine Meta Box', 'jet-engine' );
 
-		// Replace empty spaces and dashes with underscores.
-		$id = preg_replace( '/[\s+\-]/', '_', strtolower( $name ) );
-		// Remove brackets.
-		$id = preg_replace( '/[()]/', '', $id );
+		$id = $this->sanitize_id( $name );
 
 		$tabs[ $id ] = [
 			'label'    => esc_html( $name ),
@@ -201,10 +217,7 @@ class Product_Data_Panel extends \Jet_Engine_CPT_Meta {
 
 		$name = $this->args['name'] ?? __( 'JetEngine Meta Box', 'jet-engine' );
 
-		// Replace empty spaces and dashes with underscores.
-		$id = preg_replace( '/[\s+\-]/', '_', strtolower( $name ) );
-		// Remove brackets.
-		$id = preg_replace( '/[()]/', '', $id );
+		$id = $this->sanitize_id( $name );
 		?>
 
 		<div id="<?php echo esc_attr( $id ); ?>" class="panel woocommerce_options_panel hidden">
@@ -250,8 +263,8 @@ class Product_Data_Panel extends \Jet_Engine_CPT_Meta {
 	 */
 	public function save_meta_box_option_fields( $post_id ) {
 		foreach ( $this->fields as $key => $field ) {
-			if ( isset( $_POST[ $key ] ) ) {
-				update_post_meta( $post_id, $key, $this->sanitize_meta( $field, $_POST[ $key ] ) );
+			if ( isset( $_POST[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+				update_post_meta( $post_id, $key, $this->sanitize_meta( $field, wp_unslash( $_POST[ $key ] ) ) ); // phpcs:ignore
 			} else {
 				delete_post_meta( $post_id, $key);
 			}

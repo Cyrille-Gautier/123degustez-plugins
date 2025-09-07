@@ -2,6 +2,17 @@
 
 	'use strict';
 
+	Vue.component( 'jet-engine-cct-query-field', {
+		extends: window.JetEngineQueryMetaField,
+		template: '#jet-engine-cct-query-field',
+		props: [ 'field', 'metaQuery', 'dynamicQuery', 'currentFields' ],
+		methods: {
+			setDynamicArgs: function( id, data ) {
+				this.setDynamicMeta( id, data );
+			}
+		}
+	} );
+
 	Vue.component( 'jet-cct-query', {
 		template: '#jet-cct-query',
 		mixins: [
@@ -74,6 +85,20 @@
 					}
 				}
 
+				if ( ! this.query.relation ) {
+					this.$set( this.query, 'relation', 'AND' );
+				}
+
+			},
+			addNewArgsGroup( event ) {
+				this.addNewField( event, [], this.query.args, this.newDynamicArgs, {
+					is_group: true,
+					relation: 'or',
+					args: [],
+				} );
+			},
+			setDynamicArgs: function( id, data ) {
+				this.$set( this.dynamicQuery.args, id, data );
 			},
 			newDynamicArgs: function( newClause, metaQuery, prevID ) {
 

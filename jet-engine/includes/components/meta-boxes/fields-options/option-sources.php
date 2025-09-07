@@ -178,6 +178,7 @@ class Jet_Engine_Meta_Boxes_Option_Sources {
 	 */
 	public function save_custom_values( $id, $data_handler, $object_type = false, $sub_type = false ) {
 
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
@@ -294,6 +295,7 @@ class Jet_Engine_Meta_Boxes_Option_Sources {
 
 			}
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 	}
 
@@ -307,7 +309,8 @@ class Jet_Engine_Meta_Boxes_Option_Sources {
 	 * @return mixed
 	 */
 	public function maybe_add_custom_values_to_options( $meta_fields, $field, $field_args ) {
-		
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		$update_meta  = false;
 		$meta_index   = array_search( $field, array_column( $meta_fields, 'name' ) );
 		$post_meta    = new \Jet_Engine_CPT_Meta();
@@ -317,24 +320,27 @@ class Jet_Engine_Meta_Boxes_Option_Sources {
 		switch ( $field_args['type'] ) {
 			case 'checkbox':
 
-				if ( ! is_array( $_POST[ $field ] ) ) {
+				if ( ! isset( $_POST[ $field ] ) || ! is_array( $_POST[ $field ] ) ) {
 					return false;
 				}
 
-				$custom_values = array_diff( array_keys( $_POST[ $field ] ), $meta_options );
+				$raw_values = wp_unslash( $_POST[ $field ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized  -- sanitized below
+				$custom_values = array_diff( array_keys( $raw_values ), $meta_options );
 
 				if ( ! empty( $custom_values ) ) {
 					foreach ( $custom_values as $custom_value ) {
 
-						$custom_item_value = filter_var( 
-							$_POST[ $field ][ $custom_value ], 
-							FILTER_VALIDATE_BOOLEAN 
-						);
+						if ( isset( $raw_values[ $custom_value ] ) ) {
+							$custom_item_value = filter_var(
+								$raw_values[ $custom_value ],
+								FILTER_VALIDATE_BOOLEAN
+							);
+						}
 
 						if ( $custom_item_value ) {
-							$meta_fields[ $meta_index ] = $this->get_field_with_merged_options( 
+							$meta_fields[ $meta_index ] = $this->get_field_with_merged_options(
 								$meta_fields[ $meta_index ],
-								wp_unslash( $custom_value )
+								sanitize_text_field( $custom_value )
 							);
 
 							$update_meta = true;
@@ -344,13 +350,19 @@ class Jet_Engine_Meta_Boxes_Option_Sources {
 				break;
 
 			case 'radio':
-				$custom_value = ! in_array( $_POST[ $field ], $meta_options ) ? $_POST[ $field ] : false;
+
+				if ( ! isset( $_POST[ $field ] ) ) {
+					return false;
+				}
+
+				$raw_value    = wp_unslash( $_POST[ $field ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized  -- sanitized below
+				$custom_value = ! in_array( $raw_value, $meta_options, true ) ? $raw_value : false;
 
 				if ( ! Jet_Engine_Tools::is_empty( $custom_value ) ) {
 
 					$meta_fields[ $meta_index ] = $this->get_field_with_merged_options( 
 						$meta_fields[ $meta_index ],
-						wp_unslash( $custom_value )
+						sanitize_text_field( $custom_value )
 					);
 
 					$update_meta = true;
@@ -364,6 +376,7 @@ class Jet_Engine_Meta_Boxes_Option_Sources {
 		}
 
 		return $meta_fields;
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 
 	/**
@@ -417,7 +430,7 @@ class Jet_Engine_Meta_Boxes_Option_Sources {
 	 *
 	 * @since  1.0.0
 	 * @access public
-	 * @return Jet_Engine
+	 * @return static
 	 */
 	public static function instance() {
 		// If the single instance hasn't been set, set it now.

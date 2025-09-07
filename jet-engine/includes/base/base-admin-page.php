@@ -62,6 +62,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_Page_Base' ) ) {
 
 			$key = $this->manager->action_key;
 
+			//phpcs:disable WordPress.Security.NonceVerification
 			if ( $this->is_default && ! isset( $_GET[ $key ] ) ) {
 				return true;
 			}
@@ -69,6 +70,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_Page_Base' ) ) {
 			if ( ! isset( $_GET[ $key ] ) || $this->get_slug() !== $_GET[ $key ] ) {
 				return false;
 			}
+			//phpcs:enable WordPress.Security.NonceVerification
 
 			return true;
 

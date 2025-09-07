@@ -7,7 +7,8 @@ const {
 
 const {
 	Component,
-	Fragment
+	Fragment,
+	createRef,
 } = wp.element;
 
 const {
@@ -48,6 +49,7 @@ class MetaFields extends Component {
 		this.savedTimeout = null;
 		this.errorTimeout = null;
 
+		this.fieldsListRef = createRef();
 	}
 
 	saveMeta() {
@@ -149,10 +151,36 @@ class MetaFields extends Component {
 		return emptyFields.length > 0;
 	}
 
+	handleSave = () => {
+		const hasEmptyRequiredFields = this.checkRequiredFields();
+
+		if ( hasEmptyRequiredFields ) {
+			return;
+		}
+
+		// call validation on FieldsList via ref
+		if ( ! this.fieldsListRef.current.validateFields() ) {
+			// if there are errors, do not save
+			return;
+		}
+
+		this.setState( {
+			isBusy: true,
+		} );
+
+		if ( this.savedTimeout ) {
+			clearTimeout( this.savedTimeout );
+			this.savedTimeout = null;
+		}
+
+		this.saveMeta();
+	}
+
 	render() {
-		
+
 		return ( <Fragment>
 			<FieldsList
+				ref={ this.fieldsListRef }
 				fields={ this.props.metaFields }
 				values={ this.state.metaData }
 				onChange={ ( newData ) => {
@@ -165,25 +193,7 @@ class MetaFields extends Component {
 				<Button
 					isPrimary
 					isBusy={ this.state.isBusy }
-					onClick={ () => {
-
-						const hasEmptyRequiredFields = this.checkRequiredFields();
-
-						if ( hasEmptyRequiredFields ) {
-							return;
-						}
-
-						this.setState( {
-							isBusy: true,
-						} );
-
-						if ( this.savedTimeout ) {
-							clearTimeout( this.savedTimeout );
-							this.savedTimeout = null;
-						}
-
-						this.saveMeta();
-					} }
+					onClick={ this.handleSave }
 				>{ 'Save Meta Data' }</Button>
 				{ this.state.error && <span style={ { marginLeft: '10px', color: 'red' } }>{ this.state.errorMessage }</span> }
 				{ this.state.isBusy && <span style={ { marginLeft: '10px' } }>Saving...</span> }

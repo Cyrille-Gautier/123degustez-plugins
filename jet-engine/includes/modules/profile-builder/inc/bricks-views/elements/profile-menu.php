@@ -240,7 +240,7 @@ class Profile_Menu extends Base {
 			);
 		}
 
-		echo "<div {$this->render_attributes( '_root' )}>";
+		echo "<div {$this->render_attributes( '_root' )}>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		Module::instance()->frontend->profile_menu( array(
 			'menu_context'       => $context,
 			'roles'              => $roles,

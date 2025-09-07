@@ -129,7 +129,7 @@ if ( ! class_exists( 'Jet_Engine_Base_Data' ) ) {
 
 			if ( $redirect && $redirect_url ) {
 
-				wp_redirect( $redirect_url );
+				wp_safe_redirect( $redirect_url );
 
 				die();
 
@@ -207,7 +207,7 @@ if ( ! class_exists( 'Jet_Engine_Base_Data' ) ) {
 
 			if ( $redirect ) {
 				if ( method_exists( $this->parent, 'get_page_link' ) ) {
-					wp_redirect( $this->parent->get_page_link() );
+					wp_safe_redirect( $this->parent->get_page_link() );
 					die();
 				}
 			} else {
@@ -270,7 +270,7 @@ if ( ! class_exists( 'Jet_Engine_Base_Data' ) ) {
 
 				if ( method_exists( $this->parent, 'get_page_link' ) ) {
 
-					wp_redirect( add_query_arg(
+					wp_safe_redirect( add_query_arg(
 						array( 'id' => $id ),
 						$this->parent->get_page_link( $this->edit )
 					) );

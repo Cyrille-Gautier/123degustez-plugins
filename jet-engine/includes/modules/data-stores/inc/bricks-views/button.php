@@ -31,14 +31,6 @@ class Button extends Base {
 	public function set_control_groups() {
 
 		$this->register_jet_control_group(
-			'section_content',
-			[
-				'title' => esc_html__( 'General', 'jet-engine' ),
-				'tab'   => 'content',
-			]
-		);
-
-		$this->register_jet_control_group(
 			'section_button_style',
 			[
 				'title' => esc_html__( 'Button', 'jet-engine' ),
@@ -57,8 +49,6 @@ class Button extends Base {
 
 	// Set builder controls
 	public function set_controls() {
-
-		$this->start_jet_control_group( 'section_content' );
 
 		$stores = Module::instance()->elementor_integration->get_store_options();
 
@@ -91,7 +81,7 @@ class Button extends Base {
 				'type'    => 'icon',
 				'css'     => [
 					[
-						'selector' => $this->css_selector( '__icon svg' ), // Use to target SVG file
+						'selector' => '.jet-add-to-store ' . $this->css_selector( '__icon.is-svg-icon svg' ), // Use to target SVG file
 					],
 				],
 			]
@@ -159,6 +149,11 @@ class Button extends Base {
 				'tab'      => 'content',
 				'label'    => esc_html__( 'Icon after added to store', 'jet-engine' ),
 				'type'     => 'icon',
+				'css'     => [
+					[
+						'selector' => '.in-store ' . $this->css_selector( '__icon.is-svg-icon svg' ), // Use to target SVG file
+					],
+				],
 				'required' => [ 'action_after_added', '=', [ 'switch_status', 'remove_from_store' ] ],
 			]
 		);
@@ -215,8 +210,6 @@ class Button extends Base {
 				'default' => 'default_object',
 			]
 		);
-
-		$this->end_jet_control_group();
 
 		$this->start_jet_control_group( 'section_button_style' );
 
@@ -297,16 +290,12 @@ class Button extends Base {
 			'button_icon_color',
 			[
 				'tab'   => 'style',
-				'label' => esc_html__( 'Icon color', 'jet-engine' ),
+				'label' => esc_html__( 'Color', 'jet-engine' ),
 				'type'  => 'color',
 				'css'   => [
 					[
 						'property' => 'color',
 						'selector' => $this->css_selector( '__icon' ),
-					],
-					[
-						'property' => 'fill',
-						'selector' => $this->css_selector( '__icon :is(svg)' ) . ', ' . $this->css_selector( '__icon :is(path)' ),
 					],
 				],
 			]
@@ -316,7 +305,7 @@ class Button extends Base {
 			'button_icon_size',
 			[
 				'tab'   => 'style',
-				'label' => esc_html__( 'Icon size', 'jet-engine' ),
+				'label' => esc_html__( 'Size', 'jet-engine' ),
 				'type'  => 'number',
 				'units' => true,
 				'css'   => [
@@ -332,12 +321,36 @@ class Button extends Base {
 			'button_icon_gap',
 			[
 				'tab'   => 'style',
-				'label' => esc_html__( 'Icon gap', 'jet-engine' ),
+				'label' => esc_html__( 'Gap', 'jet-engine' ),
 				'type'  => 'number',
 				'units' => true,
 				'css'   => [
 					[
 						'property' => 'gap',
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'button_icon_in_store',
+			[
+				'tab'   => 'style',
+				'type'  => 'separator',
+				'label' => esc_html__( 'In Store', 'jet-engine' ),
+			]
+		);
+
+		$this->register_jet_control(
+			'button_icon_color_in_store',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Color', 'jet-engine' ),
+				'type'  => 'color',
+				'css'   => [
+					[
+						'property' => 'color',
+						'selector' => '.in-store ' . $this->css_selector( '__icon' ),
 					],
 				],
 			]
@@ -378,14 +391,13 @@ class Button extends Base {
 			);
 		}
 
-		echo "<div {$this->render_attributes( '_root' )}>";
+		echo "<div {$this->render_attributes( '_root' )}>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		$render->render_content();
 		echo "</div>";
 
 	}
 
 	public function parse_jet_render_attributes( $attrs = [] ) {
-
 		$attrs['icon']                = isset( $attrs['icon'] ) ? Element::render_icon( $attrs['icon'] ) : null;
 		$attrs['added_to_store_icon'] = isset( $attrs['added_to_store_icon'] ) ? Element::render_icon( $attrs['added_to_store_icon'] ) : null;
 

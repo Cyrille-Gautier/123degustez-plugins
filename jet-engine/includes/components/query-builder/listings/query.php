@@ -89,6 +89,11 @@ class Query {
 
 	}
 
+	/**
+	 * Maybe setup load more-related props for the query.
+	 *
+	 * @param \Jet_Engine\Query_Builder\Listings\Query $query
+	 */
 	public function maybe_setup_load_more_prop( $query ) {
 
 		if ( ! jet_engine()->listings->is_listing_ajax() ) {
@@ -113,6 +118,8 @@ class Query {
 		if ( ! empty( $_REQUEST['page'] ) ) {
 			$query->set_filtered_prop( '_page', absint( $_REQUEST['page'] ) );
 		}
+
+		do_action( 'jet-engine/query-builder/listings/on-load-more-props-setup', $query );
 
 		if ( ! empty( $_REQUEST['query']['filtered_query'] ) ) {
 			foreach ( $_REQUEST['query']['filtered_query'] as $prop => $value ) {

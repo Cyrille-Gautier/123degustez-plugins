@@ -37,7 +37,7 @@ class Module {
 	 * Constructor for the class
 	 */
 	public function __construct() {
-		add_action( 'init', array( $this, 'init' ), 0 );
+		add_action( 'init', array( $this, 'init' ), -1 );
 	}
 
 	/**

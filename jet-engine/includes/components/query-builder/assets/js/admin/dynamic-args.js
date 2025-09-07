@@ -25,7 +25,7 @@ Vue.component( 'jet-query-dynamic-args', {
 
 		const regexp = /%([a-z_-]+)(\|[a-zA-Z0-9_\-\,\.\+\:\/\s\'\"\=\?\!\|\]\[\{\}%&]*)?%(\{.+\})?/;
 		const parsedData = this.value.match( regexp ) || [];
-		
+
 		let macros = parsedData[1] || null;
 		let data = null;
 
@@ -155,6 +155,7 @@ Vue.component( 'jet-query-dynamic-args', {
 		clearResult: function() {
 			this.result = {};
 			this.$emit( 'input', '' );
+			this.$emit( 'on-delete' );
 		},
 		formatResult: function() {
 

@@ -604,8 +604,9 @@ class Dynamic_Field extends Base {
 
 		$attrs = $this->render_attributes( '_root' );
 
-		echo "<div {$attrs}>";
-		echo $content;
+		echo "<div {$attrs}>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		// Escaped in render class
+		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo "</div>";
 	}
 

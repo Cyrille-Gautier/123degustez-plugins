@@ -50,6 +50,28 @@
 
 			this.presetMeta();
 
+			let allFields = [];
+			
+			allFields = window.jet_query_component_repeater.meta_fields
+				.reduce( ( acc, cur ) => acc.concat( cur.options.map( op => op.value ) ), allFields );
+
+			let currentEngineField = this?.query?.jet_engine_field;
+
+			if ( currentEngineField?.length && ! allFields.includes( currentEngineField ) ) {
+				let userFields = [];
+			
+				userFields = window.jet_query_component_repeater.meta_fields
+					.filter( o => o?.for === 'user' )
+					.reduce( ( acc, cur ) => acc.concat( cur.options.map( op => op.value ) ), userFields );
+
+				for ( const name of userFields ) {
+					if ( name.includes( currentEngineField ) ) {
+						this.$set( this.query, 'jet_engine_field', name );
+						break;
+					}
+				}
+			}
+
 			// if ( undefined === this.query.hide_empty ) {
 			// 	this.$set( this.query, 'hide_empty', true );
 			// }

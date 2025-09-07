@@ -35,6 +35,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 		 */
 		public function is_listing_ajax( $handler = false ) {
 
+			// phpcs:disable
 			$is_listing_ajax = (
 				( ! empty( $_REQUEST['action'] ) && 'jet_engine_ajax' === $_REQUEST['action'] && ! empty( $_REQUEST['handler'] ) )
 				|| ! empty( $_REQUEST['jet_engine_action'] )
@@ -43,6 +44,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 			if ( $is_listing_ajax && ! empty( $handler ) ) {
 				return ( ! empty( $_REQUEST['handler'] ) && $handler === $_REQUEST['handler'] );
 			}
+			// phpcs:enable
 
 			return $is_listing_ajax;
 		}
@@ -64,6 +66,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 
 			$action = 'jet_engine_ajax';
 
+			// phpcs:disable
 			if ( ! empty( $_REQUEST['jet_engine_action'] ) ) {
 				$action = sanitize_text_field( $_REQUEST['jet_engine_action'] );
 			}
@@ -71,6 +74,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 			$this->add_settings_to_request();
 
 			do_action( 'jet-engine/ajax-handlers/before-do-ajax', $this, $_REQUEST );
+			// phpcs:enable
 
 			if ( is_user_logged_in() ) {
 				do_action( 'wp_ajax_' . $action );
@@ -79,7 +83,6 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 			}
 
 			die();
-
 		}
 
 		/**
@@ -89,6 +92,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 		 */
 		public function handle_ajax() {
 
+			// phpcs:disable
 			if ( ! isset( $_REQUEST['handler'] ) || ! is_callable( array( $this, $_REQUEST['handler'] ) ) ) {
 				return;
 			}
@@ -101,13 +105,28 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 
 			do_action( 'jet-engine/ajax-handlers/before-call-handler', $this, $_REQUEST );
 
-			call_user_func( array( $this, $_REQUEST['handler'] ) );
+			$allowed_handlers = array(
+				'listing_load_more',
+				'get_listing',
+			);
 
+			if ( ! in_array( $_REQUEST['handler'], $allowed_handlers ) ) {
+				wp_send_json_error( __( 'Invalid handler requested', 'jet-engine' ) );
+			}
+
+			// Call the requested handler only if it allowed to call
+			call_user_func( array( $this, $_REQUEST['handler'] ) );
+			// phpcs:enable
 		}
 
+		/**
+		 * Add parsed settings to the global request
+		 *
+		 * @return void
+		 */
 		public function add_settings_to_request() {
 
-			$settings = ! empty( $_REQUEST['page_settings'] ) ? $_REQUEST['page_settings'] : $_REQUEST;
+			$settings = ! empty( $_REQUEST['page_settings'] ) ? $_REQUEST['page_settings'] : $_REQUEST; // phpcs:ignore
 
 			$query            = ! empty( $settings['query'] ) ? $settings['query'] : array();
 			$post_id          = ! empty( $settings['post_id'] ) ? absint( $settings['post_id'] ) : false;
@@ -129,7 +148,8 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 
 			if ( $post_id && $element_id ) {
 
-				$listing_type = ( isset( $_REQUEST['listing_type'] ) && 'false' !== $_REQUEST['listing_type'] ) ? $_REQUEST['listing_type'] : false;
+				// Safe: $_REQUEST data is used only for the internal comparison
+				$listing_type = ( isset( $_REQUEST['listing_type'] ) && 'false' !== $_REQUEST['listing_type'] ) ? $_REQUEST['listing_type'] : false; // phpcs:ignore
 
 				// Elementor-only legacy code
 				if ( jet_engine()->has_elementor() && ( ! $listing_type || 'elementor' === $listing_type ) ) {
@@ -144,13 +164,10 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 							$widget_instance = $elementor->elements_manager->create_element_instance( $widget );
 							$widget_settings = $widget_instance->get_settings_for_display();
 							$widget_settings['_id'] = $element_id;
-							//$_REQUEST['query'] = null;
 						}
-
 					}
 
 				} elseif ( $listing_type ) {
-
 
 					$widget_settings = apply_filters(
 						'jet-engine/listings/ajax/settings-by-id/' . $listing_type,
@@ -162,15 +179,143 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 					if ( empty( $widget_settings['columns_mobile'] ) ) {
 						$widget_settings['columns_mobile'] = 1;
 					}
-
 				}
-
 			}
 
 			if ( $widget_settings ) {
 				$_REQUEST['widget_settings'] = $widget_settings;
 			}
+		}
 
+		/**
+		 * Get validated query from request
+		 *
+		 * @return array
+		 */
+		public function get_validated_query_from_request() {
+
+			$query = ! empty( $_REQUEST['query'] ) ? wp_unslash( $_REQUEST['query'] ) : array(); // phpcs:ignore
+
+			// there is nothing to validate
+			if ( empty( $query ) ) {
+				return $query;
+			}
+
+			if ( ! $this->query_has_valid_signature( $query ) ) {
+				wp_send_json_error( __( 'Invalid query signature', 'jet-engine' ) );
+			}
+
+			return $query;
+		}
+
+		/**
+		 * Check if query has signature ad passed paramters match this signature
+		 *
+		 * @param array $query Query to validate.
+		 * @return bool
+		 */
+		public function query_has_valid_signature( $query ) {
+
+			/**
+			 * Allow to disable signature checking from the code.
+			 * Please note - this can expose your site to security risks.
+			 */
+			$force_valid = apply_filters( 'jet-engine/listings/ajax/force-valid-query', false, $query );
+
+			if ( $force_valid ) {
+				return true;
+			}
+
+			$signature = ! empty( $query['signature'] ) ? $query['signature'] : false;
+			unset( $query['signature'] );
+
+			$generated_signature = $this->generate_signature( $query );
+
+			if ( ! $signature || $signature !== $generated_signature ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Generate signature for the query
+		 *
+		 * @param array $query Query to generate signature for.
+		 *
+		 * @return string
+		 */
+		public function generate_signature( $query ) {
+
+			// Remove paramters allowed to set from the JS and not affecting query security
+			$js_allowed = array(
+				'front_store__in',
+				'is_front_store',
+				'order',
+				'jet_ajax_search_settings',
+			);
+
+			foreach ( $js_allowed as $param ) {
+				if ( isset( $query[ $param ] ) ) {
+					unset( $query[ $param ] );
+				}
+			}
+
+			$key_parts = array(
+				defined('AUTH_KEY')   ? AUTH_KEY   : '',
+				defined('NONCE_KEY')  ? NONCE_KEY  : '',
+				defined('AUTH_SALT')  ? AUTH_SALT  : '',
+				defined('NONCE_SALT') ? NONCE_SALT : '',
+			);
+
+
+			$secret_key = implode( '.', $key_parts );
+
+			$normalized = $this->normalize( $query );
+
+			// Remove empty arrays
+			$normalized = array_filter( $normalized, function( $value ) {
+				return ! ( is_array( $value ) && empty( $value ) );
+			} );
+
+			$serialized = json_encode( $normalized, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+
+			return hash_hmac( 'sha256', $serialized, $secret_key );
+		}
+
+		/**
+		 * Normalize array for consistent serialization
+		 */
+		protected function normalize($data) {
+
+			if ( is_array( $data ) ) {
+
+				// Do not use 'relation' key in the signature
+				// it not affects query security, but can cause consistency issues
+				if ( isset( $data['relation'] ) ) {
+					unset( $data['relation'] );
+				}
+
+				// Recursively sort keys
+				ksort( $data );
+
+				foreach ( $data as $key => $value ) {
+					$data[ $key ] = $this->normalize( $value );
+				}
+
+				return $data;
+			}
+
+			// Cast scalars to string, preserve null and empty string
+			if ( is_bool( $data ) ) {
+				return $data ? 'true' : 'false';
+			}
+
+			if ( is_null( $data ) ) {
+				return 'null';
+			}
+
+			return (string) $data;
 		}
 
 		/**
@@ -178,9 +323,13 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 		 */
 		public function listing_load_more() {
 
-			$query           = ! empty( $_REQUEST['query'] ) ? wp_unslash ( $_REQUEST['query'] ) : array();
-			$widget_settings = ! empty( $_REQUEST['widget_settings'] ) ? $_REQUEST['widget_settings'] : array();
-			$response        = array();
+			$query = $this->get_validated_query_from_request();
+
+			// Safe: $_REQUEST['widget_settings'] is set in the
+			// `add_settings_to_request` method by the internal data, not user input.
+			$widget_settings = ! empty( $_REQUEST['widget_settings'] ) ? $_REQUEST['widget_settings'] : array(); // phpcs:ignore
+
+			$response = array();
 
 			if ( jet_engine()->has_elementor() ) {
 
@@ -218,7 +367,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 			jet_engine()->listings->data->set_listing_by_id( $listing_id );
 
 			$listing_source = jet_engine()->listings->data->get_listing_source();
-			$page           = ! empty( $_REQUEST['page'] ) ? absint( $_REQUEST['page'] ) : 1;
+			$page           = ! empty( $_REQUEST['page'] ) ? absint( $_REQUEST['page'] ) : 1; // phpcs:ignore
 			$query['paged'] = $page;
 
 			$render_instance = jet_engine()->listings->get_render_instance( 'listing-grid', $widget_settings );
@@ -313,7 +462,6 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 			$response = apply_filters( 'jet-engine/ajax/listing_load_more/response', $response, $widget_settings );
 
 			wp_send_json_success( $response );
-
 		}
 
 		/**
@@ -321,17 +469,13 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 		 */
 		public function get_listing() {
 
-			$query            = ! empty( $_REQUEST['query'] ) ? $_REQUEST['query'] : array();
-			$widget_settings  = ! empty( $_REQUEST['widget_settings'] ) ? $_REQUEST['widget_settings'] : array();
-			$response         = array();
+			$query = $this->get_validated_query_from_request();
 
-			/*
-			This code has been moved to the `add_settings_to_request` method.
-			if ( $queried_id && 'WP_Post' === $queried_obj_type ) {
-				global $post;
-				$post = get_post( $queried_id );
-			}
-			*/
+			// Safe: $_REQUEST['widget_settings'] is set in the
+			// `add_settings_to_request` method by the internal data, not user input.
+			$widget_settings  = ! empty( $_REQUEST['widget_settings'] ) ? $_REQUEST['widget_settings'] : array(); // phpcs:ignore
+
+			$response = array();
 
 			$_widget_settings = $widget_settings;
 			$is_lazy_load     = ! empty( $widget_settings['lazy_load'] ) ? filter_var( $widget_settings['lazy_load'], FILTER_VALIDATE_BOOLEAN ) : false;
@@ -355,19 +499,6 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 
 			$render_instance = jet_engine()->listings->get_render_instance( 'listing-grid', $widget_settings );
 
-			/*
-			The setup of current object has been moved to the `add_settings_to_request` method.
-			if ( $is_lazy_load && $queried_id ) {
-				switch ( $queried_obj_type ) {
-					case 'WP_Post':
-						jet_engine()->listings->data->set_current_object( get_post( $queried_id ) );
-						break;
-					case 'WP_Term':
-						jet_engine()->listings->data->set_current_object( get_term( $queried_id ) );
-						break;
-				}
-			}
-			*/
 			if ( $is_lazy_load && ! empty( $query ) && empty( $query['query_id'] ) ) { // for Archive pages
 
 				jet_engine()->listings->data->set_listing_by_id( $widget_settings['lisitng_id'] );
@@ -398,9 +529,16 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 			$response = apply_filters( 'jet-engine/ajax/get_listing/response', $response, $_widget_settings, $query );
 
 			wp_send_json_success( $response );
-
 		}
 
+		/**
+		 * Find element by ID in the Elementor elements tree.
+		 * Legacy Elementor-only method
+		 *
+		 * @param  array  $elements   Elements tree.
+		 * @param  string $element_id Element ID.
+		 * @return array|bool
+		 */
 		public function find_element_recursive( $elements, $element_id ) {
 
 			foreach ( $elements as $element ) {
@@ -422,11 +560,18 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 			return false;
 		}
 
+		/**
+		 * Add enqueued assets data to the response.
+		 *
+		 * @param array $response Response data.
+		 */
 		public static function maybe_add_enqueue_assets_data( &$response ) {
 
+			// phpcs:disable
 			if ( isset( $_REQUEST['isEditMode'] ) && filter_var( $_REQUEST['isEditMode'], FILTER_VALIDATE_BOOLEAN ) ) {
 				return;
 			}
+			// phpcs:enable
 
 			// Ensure registered `jet-plugins` script.
 			if ( ! wp_script_is( 'jet-plugins', 'registered' )  ) {
@@ -465,9 +610,6 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 					$response['styles'][ $style ] = $style_html;
 				}
 			}
-
 		}
-
 	}
-
 }

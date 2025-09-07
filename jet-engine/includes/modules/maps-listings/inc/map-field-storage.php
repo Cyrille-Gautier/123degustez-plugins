@@ -42,7 +42,9 @@ class Map_Field_Storage {
 		add_filter( 'jet-engine/maps-listing/settings/save-response/additional-data', [ $this, 'add_response_data' ], 10, 2 );
 
 		//https://github.com/Crocoblock/issues-tracker/issues/15079
-		add_filter( 'jet-form-builder/preset/extra-fields', array( $this, 'get_map_extra_fields' ), 10, 2 );
+		add_filter( 'jet-form-builder/preset/extra-fields', [ $this, 'get_map_extra_fields' ], 10, 2 );
+
+		add_filter( 'jet-engine/custom-meta-tables/prepared_fields', [ $this, 'add_service_columns' ], 10, 2 );
 
 	}
 
@@ -244,13 +246,6 @@ class Map_Field_Storage {
 		);
 
 		$object_slug = $storage->object_slug;
-
-		add_filter(
-			'jet-engine/custom-meta-tables/prepared_fields',
-			function( $fields ) use ( $object_slug ) {
-				return $this->add_service_columns( $fields, $object_slug );
-			}
-		);
 	}
 
 	/**
@@ -312,18 +307,42 @@ class Map_Field_Storage {
 
 		$preload_fields = explode( ',', $preload_fields );
 		$preload_fields = array_map( 'trim', $preload_fields );
-		$preload_fields = array_filter(
+
+		$group_preload_fields = array_filter(
 			$preload_fields,
 			function ( $group ) {
 				return false !== strpos( $group, '+' );
 			}
 		);
 
-		if ( empty( $preload_fields ) ) {
+		// $single_preload_fields = array_filter(
+		// 	$preload_fields,
+		// 	function ( $group ) {
+		// 		return false === strpos( $group, '+' );
+		// 	}
+		// );
+
+		if ( empty( $group_preload_fields ) && empty( $single_preload_fields ) ) {
 			return $fields;
 		}
 
-		foreach ( $preload_fields as $field ) {
+		// foreach ( $single_preload_fields as $field ) {
+		// 	preg_match(  '/(?<name>\w+\b)/', $field, $matches  );
+
+		// 	if ( ! empty( $matches ) ) {
+		// 		$field_name = $matches['name'];
+
+		// 		if ( in_array( $field_name, $fields['as_columns'] ) ) {
+		// 			$service_fields = $this->get_service_columns_array( $field_name );
+
+		// 			foreach ( $service_fields as $s_field ) {
+		// 				$fields['as_columns'][] = $s_field;
+		// 			}
+		// 		}
+		// 	}
+		// }
+
+		foreach ( $group_preload_fields as $field ) {
 			preg_match( '/(?:[^:]+\+)+(?:.+)/', $field, $matches );
 
 			if ( ! empty( $matches ) ) {

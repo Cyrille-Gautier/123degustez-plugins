@@ -2,6 +2,8 @@
 /**
  * Posts query component template
  */
+
+// phpcs:disable
 ?>
 <div class="jet-engine-edit-page__fields">
 	<div class="cx-vui-collapse__heading">
@@ -192,11 +194,28 @@
 						></cx-vui-select>
 						<cx-vui-input
 							label="<?php _e( 'Value', 'jet-engine' ); ?>"
-							:wrapper-css="[ 'equalwidth', 'has-macros' ]"
+							:wrapper-css="[ 'equalwidth', 'has-macros', 'has-empty-toggle' ]"
 							size="fullwidth"
 							:value="query.meta_query[ index ].value"
 							@input="setFieldProp( clause._id, 'value', $event, query.meta_query )"
-						><jet-query-dynamic-args v-model="dynamicQuery.meta_query[ clause._id ].value"></jet-query-dynamic-args></cx-vui-input>
+						>
+							<jet-query-dynamic-args
+								v-model="dynamicQuery.meta_query[ clause._id ].value"
+								@on-delete="setFieldProp( clause._id, 'exclude_empty', false, query.meta_query )"
+							></jet-query-dynamic-args>
+							<label
+								class="jet-engine-exclude-empty-toggle"
+								v-if="dynamicQuery.meta_query[ clause._id ].value"
+							>
+								<input
+									type="checkbox"
+									:value="query.meta_query[ index ].exclude_empty"
+									:checked="query.meta_query[ index ].exclude_empty"
+									@input="setFieldProp( clause._id, 'exclude_empty', $event.target.checked, query.meta_query )"
+								>
+								<?php _e( 'Exclude this clause from the query if the dynamic value is empty', 'jet-engine' ) ?>
+							</label>
+						</cx-vui-input>
 						<cx-vui-select
 							label="<?php _e( 'Type', 'jet-engine' ); ?>"
 							description="<?php _e( 'Data type stored in the given field', 'jet-engine' ); ?>"

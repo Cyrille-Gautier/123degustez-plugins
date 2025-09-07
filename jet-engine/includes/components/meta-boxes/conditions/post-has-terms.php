@@ -103,21 +103,23 @@ class Post_Has_Terms extends Base {
 	 * @return array
 	 */
 	public function get_control() {
+
+		// phpcs:disable
 		ob_start();
 		?>
 		<cx-vui-component-wrapper
 			label="<?php _e( 'Post Has Taxonomy Terms', 'jet-engine' ); ?>"
 			description="<?php _e( 'Select specific taxonomy terms, to show meta box only if post has these terms', 'jet-engine' ); ?>"
 			:wrapper-css="[ 'equalwidth', 'meta-condition', 'terms-conditions' ]"
-			:style="conditionControlsInlineCSS( '<?php echo $this->get_key(); ?>' )"
+			:style="conditionControlsInlineCSS( '<?php echo esc_js( $this->get_key() ); ?>' )"
 			:conditions="[
 				{
 					input: this.generalSettings.object_type,
 					compare: 'in',
-					value: <?php echo htmlentities( json_encode( $this->allowed_sources() ) ) ?>,
+					value: <?php echo esc_html( wp_json_encode( $this->allowed_sources() ) ) ?>,
 				},
 				{
-					input: '<?php echo $this->get_key() ?>',
+					input: '<?php echo esc_html( $this->get_key() ) ?>',
 					compare: 'in',
 					value: this.generalSettings.active_conditions,
 				}
@@ -125,7 +127,7 @@ class Post_Has_Terms extends Base {
 		>
 			<cx-vui-select
 				:options-list="[ ...[ { value: '', label: '<?php _e( 'Select taxonomy...', 'jet-engine' ) ?>' } ], ...taxonomies ]"
-				v-model="generalSettings.<?php echo $this->get_key() ?>__tax"
+				v-model="generalSettings.<?php echo esc_attr( $this->get_key() ) ?>__tax"
 				size="fullwidth"
 			></cx-vui-select>
 			<cx-vui-f-select
@@ -134,14 +136,15 @@ class Post_Has_Terms extends Base {
 				size="fullwidth"
 				:multiple="true"
 				placeholder="<?php _e( 'Set terms...', 'jet-engine' ) ?>"
-				v-model="generalSettings.<?php echo $this->get_key() ?>__terms"
-				ref="<?php echo $this->get_key() ?>"
+				v-model="generalSettings.<?php echo esc_attr( $this->get_key() ) ?>__terms"
+				ref="<?php echo esc_attr( $this->get_key() ) ?>"
 			></cx-vui-f-select>
-			<?php echo $this->remove_button(); ?>
+			<?php echo $this->remove_button(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</cx-vui-component-wrapper>
 		<?php
 
 		return ob_get_clean();
+		// phpcs:enable
 
 	}
 
@@ -183,7 +186,7 @@ class Post_Has_Terms extends Base {
 	public function get_js_handler() {
 		ob_start();
 		?>
-		window.JetEnginMBAjaxConditionsHandlers.<?php echo $this->get_key(); ?> = function( $ ) {
+		window.JetEnginMBAjaxConditionsHandlers.<?php echo esc_html( $this->get_key() ); ?> = function( $ ) {
 
 			$( document ).on( 'change', '.categorychecklist, .tagchecklist', () => {
 				$( document ).trigger( 'jet-engine/meta-box/data-change', [] );

@@ -151,6 +151,10 @@ class Comments_Query extends Base_Query {
 				$this->final_query['paged'] = $value;
 				break;
 
+			case '_items_per_page':
+				$this->final_query['number'] = $value;
+				break;
+
 			case 'meta_query':
 				$this->replace_meta_query_row( $value );
 				break;

@@ -68,7 +68,9 @@ class Product_Field_Tag extends \Elementor\Core\DynamicTags\Tag {
 		$product = Listings_Manager::instance()->get_current_product();
 
 		if ( ! $product ) {
+			// phpcs:disable
 			_e( '<b>WooCommerce Product Field</b> works only with WC Query (from JetEngine Query Builder) or on single product page', 'jet-engine' );
+			// phpcs:enable
 			return;
 		}
 
@@ -78,8 +80,7 @@ class Product_Field_Tag extends \Elementor\Core\DynamicTags\Tag {
 			return;
 		}
 
-		echo $result;
-
+		echo $result; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 }

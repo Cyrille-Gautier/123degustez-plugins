@@ -15,6 +15,11 @@ class Providers_Manager {
 
 	}
 
+	/**
+	 * Get active geocode provider
+	 *
+	 * @return Providers\Base Map provider instance
+	 */
 	public function get_active_map_provider() {
 		$provider_id = Module::instance()->settings->get( 'map_provider' );
 		return $this->get_providers( 'map', $provider_id );
@@ -83,7 +88,7 @@ class Providers_Manager {
 	 * @param  string $source      'map' or 'geocode'
 	 * @param  string $provider_id Provider ID ('google', 'mapbox', etc.), if null - returns all providers list
 	 * 
-	 * @return Geocode_Providers\Base|Geocode_Providers\Base[]|false Provider instance, array of provider instances, or false if no provider with given ID
+	 * @return Providers\Base|Providers\Base[]|Geocode_Providers\Base|Geocode_Providers\Base[]|false Provider instance, array of provider instances, or false if no provider with given ID
 	 */
 	public function get_providers( $source = 'map', $provider_id = null ) {
 

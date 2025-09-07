@@ -139,11 +139,11 @@ if ( ! class_exists( 'Jet_Engine_Popup_Package' ) ) {
 		 * @return [type] [description]
 		 */
 		public function maybe_get_blocks_css( $popup_id ) {
-			
+
 			if ( ! class_exists( '\JET_SM\Gutenberg\Style_Manager' ) ) {
 				return '';
 			}
-			
+
 			ob_start();
 
 			\JET_SM\Gutenberg\Style_Manager::get_instance()->render_blocks_style( $popup_id );
@@ -182,23 +182,25 @@ if ( ! class_exists( 'Jet_Engine_Popup_Package' ) ) {
 				//ensure that wp_redirect will not work when setting queried object
 				add_filter( 'wp_redirect', '__return_false', PHP_INT_MAX );
 
+				// phpcs:disable
 				$_SERVER['REQUEST_URI'] = str_replace( site_url(), '', $popup_data['page_url'] );
 				$_SERVER['REQUEST_URI'] = preg_replace( '/#.+$/', '', $_SERVER['REQUEST_URI'] );
 				$_SERVER['PHP_SELF']    = '/index.php';
+				// phpcs:enable
 
 				global $wp;
-	
+
 				$wp->parse_request();
 				$wp->query_posts();
 				wp_reset_postdata();
 
 				do_action( 'jet-engine/profile-builder/query/maybe-setup-props' );
-				
+
 				jet_engine()->listings->objects_stack->save_root();
 
 				remove_filter( 'wp_redirect', '__return_false', PHP_INT_MAX );
 			}
-			
+
 			do_action( 'jet-engine/compatibility/popup-package/get-content', $content, $popup_data );
 
 			$source   = ! empty( $popup_data['listingSource'] ) ? $popup_data['listingSource'] : 'posts';
@@ -246,6 +248,14 @@ if ( ! class_exists( 'Jet_Engine_Popup_Package' ) ) {
 							} else {
 								$id_data    = explode( '-', $popup_data['postId'] );
 								$item_index = absint( $id_data[1] );
+
+								/**
+								 * for compatibility with query switcher filter
+								 * @see https://github.com/Crocoblock/issues-tracker/issues/14122
+								 */
+								if ( $id_data[0] !== $query->id ) {
+									$query = \Jet_Engine\Query_Builder\Manager::instance()->get_query_by_id( $id_data[0] );
+								}
 
 								$query->setup_query();
 
@@ -363,21 +373,24 @@ if ( ! class_exists( 'Jet_Engine_Popup_Package' ) ) {
 
 		public function register_listing_link_controls( $document ) {
 
+			$q_args = apply_filters( 'jet_popup_default_query_args',
+				array(
+					'post_type'      => jet_popup()->post_type->slug(),
+					'order'          => 'DESC',
+					'orderby'        => 'date',
+					'posts_per_page' => - 1,
+					'post_status'    => 'publish',
+				)
+			);
+
 			$document->add_control(
 				'jet_attached_popup',
 				array(
 					'label'      => esc_html__( 'JetPopup', 'jet-popup' ),
 					'type'       => 'jet-query',
 					'query_type' => 'post',
-					'query'      => apply_filters( 'jet_popup_default_query_args',
-						array(
-							'post_type'      => jet_popup()->post_type->slug(),
-							'order'          => 'DESC',
-							'orderby'        => 'date',
-							'posts_per_page' => - 1,
-							'post_status'    => 'publish',
-						)
-					),
+					'query'      => $q_args,
+					'signature' => \Jet_Elementor_Extension\Ajax_Handlers::create_signature( $q_args ),
 					'edit_button' => array(
 						'active' => true,
 						'label'  => esc_html__( 'Edit Popup', 'jet-popup' ),
@@ -388,7 +401,6 @@ if ( ! class_exists( 'Jet_Engine_Popup_Package' ) ) {
 					),
 				)
 			);
-
 		}
 
 		public function update_listing_link_controls( $document ) {
@@ -438,15 +450,17 @@ if ( ! class_exists( 'Jet_Engine_Popup_Package' ) ) {
 
 		public function save_blocks_editor_settings( $post_id ) {
 
+			// phpcs:disable WordPress.Security.NonceVerification
 			if ( ! isset( $_POST['jet_engine_listing_jet_attached_popup'] ) ) {
 				return;
 			}
 
 			$elementor_page_settings = get_post_meta( $post_id, '_elementor_page_settings', true );
 
-			$elementor_page_settings['jet_attached_popup'] = esc_attr( $_POST[ 'jet_engine_listing_jet_attached_popup' ] );
+			$elementor_page_settings['jet_attached_popup'] = sanitize_text_field( wp_unslash( $_POST[ 'jet_engine_listing_jet_attached_popup' ] ) );
 
 			update_post_meta( $post_id, '_elementor_page_settings', $elementor_page_settings );
+			// phpcs:enable WordPress.Security.NonceVerification
 		}
 
 		public function custom_listing_link( $url, $settings ) {
@@ -470,12 +484,14 @@ if ( ! class_exists( 'Jet_Engine_Popup_Package' ) ) {
 
 			// Prevent adding popup attr in elementor editor.
 			if ( jet_engine()->has_elementor() ) {
+				// phpcs:disable WordPress.Security.NonceVerification
 				$is_editor_mode = ! empty( $_GET['action'] ) && 'elementor' === $_GET['action'] && ! empty( $_GET['post'] );
 				$is_editor_ajax = jet_engine()->elementor_views && jet_engine()->elementor_views->is_editor_ajax();
 
 				if ( $is_editor_mode || $is_editor_ajax ) {
 					return $attrs;
 				}
+				// phpcs:enable WordPress.Security.NonceVerification
 			}
 
 			$attrs['class'] .= ' jet-popup-target';

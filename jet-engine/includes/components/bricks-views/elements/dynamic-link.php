@@ -111,6 +111,9 @@ class Dynamic_Link extends Base {
 			]
 		);
 
+		$links = ' <a href="' . admin_url( 'admin.php?page=jet-engine#shortcode_generator' ) . '" target="_blank">' . __( 'shortcodes', 'jet-engine' ) . '</a>' . '/' .
+		         '<a href="' . admin_url( 'admin.php?page=jet-engine#macros_generator' ) . '" target="_blank">' . __( 'macros', 'jet-engine' ) . '</a>. ';
+
 		$this->register_jet_control(
 			'delete_link_dialog',
 			[
@@ -118,7 +121,7 @@ class Dynamic_Link extends Base {
 				'label'       => esc_html__( 'Confirm deletion message', 'jet-engine' ),
 				'type'        => 'textarea',
 				'default'     => esc_html__( 'Are you sure you want to delete this post?', 'jet-engine' ),
-				'description' => esc_html__( 'Only users with appropriate permissions can delete posts', 'jet-engine' ),
+				'description' => esc_html__( 'Only users with appropriate permissions can delete posts. You may use JetEngine', 'jet-engine' ) . $links,
 				'required'    => [ 'dynamic_link_source', '=', 'delete_post_link' ],
 			]
 		);
@@ -408,7 +411,7 @@ class Dynamic_Link extends Base {
 			);
 		}
 
-		echo "<div {$this->render_attributes( '_root' )}>";
+		echo "<div {$this->render_attributes( '_root' )}>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		$render->render_content();
 		echo "</div>";
 	}

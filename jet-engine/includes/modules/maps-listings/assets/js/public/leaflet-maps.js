@@ -223,6 +223,18 @@ window.JetEngineMapsProvider = function() {
 		trigger.openPopup();
 	}
 
+
+	this.setAutocenterBlock = function( e ) {
+		if ( e.target._map.jetPlugins.autoCenterBlock ) {
+			return;
+		}
+
+		const spiderfied = e.target._spiderfied || false;
+		const clickedMarker = e.layer;
+		
+		e.target._map.jetPlugins.autoCenterBlock = spiderfied && spiderfied.getAllChildMarkers().includes( clickedMarker );
+	}
+
 	this.getMarkerCluster = function( data ) {
 		let options = {};
 
@@ -240,6 +252,15 @@ window.JetEngineMapsProvider = function() {
 		var markersGrpup = JetEngineLeaflet.markerClusterGroup( options );
 		markersGrpup.addLayers( data.markers );
 		data.map.addLayer( markersGrpup );
+
+		/**
+		 * prevent auto center when opening popup from spiderfied cluster,
+		 * as programmatical pan causes cluster to unspiderfy
+		 * @see https://github.com/Crocoblock/issues-tracker/issues/13780
+		 */
+
+		markersGrpup.on( 'click mouseover', this.setAutocenterBlock );
+		
 		return markersGrpup;
 	}
 
@@ -309,13 +330,15 @@ window.JetEngineMapsProvider = function() {
 
 	this.fitMapToMarker = function( marker, markersClusterer, zoom ) {
 		markersClusterer.zoomToShowLayer( marker, () => {
-			this.panTo( {
-				map: markersClusterer._map,
-				position: this.getMarkerPosition( marker ),
-				zoom: zoom
-			} );
-
-			this.triggerOpenPopup( marker );
+			if ( true||! marker.__parent._icon ) {
+				this.panTo( {
+					map: markersClusterer._map,
+					position: this.getMarkerPosition( marker ),
+					zoom: zoom
+				} );
+	
+				this.triggerOpenPopup( marker );
+			}
 		} );
 	}
 

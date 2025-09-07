@@ -37,12 +37,14 @@ if ( ! class_exists( 'Jet_Engine_Listings_Post_Type' ) ) {
 
 			add_action( 'init', array( $this, 'register_post_type' ) );
 
+			// phpcs:disable
 			if ( ! empty( $_GET['elementor-preview'] ) ) {
 				add_action( 'template_include', array( $this, 'set_editor_template' ), 9999 );
 			}
+			// phpcs:enable
 
 			if ( is_admin() ) {
-				
+
 				add_action( 'admin_menu', array( $this, 'add_templates_page' ), 20 );
 				add_action( 'add_meta_boxes_' . $this->slug(), array( $this, 'disable_metaboxes' ), 9999 );
 				add_action( 'admin_enqueue_scripts', array( $this, 'listings_page_assets' ) );
@@ -55,8 +57,8 @@ if ( ! class_exists( 'Jet_Engine_Listings_Post_Type' ) ) {
 			$this->admin_screen = new Jet_Engine_Listing_Admin_Screen( $this->slug() );
 
 			add_action( 'wp', array( $this, 'set_singular_preview_object' ) );
-			
-			add_filter( 
+
+			add_filter(
 				'jet-engine/profile-builder/create-template/' . $this->slug(),
 				[ $this, 'create_profile_template' ],
 				10, 3
@@ -66,7 +68,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Post_Type' ) ) {
 
 		/**
 		 * Create new profile template
-		 * 
+		 *
 		 * @param  array  $result         Argument to set URL and ID into.
 		 * @param  string $template_name Name of template to create.
 		 * @param  string $template_view Listing view.
@@ -148,7 +150,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Post_Type' ) ) {
 
 		/**
 		 * Assets related to create new listing/component form
-		 * 
+		 *
 		 * @param  boolean $force_print_templates [description]
 		 * @param  array   $vars                  [description]
 		 * @return [type]                         [description]
@@ -194,7 +196,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Post_Type' ) ) {
 			} else {
 				add_action( 'admin_footer', array( $this, 'print_listings_popup' ), 999 );
 			}
-			
+
 		}
 
 		/**
@@ -204,6 +206,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Post_Type' ) ) {
 		 */
 		public function is_listings_edit_page() {
 
+			// phpcs:disable
 			$screen = get_current_screen();
 
 			if ( $screen && $screen->id === 'edit-' . $this->slug() ) {
@@ -224,6 +227,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Post_Type' ) ) {
 			} else {
 				return false;
 			}
+			// phpcs:enable
 		}
 
 		public function get_nonce_action() {
@@ -270,7 +274,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Post_Type' ) ) {
 		 * @return void
 		 */
 		public function print_listings_popup() {
-			echo $this->admin_screen->get_listing_popup();
+			echo $this->admin_screen->get_listing_popup(); // phpcs:ignore
 		}
 
 		/**
@@ -323,7 +327,7 @@ if ( ! class_exists( 'Jet_Engine_Listings_Post_Type' ) ) {
 				'exclude_from_search' => true,
 				'capability_type'     => 'post',
 				'rewrite'             => false,
-				'supports'            => array( 
+				'supports'            => array(
 					'title', 'editor', /*'thumbnail',*/ 'author', 'elementor', 'custom-fields'
 				),
 			);

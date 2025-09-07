@@ -51,6 +51,11 @@ class OpenStreetMap extends Base {
 	 */
 	public function extract_coordinates_from_response_data( $data = array() ) {
 
+		if ( count( $data ) === 1 && isset( $data['message'] ) ) {
+			$this->save_error( $data, 'geocode' );
+			return false;
+		}
+
 		$coord = isset( $data[0] )
 			? array( 'lat' => $data[0]['lat'], 'lng' => $data[0]['lon'] )
 			: false;

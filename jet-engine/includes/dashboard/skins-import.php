@@ -28,6 +28,7 @@ if ( ! class_exists( 'Jet_Engine_Skins_Import' ) ) {
 		public $errors = array();
 		public $copied_slugs = array();
 		public $replaced_slugs = array();
+		public $skipped_slugs = array();
 
 		//custom meta storage compatibility https://github.com/Crocoblock/issues-tracker/issues/11080
 		private $custom_storage_classes_loaded = false;
@@ -409,6 +410,8 @@ if ( ! class_exists( 'Jet_Engine_Skins_Import' ) ) {
 			require_once jet_engine()->cpt->component_path( 'custom-tables/query.php' );
 
 			return Custom_Storage::instance();
+
+			$this->custom_storage_classes_loaded = true;
 		}
 
 		public function maybe_init_custom_storage( $item, $type = 'post' ) {
@@ -417,7 +420,7 @@ if ( ! class_exists( 'Jet_Engine_Skins_Import' ) ) {
 				 && ! empty( $item['meta_fields'] ) ) {
 
 				$custom_storage = $this->ensure_custom_storage();
-				$fields         = $custom_storage->prepare_fields( $item['meta_fields'] );
+				$fields         = $custom_storage->prepare_fields( $item['meta_fields'], $item['slug'] )['as_columns'];
 				$db             = $custom_storage->get_db_instance( $item['slug'], $fields );
 
 				new Meta_Storage( $db, $type, $item['slug'], $fields );

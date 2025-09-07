@@ -2,6 +2,8 @@
 /**
  * WC product query component template
  */
+
+// phpcs:disable
 ?>
 <div class="jet-engine-edit-page__fields">
 	<div class="cx-vui-collapse__heading">
@@ -84,7 +86,7 @@
 			size="fullwidth"
 			v-model="query.date_query"
 		></cx-vui-select>
-		
+
 		<cx-vui-input
 			label="<?php _e( 'From Date', 'jet-engine' ); ?>"
 			description="<?php _e( 'Set date to get records after. You can use exact date or human-readable string like today, today - 7 days etc.', 'jet-engine' ); ?>"
@@ -119,7 +121,7 @@
 		>
 			<jet-query-dynamic-args v-model="dynamicQuery.date_from"></jet-query-dynamic-args>
 		</cx-vui-input>
-		
+
 		<cx-vui-component-wrapper
 			:wrapper-css="[ 'fullwidth-control' ]"
 		>
@@ -211,3 +213,5 @@
 		><jet-query-dynamic-args v-model="dynamicQuery.offset"></jet-query-dynamic-args></cx-vui-input>
 	</div>
 </div>
+<?php
+// phpcs:enable

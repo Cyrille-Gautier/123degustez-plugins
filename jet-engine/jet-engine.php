@@ -3,7 +3,7 @@
  * Plugin Name: JetEngine
  * Plugin URI:  https://crocoblock.com/plugins/jetengine/
  * Description: The ultimate solution for managing custom post types, taxonomies and meta boxes.
- * Version:     3.6.8
+ * Version:     3.7.5
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-engine
@@ -21,8 +21,10 @@ if ( ! defined( 'WPINC' ) ) {
 if ( ! class_exists( 'Jet_Engine' ) ) {
 
 	/**
-	 * @property Jet_Engine_Booking_Forms        $forms
-	 * @property  \Jet_Engine\Glossaries\Manager $glossaries
+	 * @property Jet_Engine_Booking_Forms       $forms
+	 * @property \Jet_Engine\Glossaries\Manager $glossaries
+	 * @property \Jet_Engine_Blocks_Views       $blocks_views
+	 * @property \Jet_Engine_Misc_Settings	     $misc_settings
 	 *
 	 * Sets up and initializes the plugin.
 	 */
@@ -61,7 +63,7 @@ if ( ! class_exists( 'Jet_Engine' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '3.6.8';
+		private $version = '3.7.5';
 
 		/**
 		 * Holder for base plugin path
@@ -286,9 +288,11 @@ if ( ! class_exists( 'Jet_Engine' ) ) {
 		 */
 		public function init() {
 
+			require $this->plugin_path( 'includes/classes/sanitizer.php' );
 			require $this->plugin_path( 'includes/classes/tools.php' );
 			require $this->plugin_path( 'includes/classes/icons.php' );
 			require $this->plugin_path( 'includes/base/base-db.php' );
+			require $this->plugin_path( 'includes/traits/setup-listing.php' );
 
 			$this->admin_init();
 
@@ -327,6 +331,9 @@ if ( ! class_exists( 'Jet_Engine' ) ) {
 			// Register AI handler
 			require $this->plugin_path( 'includes/core/ai-handler.php' );
 			$this->ai = new Jet_Engine_AI_Handler();
+
+			require $this->plugin_path( 'includes/dashboard/misc-settings.php' );
+			$this->misc_settings = new Jet_Engine_Misc_Settings();
 
 			do_action( 'jet-engine/init', $this );
 

@@ -34,7 +34,7 @@ class Jet_Engine_Object_Property_Tag extends Elementor\Core\DynamicTags\Data_Tag
 	}
 
 	protected function register_controls() {
-		
+
 		$this->add_control(
 			'object_prop',
 			array(
@@ -64,7 +64,7 @@ class Jet_Engine_Object_Property_Tag extends Elementor\Core\DynamicTags\Data_Tag
 				'options'   => jet_engine()->listings->allowed_context_list(),
 			)
 		);
-		
+
 	}
 
 	protected function register_advanced_section() {
@@ -112,7 +112,7 @@ class Jet_Engine_Object_Property_Tag extends Elementor\Core\DynamicTags\Data_Tag
 	}
 
 	public function get_value( array $options = array() ) {
-	
+
 		$object_prop    = $this->get_settings( 'object_prop' );
 		$custom_prop    = $this->get_settings( 'custom_object_prop' );
 		$object_context = $this->get_settings( 'object_context' );

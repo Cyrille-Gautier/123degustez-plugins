@@ -28,11 +28,12 @@ class Users_Query extends Base_Query {
 
 	}
 
-	public function get_current_wp_query() {
-
-		if ( null !== $this->current_wp_query ) {
-			return $this->current_wp_query;
-		}
+	/**
+	 * Returns current query arguments
+	 *
+	 * @return array
+	 */
+	public function get_query_args() {
 
 		if ( null === $this->final_query ) {
 			$this->setup_query();
@@ -53,7 +54,16 @@ class Users_Query extends Base_Query {
 			$args['date_query'] = $this->prepare_date_query_args( $args );
 		}
 
-		$this->current_wp_query = new \WP_User_Query( $args );
+		return $args;
+	}
+
+	public function get_current_wp_query() {
+
+		if ( null !== $this->current_wp_query ) {
+			return $this->current_wp_query;
+		}
+
+		$this->current_wp_query = new \WP_User_Query( $this->get_query_args() );
 
 		return $this->current_wp_query;
 
@@ -158,6 +168,10 @@ class Users_Query extends Base_Query {
 				$this->final_query['paged'] = $value;
 				break;
 
+			case '_items_per_page':
+				$this->final_query['number'] = $value;
+				break;
+
 			case 'meta_query':
 				$this->replace_meta_query_row( $value );
 				break;
@@ -177,7 +191,7 @@ class Users_Query extends Base_Query {
 	/**
 	 * Adds date range query arguments to given query parameters.
 	 * Required to allow ech query to ensure compatibility with Dynamic Calendar
-	 * 
+	 *
 	 * @param array $args [description]
 	 */
 	public function add_date_range_args( $args = array(), $dates_range = array(), $settings = array() ) {
@@ -232,6 +246,7 @@ class Users_Query extends Base_Query {
 	public function reset_query() {
 		$this->current_wp_query = null;
 	}
+
 	public function _debug_info() {
 		$current_query = $this->get_current_wp_query();
 		$request = is_object( $current_query ) && isset( $current_query->request ) ? $current_query->request : 'Query error';
@@ -243,5 +258,4 @@ class Users_Query extends Base_Query {
 
 		return $result;
 	}
-
 }

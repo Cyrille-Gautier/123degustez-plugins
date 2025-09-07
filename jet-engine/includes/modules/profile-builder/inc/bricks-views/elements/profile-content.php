@@ -20,7 +20,7 @@ class Profile_Content extends Base {
 
 	// Render element HTML
 	public function render() {
-		echo "<div {$this->render_attributes( '_root' )}>";
+		echo "<div {$this->render_attributes( '_root' )}>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		Module::instance()->frontend->render_page_content();
 		echo "</div>";
 	}

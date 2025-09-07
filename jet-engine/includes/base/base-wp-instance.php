@@ -130,6 +130,7 @@ if ( ! class_exists( 'Jet_Engine_Base_WP_Intance' ) ) {
 		 */
 		public function handle_actions() {
 
+			//phpcs:disable
 			if ( ! isset( $_GET['action'] ) ) {
 				return;
 			}
@@ -150,6 +151,7 @@ if ( ! class_exists( 'Jet_Engine_Base_WP_Intance' ) ) {
 				return;
 			}
 
+			//phpcs:enable
 			call_user_func( $core_actions[ $action ] );
 
 		}
@@ -176,6 +178,7 @@ if ( ! class_exists( 'Jet_Engine_Base_WP_Intance' ) ) {
 		 * @return boolean
 		 */
 		public function is_cpt_page() {
+			//phpcs:ignore WordPress.Security.NonceVerification
 			return ( isset( $_GET['page'] ) && $this->page_slug() === $_GET['page'] );
 		}
 
@@ -271,7 +274,7 @@ if ( ! class_exists( 'Jet_Engine_Base_WP_Intance' ) ) {
 			?>
 			<div class="wrap">
 				<div class="cpt-header">
-					<h1 class="wp-heading-inline"><?php echo $page->get_name(); ?></h1>
+					<h1 class="wp-heading-inline"><?php echo esc_html( $page->get_name() ); ?></h1>
 					<?php do_action( 'jet-engine/' . $this->instance_slug() . '/page/after-title', $page ); ?>
 					<hr class="wp-header-end">
 				</div>
@@ -329,12 +332,14 @@ if ( ! class_exists( 'Jet_Engine_Base_WP_Intance' ) ) {
 		/**
 		 * Returns current page object
 		 *
-		 * @return object
+		 * @return \Jet_Engine_CPT_Page_Base
 		 */
 		public function get_current_page() {
 
-			$action = isset( $_GET[ $this->action_key ] ) ? $_GET[ $this->action_key ] : 'list';
+			//phpcs:disable
+			$action = isset( $_GET[ $this->action_key ] ) ? wp_unslash( $_GET[ $this->action_key ] ) : 'list';
 			$page   = isset( $this->_pages[ $action ] ) ? $this->_pages[ $action ] : false;
+			//phpcs:enable
 
 			return $page;
 

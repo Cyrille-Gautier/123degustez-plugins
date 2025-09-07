@@ -195,6 +195,22 @@ class Listing_Grid extends Base {
 		);
 
 		$this->register_jet_control(
+			'list_tags_selection',
+			[
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Wrapper Tag', 'jet-engine' ),
+				'type'    => 'select',
+				'inline'  => true,
+				'default' => 'div_div',
+				'options' => array(
+					'div_div' => __( 'Default (DIV > DIV)', 'jet-engine' ),
+					'ul_li'   => __( 'Unordered list( UL > LI)', 'jet-engine' ),
+					'ol_li'   => __( 'Ordered list (OL > LI)', 'jet-engine' ),
+				),
+			],
+		);
+
+		$this->register_jet_control(
 			'columns',
 			[
 				'tab'     => 'content',
@@ -476,6 +492,19 @@ class Listing_Grid extends Base {
 				'default'  => false,
 				'required' => [ 'scroll_slider_enabled', '=', false ],
 			)
+		);
+
+		$this->register_jet_control(
+			'carousel_enabled_note',
+			[
+				'tab'      => 'content',
+				'label'    => esc_html__( 'Note: You selected a list tag for the listing. The slider adds wrappers, which make the list markup invalid by W3C standards.', 'jet-engine' ),
+				'type'     => 'info',
+				'required' => [
+					[ 'list_tags_selection', '=', [ 'ul_li', 'ol_li' ] ],
+					[ 'carousel_enabled', '=', true ],
+				],
+			]
 		);
 
 		$this->register_jet_control(
@@ -1379,7 +1408,7 @@ class Listing_Grid extends Base {
 		parent::render();
 
 		$settings          = $this->parse_jet_render_attributes( $this->get_jet_settings() );
-		$listing_id        = $settings['lisitng_id'];
+		$listing_id        = absint( $settings['lisitng_id'] );
 		$has_dynamic_value = jet_engine()->bricks_views->listing->has_dynamic_value_in_controls( $listing_id );
 
 		$this->set_attribute( '_root', 'class', 'brxe-' . $this->id );
@@ -1411,7 +1440,7 @@ class Listing_Grid extends Base {
 
 		$render->before_listing_grid();
 
-		echo "<div {$this->render_attributes( '_root' )}>";
+		echo "<div {$this->render_attributes( '_root' )}>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		jet_engine()->bricks_views->listing->render_assets( $listing_id, $has_dynamic_value );
 		$render->render_content();
 		echo "</div>";

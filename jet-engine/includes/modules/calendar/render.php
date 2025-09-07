@@ -442,6 +442,29 @@ if ( ! class_exists( 'Jet_Listing_Render_Calendar' ) ) {
 			return $result;
 		}
 
+		public function get_item_attrs( $item ) {
+			$item_id = jet_engine()->listings->data->get_current_object_id( $item );
+
+			$item_attrs = array(
+				'data-item-object' => $item_id,
+				'data-render-type' => 'jet-engine-calendar',
+
+			);
+
+			$item_attrs = apply_filters(
+				'jet-engine/calendar/render/item-attrs',
+				$item_attrs, $item, $this
+			);
+
+			unset( $item_attrs['class'] );
+			unset( $item_attrs['data-post-id'] );
+			unset( $item_attrs['data-item-object'] );
+			unset( $item_attrs['data-render-type'] );
+			unset( $item_attrs['style'] );
+
+			return \Jet_Engine_Tools::get_attr_string( $item_attrs );
+		}
+
 		/**
 		 * Render posts template.
 		 * Moved to separate function to be rewritten by other layouts
@@ -488,7 +511,7 @@ if ( ! class_exists( 'Jet_Listing_Render_Calendar' ) ) {
 			$caption_layout = ! empty( $settings['caption_layout'] ) && in_array( $settings['caption_layout'], $allowed_layouts ) ? $settings['caption_layout'] : 'layout-1';
 
 			$data_settings = apply_filters( 'jet-engine/calendar/render/widget-settings', array(
-				'lisitng_id'               => isset( $settings['lisitng_id'] ) ? $settings['lisitng_id'] : false,
+				'lisitng_id'               => isset( $settings['lisitng_id'] ) ? absint( $settings['lisitng_id'] ) : false,
 				'week_days_format'         => $days_format,
 				'allow_multiday'           => $multiday,
 				'end_date_key'             => $end_date_key,
@@ -527,7 +550,7 @@ if ( ! class_exists( 'Jet_Listing_Render_Calendar' ) ) {
 			$container_classes = [
 				'jet-calendar',
 				$base_class,
-				'jet-listing-grid--' . $settings['lisitng_id'], // for inline CSS consistency between differen views and listing widgets
+				'jet-listing-grid--' . absint( $settings['lisitng_id'] ), // for inline CSS consistency between differen views and listing widgets
 			];
 
 			printf(
@@ -550,7 +573,7 @@ if ( ! class_exists( 'Jet_Listing_Render_Calendar' ) ) {
 
 			echo '<tbody>';
 
-			jet_engine()->frontend->set_listing( $settings['lisitng_id'] );
+			jet_engine()->frontend->set_listing( absint( $settings['lisitng_id'] ) );
 
 			$fallback = 1;
 			$today_date        = date_i18n( 'j-n-Y' );
@@ -571,7 +594,7 @@ if ( ! class_exists( 'Jet_Listing_Render_Calendar' ) ) {
 					$num                     = $prev_month - $pad + $i + 1;
 					$key                     = $num . '-' . $prev_month_num;
 					$posts                   = ! empty( $prepared_posts[ $key ] ) ? $prepared_posts[ $key ] : array();
-					$padclass                = ' day-pad';
+					$padclass                = ! empty( $posts ) ? ' day-pad has-events' : ' day-pad';
 					$current_multiday_events = ! empty( $this->prev_month_posts[ $num ] ) ? $this->prev_month_posts[ $num ] : array();
 
 					include jet_engine()->modules->get_module( 'calendar' )->get_template( 'date.php' );
@@ -630,7 +653,7 @@ if ( ! class_exists( 'Jet_Listing_Render_Calendar' ) ) {
 					$num                     = $i;
 					$key                     = $num . '-' . $next_month_num;
 					$posts                   = ! empty( $prepared_posts[ $key ] ) ? $prepared_posts[ $key ] : array();
-					$padclass                = ' day-pad';
+					$padclass                = ! empty( $posts ) ? ' day-pad has-events' : ' day-pad';
 					$current_multiday_events = ! empty( $this->next_month_posts[ $num ] ) ? $this->next_month_posts[ $num ] : array();
 
 					include jet_engine()->modules->get_module( 'calendar' )->get_template( 'date.php' );

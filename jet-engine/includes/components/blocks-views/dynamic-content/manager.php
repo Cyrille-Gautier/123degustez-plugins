@@ -9,6 +9,9 @@ class Manager {
 	private $_blocks = array();
 	private $_dynamic_data_key = 'jetEngineDynamicData';
 
+	/**
+	 * @var Data
+	 */
 	public $data;
 
 	public function __construct() {

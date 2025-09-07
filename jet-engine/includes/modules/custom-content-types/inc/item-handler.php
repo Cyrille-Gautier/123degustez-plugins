@@ -11,6 +11,9 @@ if ( ! defined( 'WPINC' ) ) {
  */
 class Item_Handler {
 
+	/**
+	 * @var Factory
+	 */
 	private $factory;
 	private $item_id;
 	private $update_status = false;
@@ -224,7 +227,17 @@ class Item_Handler {
 			require Module::instance()->module_path( 'list-table.php' );
 			$items_table = new List_Table( array( 'screen' => 'ajax-quick-edit' ) );
 			$items_table->set_factory( $this->factory );
+
+			// Force format flag to \ARRAY_A to ensure correct CCT item updates.
+			// The issue occurs when the 'jet-smart-filters/filters/filter-options' filter runs during CCT item updates,
+			// causing the format flag to switch to 'OBJECT' unexpectedly.
+			// Related issue: https://github.com/Crocoblock/issues-tracker/issues/15812
+			$current_format = $this->factory->db->get_format_flag();
+			$this->factory->db->set_format_flag( \ARRAY_A );
+
 			$items_table->prepare_items( array( '_ID' => $item_id ) );
+
+			$this->factory->db->set_format_flag( $current_format );
 
 			if ( empty( $items_table->items ) ) {
 				wp_send_json_error( 'Item processing went wrong, please reload page and try again' );
@@ -301,11 +314,13 @@ class Item_Handler {
 	}
 
 	/**
-	 * Insert or update item
-	 *
-	 * @param  [type] $item [description]
-	 * @return [type]       [description]
-	 */
+     * Insert or update item
+     * 
+     * @param array $item_array Array of fields that need to be filled/updated
+     *                          If this array contains _ID element - item with that ID will be updated.
+     *                          Otherwise, a new item will be created.
+	 * @return int|WP_Error     Returns item ID on success, or WP_Error on failure.
+     */
 	public function update_item( $itemarr = array() ) {
 
 		if ( empty( $itemarr ) ) {
@@ -444,10 +459,10 @@ class Item_Handler {
 			$item['_ID'] = $item_id;
 
 			do_action(
-				'jet-engine/custom-content-types/updated-item/' . $this->factory->get_arg( 'slug' ), 
-				$item, 
-				array(), 
-				$this 
+				'jet-engine/custom-content-types/updated-item/' . $this->factory->get_arg( 'slug' ),
+				$item,
+				array(),
+				$this
 			);
 
 			if ( ! $item_id ) {
@@ -556,9 +571,11 @@ class Item_Handler {
 
 	/**
 	 * Process single post
+	 * This method is used to create or update a single post associated with the CCT item.
 	 *
-	 * @param  array  $item [description]
-	 * @return [type]       [description]
+	 * @param  array  $item CCT item data. 'cct_single_post_id' key is used to store the ID of the single post.
+	 *                      If this key is not set/is not valid, a new single post will be created.
+	 * @return int|false    Returns the ID of the created/updated single post on success, or false on failure.
 	 */
 	public function process_single_post( $item = array() ) {
 

@@ -5,6 +5,15 @@ use Jet_Engine\Modules\Custom_Content_Types\Module;
 
 class CCT_Query_Editor extends \Jet_Engine\Query_Builder\Query_Editor\Base_Query {
 
+	public function __construct() {
+		parent::__construct();
+
+		add_action(
+			'jet-engine/query-builder/editor/before-print-templates',
+			array( $this, 'print_custom_editor_templates' )
+		);
+	}
+
 	/**
 	 * Qery type ID
 	 */
@@ -65,6 +74,20 @@ class CCT_Query_Editor extends \Jet_Engine\Query_Builder\Query_Editor\Base_Query
 		ob_start();
 		include Module::instance()->module_path( 'templates/admin/query-editor.php' );
 		return ob_get_clean();
+	}
+
+	/**
+	 * Print custom editor template for SQL nested fields.
+	 *
+	 * @return void
+	 */
+	public function print_custom_editor_templates() {
+
+		ob_start();
+		include Module::instance()->module_path( 'templates/admin/query-field.php' );
+		$content = ob_get_clean();
+
+		printf( '<script type="text/x-template" id="jet-engine-cct-query-field">%s</script>', $content );
 	}
 
 	/**

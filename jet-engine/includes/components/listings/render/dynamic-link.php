@@ -53,7 +53,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Link' ) ) {
 		}
 
 		public function get_link_url( $settings ) {
-			
+
 			$source = ! empty( $settings['dynamic_link_source'] ) ? $settings['dynamic_link_source'] : '_permalink';
 			$custom = ! empty( $settings['dynamic_link_source_custom'] ) ? $settings['dynamic_link_source_custom'] : '';
 
@@ -99,7 +99,28 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Link' ) ) {
 			$url = $this->maybe_add_query_args( $url, $settings );
 
 			if ( ! empty( $settings['url_prefix'] ) ) {
-				$url = esc_attr( $settings['url_prefix'] ) . $url;
+
+				/**
+				 * @see https://github.com/Crocoblock/issues-tracker/issues/16819
+				 */
+				$prefix = esc_attr( $settings['url_prefix'] );
+
+				$disallowed_prefixes = apply_filters(
+					'jet-engine/listings/dynamic-link/disallowed-url-prefixes',
+					array(
+						'javascript:',
+						'data:',
+					)
+				);
+
+				foreach ( $disallowed_prefixes as $disallowed_prefix ) {
+					if ( false !== strpos( $prefix, $disallowed_prefix ) ) {
+						$prefix = '';
+						break;
+					}
+				}
+
+				$url = $prefix . $url;
 			}
 
 			if ( ! empty( $settings['url_anchor'] ) ) {
@@ -136,7 +157,8 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Link' ) ) {
 			$pre_render_link = apply_filters( 'jet-engine/listings/dynamic-link/pre-render-link', false, $settings, $base_class, $this );
 
 			if ( $pre_render_link ) {
-				echo $pre_render_link;
+				// User-controlled input escaped by callbacks
+				echo $pre_render_link; // phpcs:ignore
 				return;
 			}
 
@@ -145,17 +167,17 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Link' ) ) {
 			$icon  = $this->get_link_icon( $settings, $base_class );
 
 			if ( is_wp_error( $url ) ) {
-				echo $url->get_error_message();
+				echo wp_kses_post( $url->get_error_message() );
 				return;
 			}
 
 			$open_in_new = isset( $settings['open_in_new'] ) ? $settings['open_in_new'] : '';
-			$rel_attr    = isset( $settings['rel_attr'] ) ? esc_attr( $settings['rel_attr'] ) : '';
+			$rel_attr    = isset( $settings['rel_attr'] ) ? $settings['rel_attr'] : '';
 			$rel         = '';
 			$target      = '';
 
 			if ( $rel_attr ) {
-				$rel = sprintf( ' rel="%s"', $rel_attr );
+				$rel = sprintf( ' rel="%s"', esc_attr( $rel_attr ) );
 			}
 
 			if ( $open_in_new ) {
@@ -171,8 +193,17 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Link' ) ) {
 
 			if ( $this->is_delete_link ) {
 				$message = ! empty( $settings['delete_link_dialog'] ) ? $settings['delete_link_dialog'] : '';
+
+				if ( false !== strpos( $message, '%' ) ) {
+					$message = jet_engine()->listings->macros->do_macros( $message );
+				}
+
+				if ( false !== strpos( $message, '[' ) ) {
+					$message = do_shortcode( $message );
+				}
+
 				$custom_attrs .= ' data-delete-link="1"';
-				$custom_attrs .= ' data-delete-message="' . $message . '"';
+				$custom_attrs .= ' data-delete-message="' . esc_attr( $message ) . '"';
 			}
 
 			if ( ! empty( $settings['aria_label_attr'] ) ) {
@@ -181,8 +212,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Link' ) ) {
 
 			$custom_attrs = apply_filters( 'jet-engine/listings/dynamic-link/custom-attrs', $custom_attrs, $this );
 
-			printf( $format, $url, $base_class, $icon, $label, $rel, $target, $custom_attrs );
-
+			printf( $format, $url, $base_class, $icon, $label, $rel, $target, $custom_attrs ); // phpcs:ignore
 		}
 
 		public function get_link_label( $settings, $base_class, $url ) {
@@ -199,17 +229,17 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Link' ) ) {
 				$format = '<span class="%1$s__label">%2$s</span>';
 
 				// If optimized DOM tweak is active and link not has an icon - we can use plain text
-				if ( $this->prevent_wrap() 
-					&& empty( $settings['link_icon'] ) 
-					&& ( empty( $settings['selected_link_icon'] ) 
-						|| empty( $settings['selected_link_icon']['value'] ) 
+				if ( $this->prevent_wrap()
+					&& empty( $settings['link_icon'] )
+					&& ( empty( $settings['selected_link_icon'] )
+						|| empty( $settings['selected_link_icon']['value'] )
 					)
 				) {
 					$format = '%2$s';
 				}
 
 				$label = jet_engine()->listings->macros->do_macros( $label, $url );
-				$label = sprintf( $format, $base_class, $label );
+				$label = sprintf( $format, esc_attr( $base_class ), wp_kses_post( $label ) );
 
 				// Reset macros context to initial.
 				jet_engine()->listings->macros->set_macros_context( $macros_context );
@@ -229,7 +259,11 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Link' ) ) {
 			if ( $new_icon_html ) {
 				$icon = $new_icon_html;
 			} elseif ( $icon ) {
-				$icon = sprintf( '<i class="%1$s__icon %2$s"></i>', $base_class, $icon );
+				$icon = sprintf(
+					'<i class="%1$s__icon %2$s"></i>',
+					esc_attr( $base_class ),
+					esc_attr( $icon )
+				);
 			}
 
 			return $icon;
@@ -255,7 +289,11 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Link' ) ) {
 			ob_start();
 
 			if ( ! $this->prevent_wrap() ) {
-				printf( '<%1$s class="%2$s">', $tag, implode( ' ', $this->get_wrapper_classes() ) );
+				printf(
+					'<%1$s class="%2$s">',
+					$tag, // phpcs:ignore
+					esc_attr( implode( ' ', $this->get_wrapper_classes() ) )
+				);
 			}
 
 			do_action( 'jet-engine/listing/dynamic-link/before-field', $this );
@@ -265,21 +303,18 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Link' ) ) {
 			do_action( 'jet-engine/listing/dynamic-link/after-field', $this );
 
 			if ( ! $this->prevent_wrap() ) {
-				printf( '</%s>', $tag );
+				printf( '</%s>', $tag ); // phpcs:ignore
 			}
 
 			$content = ob_get_clean();
 
 			if ( $this->show_field ) {
-				echo $content;
+				echo $content; // phpcs:ignore
 			}
-
 		}
 
 		public function is_delete_link() {
 			return $this->is_delete_link;
 		}
-
 	}
-
 }

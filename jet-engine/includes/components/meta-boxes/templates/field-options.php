@@ -1,5 +1,5 @@
 <cx-vui-repeater
-	button-label="<?php _e( 'New Field Option', 'jet-engine' ); ?>"
+	button-label="<?php _e( 'New Field Option', 'jet-engine' ); // phpcs:ignore ?>"
 	button-style="accent"
 	button-size="mini"
 	v-model="options"
@@ -16,24 +16,24 @@
 		:key="option.id ? option.id : option.id = getRandomID()"
 	>
 		<cx-vui-input
-			label="<?php _e( 'Option Value', 'jet-engine' ); ?>"
-			description="<?php _e( 'This value will be saved into Database', 'jet-engine' ); ?>"
+			label="<?php _e( 'Option Value', 'jet-engine' ); // phpcs:ignore ?>"
+			description="<?php _e( 'This value will be saved into Database', 'jet-engine' ); // phpcs:ignore ?>"
 			:wrapper-css="[ 'equalwidth' ]"
 			size="fullwidth"
 			:value="options[ optionIndex ].key"
 			@input="setOptionProp( optionIndex, 'key', $event )"
 		></cx-vui-input>
 		<cx-vui-input
-			label="<?php _e( 'Option label', 'jet-engine' ); ?>"
-			description="<?php _e( 'This will be shown for user on Post edit page', 'jet-engine' ); ?>"
+			label="<?php _e( 'Option label', 'jet-engine' ); // phpcs:ignore ?>"
+			description="<?php _e( 'This will be shown for user on Post edit page', 'jet-engine' ); // phpcs:ignore ?>"
 			:wrapper-css="[ 'equalwidth' ]"
 			size="fullwidth"
 			:value="options[ optionIndex ].value"
 			@input="setOptionProp( optionIndex, 'value', $event )"
 		></cx-vui-input>
 		<cx-vui-switcher
-			label="<?php _e( 'Is checked (selected)', 'jet-engine' ); ?>"
-			description="<?php _e( 'Check this to make this field checked or selected by default.', 'jet-engine' ); ?>"
+			label="<?php _e( 'Is checked (selected)', 'jet-engine' ); // phpcs:ignore ?>"
+			description="<?php _e( 'Check this to make this field checked or selected by default.', 'jet-engine' ); // phpcs:ignore ?>"
 			:wrapper-css="[ 'equalwidth' ]"
 			:value="options[ optionIndex ].is_checked"
 			@input="setOptionProp( optionIndex, 'is_checked', $event )"

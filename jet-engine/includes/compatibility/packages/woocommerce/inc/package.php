@@ -59,7 +59,7 @@ class Package {
 		if ( ! is_a( $post, 'WC_Product' ) ) {
 			return $value;
 		}
-		
+
 		return [ $post->get_meta( $meta_key ) ];
 	}
 
@@ -75,10 +75,11 @@ class Package {
 
 		require_once $this->package_path( 'macros/products-in-cart.php' );
 		require_once $this->package_path( 'macros/purchased-products.php' );
+		require_once $this->package_path( 'macros/products-on-sale.php' );
 
 		new Macros\Products_In_Cart();
 		new Macros\Purchased_Products();
-
+		new Macros\Products_On_Sale();
 	}
 
 	/**

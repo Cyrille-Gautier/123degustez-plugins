@@ -5,7 +5,7 @@ use Jet_Engine\Modules\Maps_Listings\Base_Provider;
 
 abstract class Base extends Base_Provider {
 
-	private $errors = false;
+	private $errors = array();
 
 	/**
 	 * Hook name to register provider-specific settings
@@ -14,6 +14,10 @@ abstract class Base extends Base_Provider {
 	 */
 	public function settings_hook() {
 		return 'jet-engine/maps-listing/settings/geocode-provider-controls';
+	}
+
+	public function get_api_key( $for_geocoding = false ) {
+		return '';
 	}
 
 	/**
@@ -68,8 +72,9 @@ abstract class Base extends Base_Provider {
 
 		$json = wp_remote_retrieve_body( $response );
 
-		return json_decode( $json, true );
+		$data = json_decode( $json, true );
 
+		return $data;
 	}
 
 	/**
@@ -149,7 +154,7 @@ abstract class Base extends Base_Provider {
 	 * Returns data for the given location
 	 *
 	 * @param  string      $location Location string, address
-	 * @return array|false [ 'lat' => float, 'lng' => float ] if location found, false otherwise
+	 * @return array|false [ 'lat' => float, 'lng' => float ] if location found, false if not found or empty string given
 	 */
 	public function get_location_data( $location = '' ) {
 
@@ -164,10 +169,6 @@ abstract class Base extends Base_Provider {
 		}
 
 		$data = $this->make_request( $url );
-
-		if ( ! $data ) {
-			return false;
-		}
 
 		return $this->extract_coordinates_from_response_data( $data );
 

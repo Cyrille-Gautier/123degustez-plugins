@@ -222,14 +222,14 @@ class Jet_Engine_Meta_Boxes_Conditions {
 	 */
 	public function ajax_check_conditions() {
 
-		$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false;
+		$nonce = ! empty( $_REQUEST['nonce'] ) ? wp_unslash( $_REQUEST['nonce'] ) : false; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		// There is no senesetive data returned by this callback so there is no need to additonal verfifcation except nonce
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'jet-engine/meta-boxes/conditions' ) ) {
 			wp_send_json_error( 'Invalid request' );
 		}
 
-		$conditions = ! empty( $_REQUEST['conditions'] ) ? $_REQUEST['conditions'] : array();
+		$conditions = ! empty( $_REQUEST['conditions'] ) ? wp_unslash( $_REQUEST['conditions'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized via structure validation and never used for direct output
 		$request = $_REQUEST;
 		$result = array();
 

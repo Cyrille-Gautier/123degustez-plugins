@@ -136,6 +136,8 @@ if ( ! class_exists( 'Jet_Engine_Dashboard' ) ) {
 				true
 			);
 
+			$misc_settings = jet_engine()->misc_settings->get_settings();
+
 			wp_localize_script(
 				'jet-engine-dashboard',
 				'JetEngineDashboardConfig',
@@ -165,6 +167,7 @@ if ( ! class_exists( 'Jet_Engine_Dashboard' ) ) {
 						'macros_generator'   => jet_engine()->listings->macros->get_macros_for_js(),
 						'_nonce'             => wp_create_nonce( $this->nonce_action ),
 						'has_bricks'         => $this->has_bricks(),
+						'misc_settings'      => ! empty( $misc_settings ) ? $misc_settings : null,
 					)
 				)
 			);

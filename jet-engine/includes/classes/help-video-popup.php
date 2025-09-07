@@ -55,7 +55,9 @@ class Jet_Engine_Help_Video_Popup {
 
 		printf(
 			'<a href="%3$s" class="jet-listings-video-popup-trigger" target="_blank">%2$s%1$s</a>',
-			$this->label, $this->get_trigger_icon(), $url
+			esc_html( $this->label ),
+			$this->get_trigger_icon(), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			esc_url( $url )
 		);
 
 		if ( ! $is_link ) {
@@ -100,6 +102,7 @@ class Jet_Engine_Help_Video_Popup {
 
 	public function print_script() {
 
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '<script>
 		(function( $ ) {
 			
@@ -129,6 +132,7 @@ class Jet_Engine_Help_Video_Popup {
 			} );
 		})( jQuery );
 		</script>';
+		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	public function print_style() {
@@ -218,6 +222,7 @@ class Jet_Engine_Help_Video_Popup {
 	}
 
 	public function print_template() {
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '<div class="jet-listings-video-popup" id="popup_' .  $this->id . '" style="display: none;">
 			<div class="jet-listings-video-popup__overlay"></div>
 			<div class="jet-listings-video-popup__content">
@@ -228,6 +233,7 @@ class Jet_Engine_Help_Video_Popup {
 			<iframe width="560" height="315" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 			</div>
 		</div>';
+		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	public function setup_default_vars() {
@@ -239,7 +245,7 @@ class Jet_Engine_Help_Video_Popup {
 
 	public function setup_js_var( $name, $data ) {
 		add_action( 'admin_footer', function() use ( $name, $data ) {
-			printf( '<script>var %1$s%3$s = %2$s;</script>', $name, json_encode( $data ), $this->id );
+			printf( '<script>var %1$s%3$s = %2$s;</script>', $name, json_encode( $data ), $this->id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		} );
 	}
 

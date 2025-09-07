@@ -463,7 +463,7 @@ if ( ! class_exists( 'Jet_Engine_CPT_Data' ) ) {
 				$fields = ! empty( $item['meta_fields'] ) ? $item['meta_fields'] : [];
 				$db     = \Jet_Engine\CPT\Custom_Tables\Manager::instance()->get_db_instance(
 					$item['slug'],
-					\Jet_Engine\CPT\Custom_Tables\Manager::instance()->prepare_fields( $fields )['as_columns'] ?? array()
+					\Jet_Engine\CPT\Custom_Tables\Manager::instance()->prepare_fields( $fields, $item['slug'] )['as_columns'] ?? array()
 				);
 
 				if ( $is_new ) {

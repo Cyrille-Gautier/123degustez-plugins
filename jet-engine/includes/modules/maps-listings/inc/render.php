@@ -137,7 +137,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 
 				}
 
-				if ( ! $address && $add_lat_lng ) {
+				if ( ! $address && $add_lat_lng && $lat_lng_address ) {
 
 					$fields = explode( '+', $lat_lng_address );
 
@@ -353,7 +353,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 			$image_size      = ! empty( $settings['marker_image_size'] ) ? $settings['marker_image_size'] : 'full';
 			$image_cache_key = sprintf( 'jet_engine_marker_%d_%s', $image_id, $image_size );
 			$image_url       = wp_cache_get( $image_cache_key );
-			
+
 			if ( ! $image_url ) {
 				$image_url = wp_get_attachment_image_url( $image_id, $image_size );
 				wp_cache_set( $image_cache_key, $image_url );
@@ -406,7 +406,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 
 						$field_value = ! empty( $marker['field_value'] ) ? $marker['field_value'] : false;
 
-						
+
 						if ( $this->source ) {
 							$source      = Module::instance()->sources->get_source( $this->source );
 							$saved_value = $source->get_field_value( $post, $field );
@@ -533,7 +533,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 
 	/**
 	 * Allow to change marker data before usage
-	 * 
+	 *
 	 * @param  [type] $marker [description]
 	 * @return [type]         [description]
 	 */
@@ -546,7 +546,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 			return false;
 		}
 
-		$string = wp_unslash( $string );
+		$string = stripslashes( $string );
 
 		$color = do_shortcode( $string );
 		$color = jet_engine()->listings->macros->do_macros( $color );
@@ -562,7 +562,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 	public function get_marker_data( $settings = array() ) {
 
 		$type = ! empty( $settings['marker_type'] ) ? $settings['marker_type'] : 'image';
-		
+
 		$result = array( 'type' => null );
 
 		switch ( $type ) {
@@ -603,11 +603,11 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 
 				$icon           = ! empty( $settings['marker_icon'] ) ? $settings['marker_icon'] : false;
 				$result['type'] = 'icon';
-				
+
 				if ( $icon === false || ( is_array( $icon ) && empty( $icon['value'] ) ) ) {
 					$icon = $this->get_settings( 'marker_icon' );
 				}
-				
+
 				if ( ! $icon ) {
 					return false;
 				} else {
@@ -623,14 +623,14 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 					}
 
 					if ( ! empty( $settings['conditional_marker_type_index'] ) ) {
-						$icon_class .= ' ' . $settings['conditional_marker_type_index'];
+						$icon_class .= ' jet-map-marker-condition ' . $settings['conditional_marker_type_index'];
 
 						$icon_color = ! empty( $settings['marker_icon_color_dynamic'] ) ? $settings['marker_icon_color_dynamic'] : false;
-					
+
 						if ( $icon_color ) {
 							$icon_color = $this->get_dynamic_color( $icon_color );
 						}
-						
+
 						if ( ! $icon_color || ! \Jet_Engine_Tools::is_valid_color( $icon_color ) ) {
 							$icon_color = ! empty( $settings['marker_icon_color'] ) ? $settings['marker_icon_color'] : false;
 						}
@@ -643,10 +643,12 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 							$icon_style .= "color:{$icon_color} !important;";
 							$icon_class .= ' custom-color';
 						}
+					} else {
+						$icon_class .= ' jet-map-marker-default';
 					}
 
-					$color_mode  = ! empty( $settings['marker_icon_color_apply_to'] ) ? $settings['marker_icon_color_apply_to'] : 'apply-fill';
-					
+					$color_mode  = ! empty( $settings['marker_icon_color_apply_to'] ) ? $settings['marker_icon_color_apply_to'] : 'keep';
+
 					switch ( $color_mode ) {
 						case 'keep':
 							$icon_class .= ' keep-color';
@@ -660,7 +662,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 					if ( ! empty( $icon_style ) ) {
 						$atts['style'] = $icon_style;
 					}
-					
+
 					$icon_html      = \Jet_Engine_Tools::render_icon( $icon, $icon_class, $atts, $image_size, true );
 					$result['html'] = $icon_html;
 					return $result;
@@ -760,7 +762,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 
 		$marker_clustering = isset( $settings['marker_clustering'] ) ? filter_var( $settings['marker_clustering'], FILTER_VALIDATE_BOOLEAN ) : true;
 
-		jet_engine()->frontend->set_listing( $settings['lisitng_id'] );
+		jet_engine()->frontend->set_listing( absint( $settings['lisitng_id'] ) );
 
 		// Ensure register scripts.
 		if ( ! wp_script_is( 'jet-maps-listings', 'registered' )  ) {
@@ -788,7 +790,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 		}
 
 		$permalink_structure = get_option( 'permalink_structure' );
-		
+
 		$general = apply_filters( 'jet-engine/maps-listings/data-settings', array(
 			'api'              => jet_engine()->api->get_route( 'get-map-marker-info', true ),
 			'restNonce'        => wp_create_nonce( 'wp_rest' ),
@@ -829,7 +831,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 
 		$general = htmlspecialchars( json_encode( $general ) );
 
-		$classes = array( 
+		$classes = array(
 			'jet-map-listing',
 			'jet-listing-grid--' . $listing_id, // for inline CSS consistency between differen views and listing widgets
 		);
@@ -850,7 +852,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 
 		$custom_css = '';
 
-		if ( ! empty( $settings['map_height'] ) && ! is_array( $settings['map_height'] ) ) {
+		if ( ! empty( $settings['map_height'] ) && isset( $settings['_block_id'] ) ) {
 			$custom_css = 'height:' . $settings['map_height'] . 'px;';
 		}
 
@@ -878,6 +880,19 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 
 		$html = sprintf( '<div %s></div>', \Jet_Engine_Tools::get_attr_string( $attrs ) );
 
+		/**
+		 * Render map listing popup content to ensure needed scripts are loaded
+		 *
+		 * @see https://github.com/Crocoblock/issues-tracker/issues/15570
+		 * @see https://github.com/Crocoblock/issues-tracker/issues/16571
+		 */
+		if ( ! ( defined('REST_REQUEST') && REST_REQUEST ) && ! wp_doing_ajax() ) {
+			global $post;
+			$default_post = $post;
+			jet_engine()->frontend->get_listing_item( $query[0] ?? null );
+			$post = $default_post;
+		}
+
 		echo apply_filters( 'jet-engine/maps-listings/content', $html, $this );
 	}
 
@@ -889,7 +904,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 			$query = \Jet_Engine\Query_Builder\Manager::instance()->get_query_by_id( $this->listing_query_id );
 
 			if ( $query ) {
-				
+
 				$query->setup_query();
 
 				if ( ! empty( $query->final_query['geo_query'] ) && isset( $query->final_query['geo_query']['latitude'] ) && isset( $query->final_query['geo_query']['longitude'] ) ) {
@@ -920,7 +935,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 					}
 					window.JetEngineMaps.initBlocks();
 				};
-		
+
 			if ( undefined === window.JetEngineMaps ) {
 				jQuery( window ).on( "jet-engine/frontend-maps/loaded", initCb );
 			} else {

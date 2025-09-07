@@ -28,7 +28,7 @@ class Jet_Engine_Queried_Repeater_Item {
 	/**
 	 * Constructor for the class
 	 *
-	 * @param array $item
+	 * @param object  $item
 	 * @param integer $item_id
 	 * @param integer $object_id
 	 * @param integer $query_id

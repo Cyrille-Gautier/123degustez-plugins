@@ -182,7 +182,7 @@ function jet_engine_render_checkbox_values( $value = null, $delimiter = ', ' ) {
 	}
 
 	if ( ! $value || ! is_array( $value ) ) {
-		return $value;
+		return wp_kses_post( $value );
 	}
 
 	$result = jet_engine_get_prepared_check_values( $value );
@@ -688,7 +688,7 @@ function jet_engine_custom_cb_date( $post_id = 0, $field = '', $format = '' ) {
 	$value = get_post_meta( $post_id, $field, true );
 
 	if ( $value ) {
-		return date_i18n( $format, $value );
+		return jet_engine_date( $format, $value );
 	} else {
 		return null;
 	}
@@ -1045,7 +1045,7 @@ function jet_engine_get_field_options_labels( $value = null, $obj_type = 'post',
 
 	foreach ( $value as $single_value ) {
 		if ( isset( $prepared_options[ $single_value ] ) ) {
-			$result[] = is_array( $prepared_options[ $single_value ] ) 
+			$result[] = is_array( $prepared_options[ $single_value ] )
 						? $prepared_options[ $single_value ]['label']
 						: $prepared_options[ $single_value ];
 		}
@@ -1222,7 +1222,7 @@ function jet_engine_datetime() {
 
 /**
  * Returns formatted date according timezone settings
- * 
+ *
  * @param  [type] $format    [description]
  * @param  [type] $timestamp [description]
  * @return [type]            [description]
@@ -1233,7 +1233,7 @@ function jet_engine_date( $format, $timestamp ) {
 
 /**
  * Retruns given user property by given user ID
- * 
+ *
  * @param  [type] $user_id [description]
  * @param  [type] $prop    [description]
  * @return [type]          [description]
@@ -1244,7 +1244,7 @@ function jet_engine_get_user_data_by_id( $user_id = 0, $prop = 'display_name' ) 
 
 /**
  * Maybe unserialize value; used in callbacks to ensure proper function
- * 
+ *
  * @param  string  $value   Input value
  * @param  string  $context Callback name given for context; or any other value so that filter may be applied selectively
  * @return mixed            Output value, serialized if allowed and needed
@@ -1265,7 +1265,7 @@ function jet_engine_maybe_unserialize( $value = '', $context = '' ) {
 
 /**
  * Maybe unserialize object properties
- * 
+ *
  * @param  object  $object  Object for which properties should be unserialized
  * @return object           Object in which serialized properties have been unserialized
  */

@@ -101,18 +101,48 @@ class Jet_Engine_User_Field_Tag extends Elementor\Core\DynamicTags\Tag {
 		}
 
 		if ( isset( $default_fields[ $user_field ] ) ) {
+
+			/**
+			 * @see https://github.com/Crocoblock/issues-tracker/issues/16819
+			 */
+			$forbidden_fields = apply_filters( 'jet-engine/forbidden-user-fields', array(
+				'user_pass',
+				'user_activation_key',
+				'user_status',
+			) );
+
+			if ( in_array( $user_field, $forbidden_fields ) ) {
+				return;
+			}
+
 			$value = jet_engine()->listings->data->get_prop( $user_field, $user_object );
+
 		} elseif ( $user_object ) {
+
+			/**
+			 * @see https://github.com/Crocoblock/issues-tracker/issues/16819
+			 */
+			$forbidden_meta = apply_filters( 'jet-engine/forbidden-user-fields', array(
+				'session_tokens',
+				'wp_capabilities',
+				'wp_user_level',
+				'wp_user-settings',
+			) );
+
+			if ( in_array( $user_field, $forbidden_meta ) ) {
+				return;
+			}
+
 			$value = get_user_meta( $user_object->ID, $user_field, true );
 		}
 
 		if ( is_array( $value ) ) {
-			echo jet_engine_render_checkbox_values( $value );
+			// Escaped in jet_engine_render_checkbox_values()
+			echo jet_engine_render_checkbox_values( $value ); // phpcs:ignore
 			return $value;
 		}
 
-		echo $value;
-
+		echo wp_kses_post( $value );
 	}
 
 	public function default_user_fields() {

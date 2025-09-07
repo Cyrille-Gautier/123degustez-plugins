@@ -211,7 +211,7 @@ class Current_WP_Query extends Posts_Query {
 
 	public function set_filtered_prop( $prop = '', $value = null ) {
 
-		if ( $this->current_wp_query && $this->current_wp_query->posts ) {
+		if ( $this->get_current_wp_query() && $this->current_wp_query->posts ) {
 			$this->current_wp_query->posts = false;
 		}
 

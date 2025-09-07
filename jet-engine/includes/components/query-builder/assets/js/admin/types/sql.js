@@ -2,6 +2,17 @@
 
 	'use strict';
 
+	Vue.component( 'jet-engine-sql-query-field', {
+		extends: window.JetEngineQueryMetaField,
+		template: '#jet-engine-sql-query-field',
+		props: [ 'field', 'metaQuery', 'dynamicQuery', 'availableColumns' ],
+		methods: {
+			setDynamicWhere: function( id, data ) {
+				this.setDynamicMeta( id, data );
+			}
+		}
+	} );
+
 	Vue.component( 'jet-sql-query', {
 		template: '#jet-sql-query',
 		mixins: [
@@ -17,6 +28,8 @@
 				dataTypes: window.JetEngineQueryConfig.data_types,
 				query: {},
 				dynamicQuery: {},
+				codeEditors: {},
+				fetchedControls: {},
 			};
 		},
 		created: function() {
@@ -24,20 +37,24 @@
 			this.query = { ...this.value };
 			this.dynamicQuery = { ...this.dynamicValue };
 
+			if ( ! this.query.custom_aliases ) {
+				this.query.custom_aliases = {};
+			}
+
 			this.presetJoin();
 			this.presetWhere();
 			this.presetOrder();
-			this.presetCols()
+			this.presetCols();
 		},
 		computed: {
 			columnSchema: function() {
-				
+
 				var result = [];
 
 				if ( this.query.table ) {
-					
+
 					let columns = this.getColumns( this.query.table );
-					
+
 					result.push( {
 						table: this.query.table,
 						columns: [ ...columns ],
@@ -65,7 +82,7 @@
 
 							let joinColumns = this.getColumns( joinTable );
 							let preparedColumns = [];
-							
+
 							joinColumns = [ ...joinColumns ];
 
 							for ( var j = 0; j < joinColumns.length; j++ ) {
@@ -117,14 +134,17 @@
 			},
 			availableOrderByColumns: function() {
 				var columns = JSON.parse( JSON.stringify( this.availableColumns ) );
-
+				
 				if ( this.query?.include_calc && this.query?.calc_cols?.length ) {
 
 					for ( var i = 0; i < this.query.calc_cols.length; i++ ) {
 						if ( this.query.calc_cols[ i ]?.column && this.query.calc_cols[ i ]?.function ) {
+							let col = this.query.calc_cols[ i ];
+							let colName = col.function + '(' + col.column + ')';
+							let colLabel = col?.column_alias ? col.column_alias + ' (calculated)' : colName;
 							columns.push( {
-								label: this.query.calc_cols[ i ].function + '(' + this.query.calc_cols[ i ].column + ')',
-								value: this.query.calc_cols[ i ].function + '(' + this.query.calc_cols[ i ].column + ')',
+								label: colLabel,
+								value: colName,
 							} );
 						}
 					}
@@ -136,6 +156,152 @@
 			},
 		},
 		methods: {
+			initEditor: function( controlName, prop ) {
+				if ( ! wp.codeEditor || ! JetEngineQueryConfig.use_CodeMirror ) {
+					return;
+				}
+
+				let codeEditorArea = this.$refs?.[ controlName ]?.$el?.querySelector( 'textarea' );
+
+				if ( ! codeEditorArea ) {
+					return;
+				}
+
+				const codeMirrorConfig = JetEngineQueryConfig.CodeMirror_config;
+
+				if ( codeMirrorConfig.jeReplaceTabs ) {
+					codeMirrorConfig.extraKeys ??= {};
+					codeMirrorConfig.extraKeys.Tab = function( cm ) {
+						let spaces = Array( cm.getOption( "tabSize" ) + 1 ).join( " " );
+						cm.replaceSelection( spaces, "end", "+input" );
+					};
+				}
+
+				const wpCodeMirror = wp.codeEditor.initialize(
+					codeEditorArea,
+					{
+						codemirror: codeMirrorConfig,
+					}
+				);
+
+				const codeMirror = wpCodeMirror.codemirror;
+
+				if ( codeMirrorConfig.jeCustomHeight ) {
+					let size = codeMirrorConfig.jeCustomHeight.toString().match( /(^\d+)(px)?/ );
+
+					if ( size ) {
+						let lineHeight = codeMirror.defaultTextHeight();
+						let height = size[ 2 ] ? size[ 1 ] : size[ 1 ] * lineHeight;
+						codeMirror.setSize( null, height );
+					}
+				}
+
+				this.codeEditors[ controlName ] = codeMirror;
+
+				codeMirror.on( 'change', ( event ) => {
+					this.$set( this.query, prop, event.getValue() );
+				} )
+			},
+			setEditorValue: function( completion, controlName ) {
+				if ( this?.codeEditors?.[ controlName ] ) {
+					this.codeEditors[ controlName ].setValue( completion );
+				} else {
+					this.$set( this.query, controlName.replace( /^query_/, '' ), completion );
+				}
+			},
+			isFetchingControl: function( controlName ) {
+				return this.fetchedControls[ controlName ] ?? false;
+			},
+			setControlFetch: function( controlName, isFetching = true ) {
+				this.$set( this.fetchedControls, controlName, isFetching );
+			},
+			prettifySQL( sql = '' ) {
+				if ( ! window.sqlFormatter || ! sql.length ) {
+					return sql;
+				}
+				
+				let result;
+				
+				result = sql.replaceAll( /%[a-z-_]+?%({.+?})?/g, '"$&"' );
+				result = window.sqlFormatter.format( result, { language: 'mysql' } );
+				
+				result = result.replaceAll(
+					/"(%[a-z-_]+?%)({[^{}]+?})?"/g,
+					function( match, macroBody, macroArgs ) {
+						if ( ! macroArgs ) {
+							return match;
+						}
+
+						return macroBody + macroArgs.replaceAll( /"\s+(.+?)\s+":"\s+(.+?)\s+"/g, '"$1":"$2"' );
+					}
+				);
+
+				return result;
+			},
+			maybeConvertToAdvanced: function( controlName ) {
+				const query = this.query;
+				
+				if ( query?.manual_query?.length || ! query.advanced_mode || ! query.table ) {
+					return;
+				}
+
+				const dynamicQuery = this.dynamicQuery;
+				const self = this;
+
+				self.setControlFetch( controlName );
+
+				self.$CXNotice.add( {
+					message: 'Converting simple query to advanced...',
+					type: 'info',
+					duration: 70000,
+				}, 'sqlConvert' );
+
+				wp.apiFetch( {
+					method: 'post',
+					path: JetEngineQueryConfig.api_path_convert_sql,
+					data: {
+						query_type: 'sql',
+						query: query,
+						dynamic_query: dynamicQuery,
+					}
+				} ).then( function( response ) {
+					self.$CXNotice.close( 'sqlConvert' );
+
+					if ( response.success ) {
+						let result = self.prettifySQL( response.data );
+
+						if ( result ) {
+							self.setEditorValue( result, 'query_manual_query' );
+
+							self.$CXNotice.add( {
+								message: 'Simple query converted to advanced',
+								type: 'success',
+								duration: 7000,
+							} );
+						}
+					} else {
+						self.$CXNotice.add( {
+							message: 'Conversion failed',
+							type: 'error',
+							duration: 7000,
+						} );
+					}
+
+					self.setControlFetch( controlName, false );
+				} ).catch( function( response ) {
+					self.$CXNotice.close( 'sqlConvert' );
+
+					self.$CXNotice.add( {
+						message: 'Conversion failed, check if Simple Mode forms a valid SQL query',
+						type: 'error',
+						duration: 7000,
+					} );
+
+					window.JetEngineSQLConverterError = response;
+
+					self.setControlFetch( controlName, false );
+				} );
+			},
 			presetJoin: function() {
 				if ( ! this.query.join_tables ) {
 					this.$set( this.query, 'join_tables', [] );
@@ -195,26 +361,35 @@
 				}
 
 				this.$set( this.dynamicQuery.where, newClause._id, newItem );
-
 			},
 			deleteDynamicWhere: function( id ) {
 				this.$delete( this.dynamicQuery.where, id );
+			},
+			setDynamicWhere: function( id, data ) {
+				this.$set( this.dynamicQuery.where, id, data );
+			},
+			addNewWhereGroup( event ) {
+				this.addNewField( event, [], this.query.where, this.newDynamicWhere, {
+					is_group: true,
+					relation: 'or',
+					args: [],
+				} );
 			},
 			getColumns: function( table ) {
 				return window.jet_query_component_sql.columns[ table ] || [];
 			},
 			getJoinTitle( item, currentIndex ) {
-				
+
 				const allColumns = [ ...this.columnSchema ];
 
 				currentIndex++;
-				
+
 				for ( var i = 0; i < allColumns.length; i++ ) {
 
 					if ( i === currentIndex ) {
 						return allColumns[ i ].table;
 					}
-					
+
 				}
 
 			},
@@ -233,7 +408,7 @@
 							options: allColumns[ i ].columns,
 						} );
 					}
-					
+
 				}
 
 				return result;

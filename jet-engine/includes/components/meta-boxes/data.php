@@ -58,8 +58,8 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes_Data' ) ) {
 			}
 
 			if ( $redirect ) {
-				wp_redirect( $this->parent->get_page_link() );
-				die();
+				wp_safe_redirect( $this->parent->get_page_link() );
+				exit;
 			} else {
 				return true;
 			}

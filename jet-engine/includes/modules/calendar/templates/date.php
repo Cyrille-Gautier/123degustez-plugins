@@ -1,6 +1,7 @@
 <?php
 /**
  * Single date template
+ * @var $this \Jet_Listing_Render_Calendar
  */
 ?>
 <td class="jet-calendar-week__day<?php echo $padclass; ?>">
@@ -21,14 +22,17 @@
 			if ( ! empty( $posts ) ) {
 				foreach ( $posts as $post ) {
 
-					$this->maybe_set_listing( $settings['lisitng_id'] );
+					$this->maybe_set_listing( absint( $settings['lisitng_id'] ) );
 					$content = jet_engine()->frontend->get_listing_item( $post );
 					$item_id = jet_engine()->listings->data->get_current_object_id( $post );
 
+					$item_attrs = $this->get_item_attrs( $post );
+
 					$result = sprintf(
-						'<div class="jet-calendar-week__day-event jet-listing-dynamic-post-%2$s" data-post-id="%2$s">%1$s</div>',
+						'<div class="jet-calendar-week__day-event jet-listing-dynamic-post-%2$s" data-post-id="%2$s" %3$s>%1$s</div>',
 						$content,
-						$item_id
+						$item_id,
+						$item_attrs
 					);
 
 					echo $result;
@@ -49,16 +53,18 @@
 					if ( ! empty( $this->posts_cache[ $post_id ] ) ) {
 						echo $this->posts_cache[ $post_id ];
 					} else {
-						
+
 						if ( $post ) {
-							
-							$this->maybe_set_listing( $settings['lisitng_id'] );
+
+							$this->maybe_set_listing( absint( $settings['lisitng_id'] ) );
 							$content = jet_engine()->frontend->get_listing_item( $post );
+							$item_attrs = $this->get_item_attrs( $post );
 
 							$result = sprintf(
-								'<div class="jet-calendar-week__day-event jet-listing-dynamic-post-%2$s" data-post-id="%2$s">%1$s</div>',
+								'<div class="jet-calendar-week__day-event jet-listing-dynamic-post-%2$s" data-post-id="%2$s" %3$s>%1$s</div>',
 								$content,
-								$post_id
+								$post_id,
+								$item_attrs
 							);
 
 							echo $result;

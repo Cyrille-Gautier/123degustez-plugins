@@ -11,6 +11,9 @@ if ( ! defined( 'WPINC' ) ) {
 class Base {
 
 	public $args         = array();
+	/**
+	 * @var \Jet_Engine\Relations\Relation
+	 */
 	public $relation     = null;
 	public $control_type = null;
 

@@ -30,10 +30,17 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 
 		$order  = ! empty( $this->final_query['order'] ) ? $this->final_query['order'] : array();
 		$args   = ! empty( $this->final_query['args'] ) ? $this->final_query['args'] : array();
+		$rel    = ! empty( $this->final_query['relation'] ) ? $this->final_query['relation'] : 'AND';
 		$search = ! empty( $this->final_query['search_query'] ) ? $this->final_query['search_query'] : array();
-		$offset = ! empty( $this->final_query['offset'] ) ? absint( $this->final_query['offset'] ) : 0;
+		$offset = ! empty( $this->final_query['offset'] ) ? $this->final_query['offset'] : 0;
 		$status = ! empty( $this->final_query['status'] ) ? $this->final_query['status'] : '';
-		$limit  = ! empty( $this->final_query['number'] ) ? absint( $this->final_query['number'] ) : 0;
+		$limit  = ! empty( $this->final_query['number'] ) ? $this->final_query['number'] : 0;
+
+		// Process macros in offset and limit
+		$offset = jet_engine()->listings->macros->do_macros( $offset );
+		$limit  = jet_engine()->listings->macros->do_macros( $limit );
+		$offset = absint( $offset );
+		$limit  = absint( $limit );
 
 		$flag = \OBJECT;
 		$content_type->db->set_format_flag( $flag );
@@ -44,11 +51,13 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 				'operator' => '=',
 				'value'    => $status,
 			);
+
+			$rel = 'AND';
 		}
 
 		$content_type->db->set_query_object( $this );
 
-		$args = $content_type->prepare_query_args( $args );
+		$args = $content_type->prepare_query_args( $this->extract_nested( $args ) );
 
 		if ( ! empty( $order ) ) {
 			foreach( $order as $i => $order_item ) {
@@ -71,10 +80,44 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 			);
 		}
 
-		$result = $content_type->db->query( $args, $limit, $offset, $order );
+		$result = $content_type->db->query( $args, $limit, $offset, $order, $rel );
 
 		return $result;
 
+	}
+
+	/**
+	 * Extract nested query arguments
+	 *
+	 * @param array $args
+	 * @return array
+	 */
+	public function extract_nested( $args = [] ) {
+
+		if ( empty( $args ) ) {
+			return array();
+		}
+
+		foreach ( $args as $index => $row ) {
+
+			if ( ! empty( $row['is_group'] )
+				&& ! empty( $row['args'] )
+				&& is_array( $row['args'] )
+			) {
+
+				$relation = ! empty( $row['relation'] ) ? strtoupper( $row['relation'] ) : 'AND';
+				$relation = in_array( $relation, array( 'AND', 'OR' ), true ) ? $relation : 'AND';
+
+				$args[ $index ] = array_merge(
+					array(
+						'relation' => $relation,
+					),
+					$row['args']
+				);
+			}
+		}
+
+		return $args;
 	}
 
 	/**
@@ -166,6 +209,7 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 		}
 
 		$args   = ! empty( $this->final_query['args'] ) ? $this->final_query['args'] : array();
+		$rel	= ! empty( $this->final_query['relation'] ) ? $this->final_query['relation'] : 'AND';
 		$status = ! empty( $this->final_query['status'] ) ? $this->final_query['status'] : '';
 
 		if ( $status ) {
@@ -174,12 +218,14 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 				'operator' => '=',
 				'value'    => $status,
 			);
+
+			$rel = 'AND';
 		}
 
 		$content_type->db->set_query_object( $this );
 
-		$args   = $content_type->prepare_query_args( $args );
-		$result = $content_type->db->count( $args );
+		$args   = $content_type->prepare_query_args( $this->extract_nested( $args ) );
+		$result = $content_type->db->count( $args, $rel );
 
 
 		$this->update_query_cache( $result, 'count' );
@@ -264,6 +310,10 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 
 				break;
 
+			case '_items_per_page':
+				$this->final_query['number'] = $value;
+				break;
+
 			case 'orderby':
 			case 'order':
 			case 'meta_key':
@@ -288,8 +338,8 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 
 				break;
 
-			default: 
-				
+			default:
+
 				$this->merge_default_props( $prop, $value );
 				break;
 
@@ -305,6 +355,17 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 	 */
 	public function prepare_args_row( $row ) {
 
+		// Added by Photon to fix an issue with regex meta queries.
+		// Note: the previous fix only addressed filtering by checkbox meta fields.
+		// In CCT, $args = wp_unslash( $args ); was previously called in the prepare_query_args method
+		// of the Factory class (namespace Jet_Engine\Modules\Custom_Content_Types).
+		// This new fix applies the same logic here as it’s done for CPT.
+		// Previous issue: https://github.com/Crocoblock/issues-tracker/issues/833
+		// Current issue: https://github.com/Crocoblock/issues-tracker/issues/15446
+		if ( isset( $row['compare'] ) && $row['compare'] === 'REGEXP' ) {
+			$row = wp_unslash( $row );
+		}
+
 		if ( ! empty( $row['relation'] ) ) {
 
 			$prepared_row = array(
@@ -318,6 +379,7 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 			}
 
 		} else {
+
 			$prepared_row = array(
 				'field'    => ! empty( $row['key'] ) ? $row['key'] : false,
 				'operator' => ! empty( $row['compare'] ) ? $row['compare'] : '=',
@@ -381,7 +443,7 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 	/**
 	 * Adds date range query arguments to given query parameters.
 	 * Required to allow ech query to ensure compatibility with Dynamic Calendar
-	 * 
+	 *
 	 * @param array $args [description]
 	 */
 	public function add_date_range_args( $args = array(), $dates_range = array(), $settings = array() ) {
@@ -409,7 +471,7 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 				if ( $settings['group_by_key'] ) {
 					$meta_key = esc_attr( $settings['group_by_key'] );
 				}
-				
+
 				$calendar_query = array();
 
 				if ( $meta_key ) {

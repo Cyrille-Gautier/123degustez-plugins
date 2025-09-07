@@ -44,6 +44,8 @@ class Exclude_Posts extends Include_Posts {
 	 * @return array
 	 */
 	public function get_control() {
+
+		// phpcs:disable
 		ob_start();
 		?>
 		<cx-vui-f-select
@@ -54,25 +56,26 @@ class Exclude_Posts extends Include_Posts {
 			:remote-callback="getPosts"
 			size="fullwidth"
 			:multiple="true"
-			:style="conditionControlsInlineCSS( '<?php echo $this->get_key(); ?>' )"
+			:style="conditionControlsInlineCSS( '<?php echo esc_js( $this->get_key() ); ?>' )"
 			:conditions="[
 				{
 					input: this.generalSettings.object_type,
 					compare: 'in',
-					value: <?php echo htmlentities( json_encode( $this->allowed_sources() ) ) ?>,
+					value: <?php echo esc_html( wp_json_encode( $this->allowed_sources() ) ) ?>,
 				},
 				{
-					input: '<?php echo $this->get_key() ?>',
+					input: '<?php echo esc_html( $this->get_key() ) ?>',
 					compare: 'in',
 					value: this.generalSettings.active_conditions,
 				}
 			]"
-			v-model="generalSettings.<?php echo $this->get_key() ?>"
-			ref="<?php echo $this->get_key() ?>"
-		><?php echo $this->remove_button(); ?></cx-vui-f-select>
+			v-model="generalSettings.<?php echo esc_attr( $this->get_key() ) ?>"
+			ref="<?php echo esc_attr( $this->get_key() ) ?>"
+		><?php echo $this->remove_button(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></cx-vui-f-select>
 		<?php
 
 		return ob_get_clean();
+		// phpcs:enable
 
 	}
 

@@ -74,6 +74,7 @@ class Jet_Engine_Dynamic_Function_Tag extends Elementor\Core\DynamicTags\Tag {
 
 		$custom_settings = jet_engine()->dynamic_functions->get_custom_settings( $function_name, $this );
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo jet_engine()->dynamic_functions->call_function( $function_name, $data_source, $field_name, $custom_settings );
 	}
 

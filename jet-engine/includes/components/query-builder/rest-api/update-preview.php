@@ -37,9 +37,11 @@ class Update_Preview extends \Jet_Engine_Base_API_Endpoint {
 
 		$this->setup_preview( $preview );
 
+		$query_name = $params['general_settings']['name'] ?? '';
+
 		$factory = new \Jet_Engine\Query_Builder\Query_Factory( array(
 			'id'     => $params['query_id'],
-			'lables' => array( 'name' => 'Preview' ),
+			'labels' => array( 'name' => ! empty( $query_name ) ? sprintf( 'Preview (%s)', $query_name ) : 'Preview' ),
 			'args'   => array(
 				'query_type'         => $type,
 				$type                => $params['query'],

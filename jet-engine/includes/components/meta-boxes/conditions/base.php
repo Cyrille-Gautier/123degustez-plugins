@@ -49,15 +49,17 @@ abstract class Base {
 	 * @return [type] [description]
 	 */
 	public function remove_button() {
+		// phpcs:disable
 		?>
 		<cx-vui-button
 			button-style="link-error"
 			size="mini"
-			@click="removeCondition( '<?php echo $this->get_key(); ?>' )"
+			@click="removeCondition( '<?php echo esc_js( $this->get_key() ); ?>' )"
 		>
 			<span slot="label">&times; <?php _e( 'Remove', 'jet-engine' ); ?></span>
 		</cx-vui-button>
 		<?php
+		// phpcs:enable
 	}
 
 	/**
@@ -86,7 +88,7 @@ abstract class Base {
 		$control = $this->get_control();
 
 		if ( $control ) {
-			echo $control;
+			echo $control; // phpcs:ignore
 		}
 
 	}

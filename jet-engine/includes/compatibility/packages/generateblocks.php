@@ -34,6 +34,7 @@ if ( ! class_exists( 'Jet_Engine_Generate_Blocks_Package' ) ) {
 
 		public function enable_enqueue_css_for_lazy_load () {
 
+			// phpcs:disable WordPress.Security.NonceVerification
 			if ( empty( $_REQUEST['handler'] ) || 'get_listing' !== $_REQUEST['handler'] ) {
 				return;
 			}
@@ -41,6 +42,7 @@ if ( ! class_exists( 'Jet_Engine_Generate_Blocks_Package' ) ) {
 			if ( empty( $_REQUEST['widget_settings'] ) || empty( $_REQUEST['widget_settings']['lazy_load'] ) ) {
 				return;
 			}
+			// phpcs:enable WordPress.Security.NonceVerification
 
 			$this->is_lazy_load = true;
 

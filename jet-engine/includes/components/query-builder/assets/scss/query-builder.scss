@@ -1,8 +1,29 @@
 .cx-vui-component--has-macros {
-	.cx-vui-component__control {
+	> .cx-vui-component__control {
 		display: flex;
 		position: relative;
 		align-items: flex-start;
+		flex-wrap: wrap;
+		> input,
+		> textarea,
+		> select {
+			flex: 0 0 calc(100% - 32px);
+		}
+	}
+}
+
+.cx-vui-component.cx-vui-component--mini-label {
+	padding: 5px 0 !important;
+}
+
+.jet-engine-exclude-empty-toggle {
+	cursor: pointer;
+	margin: 5px 0 0;
+	display: flex;
+	font-size: 12px;
+	color: #7B7E81;
+	input {
+		margin: 1px 5px 0 0;
 	}
 }
 
@@ -89,6 +110,7 @@
 .jet-ai-query {
 	&__trigger {
 		position: absolute;
+		z-index: 10;
 		right: 8px;
 		top: 8px;
 		border: 1px solid #DCDCDD;
@@ -382,6 +404,18 @@
 	}
 }
 
+.jet-engine-query-builder__field {
+	.cx-vui-popup {
+		.cx-vui-popup__footer {
+			justify-content: flex-end;
+			padding: 0;
+			button {
+				margin-top: -32px;
+			}
+		}
+	}
+}
+
 .cx-vui-inner-panel.query-panel {
 	padding: 20px;
 	.cx-vui-panel {
@@ -403,6 +437,7 @@
 .jet-query-macros {
 	width: 32px;
 	height: 32px;
+	flex: 0 0 32px;
 	&__config {
 		text-align: right;
 		margin: -12px -10px 10px 0;
@@ -486,6 +521,9 @@
 					}
 				}
 			}
+		}
+		.cx-vui-component--has-empty-toggle & {
+			height: 32px;
 		}
 	}
 	&__back {
@@ -596,6 +634,7 @@
 	code {
 		display: block;
 		padding: 15px 35px 15px 15px;
+		white-space: pre-wrap;
 	}
 }
 .jet-engine-query-builder-api-error {
@@ -681,4 +720,8 @@
 			margin-left: -135px !important;
 		}
 	}
+}
+.CodeMirror-wrap {
+    border: 1px solid #ececec;
+    border-radius: 4px;
 }

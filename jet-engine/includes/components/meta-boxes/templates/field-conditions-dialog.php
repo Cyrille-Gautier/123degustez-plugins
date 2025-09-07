@@ -6,14 +6,14 @@
 	:footer="false"
 >
 	<div class="cx-vui-subtitle" slot="title">
-		<?php _e( 'Conditional Logic for', 'jet-engine' ); ?>
+		<?php _e( 'Conditional Logic for', 'jet-engine' ); // phpcs:ignore ?>
 		<span class="jet-engine-condition-field-name" v-html="field.title"></span>
-		<?php _e( 'Field', 'jet-engine' ); ?>
+		<?php _e( 'Field', 'jet-engine' ); // phpcs:ignore ?>
 	</div>
 	<template slot="content">
 		<cx-vui-switcher
-			label="<?php _e( 'Enable Conditional Logic', 'jet-engine' ); ?>"
-			description="<?php _e( 'Toggle this option to set display rules.', 'jet-engine' ); ?>"
+			label="<?php _e( 'Enable Conditional Logic', 'jet-engine' ); // phpcs:ignore ?>"
+			description="<?php _e( 'Toggle this option to set display rules.', 'jet-engine' ); // phpcs:ignore ?>"
 			:wrapper-css="[ 'equalwidth' ]"
 			v-model="isEnabled"
 		></cx-vui-switcher>
@@ -29,7 +29,7 @@
 		>
 			<div class="cx-vui-inner-panel">
 				<cx-vui-repeater
-					:button-label="'<?php _e( 'New Rule', 'jet-engine' ); ?>'"
+					:button-label="'<?php _e( 'New Rule', 'jet-engine' ); // phpcs:ignore ?>'"
 					:button-style="'accent'"
 					:button-size="'mini'"
 					v-model="conditions"
@@ -47,7 +47,7 @@
 						:key="condition.id ? condition.id : condition.id = getRandomID()"
 					>
 						<cx-vui-select
-							:label="'<?php _e( 'Field', 'jet-engine' ); ?>'"
+							:label="'<?php _e( 'Field', 'jet-engine' ); // phpcs:ignore ?>'"
 							:wrapper-css="[ 'equalwidth' ]"
 							:size="'fullwidth'"
 							:options-list="getConditionFieldsList()"
@@ -55,7 +55,7 @@
 							@input="setConditionProp( conditionIndex, 'field', $event )"
 						></cx-vui-select>
 						<cx-vui-select
-							:label="'<?php _e( 'Operator', 'jet-engine' ); ?>'"
+							:label="'<?php _e( 'Operator', 'jet-engine' ); // phpcs:ignore ?>'"
 							:wrapper-css="[ 'equalwidth' ]"
 							:size="'fullwidth'"
 							:options-list="getOperatorsList( conditionIndex )"
@@ -63,7 +63,7 @@
 							@input="setConditionProp( conditionIndex, 'operator', $event )"
 						></cx-vui-select>
 						<cx-vui-input
-							:label="'<?php _e( 'Value', 'jet-engine' ); ?>'"
+							:label="'<?php _e( 'Value', 'jet-engine' ); // phpcs:ignore ?>'"
 							:wrapper-css="[ 'equalwidth' ]"
 							:size="'fullwidth'"
 							:value="conditions[ conditionIndex ].value"
@@ -85,21 +85,21 @@
 								v-if="-1 !== ['in', 'not_in'].indexOf( conditions[ conditionIndex ].operator )"
 								style="padding-top:4px;font-style:italic"
 							>
-								<?php _e( 'Separate multiple values with comma', 'jet-engine' ); ?>
+								<?php _e( 'Separate multiple values with comma', 'jet-engine' ); // phpcs:ignore ?>
 							</div>
 						</cx-vui-input>
 						<cx-vui-select
-							:label="'<?php _e( 'Value', 'jet-engine' ); ?>'"
+							:label="'<?php _e( 'Value', 'jet-engine' ); // phpcs:ignore ?>'"
 							:wrapper-css="[ 'equalwidth' ]"
 							:size="'fullwidth'"
 							:options-list="[
 								{
 									value: 'true',
-									label: '<?php _e( 'On', 'jet-engine' ); ?>',
+									label: '<?php _e( 'On', 'jet-engine' ); // phpcs:ignore ?>',
 								},
 								{
 									value: 'false',
-									label: '<?php _e( 'Off', 'jet-engine' ); ?>',
+									label: '<?php _e( 'Off', 'jet-engine' ); // phpcs:ignore ?>',
 								}
 							]"
 							:value="conditions[ conditionIndex ].value"
@@ -118,7 +118,7 @@
 							]"
 						></cx-vui-select>
 						<cx-vui-f-select
-							:label="'<?php _e( 'Value', 'jet-engine' ); ?>'"
+							:label="'<?php _e( 'Value', 'jet-engine' ); // phpcs:ignore ?>'"
 							:wrapper-css="[ 'equalwidth' ]"
 							:size="'fullwidth'"
 							:options-list="getConditionValuesList( conditionIndex )"
@@ -141,7 +141,7 @@
 							]"
 						></cx-vui-f-select>
 						<cx-vui-f-select
-							:label="'<?php _e( 'Value', 'jet-engine' ); ?>'"
+							:label="'<?php _e( 'Value', 'jet-engine' ); // phpcs:ignore ?>'"
 							:wrapper-css="[ 'equalwidth' ]"
 							:size="'fullwidth'"
 							:multiple="true"
@@ -169,17 +169,17 @@
 			</div>
 		</cx-vui-component-wrapper>
 		<cx-vui-select
-			label="<?php _e( 'Relation', 'jet-engine' ); ?>"
-			description="<?php _e( 'The logical relationship between conditional rules', 'jet-engine' ); ?>"
+			label="<?php _e( 'Relation', 'jet-engine' ); // phpcs:ignore ?>"
+			description="<?php _e( 'The logical relationship between conditional rules', 'jet-engine' ); // phpcs:ignore ?>"
 			:wrapper-css="[ 'equalwidth' ]"
 			:options-list="[
 				{
 					value: 'AND',
-					label: '<?php _e( 'And', 'jet-engine' ); ?>',
+					label: '<?php _e( 'And', 'jet-engine' ); // phpcs:ignore ?>',
 				},
 				{
 					value: 'OR',
-					label: '<?php _e( 'Or', 'jet-engine' ); ?>',
+					label: '<?php _e( 'Or', 'jet-engine' ); // phpcs:ignore ?>',
 				},
 			]"
 			size="fullwidth"
