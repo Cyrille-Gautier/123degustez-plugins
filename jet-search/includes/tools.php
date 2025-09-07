@@ -38,7 +38,7 @@ if ( ! class_exists( 'Jet_Search_Tools' ) ) {
 				$result[ $slug ] = $post_type->label;
 			}
 
-			return $result;
+			return apply_filters( 'jet-search/tools/get-post-types', $result );
 		}
 
 		/**
@@ -609,7 +609,7 @@ if ( ! class_exists( 'Jet_Search_Tools' ) ) {
 				$render = $source->render();
 
 				if ( ! empty( $render ) ) {
-					echo $render[0];
+					echo $render[0]; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 			}
 		}
@@ -625,7 +625,7 @@ if ( ! class_exists( 'Jet_Search_Tools' ) ) {
 
 			if ( ! empty( $custom_atts ) ) {
 				foreach ( $custom_atts as $key => $value ) {
-					$custom_atts_string .= sprintf( ' %1$s="%2$s"', $key, $value );
+					$custom_atts_string .= sprintf( ' %1$s="%2$s"', esc_attr( $key ), esc_attr( $value ) );
 				}
 			}
 
@@ -635,7 +635,7 @@ if ( ! class_exists( 'Jet_Search_Tools' ) ) {
 
 				ob_start();
 
-				echo '<div class="' . $icon_class . ' is-svg-icon"' . $custom_atts_string . '>';
+				echo '<div class="' . esc_attr( $icon_class ) . ' is-svg-icon"' . $custom_atts_string . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 				$mime = get_post_mime_type( $icon );
 
@@ -660,8 +660,8 @@ if ( ! class_exists( 'Jet_Search_Tools' ) ) {
 
 				ob_start();
 
-				echo '<div class="' . $icon_class . ' is-svg-icon"' . $custom_atts_string . '>';
-				echo $icon;
+				echo '<div class="' . esc_attr( $icon_class ) . ' is-svg-icon"' . $custom_atts_string . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo '</div>';
 
 				return ob_get_clean();
@@ -672,15 +672,15 @@ if ( ! class_exists( 'Jet_Search_Tools' ) ) {
 
 				ob_start();
 
-				echo '<div class="' . $icon_class . '">';
-				echo $icon;
+				echo '<div class="' . esc_attr( $icon_class ) . '">';
+				echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo '</div>';
 
 				return ob_get_clean();
 			}
 			// Bricks font icon with array value
 			elseif ( is_array( $icon ) && isset( $icon['library'] ) && isset( $icon['icon'] ) ) {
-				return sprintf( '<div class="%1$s"><i class="%2$s"></i></div>', $icon_class, $icon['icon'] );
+				return sprintf( '<div class="%1$s"><i class="%2$s"></i></div>', esc_attr( $icon_class ), $icon['icon'] );
 			}
 
 			// Pre-process Gutenberg icon
@@ -691,7 +691,7 @@ if ( ! class_exists( 'Jet_Search_Tools' ) ) {
 				if ( is_array( $icon ) && ! empty( $icon['src'] ) ) {
 					$icon_src = $icon['src'];
 
-					return sprintf( '<div class="%1$s is-svg-icon"%2$s>%3$s</div>', $icon_class, $custom_atts_string, $icon_src );
+					return sprintf( '<div class="%1$s is-svg-icon"%2$s>%3$s</div>', esc_attr( $icon_class ), $custom_atts_string, $icon_src );
 				}
 			}
 
@@ -716,7 +716,7 @@ if ( ! class_exists( 'Jet_Search_Tools' ) ) {
 						$html = str_replace( $icon_class . ' ', '', $html );
 					}
 
-					$html = sprintf( '<div class="%1$s is-svg-icon"%2$s>%3$s</div>', $icon_class, $custom_atts_string, $html );
+					$html = sprintf( '<div class="%1$s is-svg-icon"%2$s>%3$s</div>', esc_attr( $icon_class ), $custom_atts_string, $html );
 				}
 
 				return $html;
@@ -770,7 +770,7 @@ if ( ! class_exists( 'Jet_Search_Tools' ) ) {
 		}
 
 		public static function maybe_add_enqueue_assets_data( &$response ) {
-			if ( isset( $_REQUEST['isEditMode'] ) && filter_var( $_REQUEST['isEditMode'], FILTER_VALIDATE_BOOLEAN ) ) {
+			if ( isset( $_REQUEST['isEditMode'] ) && filter_var( $_REQUEST['isEditMode'], FILTER_VALIDATE_BOOLEAN ) ) { // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 				return;
 			}
 

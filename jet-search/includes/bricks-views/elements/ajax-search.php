@@ -5231,12 +5231,12 @@ class Jet_Search_Bricks_Ajax_Search extends Base {
 		$this->set_attribute( '_root', 'class', 'brxe-jet-search-el' );
 		$this->set_attribute( '_root', 'data-element-id', $this->id );
 
-		echo "<div {$this->render_attributes( '_root' )}>";
+		echo "<div {$this->render_attributes( '_root' )}>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		$render = new \Jet_Search_Render( $settings, $element_id );
 		$render->render();
 
-		echo "<style>" . $inline_css . "</style>";
+		echo "<style>" . $inline_css . "</style>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo "</div>";
 	}
 

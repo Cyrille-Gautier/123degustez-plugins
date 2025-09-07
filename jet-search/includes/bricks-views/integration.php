@@ -104,13 +104,13 @@ class Jet_Search_Bricks_Integration {
 
 		// is API request
 		$bricks_request_str = 'wp-json/bricks/v1/render_element';
-		$is_api = ( ! empty( $_SERVER['REQUEST_URI'] ) && false !== strpos( $_SERVER['REQUEST_URI'], $bricks_request_str ) );
+		$is_api = ( ! empty( $_SERVER['REQUEST_URI'] ) && false !== strpos( $_SERVER['REQUEST_URI'], $bricks_request_str ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 		// is AJAX request
-		$is_ajax = ( ! empty( $_REQUEST['action'] ) && 'bricks_render_element' === $_REQUEST['action'] );
+		$is_ajax = ( ! empty( $_REQUEST['action'] ) && 'bricks_render_element' === $_REQUEST['action'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		// Is editor iframe
-		$is_editor = ( ! empty( $_REQUEST['bricks'] ) && 'run' === $_REQUEST['bricks'] );
+		$is_editor = ( ! empty( $_REQUEST['bricks'] ) && 'run' === $_REQUEST['bricks'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		return $is_api || $is_ajax || $is_editor;
 	}

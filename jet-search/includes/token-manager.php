@@ -98,9 +98,9 @@ if ( ! class_exists( 'Jet_Search_Token_Manager' ) ) {
          */
         public function generate_token() {
             if ( array_key_exists( 'HTTP_X_FORWARDED_FOR', $_SERVER ) ) {
-                $ip_address = $_SERVER["HTTP_X_FORWARDED_FOR"];
-            } else {
-                $ip_address = $_SERVER['REMOTE_ADDR'];
+                $ip_address = $_SERVER["HTTP_X_FORWARDED_FOR"]; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+            } elseif ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
+                $ip_address = $_SERVER['REMOTE_ADDR']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
             }
 
             $nonce_salt = defined('NONCE_SALT') ? NONCE_SALT : '';

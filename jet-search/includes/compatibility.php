@@ -234,24 +234,19 @@ if ( ! class_exists( 'Jet_Search_Compatibility' ) ) {
 			}
 
 			if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) ) {
-				$instance->search_query['meta_query'] = array( 'relation'  => 'OR' );
+				$product_visibility_term_ids  = function_exists( 'wc_get_product_visibility_term_ids' )
+					? wc_get_product_visibility_term_ids()
+					: array();
 
-				array_push(
-					$instance->search_query['meta_query'],
-					array(
-						'key'     => '_stock_status',
-						'value'   => 'outofstock',
-						'compare' => 'NOT LIKE'
-					)
-				);
+				if ( isset( $product_visibility_term_ids['outofstock'] ) ) {
+					$instance->search_query['tax_query'][] = array(
+						'taxonomy' => 'product_visibility',
+						'field'    => 'term_taxonomy_id',
+						'terms'    => array( (int) $product_visibility_term_ids['outofstock'] ),
+						'operator' => 'NOT IN',
+					);
+				}
 
-				array_push(
-					$instance->search_query['meta_query'],
-					array(
-						'key'     => '_stock_status',
-						'compare' => 'NOT EXISTS'
-					)
-				);
 			}
 
 			return $instance;

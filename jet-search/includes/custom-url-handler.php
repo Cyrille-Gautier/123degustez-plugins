@@ -85,11 +85,11 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 			if ( is_admin() || ! is_archive() || ! $query->is_main_query() ) {
 				return;
 			}
-
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			if ( isset( $_GET['jet_search'] ) && empty( $query->get('s') ) ) {
 				$query->set( 's', sanitize_text_field( $_GET['jet_search'] ) );
 			}
-
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$args = $this->get_settings();
 			$this->set_query_settings( $args );
 
@@ -106,7 +106,7 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 				}
 			}
 
-			if ( isset( $args['results_order_by'] ) && ( is_shop() || is_product_taxonomy() ) ) {
+			if ( isset( $args['results_order_by'] ) && function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() ) ) {
 				$order_by = strtolower( $args['results_order_by'] );
 				$order    = strtoupper( ! empty( $args['results_order'] ) ? $args['results_order'] : 'ASC' );
 
@@ -280,7 +280,7 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 		public function get_search_string() {
 
 			$search_key    = jet_search_ajax_handlers()->get_custom_search_query_param();
-			$search_string = isset( $_REQUEST[ $search_key ] ) ? $_REQUEST[ $search_key ] : false;
+			$search_string = isset( $_REQUEST[ $search_key ] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ $search_key ] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 			return $search_string;
 
@@ -395,7 +395,7 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 				}
 
 				if ( function_exists( 'jet_smart_filters' ) ) {
-					$sort = isset( $_REQUEST['query']['_sort_standard'] ) || isset( $_REQUEST['sort'] ) ? true : false;
+					$sort = isset( $_REQUEST['query']['_sort_standard'] ) || isset( $_REQUEST['sort'] ) ? true : false; // phpcs:ignore WordPress.Security.NonceVerification
 
 					if ( $sort ) {
 						unset( $this->search_query['orderby']);
@@ -470,6 +470,11 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 				if ( ! empty( $args['custom_fields_source'] ) ) {
 					$this->search_query['post_type'] = Jet_Search_Tools::custom_fields_post_type_update( $args['custom_fields_source'], $this->search_query['post_type'] );
 				}
+
+				/**
+				 * Allow filtering of final search query.
+				 */
+				$this->search_query = apply_filters( 'jet-search/ajax-search/query-args', $this->search_query, $args );
 
 				do_action( 'jet-search/ajax-search/search-query', $this, $args );
 			}

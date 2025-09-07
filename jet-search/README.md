@@ -4,6 +4,29 @@ The best tool for adding complex search functionality to pages built with Elemen
 
 # ChangeLog
 
+# 3.5.13
+* FIX: prevent fatal error on incorrect JSON in Jet_Search_Ajax_Handlers;
+* FIX: replace _stock_status meta_query with product_visibility taxonomy to improve query performance;
+* FIX: show custom attributes in “Taxonomies” selector ( global settings ).
+
+# 3.5.12
+* FIX: WP Security Standards.
+
+# 3.5.11
+* ADD: jet-search/tools/get-post-types filter to modify the CPT list;
+* UPD: jet-search/ajax-search/thumbnail-html and jet-search/ajax-search/thumbnail-placeholder-html hooks;
+* FIX: apply escaping to dynamic classes and attributes for proper HTML output;
+* FIX: minor issues.
+
+# 3.5.10.1
+* ADD: sanitize user input and escape output to prevent potential XSS in Search Suggestions widget;
+* FIX: sanitize and typecast term and post ID filters as arrays in Ajax Search Tax Query.
+
+# 3.5.10
+* ADD: trigger 'jet-ajax-search/show-results/listing' for compatibility;
+* UPD: support 'jet-search/ajax-search/query-args' filter on Results and Custom Results pages;
+* FIX: apply focus to search field when popup entrance animation is active.
+
 # 3.5.9
 * ADD: `Target Widget ID ( optional )` compatibility for Archive Templates;
 * ADD: support for custom attributes in 'Search in taxonomy terms' for Bricks and Gutenberg;

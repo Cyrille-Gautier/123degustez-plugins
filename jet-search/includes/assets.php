@@ -379,7 +379,7 @@ if ( ! class_exists( 'Jet_Search_Assets' ) ) {
 					$content_search
 				);
 
-				echo $search_output;
+				echo $search_output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 
 			if ( ! empty( $content_search_suggestions_focus ) ) {
@@ -390,7 +390,7 @@ if ( ! class_exists( 'Jet_Search_Assets' ) ) {
 					$content_search_suggestions_focus
 				);
 
-				echo $search_suggestions_focus_output;
+				echo $search_suggestions_focus_output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 
 			if ( ! empty( $content_search_suggestions_inline ) ) {
@@ -401,7 +401,7 @@ if ( ! class_exists( 'Jet_Search_Assets' ) ) {
 					$content_search_suggestions_inline
 				);
 
-				echo $search_suggestions_inline_output;
+				echo $search_suggestions_inline_output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 
 			if ( ! empty( $content_ajax_search_suggestions_inline ) ) {
@@ -412,7 +412,7 @@ if ( ! class_exists( 'Jet_Search_Assets' ) ) {
 					$content_ajax_search_suggestions_inline
 				);
 
-				echo $content_ajax_search_suggestions_inline_output;
+				echo $content_ajax_search_suggestions_inline_output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 
 			if ( ! empty( $content_ajax_search_suggestions_results ) ) {
@@ -423,7 +423,7 @@ if ( ! class_exists( 'Jet_Search_Assets' ) ) {
 					$content_ajax_search_suggestions_results
 				);
 
-				echo $content_ajax_search_suggestions_results_output;
+				echo $content_ajax_search_suggestions_results_output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		}
 

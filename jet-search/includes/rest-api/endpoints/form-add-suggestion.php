@@ -107,14 +107,14 @@ class Jet_Search_Rest_Form_Add_Suggestion extends Jet_Search_Rest_Base_Route {
 	 */
 	public function permission_callback( $request ) {
 
-		if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
-			$referer         = parse_url( $_SERVER['HTTP_REFERER'] );
-			$currentSiteHost = parse_url( $_SERVER['HTTP_HOST'] );
+		if ( isset( $_SERVER['HTTP_REFERER'], $_SERVER['HTTP_HOST'] ) ) {
+			$referer         = parse_url( $_SERVER['HTTP_REFERER'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$currentSiteHost = parse_url( $_SERVER['HTTP_HOST'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 			if ( isset( $currentSiteHost['host'] ) || isset( $currentSiteHost['path'] ) ) {
 				$currentSite['host'] = isset( $currentSiteHost['host'] ) ? $currentSiteHost['host'] : $currentSiteHost['path'];
-			} else {
-				$currentSite = parse_url( '//' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] );
+			} elseif ( isset( $_SERVER['SERVER_NAME'], $_SERVER['REQUEST_URI'] ) ) {
+				$currentSite = parse_url( '//' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			}
 
 			if ( $referer['host'] !== ( $currentSite['host'] ) ) {

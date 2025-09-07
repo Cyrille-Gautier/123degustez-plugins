@@ -35,7 +35,7 @@ if ( ! class_exists( 'Jet_Search_Template_Functions' ) ) {
 				return '';
 			}
 
-			$thumbnail_format = apply_filters( 'jet-search/ajax-search/thumbnail-html', '<div class="jet-ajax-search__item-thumbnail">%s</div>' );
+			$thumbnail_format = apply_filters( 'jet-search/ajax-search/thumbnail-html', '<div class="jet-ajax-search__item-thumbnail">%s</div>', $post, $data );
 			$thumbnail_size   = ! empty( $data['thumbnail_size'] ) ? $data['thumbnail_size'] : 'thumbnail';
 			$thumbnail_attr   = array( 'class' => 'jet-ajax-search__item-thumbnail-img' );
 			$thumbnail_html   = get_the_post_thumbnail( $post->ID, $thumbnail_size, $thumbnail_attr );
@@ -58,7 +58,9 @@ if ( ! class_exists( 'Jet_Search_Template_Functions' ) ) {
 				} else {
 					$thumbnail_html = apply_filters(
 						'jet-search/ajax-search/thumbnail-placeholder-html',
-						'<div class="jet-ajax-search__item-thumbnail-placeholder"></div>'
+						'<div class="jet-ajax-search__item-thumbnail-placeholder"></div>',
+						$post,
+						$data
 					);
 				}
 			}

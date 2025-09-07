@@ -31,6 +31,37 @@
 				}
 			);
 
+			window.addEventListener( 'elementor/popup/show', ( event ) => {
+				const instance = event.detail.instance;
+
+				const interval = setInterval( () => {
+
+					if ( ! instance.keyboardHandler ) return;
+
+					const handler = instance.keyboardHandler;
+					const config  = handler.config;
+
+					if ( ! config || ! config.$modalElements ) return;
+
+					if ( handler.changeFocusAfterAnimation !== true ) {
+						clearInterval( interval );
+						return;
+					}
+
+					const $input = instance.$element.find('.jet-ajax-search__field');
+
+					if ( $input.length ) {
+						handler.firstFocusableElement = $input[0];
+					}
+
+					clearInterval( interval );
+
+				}, 50) ;
+
+				setTimeout( () => clearInterval( interval ), 1000 );
+
+			});
+
 			/*
 			// Example of usage AJAX success trigger
 			$( document ).on( 'jet-ajax-search/show-results', function( event, searchResults ) {
@@ -1481,6 +1512,8 @@
 					}
 
 					resultsList.css( 'height', 'auto' );
+
+					$( document ).trigger( 'jet-ajax-search/show-results/listing', [ resultsListInner ] );
 
 					resultsHolder.addClass( 'show' );
 

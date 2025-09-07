@@ -75,25 +75,27 @@ class Jet_Search_Render {
 
 	}
 
+	// phpcs:disable WordPress.Security.NonceVerification
 	public function preview_results() {
-		$preview = ! empty( $_GET['previewResults'] ) ? filter_var( $_GET['previewResults'], FILTER_VALIDATE_BOOLEAN ) : false;
+		$preview = ! empty( $_GET['previewResults'] ) ? filter_var( wp_unslash( $_GET['previewResults'] ), FILTER_VALIDATE_BOOLEAN ) : false;
 		return ( ! empty( $_GET['context'] ) && 'edit' === $_GET['context'] && $preview );
 	}
 
 	public function preview_results_suggestions() {
-		$preview = ! empty( $_GET['previewResultsSuggestionsItems'] ) ? filter_var( $_GET['previewResultsSuggestionsItems'], FILTER_VALIDATE_BOOLEAN ) : false;
+		$preview = ! empty( $_GET['previewResultsSuggestionsItems'] ) ? filter_var( wp_unslash( $_GET['previewResultsSuggestionsItems'] ), FILTER_VALIDATE_BOOLEAN ) : false;
 		return ( ! empty( $_GET['context'] ) && 'edit' === $_GET['context'] && $preview );
 	}
 
 	public function preview_focus_suggestions() {
-		$preview = ! empty( $_GET['previewFocusSuggestionsItems'] ) ? filter_var( $_GET['previewFocusSuggestionsItems'], FILTER_VALIDATE_BOOLEAN ) : false;
+		$preview = ! empty( $_GET['previewFocusSuggestionsItems'] ) ? filter_var( wp_unslash( $_GET['previewFocusSuggestionsItems'] ), FILTER_VALIDATE_BOOLEAN ) : false;
 		return ( ! empty( $_GET['context'] ) && 'edit' === $_GET['context'] && $preview );
 	}
 
 	public function preview_inline_suggestions() {
-		$preview = ! empty( $_GET['previewInlineSuggestions'] ) ? filter_var( $_GET['previewInlineSuggestions'], FILTER_VALIDATE_BOOLEAN ) : false;
+		$preview = ! empty( $_GET['previewInlineSuggestions'] ) ? filter_var( wp_unslash( $_GET['previewInlineSuggestions'] ), FILTER_VALIDATE_BOOLEAN ) : false;
 		return ( ! empty( $_GET['context'] ) && 'edit' === $_GET['context'] && $preview );
 	}
+	// phpcs:enable WordPress.Security.NonceVerification
 
 	public function preview_navigation_template( $position ) {
 		if ( ! $this->preview_results() ) {
@@ -124,11 +126,13 @@ class Jet_Search_Render {
 				</div>';
 			}
 
+			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 			if ( 'in_header' === $settings['navigation_arrows'] || 'both' === $settings['navigation_arrows'] ) {
 				echo '<div class="jet-ajax-search__navigation-container">
 						' . $output_html . '
 				</div>';
 			}
+			// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		if ( 'bottom' === $position ) {
@@ -146,11 +150,13 @@ class Jet_Search_Render {
 				</div>';
 			}
 
+			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 			if ( 'in_footer' === $settings['navigation_arrows'] || 'both' === $settings['navigation_arrows'] ) {
 				echo '<div class="jet-ajax-search__navigation-container">
 					' . $output_html . '
 				</div>';
 			}
+			// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
@@ -235,7 +241,7 @@ class Jet_Search_Render {
 
 		echo '<div class="jet-ajax-search__results-slide">';
 		foreach ( $preview_items as $item_data ) {
-			echo str_replace( array_keys( $item_data ), array_values( $item_data ), $item );
+			echo str_replace( array_keys( $item_data ), array_values( $item_data ), $item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 		echo '</div>';
 
@@ -277,7 +283,7 @@ class Jet_Search_Render {
 				$source->set_args( $settings );
 				$source->set_items_list( $preview_source_items );
 
-				echo $source->render();
+				echo $source->render(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		}
 	}
@@ -293,7 +299,7 @@ class Jet_Search_Render {
 		include jet_search()->get_template( 'jet-ajax-search/global/inline-suggestion-item.php' );
 		$item = ob_get_clean();
 
-		$items_quantity = ! empty( $_GET['previewSuggestionsNumber'] ) ? $_GET['previewSuggestionsNumber'] : 5;
+		$items_quantity = ! empty( $_GET['previewSuggestionsNumber'] ) ? absint( wp_unslash( $_GET['previewSuggestionsNumber'] ) ) : 5; // phpcs:ignore WordPress.Security.NonceVerification
 
 		for ( $i=0; $i < $items_quantity; $i++ ) {
 			$preview_items[] = array(
@@ -302,7 +308,7 @@ class Jet_Search_Render {
 		}
 
 		foreach ( $preview_items as $item_data ) {
-			echo str_replace( array_keys( $item_data ), array_values( $item_data ), $item );
+			echo str_replace( array_keys( $item_data ), array_values( $item_data ), $item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
@@ -317,7 +323,7 @@ class Jet_Search_Render {
 		include jet_search()->get_template( 'jet-ajax-search/global/results-suggestion-item.php' );
 		$item = ob_get_clean();
 
-		$items_quantity = ! empty( $_GET['previewSuggestionsNumber'] ) ? $_GET['previewSuggestionsNumber'] : 5;
+		$items_quantity = ! empty( $_GET['previewSuggestionsNumber'] ) ? absint( wp_unslash( $_GET['previewSuggestionsNumber'] ) ) : 5; // phpcs:ignore WordPress.Security.NonceVerification
 
 		for ( $i=0; $i < $items_quantity; $i++ ) {
 			$preview_items[] = array(
@@ -326,7 +332,7 @@ class Jet_Search_Render {
 		}
 
 		foreach ( $preview_items as $item_data ) {
-			echo str_replace( array_keys( $item_data ), array_values( $item_data ), $item );
+			echo str_replace( array_keys( $item_data ), array_values( $item_data ), $item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
@@ -359,7 +365,7 @@ class Jet_Search_Render {
 			return;
 		}
 
-		echo implode( ' ', array_map( function( $attr, $value ) {
+		echo implode( ' ', array_map( function( $attr, $value ) { // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			return $attr . '="' . esc_attr( $value ) . '"';
 		}, array_keys( $this->attributes[ $slug ] ), array_values( $this->attributes[ $slug ] ) ) );
 
@@ -397,7 +403,7 @@ class Jet_Search_Render {
 			}
 
 			if ( $icon_src ) {
-				printf( $format, $icon_src );
+				printf( $format, $icon_src ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				return;
 			}
 
@@ -431,7 +437,7 @@ class Jet_Search_Render {
 				$icon_class .= ' ' . $settings[ $setting ];
 			}
 
-			$icon_html = sprintf( '<i class="%s" aria-hidden="true"></i>', $icon_class );
+			$icon_html = sprintf( '<i class="%s" aria-hidden="true"></i>', esc_attr( $icon_class ) );
 		}
 
 		if ( empty( $icon_html ) ) {
@@ -442,7 +448,7 @@ class Jet_Search_Render {
 			return sprintf( $format, $icon_html );
 		}
 
-		printf( $format, $icon_html );
+		printf( $format, $icon_html ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 	}
 
@@ -463,7 +469,7 @@ class Jet_Search_Render {
 		$val = $this->get_settings_for_display( $setting );
 
 		if ( ! is_array( $val ) && '0' === $val ) {
-			printf( $format, $val );
+			printf( $format, esc_html( $val ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		if ( is_array( $val ) && empty( $val[ $key ] ) ) {
@@ -475,9 +481,9 @@ class Jet_Search_Render {
 		}
 
 		if ( is_array( $val ) ) {
-			printf( $format, $val[ $key ] );
+			printf( $format, esc_html( $val[ $key ] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		} else {
-			printf( $format, $val );
+			printf( $format, esc_html( $val ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 	}
@@ -799,7 +805,7 @@ class Jet_Search_Render {
 			'name'            => 'jet_ajax_search_categories',
 			'class'           => 'jet-ajax-search__categories-select',
 			'echo'            => 0,
-			'show_option_all' => $placeholder,
+			'show_option_all' => esc_attr( $placeholder ),
 			'hierarchical'    => 1,
 			'hide_if_empty'   => true,
 			'include'         => $include_categories,
@@ -814,7 +820,7 @@ class Jet_Search_Render {
 			return '';
 		}
 
-		$categories_list = str_replace( 'name=\'jet_ajax_search_categories\'', 'name="jet_ajax_search_categories" data-placeholder="' . $placeholder . '"' , $categories_list );
+		$categories_list = str_replace( 'name=\'jet_ajax_search_categories\'', 'name="jet_ajax_search_categories" data-placeholder="' . esc_attr( $placeholder ) . '"' , $categories_list );
 
 		return sprintf( $select_wrapper_html, $categories_list, $select_icon_html );
 	}

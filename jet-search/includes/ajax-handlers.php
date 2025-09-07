@@ -131,7 +131,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		}
 
 		public function set_jet_woo_builder_products_loop_custom_validation( $result ) {
-			$request = $_REQUEST;
+			$request = $_REQUEST; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 			$wc_query        = isset( $request['defaults']['wc_query'] ) ? $request['defaults']['wc_query'] : '';
 			$jet_ajax_search = isset( $request['defaults']['jet_ajax_search'] ) ? $request['defaults']['jet_ajax_search'] : false;
@@ -224,6 +224,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		}
 
 		public function get_post_ids_by_custom_fields( $query ) {
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended
 			$cf_keys = $this->get_cf_search_keys();
 
 			if ( ! $cf_keys ) {
@@ -239,7 +240,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 			if ( isset( $_GET['action'] ) && $this->action === $_GET['action']
 				&& ! empty( $_GET['data']['custom_fields_source'] )
 			) {
-				$settings = $_GET['data'];
+				$settings = isset( $_GET['data'] ) ? wp_unslash( $_GET['data'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			} else {
 				$settings = $this->get_form_settings();
 			}
@@ -254,17 +255,17 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 			$postmeta_table = $wpdb->postmeta;
 
 			$custom_search_query_param = jet_search_ajax_handlers()->get_custom_search_query_param();
-			$search_query_param        = ! empty( $_REQUEST[$custom_search_query_param] ) ? $_REQUEST[$custom_search_query_param] : false;
+			$search_query_param        = ! empty( $_REQUEST[$custom_search_query_param] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ $custom_search_query_param ] ) ) : false;
 
 			if ( isset( $_GET['action'] ) && $this->action === $_GET['action']
 				&& isset( $_GET['data']['value'] )
 				&& ! empty( $_GET['data']['value'] )
 			) {
-				$search = $_GET['data']['value'];
+				$search = sanitize_text_field( wp_unslash( $_GET['data']['value'] ) );
 			} else if ( false != $search_query_param ) {
 				$search = $search_query_param;
 			} else {
-				$search = isset( $_GET['s'] ) ? $_GET['s'] : '';
+				$search = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
 			}
 
 			$search = esc_sql( $search );
@@ -390,9 +391,11 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 			}
 
 			return '';
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		}
 
 		public function set_posts_search( $query, $type = 'search' ) {
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended
 			$tax_query = new \Jet_Search_Tax_Query();
 			$posts_ids = $tax_query->get_posts_ids();
 
@@ -432,17 +435,17 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 					}
 
 					$custom_search_query_param = jet_search_ajax_handlers()->get_custom_search_query_param();
-					$search_query_param        = ! empty( $_REQUEST[$custom_search_query_param] ) ? $_REQUEST[$custom_search_query_param] : false;
+					$search_query_param        = ! empty( $_REQUEST[$custom_search_query_param] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ $custom_search_query_param ] ) ) : false;
 
 					if ( isset( $_GET['action'] ) && $this->action === $_GET['action']
 						&& isset( $_GET['data']['value'] )
 						&& ! empty( $_GET['data']['value'] )
 					) {
-						$search = $_GET['data']['value'];
+						$search = sanitize_text_field( wp_unslash( $_GET['data']['value'] ) );
 					} else if ( false != $search_query_param ) {
 						$search = $search_query_param;
 					} else {
-						$search = isset( $_GET['s'] ) ? $_GET['s'] : '';
+						$search = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
 					}
 
 					if ( is_numeric( $search ) ) {
@@ -465,6 +468,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 			}
 
 			return $query;
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		}
 
 		/**
@@ -500,7 +504,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				wp_send_json_error( array( 'message' => __( 'Access denied', 'jet-search' ) ) );
 			}
 
-			$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false;
+			$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 			if ( ! $nonce || ! wp_verify_nonce( $nonce, 'jet-search-settings' ) ) {
 				wp_send_json_error( array(
@@ -509,7 +513,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				) ) );
 			}
 
-			$settings = ! empty( $_REQUEST['settings'] ) ? $_REQUEST['settings'] : null;
+			$settings = ! empty( $_REQUEST['settings'] ) ? wp_unslash( (array) $_REQUEST['settings'] ) : null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 			if ( ! empty( $settings ) ) {
 
@@ -540,7 +544,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				wp_send_json_error( array( 'message' => __( 'Access denied', 'jet-search' ) ) );
 			}
 
-			$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false;
+			$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 			if ( ! $nonce || ! wp_verify_nonce( $nonce, 'jet-search-settings' ) ) {
 				wp_send_json_error( array(
@@ -604,7 +608,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				wp_send_json_error( array( 'message' => __( 'Access denied', 'jet-search' ) ) );
 			}
 
-			$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false;
+			$nonce = ! empty( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 			if ( ! $nonce || ! wp_verify_nonce( $nonce, 'jet-search-settings' ) ) {
 				wp_send_json_error( array(
@@ -664,7 +668,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				wp_send_json_error( 'You are not allowed to do this' );
 			}
 
-			$media_id = ! empty( $_GET['media_id'] ) ? absint( $_GET['media_id'] ) : false;
+			$media_id = ! empty( $_GET['media_id'] ) ? absint( $_GET['media_id'] ) : false; // phpcs:ignore WordPress.Security.NonceVerification
 
 			if ( ! $media_id ) {
 				wp_send_json_error( 'Media ID not found in the request' );
@@ -698,13 +702,18 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				$form_settings = $this->get_form_settings();
 
 				if ( ! empty( $form_settings ) && $query->is_main_query() ) {
-					$this->search_query['s'] = $_GET['s'];
+					$this->search_query['s'] = wp_unslash( $_GET['s'] ?? '' ); // phpcs:ignore WordPress.Security.NonceVerification, , WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
-					if ( ! empty( $_REQUEST['jet_search_suggestions_settings'] ) ) {
+					if ( ! empty( $_REQUEST['jet_search_suggestions_settings'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 						$this->set_suggestions_query_settings( $form_settings );
 					} else {
 						$this->set_query_settings( $form_settings );
 					}
+
+					/**
+					 * Allow filtering of final search query.
+					 */
+					$this->search_query = apply_filters( 'jet-search/ajax-search/query-args', $this->search_query, $this );
 
 					// If the query is created by Query Builder, these query vars are primary.
 					if ( isset( $query->query_vars['_query_type'] ) ) {
@@ -724,7 +733,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		public function set_jet_smart_filters_extra_props( $data ) {
 
 			$custom_search_query_param = jet_search_ajax_handlers()->get_custom_search_query_param();
-			$search_query_param        = ! empty( $_REQUEST[$custom_search_query_param] ) ? $_REQUEST[$custom_search_query_param] : false;
+			$search_query_param        = ! empty( $_REQUEST[$custom_search_query_param] ) ? wp_unslash( $_REQUEST[$custom_search_query_param] ) : false; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 			if ( false === $search_query_param ) {
 				if ( ! is_search() ) {
@@ -759,7 +768,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		 */
 		public function set_jet_engine_extra_props( $args, $render, $settings ) {
 			$custom_search_query_param = jet_search_ajax_handlers()->get_custom_search_query_param();
-			$search_query_param        = ! empty( $_REQUEST[$custom_search_query_param] ) ? $_REQUEST[$custom_search_query_param] : false;
+			$search_query_param        = ! empty( $_REQUEST[$custom_search_query_param] ) ?  wp_unslash( $_REQUEST[$custom_search_query_param] ) : false; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 			if ( false === $search_query_param ) {
 				$is_archive_template = isset( $settings['is_archive_template'] ) && 'yes' === $settings['is_archive_template'];
@@ -815,7 +824,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 			$use_current_query         = $shortcode->get_attr( 'use_current_query' );
 			$use_current_query         = filter_var( $use_current_query, FILTER_VALIDATE_BOOLEAN );
 			$custom_search_query_param = jet_search_ajax_handlers()->get_custom_search_query_param();
-			$search_query_param        = ! empty( $_REQUEST[$custom_search_query_param] ) ? $_REQUEST[$custom_search_query_param] : false;
+			$search_query_param        = ! empty( $_REQUEST[$custom_search_query_param] ) ? wp_unslash( $_REQUEST[$custom_search_query_param] ) : false; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 			if ( false === $search_query_param ) {
 				if ( ! is_search() || ! $use_current_query ) {
@@ -860,35 +869,35 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		 * @return array
 		 */
 		public function get_form_settings() {
-
+			// phpcs:disable WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$form_settings          = array();
 			$default_query_settings = array();
 			$search_settings        = isset( $_REQUEST['jsearch'] ) ? true : false;
-			$search_categories      = ! empty( $_REQUEST['jet_ajax_search_categories'] ) ? $_REQUEST['jet_ajax_search_categories'] : '';
+			$search_categories      = ! empty( $_REQUEST['jet_ajax_search_categories'] ) ? wp_unslash( $_REQUEST['jet_ajax_search_categories'] ) : '';
 			$default_query_settings = get_option( 'jet_ajax_search_query_settings' );
 
 			// Ajax search form settings
 
 			if ( ! empty( $_REQUEST['jet_ajax_search_settings'] ) ) {
-				$form_settings = $_REQUEST['jet_ajax_search_settings'];
+				$form_settings = wp_unslash( $_REQUEST['jet_ajax_search_settings'] );
 				$form_settings = stripcslashes( $form_settings );
-				$form_settings = json_decode( $form_settings );
-				$form_settings = get_object_vars( $form_settings );
+				$form_settings = json_decode( $form_settings, true );
+				$form_settings = ( JSON_ERROR_NONE === json_last_error() && is_array( $form_settings ) ) ? $form_settings : array();
 			} elseif ( ! empty( $_REQUEST['query']['jet_ajax_search_settings'] ) ) {
-				$form_settings = $_REQUEST['query']['jet_ajax_search_settings'];
+				$form_settings =  wp_unslash( $_REQUEST['query']['jet_ajax_search_settings'] );
 			}
 
 			//Suggestions form settings
 
 			if ( ! empty( $_REQUEST['jet_search_suggestions_settings'] ) ) {
-				$form_settings = $_REQUEST['jet_search_suggestions_settings'];
+				$form_settings = wp_unslash( $_REQUEST['jet_search_suggestions_settings'] );
 				$form_settings = stripcslashes( $form_settings );
-				$form_settings = json_decode( $form_settings );
-				$form_settings = get_object_vars( $form_settings );
+				$form_settings = json_decode( $form_settings, true );
+				$form_settings = ( JSON_ERROR_NONE === json_last_error() && is_array( $form_settings ) ) ? $form_settings : array();
 			} elseif ( ! empty( $_REQUEST['query']['jet_search_suggestions_settings'] ) ) {
-				$form_settings = $_REQUEST['query']['jet_search_suggestions_settings'];
+				$form_settings = wp_unslash( $_REQUEST['query']['jet_search_suggestions_settings'] );
 			}
-
+			// phpcs:enable WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			if ( false != $default_query_settings && ! empty( $default_query_settings ) ) {
 				$widget_current_query = ! empty( $form_settings['current_query'] ) ? $form_settings['current_query'] : '';
 
@@ -909,6 +918,23 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 
 			if ( '' != $search_categories ) {
 				$form_settings['category__in'] = $search_categories;
+			}
+
+			if ( isset( $form_settings['search_results_target_widget_id'] ) ) {
+				$val = $form_settings['search_results_target_widget_id'];
+
+				if ( is_scalar( $val ) ) {
+					$val = sanitize_text_field( (string) $val );
+
+					if ( ! preg_match( '/^[A-Za-z0-9_-]+$/', $val ) ) {
+						$val = '';
+					}
+
+				} else {
+					$val = '';
+				}
+
+				$form_settings['search_results_target_widget_id'] = $val;
 			}
 
 			return $form_settings;
@@ -1045,7 +1071,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		 */
 		function get_query_control_options() {
 
-			$data = $_REQUEST;
+			$data = $_REQUEST; // phpcs:ignore WordPress.Security.NonceVerification
 
 			if ( ! isset( $data['query_type'] ) ) {
 				wp_send_json_error();
@@ -1194,6 +1220,17 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		 * @return void
 		 */
 		public function save_ajax_search_settings() {
+
+			if ( ! current_user_can( 'manage_options' ) ) {
+				wp_send_json_error( array( 'message' => __( 'Access denied', 'jet-search' ) ) );
+			}
+
+			$nonce = isset( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : false; // phpcs:ignore
+
+			if ( ! $nonce || ! wp_verify_nonce( $nonce, 'jet-search-settings' ) ) {
+				wp_send_json_error( array( 'message' => __( 'Nonce validation failed', 'jet-search' ) ) );
+			}
+
 			$data = $_REQUEST;
 
 			if ( ! isset( $data['query_settings'] ) || ! isset( $data['request_settings'] ) ) {
@@ -1292,9 +1329,8 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		 */
 		public function get_cf_search_keys() {
 
-			if ( isset( $_GET['action'] ) && $this->action === $_GET['action'] && ! empty( $_GET['data']['custom_fields_source'] ) ) {
-				$cf_source = $_GET['data']['custom_fields_source'];
-
+			if ( isset( $_GET['action'] ) && $this->action === $_GET['action'] && ! empty( $_GET['data']['custom_fields_source'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+				$cf_source = sanitize_text_field( wp_unslash ( $_GET['data']['custom_fields_source'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
 			} else {
 				$settings  = $this->get_form_settings();
 				$cf_source = ! empty( $settings['custom_fields_source'] ) ? $settings['custom_fields_source'] : false;
@@ -1442,7 +1478,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		 */
 		public function get_search_results() {
 
-			if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], $this->action ) ) {
+			if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], $this->action ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 				wp_send_json_error( array(
 					'message' => 'Invalid Nonce!'
 				) );
@@ -1470,12 +1506,12 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		 * @return array|bool
 		 */
 		public function get_search_data() {
-			if ( empty( $_GET['data'] ) ) {
+			if ( empty( $_GET['data'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 				return false;
 			}
 
-			$data                                      = $_GET['data'];
-			$lang									   = isset( $_GET['lang'] ) ? $_GET['lang'] : '';
+			$data                                      = isset( $_GET['data'] ) ? wp_unslash( $_GET['data'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$lang									   = isset( $_GET['lang'] ) ? sanitize_text_field( wp_unslash ( $_GET['lang'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 			$this->search_query['s']                   = urldecode( esc_sql( $data['value'] ) );
 			$this->search_query['nopaging']            = false;
 			$this->search_query['ignore_sticky_posts'] = false;
@@ -1698,7 +1734,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		 */
 		public function get_form_suggestions() {
 
-			$action = ! empty( $_GET['action'] ) ? $_GET['action'] : '';
+			$action = ! empty( $_GET['action'] ) ? $_GET['action'] : ''; // phpcs:ignore
 
 			if ( 'get_form_suggestions' != $action ) {
 				return;
@@ -1706,8 +1742,16 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 
 			jet_search()->db->create_all_tables();
 
-			$params = ! empty( $_GET['data'] ) ? $_GET['data'] : '';;
+			$raw_params = ! empty( $_GET['data'] ) ? wp_unslash( $_GET['data'] ) : '';; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+			$params = array();
 			$result = array();
+
+			if ( is_array( $raw_params ) ) {
+				$params['list_type'] = isset( $raw_params['list_type'] ) ? sanitize_text_field( $raw_params['list_type'] ) : 'popular';
+				$params['limit']     = isset( $raw_params['limit'] ) ? absint( $raw_params['limit'] ) : 5;
+				$params['value']     = isset( $raw_params['value'] ) ? sanitize_text_field( $raw_params['value'] ) : '';
+			}
 
 			if ( ! empty( $params ) ) {
 				$result = $this->get_form_suggestions_list( $params );
@@ -1763,7 +1807,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		 */
 		public function add_form_suggestion() {
 
-			if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'form_suggestions' ) ) {
+			if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'form_suggestions' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 				wp_send_json_error( array(
 					'message' => 'Invalid Nonce!'
 				) );
@@ -1771,14 +1815,14 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				return;
 			}
 
-			if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
-				$referer         = parse_url( $_SERVER['HTTP_REFERER'] );
-				$currentSiteHost = parse_url( $_SERVER['HTTP_HOST'] );
+			if ( isset( $_SERVER['HTTP_REFERER'], $_SERVER['HTTP_HOST'] ) ) {
+				$referer         = parse_url( $_SERVER['HTTP_REFERER'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+				$currentSiteHost = parse_url( $_SERVER['HTTP_HOST'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 				if ( isset( $currentSiteHost['host'] ) || isset( $currentSiteHost['path'] ) ) {
 					$currentSite['host'] = isset( $currentSiteHost['host'] ) ? $currentSiteHost['host'] : $currentSiteHost['path'];
-				} else {
-					$currentSite = parse_url( '//' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] );
+				} elseif ( isset( $_SERVER['SERVER_NAME'], $_SERVER['REQUEST_URI'] ) ) {
+					$currentSite = parse_url( '//' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 				}
 
 				if ( $referer['host'] !== ( $currentSite['host'] ) ) {
@@ -1786,7 +1830,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				}
 			}
 
-			$params = $_POST['data'];
+			$params = isset( $_POST['data'] ) && is_array( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 			if ( empty( $params ) || ! $params['name'] ) {
 				return;
@@ -1804,8 +1848,8 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 			$prefix              = 'jet_';
 			$table_name          = $wpdb->prefix . $prefix . 'search_suggestions';
 			$sessions_table_name = $wpdb->prefix . $prefix . 'search_suggestions_sessions';
-
-			$suggestion_name = esc_sql( $params['name'] );
+			$name                = sanitize_text_field( $params['name'] );
+			$suggestion_name     = esc_sql( $name );
 
 			$query = $wpdb->prepare( "SELECT * FROM {$table_name} WHERE name = %s ", $suggestion_name );
 
@@ -1850,7 +1894,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				}
 
 				$suggestion = array(
-					"name"   => $params['name'],
+					"name"   => $name,
 					"weight" => 1,
 					"parent" => 0,
 					"term"   => NULL
@@ -1872,11 +1916,11 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				return wp_send_json_error();
 			}
 
-			if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], 'jet-search-settings' ) ) {
+			if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], 'jet-search-settings' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 				return wp_send_json_error( esc_html__( 'Invalid Nonce!', 'jet-search' )  );
 			}
 
-			$suggestion = isset( $_GET['content'] ) ? $_GET['content'] : '';
+			$suggestion = isset( $_GET['content'] ) ? $_GET['content'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 			if ( empty( $suggestion ) ) {
 				return wp_send_json_error( esc_html__( 'Error!', 'jet-search' ) );
@@ -1931,7 +1975,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				return wp_send_json_error();
 			}
 
-			if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], 'jet-search-settings' ) ) {
+			if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], 'jet-search-settings' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 				return wp_send_json_error( esc_html__( 'Invalid Nonce!', 'jet-search' )  );
 			}
 
@@ -2224,11 +2268,11 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				return wp_send_json_error();
 			}
 
-			if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], 'jet-search-settings' ) ) {
+			if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], 'jet-search-settings' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 				return wp_send_json_error( esc_html__( 'Invalid Nonce!', 'jet-search' )  );
 			}
 
-			$suggestion = isset( $_GET['content'] ) ? $_GET['content'] : '';
+			$suggestion = isset( $_GET['content'] ) ? $_GET['content'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 			if ( empty( $suggestion ) ) {
 				return wp_send_json_error( esc_html__( 'Error!', 'jet-search' ) );
@@ -2241,8 +2285,9 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 
 			$prefix          = 'jet_';
 			$table_name      = $wpdb->prefix . $prefix . 'search_suggestions';
-			$suggestion_id   = esc_sql( $suggestion['id'] );
-			$suggestion_name = esc_sql( $suggestion['name'] );
+			$suggestion_id   = intval( $suggestion['id'] );
+			$name            = sanitize_text_field( $suggestion['name'] );
+			$suggestion_name = esc_sql( $name );
 
 			$query = $wpdb->prepare(
 				"SELECT * FROM {$table_name} WHERE id != %s AND name = %s",
@@ -2303,11 +2348,11 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				return wp_send_json_error();
 			}
 
-			if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], 'jet-search-settings' ) ) {
+			if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], 'jet-search-settings' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 				return wp_send_json_error( esc_html__( 'Invalid Nonce!', 'jet-search' )  );
 			}
 
-			$suggestion = isset( $_GET['content'] ) ? $_GET['content'] : '';
+			$suggestion = isset( $_GET['content'] ) ? $_GET['content'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 			if ( empty( $suggestion ) ) {
 				return wp_send_json_error( esc_html__( 'Error!', 'jet-search' ) );
@@ -2330,6 +2375,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 			$table_name    = 'search_suggestions';
 			$suggestion_id = esc_sql( (int)$suggestion['id'] );
 			$where         = array( 'id' => $suggestion_id );
+			$name          = sanitize_text_field( $suggestion['name'] );
 
 			jet_search()->db->delete( $table_name, $where );
 
@@ -2347,7 +2393,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				}
 			}
 
-			$success_text = sprintf( esc_html__( 'Success! Suggestion: %s has been deleted', 'jet-search' ), $suggestion['name'] );
+			$success_text = sprintf( esc_html__( 'Success! Suggestion: %s has been deleted', 'jet-search' ), $name );
 
 			return wp_send_json( array(
 				'success' => true,

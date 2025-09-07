@@ -68,6 +68,8 @@ if ( ! class_exists( 'Jet_Search_Settings' ) ) {
 			$rest_api_url      = apply_filters( 'jet-search/rest/frontend/url', get_rest_url() );
 			$postTypes         = \Jet_Search_Tools::get_post_types();
 			$taxonomies        = \Jet_Search_Tools::get_taxonomies();
+			$taxonomies_ext    = \Jet_Search_Tools::get_taxonomies( false, true );
+
 			$request_type_list = array(
 				array(
 					'value' => 'rest_api',
@@ -81,8 +83,8 @@ if ( ! class_exists( 'Jet_Search_Settings' ) ) {
 
 			$this->settings_page_config = [
 				'messages' => [
-					'saveSuccess' => esc_html__( 'Saved', 'jet-elements' ),
-					'saveError'   => esc_html__( 'Error', 'jet-elements' ),
+					'saveSuccess' => esc_html__( 'Saved', 'jet-search' ),
+					'saveError'   => esc_html__( 'Error', 'jet-search' ),
 				],
 				'settingsApiUrl'      => $rest_api_url . 'jet-search-api/v1/plugin-settings',
 				'getSuggestionsUrl'   => $rest_api_url . 'jet-search/v1/get-suggestions',
@@ -105,6 +107,13 @@ if ( ! class_exists( 'Jet_Search_Settings' ) ) {
 						},
 						array_keys( $taxonomies ),
 						array_values( $taxonomies )
+					),
+					'taxonomiesListExtended' => array_map(
+						function ( $value, $label ) {
+							return [ 'value' => $value, 'label' => $label ];
+						},
+						array_keys( $taxonomies_ext ),
+						array_values( $taxonomies_ext )
 					),
 					'request_type_list' => $request_type_list,
 				],

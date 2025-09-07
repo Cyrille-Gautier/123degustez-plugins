@@ -28,7 +28,7 @@ $hidden_listing_template_html = '';
 				$is_bricks_listing            = jet_engine()->listings->data->get_listing_type( $listing_id ) === 'bricks';
 				$hidden_listing_template_html = Jet_Search_Tools::get_listing_grid( $listing_id );
 
-				echo $hidden_listing_template_html;
+				echo $hidden_listing_template_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 
 			if ( class_exists( 'Jet_Search\Search_Sources\Manager' ) ) {
@@ -47,7 +47,7 @@ $hidden_listing_template_html = '';
 						if ( ! empty( $listing_id ) ) {
 							$source_listing_template_html = Jet_Search_Tools::get_listing_grid( $listing_id );
 
-							echo $source_listing_template_html;
+							echo $source_listing_template_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						}
 					}
 				}

@@ -1,3 +1,6 @@
+<?php
+// phpcs:disable
+?>
 <div
 	class="jet-ajax-search-settings-page jet-ajax-search-settings-page__settings"
 >
@@ -315,3 +318,6 @@
 		</cx-vui-button>
 	</div>
 </div>
+<?php
+// phpcs:enable
+?>

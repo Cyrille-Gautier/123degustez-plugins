@@ -68,7 +68,7 @@ if ( $this->preview_results() || $this->preview_focus_suggestions() ) {
 
 ?>
 
-<div class="jet-ajax-search__results-area<?php echo esc_attr( $show ); ?>" <?php echo $custom_area_styles; ?>>
+<div class="jet-ajax-search__results-area<?php echo esc_attr( $show ); ?>" <?php echo $custom_area_styles; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 	<div class="jet-ajax-search__results-holder<?php echo esc_attr( $show ); ?>">
 		<?php if ( false === $hide ): ?>
 			<div class="jet-ajax-search__results-header">
@@ -88,7 +88,7 @@ if ( $this->preview_results() || $this->preview_focus_suggestions() ) {
 				?>
 			</div>
 		<?php endif; ?>
-		<div class="jet-ajax-search__results-list <?php echo $column_classes; ?>" <?php echo $column_blocks_styles; ?>>
+		<div class="jet-ajax-search__results-list <?php echo $column_classes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" <?php echo $column_blocks_styles; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php $this->preview_source_template( 'before' ); ?>
             <div class="jet-ajax-search__results-list-inner <?php echo esc_attr( $bricks_listing_class ); ?>"><?php
 				$this->preview_template();

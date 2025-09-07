@@ -27,7 +27,7 @@ if ( isset( $settings['search_results_url'] ) && '' != $settings['search_results
 	if ( false != $custom_query_param ) {
 		$search_query_param = $custom_query_param;
 		$post_type_string   = '';
-		$search_query       = isset( $_REQUEST[$search_query_param] ) ? esc_attr( stripslashes( $_REQUEST[$search_query_param] ) ) : '';
+		$search_query       = isset( $_REQUEST[$search_query_param] ) ? esc_attr( stripslashes( $_REQUEST[$search_query_param] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 	}
 }
 
@@ -35,13 +35,13 @@ $action_url = apply_filters( 'jet-search/search-form/home-url', home_url( '/' ) 
 $action_url = esc_url( $action_url );
 
 ?>
-
-<form class="jet-ajax-search__form" method="get" action="<?php echo $action_url; ?>" role="search" target="<?php echo $link_target_attr; ?>">
+<?php // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+<form class="jet-ajax-search__form" method="get" action="<?php echo $action_url; ?>" role="search" target="<?php echo esc_attr( $link_target_attr ); ?>">
 	<div class="jet-ajax-search__fields-holder">
 		<div class="jet-ajax-search__field-wrapper">
 			<label for="search-input-<?php echo $id;?>" class="screen-reader-text"><?php esc_html_e( 'Search ...', 'jet-search' ); ?></label>
 			<?php $this->icon( 'search_field_icon', '<span class="jet-ajax-search__field-icon jet-ajax-search-icon">%s</span>' ); ?>
-			<input id="search-input-<?php echo $id;?>" class="jet-ajax-search__field" type="search" placeholder="<?php echo $search_placeholder_text; ?>" value="<?php echo $search_query; ?>" name="<?php echo $search_query_param; ?>" autocomplete="off" />
+			<input id="search-input-<?php echo $id;?>" class="jet-ajax-search__field" type="search" placeholder="<?php echo $search_placeholder_text; ?>" value="<?php echo $search_query; ?>" name="<?php echo esc_attr( $search_query_param ); ?>" autocomplete="off" />
 			<?php if ( '[]' != $this->get_query_settings_json() ): ?>
 				<input type="hidden" value="<?php echo $this->get_query_settings_json(); ?>" name="jet_ajax_search_settings" />
 			<?php else: ?>
@@ -59,3 +59,4 @@ $action_url = esc_url( $action_url );
 	</div>
 	<?php $this->glob_inc_if( 'submit-button', array( 'show_search_submit' ) ); ?>
 </form>
+<?php // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped ?>

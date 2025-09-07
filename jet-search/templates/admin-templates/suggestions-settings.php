@@ -26,7 +26,7 @@
 
 			<cx-vui-list-table
 				:is-empty="! itemsList.length"
-				empty-message="<?php _e( 'No suggestions found.', 'jet-search' ); ?>"
+				empty-message="<?php _e( 'No suggestions found.', 'jet-search' ); // phpcs:ignore ?>"
 			>
 				<cx-vui-list-table-heading
 					:slots="columnsIDs"
@@ -54,19 +54,19 @@
 								<span class="jet-search-suggestions__type-icon" v-if="column === 'type' && null != item['child']">
 									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 3H3V11H11V3Z" fill="#7B7E81"/><path d="M11 13H3V21H11V13Z" fill="#7B7E81"/><path d="M13 13H21V21H13V13Z" fill="#7B7E81"/><path d="M21 3H13V11H21V3Z" fill="#7B7E81"/></svg>
 									<div class="jet-search-suggestions__type-icon-tip"><?php
-										_e( 'Parent Suggestion', 'jet-search' );
+										_e( 'Parent Suggestion', 'jet-search' ); // phpcs:ignore
 									?></div>
 								</span>
 								<span class="jet-search-suggestions__type-icon" v-if="column === 'type' && '0' != item['parent'] && null === item['child']">
 									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 3V21H21V3H3ZM19 5H5V19H19V5Z" fill="#7B7E81"/></svg>
 									<div class="jet-search-suggestions__type-icon-tip"><?php
-										_e( 'Child Suggestion', 'jet-search' );
+										_e( 'Child Suggestion', 'jet-search' ); // phpcs:ignore
 									?></div>
 								</span>
 								<span class="jet-search-suggestions__type-icon" v-if="column === 'type' && '0' === item['parent'] && null === item['child']">
 									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 3H3V5H5V3Z" fill="#7B7E81"/><path d="M5 19H3V21H5V19Z" fill="#7B7E81"/><path d="M19 19H21V21H19V19Z" fill="#7B7E81"/><path d="M21 3H19V5H21V3Z" fill="#7B7E81"/><path d="M15 3H17V5H15V3Z" fill="#7B7E81"/><path d="M17 19H15V21H17V19Z" fill="#7B7E81"/><path d="M3 9V7H5V9H3Z" fill="#7B7E81"/><path d="M19 7V9H21V7H19Z" fill="#7B7E81"/><path d="M7 3H9V5H7V3Z" fill="#7B7E81"/><path d="M9 19H7V21H9V19Z" fill="#7B7E81"/><path d="M3 17V15H5V17H3Z" fill="#7B7E81"/><path d="M19 15V17H21V15H19Z" fill="#7B7E81"/><path d="M11 3H13V5H11V3Z" fill="#7B7E81"/><path d="M19 11V13H21V11H19Z" fill="#7B7E81"/><path d="M11 19H13V21H11V19Z" fill="#7B7E81"/><path d="M3 11V13H5V11H3Z" fill="#7B7E81"/></svg>
 									<div class="jet-search-suggestions__type-icon-tip"><?php
-										_e( 'Unassigned Suggestion', 'jet-search' );
+										_e( 'Unassigned Suggestion', 'jet-search' ); // phpcs:ignore
 									?></div>
 								</span>
 								<span

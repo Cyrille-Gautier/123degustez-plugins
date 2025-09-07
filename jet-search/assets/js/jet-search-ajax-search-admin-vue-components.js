@@ -29,6 +29,7 @@ Vue.component( 'jet-search-ajax-search-settings', {
 			settings: {},
 			searchSourceList: [],
 			taxonomiesList: [],
+			taxonomiesListExtended: [],
 			currentquerySettingsType: '',
 			querySettings: {
 				show_search_category_list: 'false',
@@ -146,6 +147,7 @@ Vue.component( 'jet-search-ajax-search-settings', {
 			queryData = buildQuery( {
 				query_settings: JSON.stringify( this.querySettings ),
 				request_settings: JSON.stringify( this.requestSettings ),
+				nonce: this.settings.nonce
 			} );
 
 			var xhr    = new XMLHttpRequest();

@@ -15,7 +15,7 @@ if ( '[]' === $form_settings ){
 $action_url = apply_filters( 'jet-search/search-form/home-url', home_url( '/' ) );
 $action_url = esc_url( $action_url );
 ?>
-
+<?php // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 <form class="jet-search-suggestions__form" method="get" action="<?php echo $action_url; ?>" role="search">
 	<?php do_action( 'jet-search/search-suggestions/start-form', $this ); ?>
 	<div class="jet-search-suggestions__fields-holder">
@@ -34,3 +34,4 @@ $action_url = esc_url( $action_url );
 	<?php $this->glob_inc_if( 'submit-button', array( 'show_search_submit' ) ); ?>
 	<?php do_action( 'jet-search/search-suggestions/end-form', $this ); ?>
 </form>
+<?php // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
