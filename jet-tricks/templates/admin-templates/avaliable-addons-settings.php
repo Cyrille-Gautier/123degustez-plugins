@@ -2,7 +2,7 @@
 	class="jet-tricks-settings-page jet-tricks-settings-page__avaliable-addons"
 >
 	<div class="jet-tricks-settings-page__avaliable-controls">
-		<div class="cx-vui-title"><?php _e( 'Avaliable Widgets', 'jet-tricks' ); ?></div>
+		<div class="cx-vui-title"><?php esc_html_e( 'Avaliable Widgets', 'jet-tricks' ); ?></div>
 		<div
 			class="jet-tricks-settings-page__avaliable-control"
 			v-for="(option, index) in pageOptions.avaliable_widgets.options">
@@ -20,7 +20,7 @@
 	</div>
 
 	<div class="jet-tricks-settings-page__avaliable-controls">
-		<div class="cx-vui-title"><?php _e( 'Avaliable Extensions', 'jet-tricks' ); ?></div>
+		<div class="cx-vui-title"><?php esc_html_e( 'Avaliable Extensions', 'jet-tricks' ); ?></div>
 		<div
 			class="jet-tricks-settings-page__avaliable-control"
 			v-for="(option, index) in pageOptions.avaliable_extensions.options">

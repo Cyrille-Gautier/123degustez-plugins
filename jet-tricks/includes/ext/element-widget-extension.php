@@ -356,6 +356,23 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					//'render_type'  => 'template',
 				)
 			);
+			
+			$obj->add_control(
+				'jet_tricks_widget_satellite_link',
+				array(
+					'label'       => esc_html__( 'Link', 'jet-tricks' ),
+					'type'        => Elementor\Controls_Manager::URL,
+					'placeholder' => esc_html__( 'https://your-link.com', 'jet-tricks' ),
+					'default'     => array(
+						'url' => '',
+					),
+					'dynamic'     => array( 'active' => true ),
+					'condition' => array(
+						'jet_tricks_widget_satellite'      => 'true',
+					),
+					'render_type'  => 'template',
+				)
+			);			
 
 			$obj->add_control(
 				'jet_tricks_widget_satellite_position',
@@ -498,7 +515,23 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 						'jet_tricks_widget_satellite_type' => 'text',
 					),
 					'selectors' => array(
-						'{{WRAPPER}} .jet-tricks-satellite .jet-tricks-satellite__text' => 'color: {{VALUE}}',
+						'{{WRAPPER}} .jet-tricks-satellite .jet-tricks-satellite__text span' => 'color: {{VALUE}}',
+					),
+				)
+			);
+
+			$obj->add_control(
+				'jet_tricks_widget_satellite_text_color_hover',
+				array(
+					'label'  => esc_html__( 'Hover Color', 'jet-tricks' ),
+					'type'   => Elementor\Controls_Manager::COLOR,
+					'condition' => array(
+						'jet_tricks_widget_satellite'      => 'true',
+						'jet_tricks_widget_satellite_type' => 'text',
+						'jet_tricks_widget_satellite_link[url]!' => '',
+					),
+					'selectors' => array(
+						'{{WRAPPER}} .jet-tricks-satellite:hover .jet-tricks-satellite__text span' => 'color: {{VALUE}}',
 					),
 				)
 			);
@@ -591,6 +624,53 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				);
 			}
 
+			
+
+			$obj->add_control(
+				'hover_style_heading',
+				array(
+					'label'     => esc_html__( 'Hover Style', 'jet-tricks' ),
+					'type'      => Elementor\Controls_Manager::HEADING,
+					'separator' => 'before',
+					'condition' => array(
+						'jet_tricks_widget_satellite'      => 'true',
+						'jet_tricks_widget_satellite_type' => 'icon',
+						'jet_tricks_widget_satellite_link[url]!' => '',
+					),
+				)
+			);
+
+			$obj->add_control(
+				'jet_tricks_widget_satellite_icon_color_hover',
+				array(
+					'label'  => esc_html__( 'Font Color', 'jet-tricks' ),
+					'type'   => Elementor\Controls_Manager::COLOR,
+					'condition' => array(
+						'jet_tricks_widget_satellite'      => 'true',
+						'jet_tricks_widget_satellite_type' => 'icon',
+						'jet_tricks_widget_satellite_link[url]!' => '',
+					),
+					'selectors' => array(
+						'{{WRAPPER}} .jet-tricks-satellite:hover .jet-tricks-satellite__icon-instance' => 'color: {{VALUE}}',
+					),
+				)
+			);
+
+			$obj->add_group_control(
+				Elementor\Group_Control_Background::get_type(),
+				array(
+					'name'     => 'jet_tricks_widget_satellite_icon_bg_hover',
+					'label'    => esc_html__( 'Hover Background', 'jet-tricks' ),
+					'types'    => array( 'classic', 'gradient' ),
+					'selector' => '{{WRAPPER}} .jet-tricks-satellite:hover .jet-tricks-satellite__icon-instance',
+					'condition' => array(
+						'jet_tricks_widget_satellite'      => 'true',
+						'jet_tricks_widget_satellite_type' => 'icon',
+						'jet_tricks_widget_satellite_link[url]!' => '',
+					),
+				)
+			);
+
 			$obj->end_controls_tab();
 
 			$obj->end_controls_tabs();
@@ -642,6 +722,39 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 			);
 
 			$obj->add_control(
+				'jet_tricks_widget_tooltip_content_type',
+				array(
+					'label'       => esc_html__( 'Content Type', 'jet-tricks' ),
+					'type'        => Elementor\Controls_Manager::SELECT,
+					'default'     => 'editor',
+					'options'     => array(
+						'editor'    => esc_html__( 'Editor', 'jet-tricks' ),
+						'template' => esc_html__( 'Template', 'jet-tricks' ),
+					),
+					'label_block' => 'true',
+					'condition' => array(
+						'jet_tricks_widget_tooltip' => 'true',
+					),
+				)
+			);
+
+			$obj->add_control(
+				'jet_tricks_widget_tooltip_template',
+				array(
+					'label'       => esc_html__( 'Choose Template', 'jet-tricks' ),
+					'type'        => 'jet-query',
+					'query_type'  => 'elementor_templates','edit_button' => array(
+					'active'  => true,
+					'label'   => esc_html__( 'Edit Template', 'jet-tricks' ),
+				),
+				'condition'   => array(
+						'jet_tricks_widget_tooltip' => 'true',
+						'jet_tricks_widget_tooltip_content_type' => 'template',
+					),
+				)
+			);
+
+			$obj->add_control(
 				'jet_tricks_widget_tooltip_description',
 				array(
 					'label'       => esc_html__( 'Description', 'jet-tricks' ),
@@ -651,6 +764,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'dynamic'     => array ( 'active' => true ),
 					'condition'   => array (
 						'jet_tricks_widget_tooltip' => 'true',
+						'jet_tricks_widget_tooltip_content_type' => 'editor',
 					),
 				)
 			);
@@ -861,6 +975,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					'selector' => ':is( .tippy-{{ID}}, {{WRAPPER}} > [data-tippy-root] ) .tippy-box .tippy-content',
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
+						'jet_tricks_widget_tooltip_content_type' => 'editor',
 					),
 				)
 			);
@@ -875,6 +990,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					),
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
+						'jet_tricks_widget_tooltip_content_type' => 'editor',
 					),
 				)
 			);
@@ -904,6 +1020,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 					),
 					'condition' => array(
 						'jet_tricks_widget_tooltip' => 'true',
+						'jet_tricks_widget_tooltip_content_type' => 'editor',
 					),
 					'classes'   => 'jet-tricks-text-align-control',
 				)
@@ -1055,7 +1172,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				$widget_settings[ 'tooltipTrigger' ]     = $settings[ 'jet_tricks_widget_tooltip_trigger' ];
 				$widget_settings[ 'zIndex' ]             = $settings[ 'jet_tricks_widget_tooltip_z_index' ];
 				$widget_settings[ 'customSelector' ]     = $settings[ 'jet_tricks_widget_tooltip_custom_selector' ];
-				$widget_settings['delay']                = $settings['jet_tricks_widget_tooltip_delay'];
+				$widget_settings[ 'delay' ]              = $settings['jet_tricks_widget_tooltip_delay'];
 
 				$widget->add_render_attribute( '_wrapper', array (
 					'class' => 'jet-tooltip-widget',
@@ -1087,6 +1204,27 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 		}
 
 		/**
+		 * Get link attributes from settings
+		 *
+		 * @param  array $settings Widget settings
+		 * @return string
+		 */
+		private function get_link_attrs( $settings ) {
+			$link = ! empty( $settings['jet_tricks_widget_satellite_link']['url'] ) ? $settings['jet_tricks_widget_satellite_link'] : '';
+			
+			if ( empty( $link ) ) {
+				return '';
+			}
+
+			return sprintf(
+				'href="%1$s" %2$s %3$s',
+				esc_url( $link['url'] ),
+				! empty( $link['is_external'] ) ? 'target="_blank"' : '',
+				! empty( $link['nofollow'] ) ? 'rel="nofollow"' : ''
+			);
+		}
+
+		/**
 		 * [widget_before_render_content description]
 		 * @return [type] [description]
 		 */
@@ -1109,31 +1247,46 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				filter_var( $settings['jet_tricks_widget_satellite'], FILTER_VALIDATE_BOOLEAN ) &&
 				filter_var( $this->avaliable_extensions['widget_satellite'], FILTER_VALIDATE_BOOLEAN )
 			) {
+				$link_attrs = $this->get_link_attrs( $settings );
+				$link_start = ! empty( $link_attrs ) ? '<a class="jet-tricks-satellite__link" ' . $link_attrs . '>' : '';
+				$link_end   = ! empty( $link_attrs ) ? '</a>' : '';
+
 				switch ( $settings['jet_tricks_widget_satellite_type'] ) {
 					case 'text':
-
 						if ( ! empty( $settings['jet_tricks_widget_satellite_text'] ) ) {
-							echo sprintf( '<div class="jet-tricks-satellite jet-tricks-satellite--%1$s"><div class="jet-tricks-satellite__inner"><div class="jet-tricks-satellite__text"><span>%2$s</span></div></div></div>', $settings['jet_tricks_widget_satellite_position'], $settings['jet_tricks_widget_satellite_text'] );
+							echo sprintf(
+								'<div class="jet-tricks-satellite jet-tricks-satellite--%1$s"><div class="jet-tricks-satellite__inner"><div class="jet-tricks-satellite__text">%2$s<span>%3$s</span>%4$s</div></div></div>',
+								esc_attr( $settings['jet_tricks_widget_satellite_position'] ),
+								wp_kses_post( $link_start ),
+								wp_kses_post( $settings['jet_tricks_widget_satellite_text'] ),
+								wp_kses_post( $link_end )
+							);
 						}
 					break;
 
 					case 'icon':
-
 						$icon_html = Jet_Tricks_Tools::get_icon( 'jet_tricks_widget_satellite_icon', $settings );
 
 						if ( ! empty( $icon_html ) ) {
 							echo sprintf(
-								'<div class="jet-tricks-satellite jet-tricks-satellite--%1$s"><div class="jet-tricks-satellite__inner"><div class="jet-tricks-satellite__icon"><div class="jet-tricks-satellite__icon-instance jet-tricks-icon">%2$s</div></div></div></div>',
-								$settings['jet_tricks_widget_satellite_position'],
-								$icon_html
+								'<div class="jet-tricks-satellite jet-tricks-satellite--%1$s"><div class="jet-tricks-satellite__inner"><div class="jet-tricks-satellite__icon">%2$s<div class="jet-tricks-satellite__icon-instance jet-tricks-icon">%3$s</div>%4$s</div></div></div>',
+								esc_attr( $settings['jet_tricks_widget_satellite_position'] ),
+								wp_kses_post( $link_start ),
+								$icon_html, // phpcs:ignore
+								wp_kses_post( $link_end )
 							);
 						}
 					break;
 
 					case 'image':
-
 						if ( ! empty( $settings['jet_tricks_widget_satellite_image']['url'] ) ) {
-							echo sprintf( '<div class="jet-tricks-satellite jet-tricks-satellite--%1$s"><div class="jet-tricks-satellite__inner"><div class="jet-tricks-satellite__image"><img class="jet-tricks-satellite__image-instance" src="%2$s" alt=""></div></div></div>', $settings['jet_tricks_widget_satellite_position'], $settings['jet_tricks_widget_satellite_image']['url'] );
+							echo sprintf(
+								'<div class="jet-tricks-satellite jet-tricks-satellite--%1$s"><div class="jet-tricks-satellite__inner"><div class="jet-tricks-satellite__image">%2$s<img class="jet-tricks-satellite__image-instance" src="%3$s" alt="">%4$s</div></div></div>',
+								esc_attr( $settings['jet_tricks_widget_satellite_position'] ),
+								wp_kses_post( $link_start ),
+								esc_url( $settings['jet_tricks_widget_satellite_image']['url'] ),
+								wp_kses_post( $link_end )
+							);
 						}
 					break;
 				}
@@ -1141,13 +1294,60 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 
 			if (
 				filter_var( $settings['jet_tricks_widget_tooltip'], FILTER_VALIDATE_BOOLEAN ) &&
-				filter_var( $this->avaliable_extensions['widget_tooltip'], FILTER_VALIDATE_BOOLEAN ) &&
-				! empty( $settings['jet_tricks_widget_tooltip_description'] )
+				filter_var( $this->avaliable_extensions['widget_tooltip'], FILTER_VALIDATE_BOOLEAN )
 			) {
-				echo sprintf( '<div id="jet-tricks-tooltip-content-%1$s" class="jet-tooltip-widget__content">%2$s</div>', $data['id'], $settings['jet_tricks_widget_tooltip_description'] );
+				$tooltip_content = '';
+				$content_type = ! empty( $settings['jet_tricks_widget_tooltip_content_type'] ) ? $settings['jet_tricks_widget_tooltip_content_type'] : 'editor';
+
+				switch ( $content_type ) {
+					case 'template':
+						$template_id = $settings['jet_tricks_widget_tooltip_template'];
+
+						if ( ! empty( $template_id ) ) {
+							$template_id = apply_filters( 'jet-tricks/widgets/template_id', $template_id, $widget );
+							$tooltip_content = jet_tricks()->elementor()->frontend->get_builder_content_for_display( $template_id, true );
+
+							if ( jet_tricks()->elementor()->editor->is_edit_mode() ) {
+								$edit_url = add_query_arg( array( 'elementor' => '' ), get_permalink( $template_id ) );
+								$tooltip_content .= sprintf(
+									'<a class="jet-tricks-edit-template-link" href="%s" target="_blank"><i class="fas fa-pencil-alt"></i><span>%s</span></a>',
+									esc_url( $edit_url ),
+									esc_html__( 'Edit Template', 'jet-tricks' )
+								);
+							}
+						} else {
+							$tooltip_content = $this->no_templates_message();
+						}
+						break;
+
+					case 'editor':
+					default:
+						$tooltip_content = do_shortcode( wp_kses_post( $settings['jet_tricks_widget_tooltip_description'] ) );
+						break;
+				}
+				
+				if ( ! empty( $tooltip_content ) ) {
+					echo sprintf(
+						'<div id="jet-tricks-tooltip-content-%1$s" class="jet-tooltip-widget__content">%2$s</div>',
+						$data['id'], // phpcs:ignore
+						$tooltip_content // phpcs:ignore
+					);
+				}
 			}
 
 			return $widget_content;
+		}
+
+		/**
+		 * No templates message
+		 *
+		 * @return string
+		 */
+		public function no_templates_message() {
+			return sprintf(
+				'<div class="jet-tricks-no-template-message">%s</div>',
+				esc_html__( 'Template is not defined. ', 'jet-tricks' )
+			);
 		}
 
 		/**

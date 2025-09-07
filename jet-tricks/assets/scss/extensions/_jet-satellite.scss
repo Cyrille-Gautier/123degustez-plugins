@@ -9,6 +9,15 @@
 	transform-origin: 50% 50%;
 	z-index: 2;
 
+	.jet-tricks-satellite__text,
+	.jet-tricks-satellite__icon,
+	.jet-tricks-satellite__image {
+		.jet-tricks-satellite__link {
+			pointer-events: auto;
+			cursor: pointer;
+		}
+	}
+
 	.jet-tricks-satellite__text {
 		font-size: 60px;
 		font-weight: 600;

@@ -124,6 +124,8 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 			)
 		);
 
+		do_action( 'jet-engine-query-gateway/control', $this, 'hotspots' );
+
 		$repeater = new Repeater();
 
 		$repeater->start_controls_tabs( 'tabs_hotspot' );
@@ -926,6 +928,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 		$settings = $this->get_settings_for_display();
 
 		$hotspots = $settings['hotspots'];
+		$hotspots = apply_filters( 'jet-engine-query-gateway/query', $hotspots, 'hotspots', $this );
 		$hotspots = apply_filters( 'jet-tricks/widget/loop-items', $hotspots, 'hotspots', $this );
 
 		$json_settings = array(
@@ -960,11 +963,16 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 		$image = Group_Control_Image_Size::get_attachment_image_html( $settings );
 
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'instance' ); ?>>
+		<div <?php echo $this->get_render_attribute_string( 'instance' ); // phpcs:ignore ?>>
 			<div class="jet-hotspots__inner"><?php
-				echo $image;?>
+				echo $image; // phpcs:ignore ?>
 				<div class="jet-hotspots__container"><?php
+
+					do_action( 'jet-engine-query-gateway/before-loop', 'hotspots', $this );
+
 					foreach ( $hotspots as $index => $hotspot ) {
+
+						do_action( 'jet-engine-query-gateway/do-item', $hotspot );
 						$hotspot_count = $index + 1;
 
 						$is_link = ! empty( $hotspot['hotspot_url']['url'] ) ? true : false;
@@ -1041,8 +1049,16 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 
 						$tag = ! $is_link ? 'div' : 'a';
 
-						echo sprintf( '<%1$s %2$s><div class="jet-hotspots__item-inner">%3$s%4$s</div></%1$s>', $tag, $this->get_render_attribute_string( $hotspot_setting_key ), $icon_html, $text_html );
-					}?>
+						echo sprintf( '<%1$s %2$s><div class="jet-hotspots__item-inner">%3$s%4$s</div></%1$s>',
+						 $tag, // phpcs:ignore
+						 $this->get_render_attribute_string( $hotspot_setting_key ), // phpcs:ignore
+						 $icon_html, // phpcs:ignore
+						 wp_kses_post( $text_html )
+						);
+					}
+
+					do_action( 'jet-engine-query-gateway/reset-item' );
+					?>
 				</div>
 			</div>
 		</div>

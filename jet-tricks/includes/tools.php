@@ -82,7 +82,7 @@ if ( ! class_exists( 'Jet_Tricks_Tools' ) ) {
 					$icon_class .= ' ' . $settings[ $setting ];
 				}
 
-				$icon_html = sprintf( '<i class="%s" aria-hidden="true"></i>', $icon_class );
+				$icon_html = sprintf( '<i class="%s" aria-hidden="true"></i>', esc_attr( $icon_class ) );
 			}
 
 			if ( empty( $icon_html ) ) {
@@ -92,8 +92,8 @@ if ( ! class_exists( 'Jet_Tricks_Tools' ) ) {
 			if ( ! $echo ) {
 				return sprintf( $format, $icon_html );
 			}
-
-			printf( $format, $icon_html );
+			
+			printf( $format, $icon_html ); // phpcs:ignore
 		}
 
 	}

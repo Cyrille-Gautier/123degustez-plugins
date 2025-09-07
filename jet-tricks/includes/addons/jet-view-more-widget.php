@@ -149,6 +149,82 @@ class Jet_View_More_Widget extends Jet_Tricks_Base {
 			)
 		);
 
+		$this->add_control(
+			'read_less',
+			array(
+				'label'        => esc_html__( 'Read Less Button', 'jet-tricks' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-tricks' ),
+				'label_off'    => esc_html__( 'No', 'jet-tricks' ),
+				'return_value' => 'true',
+				'default'      => 'false',
+				'description'  => esc_html__( 'Enable to show "Read Less" button after content is expanded, allowing users to collapse sections back.', 'jet-tricks' ),
+			)
+		);
+
+		$this->add_control(
+			$this->__new_icon_prefix . 'read_less_icon',
+			array(
+				'label'            => esc_html__( 'Read Less Icon', 'jet-tricks' ),
+				'type'             => Controls_Manager::ICONS,
+				'label_block'      => false,
+				'skin'             => 'inline',
+				'fa4compatibility' => 'read_less_icon',
+				'default'          => array(
+					'value'   => 'fas fa-arrow-circle-up',
+					'library' => 'fa-solid',
+				),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			)
+		);
+		
+		$this->add_control(
+			'read_less_label',
+			array(
+				'label'   => esc_html__( 'Read Less Label', 'jet-tricks' ),
+				'type'    => Controls_Manager::TEXT,
+				'default' => esc_html__( 'Read Less', 'jet-tricks' ),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			)
+		);
+
+		$this->add_control(
+			'hide_all',
+			array(
+				'label'   => esc_html__( 'Hide All Sections', 'jet-tricks' ),
+				'type'    => Controls_Manager::SWITCHER,
+				'default' => 'false',
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			)
+		);
+		
+		$this->add_control(
+			'hide_effect',
+			array(
+				'label'       => esc_html__( 'Hide Effect', 'jet-tricks' ),
+				'type'        => Controls_Manager::SELECT,
+				'default'     => 'move-down',
+				'options' => array(
+					'none'             => esc_html__( 'None', 'jet-tricks' ),
+					'fade'             => esc_html__( 'Fade', 'jet-tricks' ),
+					'zoom-in'          => esc_html__( 'Zoom In', 'jet-tricks' ),
+					'zoom-out'         => esc_html__( 'Zoom Out', 'jet-tricks' ),
+					'move-down'        => esc_html__( 'Move Down', 'jet-tricks' ),
+					'fall-perspective' => esc_html__( 'Fall Perspective', 'jet-tricks' ),
+				),
+				'render_type' => 'template',
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			)
+		);
+
 		$this->end_controls_section();
 
 		$this->__start_controls_section(
@@ -487,6 +563,283 @@ class Jet_View_More_Widget extends Jet_Tricks_Base {
 
 		$this->__end_controls_tabs();
 
+		// === Read Less Button Custom Styles ===
+		$this->__add_control(
+			'read_less_style_heading',
+			array(
+				'label' => esc_html__( 'Read Less Button', 'jet-tricks' ),
+				'type'  => Controls_Manager::HEADING,
+				'condition' => array(
+					'read_less' => 'true',
+				),
+				'separator' => 'before',
+			),
+			25
+		);
+
+		$this->__start_controls_tabs( 'button_read_less_styles' );
+
+		$this->__start_controls_tab(
+			'button_read_less_normal',
+			array(
+				'label' => esc_html__( 'Normal', 'jet-tricks' ),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			)
+		);
+
+		$this->__add_control(
+			'button_read_less_icon_color',
+			array(
+				'label'     => esc_html__( 'Icon Color', 'jet-tricks' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less ' . $css_scheme['icon'] => 'color: {{VALUE}}',
+				),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			25
+		);
+
+		$this->__add_responsive_control(
+			'button_read_less_icon_size',
+			array(
+				'label'      => esc_html__( 'Icon Size', 'jet-tricks' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array('px', 'em', 'rem'),
+				'range'      => array(
+					'px' => array('min' => 18, 'max' => 200),
+				),
+				'selectors'  => array(
+					'{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less ' . $css_scheme['icon'] => 'font-size: {{SIZE}}{{UNIT}}',
+				),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			50
+		);
+
+		$this->__add_control(
+			'button_read_less_label_color',
+			array(
+				'label'     => esc_html__( 'Text Color', 'jet-tricks' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less ' . $css_scheme['label'] => 'color: {{VALUE}}',
+				),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			25
+		);
+
+		$this->__add_group_control(
+			Group_Control_Typography::get_type(),
+			array(
+				'name'     => 'button_read_less_label_typography',
+				'selector' => '{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less ' . $css_scheme['label'],
+				'global' => array(
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			50
+		);
+
+		$this->__add_group_control(
+			\Elementor\Group_Control_Background::get_type(),
+			array(
+				'name'     => 'button_read_less_background',
+				'selector' => '{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less',
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			25
+		);
+
+		$this->__add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name'        => 'button_read_less_border',
+				'label'       => esc_html__( 'Border', 'jet-tricks' ),
+				'placeholder' => '1px',
+				'default'     => '1px',
+				'selector'  => '{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less',
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			50
+		);
+
+		$this->__add_responsive_control(
+			'button_read_less_border_radius',
+			array(
+				'label'      => esc_html__( 'Border Radius', 'jet-tricks' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%' ),
+				'selectors'  => array(
+					'{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			75
+		);
+
+		$this->__add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name'     => 'button_read_less_box_shadow',
+				'selector' => '{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less',
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			100
+		);
+
+		$this->__end_controls_tab();
+
+		$this->__start_controls_tab(
+			'button_read_less_hover',
+			array(
+				'label' => esc_html__( 'Hover', 'jet-tricks' ),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			)
+		);
+
+		$this->__add_control(
+			'button_read_less_icon_color_hover',
+			array(
+				'label'     => esc_html__( 'Icon Color', 'jet-tricks' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less:hover ' . $css_scheme['icon'] => 'color: {{VALUE}}',
+				),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			25
+		);
+
+		$this->__add_responsive_control(
+			'button_read_less_icon_size_hover',
+			array(
+				'label'      => esc_html__( 'Icon Size', 'jet-tricks' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array('px', 'em', 'rem'),
+				'range'      => array(
+					'px' => array('min' => 18, 'max' => 200),
+				),
+				'selectors'  => array(
+					'{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less:hover ' . $css_scheme['icon'] => 'font-size: {{SIZE}}{{UNIT}}',
+				),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			50
+		);
+
+		$this->__add_control(
+			'button_read_less_label_color_hover',
+			array(
+				'label'     => esc_html__( 'Text Color', 'jet-tricks' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less:hover ' . $css_scheme['label'] => 'color: {{VALUE}}',
+				),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			25
+		);
+
+		$this->__add_group_control(
+			Group_Control_Typography::get_type(),
+			array(
+				'name'     => 'button_read_less_label_typography_hover',
+				'selector' => '{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less:hover ' . $css_scheme['label'],
+				'global' => array(
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			50
+		);
+
+		$this->__add_group_control(
+			\Elementor\Group_Control_Background::get_type(),
+			array(
+				'name'     => 'button_read_less_background_hover',
+				'selector' => '{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less:hover',
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			25
+		);
+
+		$this->__add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name'        => 'button_read_less_border_hover',
+				'label'       => esc_html__( 'Border', 'jet-tricks' ),
+				'placeholder' => '1px',
+				'default'     => '1px',
+				'selector'  => '{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less:hover',
+			),
+			50
+		);
+
+		$this->__add_responsive_control(
+			'button_read_less_border_radius_hover',
+			array(
+				'label'      => esc_html__( 'Border Radius', 'jet-tricks' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%' ),
+				'selectors'  => array(
+					'{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less:hover' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			75
+		);
+
+		$this->__add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name'     => 'button_read_less_box_shadow_hover',
+				'selector' => '{{WRAPPER}} .jet-view-more__button.jet-view-more__button--read-less:hover',
+				'condition' => array(
+					'read_less' => 'true',
+				),
+			),
+			100
+		);
+
+		$this->__end_controls_tab();
+
+		$this->__end_controls_tabs();
+
 		$this->__end_controls_section();
 	}
 
@@ -508,8 +861,15 @@ class Jet_View_More_Widget extends Jet_Tricks_Base {
 
 		$settings = array(
 			'effect'   => $button_settings['show_effect'],
+			'hide_effect' => $button_settings['hide_effect'],
 			'sections' => $sections_list,
 			'showall'  => filter_var( $button_settings['show_all'], FILTER_VALIDATE_BOOLEAN ),
+			'read_less'   => filter_var( $button_settings['read_less'], FILTER_VALIDATE_BOOLEAN ),
+			'read_more_label' => $button_settings['button_label'],
+			'read_more_icon'  => $button_settings[ $this->__new_icon_prefix . 'button_icon' ],
+			'read_less_label' => $button_settings['read_less_label'],
+			'read_less_icon'  => $button_settings[ $this->__new_icon_prefix . 'read_less_icon' ],
+			'hide_all'        => filter_var( $button_settings['hide_all'], FILTER_VALIDATE_BOOLEAN ),
 		);
 
 		$this->add_render_attribute( 'instance', array(
@@ -524,14 +884,14 @@ class Jet_View_More_Widget extends Jet_Tricks_Base {
 		$button_label_html = '';
 
 		if ( ! empty( $button_settings['button_label'] ) ) {
-			$button_label_html = sprintf( '<div class="jet-view-more__label">%1$s</div>', $button_settings['button_label'] );
+			$button_label_html = sprintf( '<div class="jet-view-more__label">%1$s</div>', esc_html( $button_settings['button_label'] ) );
 		}
 
 		echo sprintf(
 			'<div %1$s><div class="jet-view-more__button" role="button" tabindex="0">%2$s%3$s</div></div>',
-			$this->get_render_attribute_string( 'instance' ),
-			$button_icon_html,
-			$button_label_html
+			$this->get_render_attribute_string( 'instance' ), // phpcs:ignore
+			$button_icon_html, // phpcs:ignore
+			$button_label_html // phpcs:ignore
 		);
 	}
 }

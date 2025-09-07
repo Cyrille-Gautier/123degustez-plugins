@@ -194,6 +194,19 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 			)
 		);
 
+		$this->add_control(
+			'separator_type',
+			array(
+				'label'   => esc_html__( 'Separator Type', 'jet-tricks' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'div',
+				'options' => array(
+					'div' => esc_html__( 'DIV', 'jet-tricks' ),
+					'gradient'  => esc_html__( 'Gradient Mask', 'jet-tricks' ),
+				),
+			)
+		);
+
 		$this->add_responsive_control(
 			'separator_height',
 			array(
@@ -223,6 +236,7 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				),
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['separator'] => 'height: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .jet-unfold__mask-gradient' => 'mask-image: linear-gradient(to top, transparent 0%, black {{SIZE}}{{UNIT}}); -webkit-mask-image: linear-gradient(to top, transparent 0%, black {{SIZE}}{{UNIT}});',
 				),
 			)
 		);
@@ -237,6 +251,9 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				'selectors' => [
 					'{{WRAPPER}} ' . $css_scheme['separator'] => 'z-index: {{VALUE}};',
 				],
+				'condition' => array(
+					'separator_type' => 'div',
+				),
 			]
 		);
 		
@@ -462,6 +479,8 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				'options' => array(
 					'row'   => esc_html__( 'Start', 'jet-tricks' ),
 					'row-reverse'  => esc_html__( 'End', 'jet-tricks' ),
+					'column'  => esc_html__( 'Top', 'jet-tricks' ),
+					'column-reverse'  => esc_html__( 'Bottom', 'jet-tricks' ),
 				),
 				'default'     => 'row',
 				'render_type' => 'template',
@@ -710,6 +729,9 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				'label'      => esc_html__( 'Separator', 'jet-tricks' ),
 				'tab'        => Controls_Manager::TAB_STYLE,
 				'show_label' => false,
+				'condition' => array(
+					'separator_type' => 'div',
+				),
 			)
 		);
 
@@ -820,6 +842,31 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 			)
 		);
 
+		$this->__add_responsive_control(
+			'button_spacing',
+			array(
+				'label'      => esc_html__( 'Spacing', 'jet-tricks' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array(
+					'px', 'em', 'rem', 'custom',
+				),
+				'range'      => array(
+					'px' => array(
+						'min' => 0,
+						'max' => 200,
+					),
+				),
+				'default'    => array(
+					'unit' => 'px',
+					'size' => 30,
+				),
+				'selectors'  => array(
+					'{{WRAPPER}} .jet-unfold__trigger' => 'margin-top: {{SIZE}}{{UNIT}}',
+				),
+			),
+			50
+		);
+
 		$this->__add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
@@ -856,6 +903,48 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				),
 			),
 			75
+		);
+
+		$this->__add_control(
+			'button_icon_style_heading',
+			array(
+				'label'     => esc_html__( 'Icon Styles', 'jet-tricks' ),
+				'type'      => Controls_Manager::HEADING,
+				'separator' => 'before',
+			),
+			25
+		);
+
+		$this->__add_responsive_control(
+			'button_icon_size',
+			array(
+				'label'      => esc_html__( 'Icon Size', 'jet-tricks' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em', 'rem' ),
+				'range'      => array(
+					'px' => array(
+						'min' => 6,
+						'max' => 50,
+					),
+				),
+				'selectors'  => array(
+					'{{WRAPPER}} ' . $css_scheme['button'] . ' .jet-unfold__button-icon.jet-tricks-icon' => 'font-size: {{SIZE}}{{UNIT}};',
+				),
+			),
+			50
+		);
+
+		$this->__add_responsive_control(
+			'button_icon_margin',
+			array(
+				'label'      => esc_html__( 'Margin', 'jet-tricks' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors'  => array(
+					'{{WRAPPER}} ' . $css_scheme['button'] . ' .jet-unfold__button-icon.jet-tricks-icon' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			),
+			50
 		);
 
 		$this->__add_control(
@@ -899,6 +988,18 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				),
 				'selectors' => array(
 					'{{WRAPPER}} ' . $css_scheme['button'] => 'background-color: {{VALUE}}',
+				),
+			),
+			25
+		);
+
+		$this->__add_control(
+			'button_icon_color',
+			array(
+				'label'     => esc_html__( 'Icon Color', 'jet-tricks' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['button'] . ' .jet-unfold__button-icon.jet-tricks-icon' => 'color: {{VALUE}}',
 				),
 			),
 			25
@@ -971,6 +1072,18 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 			25
 		);
 
+		$this->__add_control(
+			'button_hover_icon_color',
+			array(
+				'label'     => esc_html__( 'Icon Color', 'jet-tricks' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['button'] . ':hover .jet-unfold__button-icon.jet-tricks-icon' => 'color: {{VALUE}}',
+				),
+			),
+			25
+		);
+
 		$this->__add_group_control(
 			Group_Control_Border::get_type(),
 			array(
@@ -1035,6 +1148,7 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 			'autoHide'         => $settings['autohide'] ?? '',
 			'autoHideTime'     => ! empty( $settings['autohide_time'] ) ? $settings['autohide_time'] : '',
 			'foldScrollOffset' => $settings['fold_scroll_offset'] ?? '',
+			'separatorType'    => $settings['separator_type'] ?? 'div',
 		);
 
 		$this->add_render_attribute( 'instance', array(
@@ -1044,6 +1158,25 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 			),
 			'data-settings' => json_encode( $json_settings ),
 		) );
+
+		$mask_classes = array( 'jet-unfold__mask' );
+		if ( 'gradient' === $settings['separator_type'] ) {
+			$mask_classes[] = 'jet-unfold__mask-gradient';
+		}
+
+		$mask_attributes = array(
+			'class' => $mask_classes,
+		);
+
+		if (
+			! empty( $settings['mask_height']['size'] ) &&
+			! empty( $settings['mask_height']['unit'] ) &&
+			! filter_var( $settings['fold'], FILTER_VALIDATE_BOOLEAN )
+		) {
+			$mask_attributes['style'] = 'height:' . esc_attr( $settings['mask_height']['size'] . $settings['mask_height']['unit'] );
+		}
+
+		$this->add_render_attribute( 'mask', $mask_attributes );
 
 		$this->add_render_attribute( 'button', array(
 			'class' => array(
@@ -1112,22 +1245,24 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 		$fold_text        = ! empty( $settings['button_fold_text'] ) ? $settings['button_fold_text'] : '';
 		$unfold_text      = ! empty( $settings['button_unfold_text'] ) ? $settings['button_unfold_text'] : '';
 		$button_text      = ! filter_var( $settings['fold'], FILTER_VALIDATE_BOOLEAN ) ? $unfold_text : $fold_text;
-		$button_text_html = sprintf( '<span class="jet-unfold__button-text">%1$s</span>', $button_text );
+		$button_text_html = sprintf( '<span class="jet-unfold__button-text">%1$s</span>', esc_html( $button_text ) );
 
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'instance' ); ?>>
+		<div <?php echo $this->get_render_attribute_string( 'instance' ); // phpcs:ignore ?>>
 			<div class="jet-unfold__inner">
-				<div class="jet-unfold__mask">
+				<div <?php echo $this->get_render_attribute_string( 'mask' ); // phpcs:ignore ?>>
 					<div class="jet-unfold__content">
-						<div <?php echo $this->get_render_attribute_string( 'editor' ); ?>><?php echo $editor_content; ?></div>
+						<div <?php echo $this->get_render_attribute_string( 'editor' ); ?>><?php echo $editor_content; // phpcs:ignore ?></div>
 					</div>
+					<?php if ( 'div' === $settings['separator_type'] ) : ?>
 					<div class="jet-unfold__separator"></div>
+					<?php endif; ?>
 				</div>
 				<div class="jet-unfold__trigger"><?php
 					echo sprintf( '<div %1$s tabindex="0" role="button">%2$s%3$s</div>',
-						$this->get_render_attribute_string( 'button' ),
-						$button_icon_html,
-						$button_text_html
+						$this->get_render_attribute_string( 'button' ), // phpcs:ignore
+						$button_icon_html, // phpcs:ignore
+						$button_text_html // phpcs:ignore
 					);?>
 				</div>
 			</div>

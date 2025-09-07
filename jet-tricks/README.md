@@ -4,6 +4,39 @@ Enjoy adding animation on the fly without coding skills
 
 # ChangeLog
 
+## 1.5.7
+* Added: JetEngine Query Gateway support for Hotspots widget;
+* Fixed: prevent MutationObserver recursion in sticky columns [Crocoblock/suggestions#6203](https://github.com/Crocoblock/suggestions/issues/6203);
+* Fixed: shortcode processing in Tooltips [Crocoblock/suggestions#8253](https://github.com/Crocoblock/suggestions/issues/8253);
+* Fixed: tooltip display positioning in editor for Hotspots widget.
+
+## 1.5.6
+* Fixed: WP Security Standard warnings.
+
+## 1.5.5.1
+* Fixed: XSS vulnerability;
+* Fixed: icon display in satellite widget.
+
+## 1.5.5
+* Added: Read Less functionality to Read More widget [Crocoblock/suggestions#6769](https://github.com/Crocoblock/suggestions/issues/6769);
+* Added: Style controls for Button in Unfold widget (Icon size, color, margin) [Crocoblock/suggestions#6210](https://github.com/Crocoblock/suggestions/issues/6210);
+* Fixed: Separator visibility when unfold button is hidden [Crocoblock/suggestions#8181](https://github.com/Crocoblock/suggestions/issues/8181);
+* Fixed: Unfold widget not resizing on content height change [Crocoblock/suggestions#4510](https://github.com/Crocoblock/suggestions/issues/4510);
+
+## 1.5.4.2
+* Fixed: sanitize user input in Satellite to prevent XSS;
+* Fixed: security vulnerability in AJAX get_query_control_options endpoint.
+
+## 1.5.4.1
+* Fixed: tooltip content duplication.
+
+## 1.5.4
+* Added: `Link` control for Satellite [Crocoblock/suggestions#217](https://github.com/Crocoblock/suggestions/issues/217);
+* Added: ability to use Elementor Template as Tooltip content [Crocoblock/suggestions#934](https://github.com/Crocoblock/suggestions/issues/934);
+* Added: gradient mask (CSS mask-image) option for Unfold widget [Crocoblock/suggestions#8116](https://github.com/Crocoblock/suggestions/issues/8116);
+* Added: `Spacing` control for the button in Unfold widget [Crocoblock/suggestions#8136](https://github.com/Crocoblock/suggestions/issues/8136);
+* Fixed: layout shift on initial load in Unfold widget [Crocoblock/suggestions#8115](https://github.com/Crocoblock/suggestions/issues/8115).
+
 ## 1.5.3
 * Added: `Separator Z-index` control for Unfold widget;
 * Added: `Interactive Tooltip` control for Tooltip settings;

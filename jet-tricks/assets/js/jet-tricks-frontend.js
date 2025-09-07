@@ -362,7 +362,7 @@
 
 				var observer = new MutationObserver( function( mutations ) {
 					for( var mutation of mutations ) {
-						if ( 'attributes' === mutation.type ) {
+						if ( 'attributes' === mutation.type && mutation.attributeName !== 'style' ) {
 							$target[0].style.height = 'auto';
 						}
 					}
@@ -534,6 +534,16 @@
 				activeBreakpoints      = elementor.config.responsive.activeBreakpoints,
 				initialLoaded          = false;
 
+			function updateMaskGradientClass() {
+				if (settings.separatorType === 'gradient') {
+					if ($target.hasClass('jet-unfold-state') || $trigger.is(':hidden')) {
+						$mask.removeClass('jet-unfold__mask-gradient');
+					} else {
+						$mask.addClass('jet-unfold__mask-gradient');
+					}
+				}
+			}
+
 			maskBreakpointsHeights['desktop']    = [];
 			maskBreakpointsHeights['widescreen'] = [];
 
@@ -556,6 +566,16 @@
 
 			onLoaded();
 
+			if ( typeof ResizeObserver !== 'undefined' ) {
+				new ResizeObserver( function( entries ) {
+					if ( $target.hasClass( 'jet-unfold-state' ) ) {
+						$mask.css( {
+							'height': $contentInner.outerHeight()
+						} );
+					}
+				} ).observe( $contentInner[0] );
+			}
+			
 			if ( 'true' === hideOutsideClick ) {
 				$( window ).on( 'mouseup', function( event ) {
 					let container = $target;
@@ -597,6 +617,7 @@
 						} );
 					}
 					$trigger.css( 'display', 'flex' );
+					updateMaskGradientClass();
 				} else {
 					$trigger.hide();
 					$mask.css( {
@@ -608,6 +629,7 @@
 					$separator.css( {
 						'opacity': '0'
 					} );
+					updateMaskGradientClass();
 				}
 			}
 
@@ -696,6 +718,8 @@
 						}
 					} );
 				}
+				
+				updateMaskGradientClass();
 			} );
 
 			function getDeviceHeight() {
@@ -769,7 +793,7 @@
 					arrow: settings['tooltipArrow'] ? true : false,
 					placement: settings['tooltipPlacement'],
 					trigger: settings['tooltipTrigger'],
-					appendTo: $target[0],
+					appendTo: editMode ? document.body : $target[0],
 					hideOnClick: 'manual' !== settings['tooltipTrigger'],
 					maxWidth: 'none',
 					offset: [0, settings['tooltipDistance']['size']],
@@ -918,6 +942,10 @@
 				'satellite': widgetData['jet_tricks_widget_satellite'] || 'false',
 				'satelliteType': widgetData['jet_tricks_widget_satellite_type'] || 'text',
 				'satellitePosition': widgetData['jet_tricks_widget_satellite_position'] || 'top-center',
+				'satelliteText': widgetData['jet_tricks_widget_satellite_text'] || 'Lorem Ipsum',
+				'satelliteIcon': widgetData['selected_jet_tricks_widget_satellite_icon'] || '',
+				'satelliteImage': widgetData['jet_tricks_widget_satellite_image'] || '',
+				'satelliteLink': widgetData['jet_tricks_widget_satellite_link'] || '',
 				'tooltip': widgetData['jet_tricks_widget_tooltip'] || 'false',
 				'tooltipDescription': widgetData['jet_tricks_widget_tooltip_description'] || 'Lorem Ipsum',
 				'tooltipPlacement': widgetData['jet_tricks_widget_tooltip_placement'] || 'top',
@@ -950,8 +978,14 @@
 			settings        = $.extend( {}, defaultSettings, settings ),
 			sections        = settings['sections'],
 			sectionsData    = {},
-			buttonVisible   = true,
-			editMode        = Boolean( elementor.isEditMode() );
+			editMode        = Boolean( elementor.isEditMode() ),
+			readLess      = settings['read_less'] || false,
+			readMoreLabel   = settings['read_more_label'],
+			readLessLabel   = settings['read_less_label'],
+			readMoreIcon    = settings['read_more_icon'],
+			readLessIcon    = settings['read_less_icon'],
+			hideAll         = settings['hide_all'] || false,
+			isOpened        = false;
 
 		/**
 		 * Init
@@ -961,84 +995,177 @@
 
 			if ( editMode ) {
 				return false;
+			}			
+
+			function hideSection($section) {
+				// Apply hide effect if available
+				if (settings['hide_effect'] && settings['hide_effect'] !== 'none') {
+					$section.addClass('view-more-hiding');
+					$section.addClass('jet-tricks-' + settings['hide_effect'] + '-hide-effect');
+					
+					// Remove classes after animation completes
+					(function($currentSection) {
+						$currentSection.on('animationend', function animationEndHandler() {
+							$currentSection.off('animationend', animationEndHandler);
+							$currentSection.removeClass('view-more-hiding');
+							$currentSection.removeClass('jet-tricks-' + settings['hide_effect'] + '-hide-effect');
+							$currentSection.css('height', '');
+							$currentSection.removeClass('view-more-visible');
+							$currentSection.removeClass('jet-tricks-' + settings['effect'] + '-effect');
+						});
+					})($section);
+				} else {
+					$section.css('height', '');
+					$section.removeClass('view-more-visible');
+					$section.removeClass('jet-tricks-' + settings['effect'] + '-effect');
+				}
 			}
 
-			// Add Events
-			$button.on( 'click', function() {
-
+			function showAllSections() {
 				for ( var section in sectionsData ) {
 					var $section = sectionsData[ section ]['selector'];
+					sectionsData[ section ]['visible'] = true;
+					$section.css('height', $section[0].scrollHeight + 'px');
+					$section.addClass( 'view-more-visible' );
+					$section.addClass( 'jet-tricks-' + settings['effect'] + '-effect' );
+				}
+			}
 
-					if ( ! settings.showall ) {
-						if ( ! sectionsData[ section ]['visible'] ) {
-							sectionsData[ section ]['visible'] = true;
-							$section.css('height', $section[0].scrollHeight + 'px');
-							$section.addClass( 'view-more-visible' );
-							$section.addClass( 'jet-tricks-' + settings['effect'] + '-effect' );
+			function hideAllSections() {
+				for ( var section in sectionsData ) {
+					var $section = sectionsData[ section ]['selector'];
+					sectionsData[ section ]['visible'] = false;
+					hideSection($section);
+				}
+			}
 
-							break;
-						}
-					} else {
+			function showNextSection() {
+				for ( var section in sectionsData ) {
+					var $section = sectionsData[ section ]['selector'];
+					if ( !sectionsData[ section ]['visible'] ) {
 						sectionsData[ section ]['visible'] = true;
 						$section.css('height', $section[0].scrollHeight + 'px');
 						$section.addClass( 'view-more-visible' );
 						$section.addClass( 'jet-tricks-' + settings['effect'] + '-effect' );
-					}
-
-				}
-
-				for ( var section in sectionsData ) {
-					buttonVisible = true;
-
-					if ( sectionsData[ section ]['visible'] ) {
-						buttonVisible = false;
+						break;
 					}
 				}
+			}
 
-				if ( ! buttonVisible ) {
-					$button.css( { 'display': 'none' } );
+			function hideNextSection() {
+				var sectionKeys = Object.keys(sectionsData).reverse();
+				for (var i = 0; i < sectionKeys.length; i++) {
+					var sectionKey = sectionKeys[i];
+					var $section = sectionsData[sectionKey]['selector'];
+					if (sectionsData[sectionKey]['visible']) {
+						sectionsData[sectionKey]['visible'] = false;
+						hideSection($section);
+						break;
+					}
 				}
+			}
 
-			} );
-
-			$button.keydown( function( e ) {
-				var $which = e.which || e.keyCode;
-
-					if ( $which == 13 || $which == 32 ) {
-						for ( var section in sectionsData ) {
-							var $section = sectionsData[ section ]['selector'];
-
-							if ( ! settings.showall ) {
-								if ( ! sectionsData[ section ]['visible'] ) {
-									sectionsData[ section ]['visible'] = true;
-									$section.css('height', $section[0].scrollHeight + 'px');
-									$section.addClass( 'view-more-visible' );
-									$section.addClass( 'jet-tricks-' + settings['effect'] + '-effect' );
-
+			$button.on('click', function() {
+				if (readLess) {
+					if (!isOpened) {
+						if (!settings.showall) {
+							showNextSection();
+							var allVisible = true;
+							for (var section in sectionsData) {
+								if (!sectionsData[section]['visible']) {
+									allVisible = false;
 									break;
 								}
-							} else {
-								sectionsData[ section ]['visible'] = true;
-								$section.css('height', $section[0].scrollHeight + 'px');
-								$section.addClass( 'view-more-visible' );
-								$section.addClass( 'jet-tricks-' + settings['effect'] + '-effect' );
 							}
-
-						}
-
-						for ( var section in sectionsData ) {
-							buttonVisible = true;
-
-							if ( sectionsData[ section ]['visible'] ) {
-								buttonVisible = false;
+							if (allVisible) {
+								$button.find('.jet-view-more__label').text(readLessLabel);
+								if (readLessIcon && readLessIcon.value) {
+									$button.find('.jet-view-more__icon').html('<i class="' + readLessIcon.value + '"></i>');
+								}
+								$button.addClass('jet-view-more__button--read-less');
+								isOpened = true;
 							}
+						} else {
+							showAllSections();
+							$button.find('.jet-view-more__label').text(readLessLabel);
+							if (readLessIcon && readLessIcon.value) {
+								$button.find('.jet-view-more__icon').html('<i class="' + readLessIcon.value + '"></i>');
+							}
+							$button.addClass('jet-view-more__button--read-less');
+							isOpened = true;
 						}
-
-						if ( ! buttonVisible ) {
-							$button.css( { 'display': 'none' } );
+					} else {
+						if (hideAll) {
+							hideAllSections();
+							$button.find('.jet-view-more__label').text(readMoreLabel);
+							if (readMoreIcon && readMoreIcon.value) {
+								$button.find('.jet-view-more__icon').html('<i class="' + readMoreIcon.value + '"></i>');
+							}
+							$button.removeClass('jet-view-more__button--read-less');
+							isOpened = false;
+						} else {
+							hideNextSection();
+							var allHidden = true;
+							for (var section in sectionsData) {
+								if (sectionsData[section]['visible']) {
+									allHidden = false;
+									break;
+								}
+							}
+							if (allHidden) {
+								$button.find('.jet-view-more__label').text(readMoreLabel);
+								if (readMoreIcon && readMoreIcon.value) {
+									$button.find('.jet-view-more__icon').html('<i class="' + readMoreIcon.value + '"></i>');
+								}
+								$button.removeClass('jet-view-more__button--read-less');
+								isOpened = false;
+							}
 						}
 					}
-			} );
+				} else {
+					if (!settings.showall) {
+						showNextSection();
+					} else {
+						showAllSections();
+					}
+					var allVisible = true;
+					for (var section in sectionsData) {
+						if (!sectionsData[section]['visible']) {
+							allVisible = false;
+							break;
+						}
+					}
+					if (allVisible) {
+						$button.css({ 'display': 'none' });
+					}
+				}
+			});
+
+			$button.keydown(function(e) {
+				var $which = e.which || e.keyCode;
+				if ($which == 13 || $which == 32) {
+					e.preventDefault();
+					if (readLess) {
+						$button.trigger('click');
+					} else {
+						if (!settings.showall) {
+							showNextSection();
+						} else {
+							showAllSections();
+						}
+						var allVisible = true;
+						for (var section in sectionsData) {
+							if (!sectionsData[section]['visible']) {
+								allVisible = false;
+								break;
+							}
+						}
+						if (allVisible) {
+							$button.css({ 'display': 'none' });
+						}
+					}
+				}
+			});
 		};
 
 		self.setSectionsData = function() {
@@ -1157,11 +1284,7 @@
 				settings = JetTricksTools.widgetEditorSettings( widgetId );
 			}
 
-			if ( ! settings ) {
-				return false;
-			}
-
-			if ( 'undefined' === typeof settings ) {
+			if ( ! settings || typeof settings !== 'object' ) {
 				return false;
 			}
 
@@ -1172,6 +1295,31 @@
 			$scope.addClass( 'jet-satellite-widget' );
 
 			$( '.jet-tricks-satellite', $scope ).addClass( 'jet-tricks-satellite--' + settings['satellitePosition'] );
+
+			//satellite display in edit mode
+			if ( editMode && $scope.find( '.jet-tricks-satellite' ).length === 0 ) {
+				var html = '';
+				var pos = settings['satellitePosition'] || 'top-center';
+
+				var link = settings['satelliteLink'] || {};
+				var linkStart = '', linkEnd = '';
+				if ( link.url ) {
+					linkStart = '<a class="jet-tricks-satellite__link">';
+					linkEnd = '</a>';
+				}
+
+				if ( settings['satelliteType'] === 'text' && settings['satelliteText'] ) {
+					html = '<div class="jet-tricks-satellite jet-tricks-satellite--' + pos + '"><div class="jet-tricks-satellite__inner"><div class="jet-tricks-satellite__text">' + linkStart + '<span>' + settings['satelliteText'] + '</span>' + linkEnd + '</div></div></div>';
+				} else if ( settings['satelliteType'] === 'icon' && settings['satelliteIcon'] && settings['satelliteIcon'].value ) {
+					html = '<div class="jet-tricks-satellite jet-tricks-satellite--' + pos + '"><div class="jet-tricks-satellite__inner"><div class="jet-tricks-satellite__icon">' + linkStart + '<div class="jet-tricks-satellite__icon-instance jet-tricks-icon"><i class="' + settings['satelliteIcon'].value + '"></i></div>' + linkEnd + '</div></div></div>';
+				} else if ( settings['satelliteType'] === 'image' && settings['satelliteImage'] && settings['satelliteImage'].url ) {
+					html = '<div class="jet-tricks-satellite jet-tricks-satellite--' + pos + '"><div class="jet-tricks-satellite__inner"><div class="jet-tricks-satellite__image">' + linkStart + '<img class="jet-tricks-satellite__image-instance" src="' + settings['satelliteImage'].url + '" alt="">' + linkEnd + '</div></div></div>';
+				}
+
+				if ( html ) {
+					$scope.prepend(html);
+				}
+			}
 		};
 	};
 

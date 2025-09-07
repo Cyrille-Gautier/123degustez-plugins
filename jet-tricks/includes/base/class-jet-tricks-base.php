@@ -136,13 +136,13 @@ abstract class Jet_Tricks_Base extends Widget_Base {
 	 */
 	public function __get_edit_looped_template( $templates = array(), $setting = null ) {
 		?>
-		<# if ( settings.<?php echo $setting; ?> ) { #>
+		<# if ( settings.<?php echo $setting; // phpcs:ignore ?> ) { #>
 		<?php
 			if ( ! empty( $templates['start'] ) ) {
 				include $templates['start'];
 			}
 		?>
-			<# _.each( settings.<?php echo $setting; ?>, function( item ) { #>
+			<# _.each( settings.<?php echo $setting; // phpcs:ignore ?>, function( item ) { #>
 			<?php
 				if ( ! empty( $templates['loop'] ) ) {
 					include $templates['loop'];
@@ -188,8 +188,8 @@ abstract class Jet_Tricks_Base extends Widget_Base {
 
 		ob_start();
 
-		echo '<# if ( item.' . $settings . ' ) { #>';
-		printf( $format, '{{{ item.' . $settings . ' }}}' );
+		echo '<# if ( item.' . $settings . ' ) { #>'; // phpcs:ignore
+		printf( $format, '{{{ item.' . $settings . ' }}}' ); // phpcs:ignore
 		echo '<# } #>';
 
 		return ob_get_clean();
@@ -281,7 +281,7 @@ abstract class Jet_Tricks_Base extends Widget_Base {
 
 		?>
 
-		<# if ( <?php echo $condition; ?> ) { #>
+		<# if ( <?php echo $condition; // phpcs:ignore ?> ) { #>
 
 			<?php include $file; ?>
 
@@ -296,7 +296,7 @@ abstract class Jet_Tricks_Base extends Widget_Base {
 	 * @return void
 	 */
 	public function __open_wrap() {
-		printf( '<div class="elementor-%s jet-tricks-addons">', $this->get_name() );
+		printf( '<div class="elementor-%s jet-tricks-addons">', $this->get_name() ); // phpcs:ignore
 	}
 
 	/**
@@ -357,7 +357,7 @@ abstract class Jet_Tricks_Base extends Widget_Base {
 		$val = $this->get_settings( $setting );
 
 		if ( ! is_array( $val ) && '0' === $val ) {
-			printf( $format, $val );
+			printf( $format, $val ); // phpcs:ignore
 		}
 
 		if ( is_array( $val ) && empty( $val[ $key ] ) ) {
@@ -369,9 +369,9 @@ abstract class Jet_Tricks_Base extends Widget_Base {
 		}
 
 		if ( is_array( $val ) ) {
-			printf( $format, $val[ $key ] );
+			printf( $format, $val[ $key ] ); // phpcs:ignore
 		} else {
-			printf( $format, $val );
+			printf( $format, $val ); // phpcs:ignore
 		}
 
 	}
@@ -389,8 +389,8 @@ abstract class Jet_Tricks_Base extends Widget_Base {
 			$setting = $setting[0] . '.' . $setting[1];
 		}
 
-		echo '<# if ( settings.' . $setting . ' ) { #>';
-		printf( $format, '{{{ settings.' . $setting . ' }}}' );
+		echo '<# if ( settings.' . $setting . ' ) { #>'; // phpcs:ignore
+		printf( $format, '{{{ settings.' . $setting . ' }}}' ); // phpcs:ignore
 		echo '<# } #>';
 	}
 
