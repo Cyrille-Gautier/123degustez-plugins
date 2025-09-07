@@ -78,7 +78,8 @@ class Elementor_Location_Render extends Base_Render {
     }
 
 	/**
-	 *
+	 * @param $location
+	 * @return bool
 	 */
 	public function render_jet_template( $location = false ) {
 

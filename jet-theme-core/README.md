@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.0.3 - 26.06.2025
+- Fixed: Location templates and theme builder conflict
+- Fixed: Saving page template to elementor error
+
 ## 2.3.0.2 - 29.04.2025
 - Fixed: All post archive condition
 

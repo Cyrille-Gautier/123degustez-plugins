@@ -395,7 +395,7 @@ class Manager {
 		add_action( 'elementor/preview/enqueue_styles', array( $this, 'preview_styles' ) );
 		add_filter( 'jet-theme-core/templates/content-type-options', array( $this, 'modify_content_type_options' ), 10, 2 );
 		add_filter( 'jet-theme-core/templates/structure-template-details', [ $this, 'structure_template_details' ], 10, 5 );
-		//add_filter( 'jet-theme-core/templates/meta-query-params', array( $this, 'modify_get_templates_meta_query_params' ), 10, 2 );
+		add_filter( 'jet-theme-core/templates/meta-query-params', array( $this, 'modify_get_templates_meta_query_params' ), 10, 2 );
 
 		if ( ! empty( $_GET['elementor-preview'] ) ) {
 			add_action( 'template_include', array( $this, 'set_editor_template' ), 9999 );

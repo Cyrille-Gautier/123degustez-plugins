@@ -376,7 +376,11 @@ if ( ! class_exists( 'Jet_Theme_Core_Templates_Api' ) ) {
 				return;
 			}
 
-			$source = $data['data']['source'];
+			if ( is_array( $data['data']['source'] ) ) {
+				$source = $data['data']['source'][0];
+			} else {
+				$source = $data['data']['source'];
+			}
 
 			if ( ! isset( $this->_sources[ $source ] ) ) {
 				return;

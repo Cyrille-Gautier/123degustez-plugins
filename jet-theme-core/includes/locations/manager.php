@@ -59,6 +59,11 @@ class Manager {
 	 * @return [type]           [description]
 	 */
 	public function do_location( $location = 'header' ) {
+		$is_theme_builder_render = jet_theme_core()->theme_builder->frontend_manager->is_theme_builder_render;
+
+		if ( $is_theme_builder_render ) {
+			return false;
+		}
 
 		$location = apply_filters( 'jet-theme-core/location/do-location/active-location', $location );
 
@@ -67,8 +72,6 @@ class Manager {
 		if ( ! $structure ) {
 			return false;
 		}
-
-		$conditions = get_option( 'jet_site_conditions', [] );
 
 		$template_ids = jet_theme_core()->template_conditions_manager->find_matched_conditions( $structure->get_id() );
 

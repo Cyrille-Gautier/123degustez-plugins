@@ -58,6 +58,8 @@ class Get_WP_Options extends Base {
 			$option_query = $wpdb->get_results( "SELECT option_name FROM $wpdb->options WHERE option_name IN (" . implode(',', $escapedValues) . ") AND autoload = 'yes'" );
 		}
 
+		$option_query = apply_filters( 'jet-theme-core/get-wp-options', $option_query, $args );
+
 		if ( empty( $option_query ) ) {
 			return rest_ensure_response( $option_query );
 		}

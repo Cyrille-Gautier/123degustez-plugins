@@ -369,7 +369,6 @@ class Templates {
 	 * @return false
 	 */
 	public function is_template_exist( $template_id ) {
-		 var_dump( get_post_status( $template_id ) );
 		return false;
 	}
 

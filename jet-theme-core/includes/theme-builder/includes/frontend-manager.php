@@ -103,8 +103,12 @@ class Frontend_Manager {
 		$layout = $this->get_matched_page_template_layouts();
 
 		if ( empty( $layout ) ) {
+			$this->is_theme_builder_render = false;
+
 			return $template;
 		}
+
+		$this->is_theme_builder_render = true;
 
 		$override_header = ( $layout['header']['override'] && $layout['header']['id'] ) || ! $layout['header']['enabled'] ? true : false;
 		$override_body   = ( $layout['body']['override'] && $layout['body']['id'] ) || ! $layout['body']['enabled'] ? true : false;
