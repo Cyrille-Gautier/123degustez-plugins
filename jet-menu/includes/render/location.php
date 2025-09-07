@@ -61,8 +61,12 @@ class Location {
 		}
 
 		$location = $args->theme_location;
-
 		$menu_id = $this->get_menu_id( $location );
+		$prevent = apply_filters( 'jet-menu/mega-menu/location/prevent-modify-nav-menu', false, $location, $menu_id );
+
+		if ( $prevent ) {
+			return $output;
+		}
 
 		if ( false === $menu_id ) {
 			return $output;

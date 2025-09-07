@@ -115,7 +115,7 @@ function jet_menu_avada_mobile_middle_logo( $args ) {
 			$logo
 		);
 
-		echo $logo;
+		echo $logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 	}
 

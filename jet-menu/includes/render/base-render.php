@@ -137,6 +137,8 @@ abstract class Base_Render {
 	 * @return boolean
 	 */
 	public function is_editor() {
+		// Safe: 'context' is only used to detect editor mode, no sensitive processing.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		return isset( $_REQUEST['context'] ) && $_REQUEST['context'] === 'edit' ? true : false;
 	}
 

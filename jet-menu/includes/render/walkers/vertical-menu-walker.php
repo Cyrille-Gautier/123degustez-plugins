@@ -172,9 +172,35 @@ class Vertical_Menu_Walker extends \Walker_Nav_Menu {
 		$args = apply_filters( 'nav_menu_item_args', $args, $item, $depth );
 
 		$class_names = join( ' ', array_filter( $classes ) );
-		$class_names = $class_names ? ' class="' . esc_attr( $class_names ) . '"' : '';
 
-		$output .= $indent . '<div' . $class_names .'>';
+		$submenu_trigger = $args->settings['submenu_trigger'] ?? 'hover';
+		$submenu_target  = $args->settings['submenu_target'] ?? 'item';
+
+		$atts_wrapper = array();
+
+		if ( ! empty( $class_names ) ) {
+			$atts_wrapper['class'] = esc_attr( $class_names );
+		}
+
+		$is_dropdown_trigger = ( in_array( 'menu-item-has-children', $item->classes ) || $this->is_mega_enabled( $item->ID ) );
+
+		if ( $is_dropdown_trigger && ( 'item' === $submenu_target || 'hover' === $submenu_trigger ) ) {
+			$atts_wrapper['role']          = 'button';
+			$atts_wrapper['tabindex']      = '0';
+			$atts_wrapper['aria-haspopup'] = 'true';
+			$atts_wrapper['aria-expanded'] = 'false';
+			$atts_wrapper['aria-label']    = esc_attr( wp_strip_all_tags( $item->title ) );
+		}
+
+		$wrapper_attributes = '';
+
+		foreach ( $atts_wrapper as $attr => $value ) {
+			if ( ! empty( $value ) ) {
+				$wrapper_attributes .= sprintf( ' %s="%s"', $attr, $value );
+			}
+		}
+
+		$output .= $indent . '<div' . $wrapper_attributes .'>';
 
 		$atts           = array();
 		$atts['title']  = ! empty( $item->attr_title ) ? $item->attr_title : '';
@@ -283,7 +309,13 @@ class Vertical_Menu_Walker extends \Walker_Nav_Menu {
 
 		if ( in_array( 'menu-item-has-children', $item->classes ) || $this->is_mega_enabled( $item->ID ) ) {
 			$arrow_icon = isset( $args->settings['dropdown_icon'] ) ? $args->settings['dropdown_icon'] : jet_menu()->svg_manager->get_svg_html( 'arrow-right' );
-			$arrow_icon_html = sprintf( '<div class="jet-dropdown-arrow">%1$s</div>', $arrow_icon );
+
+			if ( 'click' === $submenu_trigger && 'sub_icon' === $submenu_target ) {
+				$arrow_icon_html = sprintf( '<div class="jet-dropdown-arrow" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Expand submenu">%1$s</div>', $arrow_icon );
+			} else {
+				$arrow_icon_html = sprintf( '<div class="jet-dropdown-arrow">%1$s</div>', $arrow_icon );
+			}
+
 			$title = $title . $arrow_icon_html;
 		}
 
@@ -291,7 +323,7 @@ class Vertical_Menu_Walker extends \Walker_Nav_Menu {
 		$item_output .= '</a>';
 		$item_output .= $args->after;
 
-		$is_elementor = ( isset( $_GET['elementor-preview'] ) ) ? true : false;
+		$is_elementor = ( isset( $_GET['elementor-preview'] ) ) ? true : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		$mega_item = get_post_meta( $item->ID, jet_menu()->post_type_manager->meta_key(), true );
 

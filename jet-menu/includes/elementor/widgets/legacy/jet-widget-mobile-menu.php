@@ -1655,7 +1655,7 @@ class Jet_Widget_Mobile_Menu extends Widget_Base {
 		$settings = $this->get_settings();
 
 		if ( ! isset( $settings['menu'] ) || empty( $settings['menu'] ) ) {
-			echo '<span>' . _e( 'Menu undefined', 'jet-menu' ) . '</span>';
+			echo '<span>' . esc_html_e( 'Menu undefined', 'jet-menu' ) . '</span>';
 			return;
 		}
 

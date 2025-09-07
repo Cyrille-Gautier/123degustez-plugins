@@ -90,7 +90,7 @@ class Block_Editor_Content_Render extends Base_Render {
 
 		$this->maybe_enqueue_css();
 
-		echo $content;
+		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 	}
 

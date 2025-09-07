@@ -62,6 +62,7 @@ class Rest_Api {
 
 		$this->_endpoints = array();
 
+		$this->register_endpoint( new Endpoints\Clear_Cache() );
 		$this->register_endpoint( new Endpoints\Get_Blocks_Template_Content() );
 		$this->register_endpoint( new Endpoints\Get_Elementor_Template_Content() );
 		$this->register_endpoint( new Endpoints\Plugin_Settings() );

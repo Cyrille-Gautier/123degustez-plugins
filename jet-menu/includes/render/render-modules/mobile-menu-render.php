@@ -46,7 +46,7 @@ class Mobile_Menu_Render extends Base_Render {
             } else {
 	            echo sprintf(
 		            '<span>' . esc_html__( '%3$s Go to the %1$sMenus screen%2$s to create one.', 'jet-menu' )  . '</span>',
-		            sprintf( '<a href="%s" target="_blank">', admin_url( 'nav-menus.php?action=edit&menu=0' ) ),
+		            sprintf( '<a href="%s" target="_blank">', esc_url( admin_url( 'nav-menus.php?action=edit&menu=0' ) ) ),
 		            '</a>',
 		            '<span>' . esc_html__( 'There are no menus in your site.', 'jet-menu' ) . '</span>'
 	            );
@@ -67,7 +67,7 @@ class Mobile_Menu_Render extends Base_Render {
 			$render_menu_id = $mobile_menu_id;
 		}
 
-		$menu_raw_data = jet_menu()->render_manager->generate_menu_raw_data( $render_menu_id );
+		$menu_raw_data = jet_menu()->render_manager->generate_menu_raw_data( $render_menu_id, true );
 
 		$menu_options = array(
 			'menuUniqId'         => $menu_uniqid,
@@ -182,17 +182,15 @@ class Mobile_Menu_Render extends Base_Render {
 
 		$instance_attr_string = jet_menu_tools()->get_attr_string( $instance_attributes );
 
-		?><div <?php echo $instance_attr_string; ?> data-menu-id="<?php echo $menu_id; ?>" data-menu-options="<?php echo $menu_options; ?>">
+		?><div <?php echo $instance_attr_string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> data-menu-id="<?php echo esc_attr( $menu_id ); ?>" data-menu-options="<?php echo esc_attr( $menu_options ); ?>">
 			<mobile-menu></mobile-menu><?php
-			echo $widget_refs;
+			echo $widget_refs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		?></div><?php
 
 		$this->add_menu_advanced_styles( $menu_id );
 
-        //var_dump($menu_raw_data);
-
-		?><script id="<?php echo 'jetMenuMobileWidgetRenderData' . $menu_uniqid ?>" type="text/javascript">
-            window.jetMenuMobileWidgetRenderData<?php echo $menu_uniqid; ?>=<?php echo json_encode( $menu_raw_data ); ?>;
+		?><script id="<?php echo esc_attr( 'jetMenuMobileWidgetRenderData' . $menu_uniqid ); ?>" type="application/json">
+            <?php echo wp_json_encode( $menu_raw_data ); ?>
         </script><?php
 
 		//wp_localize_script( 'jet-menu-public-scripts', 'jetMenuMobileRenderData' . $menu_uniqid, $menu_raw_data );

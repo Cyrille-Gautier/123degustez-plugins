@@ -2,6 +2,7 @@
 /**
  * Main dashboard template
  */
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 ?><div id="jet-menu-settings-nav">
 	<transition name="popup">
 		<cx-vui-popup
@@ -289,3 +290,4 @@
 		</cx-vui-popup>
 	</transition>
 </div>
+<?php // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped ?>

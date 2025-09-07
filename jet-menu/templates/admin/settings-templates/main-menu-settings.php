@@ -1,3 +1,4 @@
+<?php // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 <div class="jet-menu-settings-page jet-menu-settings-page__main-menu">
     <cx-vui-collapse
         :collapsed="false"
@@ -313,7 +314,7 @@
                 >
                     <cx-vui-tabs-panel
                         name="jet-mega-menu-top-level"
-                        label="<?php echo _e( 'Top', 'jet-menu' ); ?>"
+                        label="<?php echo esc_attr__( 'Top', 'jet-menu' ); ?>"
                         key="jet-mega-menu-top-level"
                     ><?php
 	                    jet_menu()->settings_manager->options_manager->render_typography_options( array(
@@ -357,7 +358,7 @@
                     </cx-vui-tabs-panel>
                     <cx-vui-tabs-panel
                         name="jet-mega-menu-sub-level"
-                        label="<?php echo _e( 'Sub', 'jet-menu' ); ?>"
+                        label="<?php echo esc_attr__( 'Sub', 'jet-menu' ); ?>"
                         key="jet-mega-menu-sub-level"
                     ><?php
 	                    jet_menu()->settings_manager->options_manager->render_typography_options( array(
@@ -420,7 +421,7 @@
                 >
                     <cx-vui-tabs-panel
                         name="jet-mega-menu-normal-state"
-                        label="<?php echo _e( 'Normal', 'jet-menu' ); ?>"
+                        label="<?php echo esc_attr__( 'Normal', 'jet-menu' ); ?>"
                         key="jet-mega-menu-normal-state"
                     >
                         <cx-vui-colorpicker
@@ -447,7 +448,7 @@
                     </cx-vui-tabs-panel>
                     <cx-vui-tabs-panel
                         name="jet-mega-menu-hover-state"
-                        label="<?php echo _e( 'Hover', 'jet-menu' ); ?>"
+                        label="<?php echo esc_attr__( 'Hover', 'jet-menu' ); ?>"
                         key="jet-mega-menu-hover-state"
                     >
                         <cx-vui-colorpicker
@@ -474,7 +475,7 @@
                     </cx-vui-tabs-panel>
                     <cx-vui-tabs-panel
                         name="jet-mega-menu-top-active-state"
-                        label="<?php echo _e( 'Active', 'jet-menu' ); ?>"
+                        label="<?php echo esc_attr__( 'Active', 'jet-menu' ); ?>"
                         key="jet-mega-menu-active-state"
                     >
                         <cx-vui-colorpicker
@@ -527,7 +528,7 @@
                 >
                     <cx-vui-tabs-panel
                         name="jet-mega-menu-dropdown-top-level"
-                        label="<?php echo _e( 'Top', 'jet-menu' ); ?>"
+                        label="<?php echo esc_attr__( 'Top', 'jet-menu' ); ?>"
                         key="jet-mega-menu-dropdown-top-level"
                     ><?php
 				        jet_menu()->settings_manager->options_manager->render_typography_options( array(
@@ -570,7 +571,7 @@
                     </cx-vui-tabs-panel>
                     <cx-vui-tabs-panel
                         name="jet-mega-menu-dropdown-sub-level"
-                        label="<?php echo _e( 'Sub', 'jet-menu' ); ?>"
+                        label="<?php echo esc_attr__( 'Sub', 'jet-menu' ); ?>"
                         key="jet-mega-menu-dropdown-sub-level"
                     ><?php
 				        jet_menu()->settings_manager->options_manager->render_typography_options( array(
@@ -625,7 +626,7 @@
                 >
                     <cx-vui-tabs-panel
                         name="jet-mega-menu-dropdown-normal-state"
-                        label="<?php echo _e( 'Normal', 'jet-menu' ); ?>"
+                        label="<?php echo esc_attr__( 'Normal', 'jet-menu' ); ?>"
                         key="jet-mega-menu-dropdown-normal-state"
                     >
                         <cx-vui-colorpicker
@@ -659,7 +660,7 @@
                     </cx-vui-tabs-panel>
                     <cx-vui-tabs-panel
                         name="jet-mega-menu-dropdown-hover-state"
-                        label="<?php echo _e( 'Hover', 'jet-menu' ); ?>"
+                        label="<?php echo esc_attr__( 'Hover', 'jet-menu' ); ?>"
                         key="jet-mega-menu-dropdown-hover-state"
                     >
                         <cx-vui-colorpicker
@@ -693,7 +694,7 @@
                     </cx-vui-tabs-panel>
                     <cx-vui-tabs-panel
                         name="jet-mega-menu-dropdown-active-state"
-                        label="<?php echo _e( 'Active', 'jet-menu' ); ?>"
+                        label="<?php echo esc_attr__( 'Active', 'jet-menu' ); ?>"
                         key="jet-mega-menu-dropdown-active-state"
                     >
                         <cx-vui-colorpicker
@@ -759,3 +760,4 @@
         </div>
     </cx-vui-collapse>
 </div>
+<?php // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped ?>

@@ -3,7 +3,7 @@
  * Plugin Name: JetMenu
  * Plugin URI: https://crocoblock.com/plugins/jetmenu/
  * Description: A top-notch mega menu addon for Elementor. Use it to create a fully responsive mega menu with drop-down items, rich in content modules, and change your menu style according to your vision without any coding knowledge!
- * Version:     2.4.10
+ * Version:     2.4.14
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-menu
@@ -48,7 +48,7 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '2.4.10';
+		private $version = '2.4.14';
 
 		/**
 		 * Plugin slug
@@ -185,6 +185,7 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 					$this->plugin_path( 'includes/modules/jet-dashboard/jet-dashboard.php' ),
 					$this->plugin_path( 'includes/modules/db-updater/cx-db-updater.php' ),
 					$this->plugin_path( 'includes/modules/jet-elementor-extension/jet-elementor-extension.php' ),
+					$this->plugin_path( 'includes/modules/jet-cache/jet-cache.php' ),
 				)
 			);
 		}
@@ -197,6 +198,9 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 		public function init() {
 
 			$this->load_files();
+
+			$cache_module_data = $this->module_loader->get_included_module_data( 'jet-cache.php' );
+			\Jet_Cache\Manager::get_instance( $cache_module_data );
 
 			$this->dynamic_css_manager = new CX_Dynamic_CSS( array(
 				'parent_handles' => array(
@@ -235,6 +239,10 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 				// Init DB upgrade
 				new Jet_Menu_DB_Upgrader();
 			}
+
+			// Compatibility Manager
+			new \Jet_Menu\Compatibility\Manager();
+
 		}
 
 		/**
@@ -274,6 +282,9 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 			// Tools
 			require $this->plugin_path( 'includes/tools.php' );
 
+			// Compatibility Manager
+			require $this->plugin_path( 'includes/compatibility/manager.php' );
+
 			// Dynamic CSS
 			require $this->plugin_path( 'includes/dynamic-css.php' );
 			require $this->plugin_path( 'includes/css-file.php' );
@@ -285,6 +296,7 @@ if ( ! class_exists( 'Jet_Menu' ) ) {
 			// Rest Api
 			require $this->plugin_path( 'includes/rest-api/rest-api.php' );
 			require $this->plugin_path( 'includes/rest-api/endpoints/base.php' );
+			require $this->plugin_path( 'includes/rest-api/endpoints/clear-cache.php' );
 			require $this->plugin_path( 'includes/rest-api/endpoints/get-elementor-template-content.php' );
 			require $this->plugin_path( 'includes/rest-api/endpoints/get-blocks-template-content.php' );
 			require $this->plugin_path( 'includes/rest-api/endpoints/plugin-settings.php' );

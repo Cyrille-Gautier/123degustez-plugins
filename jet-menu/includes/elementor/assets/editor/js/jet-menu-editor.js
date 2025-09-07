@@ -43,14 +43,12 @@
 					JetMenuEditor.isMobileRender = false;
 					currentElement.model.setSetting( 'force-mobile-render', false );
 					currentElement.model.renderRemoteServer();
-					currentElement.model.setSetting( 'force-mobile-render', false );
 				}
 
 				if ( mobileSections.includes( sectionName ) && ! JetMenuEditor.isMobileRender ) {
 					JetMenuEditor.isMobileRender = true;
 					currentElement.model.setSetting( 'force-mobile-render', true );
 					currentElement.model.renderRemoteServer();
-					currentElement.model.setSetting( 'force-mobile-render', false );
 				}
 			}
 

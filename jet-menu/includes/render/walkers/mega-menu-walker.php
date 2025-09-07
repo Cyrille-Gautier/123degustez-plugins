@@ -330,6 +330,9 @@ class Mega_Menu_Walker extends \Walker_Nav_Menu {
 
 		$dropdown_icon = $args->settings[ 'dropdown-icon' ];
 
+		$sub_trigger    = isset( $args->settings[ 'sub-trigger' ] ) ? $args->settings[ 'sub-trigger' ] : 'item';
+		$sub_menu_event = isset( $args->settings['sub-menu-event'] ) ? $args->settings['sub-menu-event'] : 'hover';
+
 		if ( $args->settings['use-dropdown-icon'] && ! empty( $dropdown_icon ) && ( in_array( 'menu-item-has-children', $item->classes ) || $this->is_mega_enabled( $item->ID ) ) ) {
 			
 			$format = apply_filters(
@@ -339,6 +342,14 @@ class Mega_Menu_Walker extends \Walker_Nav_Menu {
 			);
 
 			$dropdown_html = sprintf( $format, $dropdown_icon );
+
+			if ( 'submarker' === $sub_trigger && 'click' === $sub_menu_event ) {
+				$dropdown_html = preg_replace(
+					'/<div class=(["\'])jet-mega-menu-item__dropdown\1>/i',
+					'<div class="jet-mega-menu-item__dropdown" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Expand submenu">',
+					$dropdown_html
+				);
+			}
 		}
 
 		if ( $hide_item_text && 'top' === $level ) {
@@ -355,16 +366,28 @@ class Mega_Menu_Walker extends \Walker_Nav_Menu {
 			$args->link_after
 		);
 
-		$item_output = sprintf(
-			'%1$s<div class="jet-mega-menu-item__inner" tabindex="0" aria-label="%5$s">%2$s%3$s</div>%4$s',
-			$args->before,
-			$link_html,
-			$dropdown_html,
-			$args->after,
-			wp_strip_all_tags( $title )
-		);
+		$is_dropdown_trigger = ( in_array( 'menu-item-has-children', $item->classes ) || $this->is_mega_enabled( $item->ID ) );
 
-		$is_elementor = ( isset( $_GET['elementor-preview'] ) ) ? true : false;
+		if ( $is_dropdown_trigger && ( 'item' === $sub_trigger || 'hover' === $sub_menu_event ) ) {
+			$item_output = sprintf(
+				'%1$s<div class="jet-mega-menu-item__inner" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="%5$s">%2$s%3$s</div>%4$s',
+				$args->before,
+				$link_html,
+				$dropdown_html,
+				$args->after,
+				wp_strip_all_tags( $title )
+			);
+		} else {
+			$item_output = sprintf(
+				'%1$s<div class="jet-mega-menu-item__inner">%2$s%3$s</div>%4$s',
+				$args->before,
+				$link_html,
+				$dropdown_html,
+				$args->after
+			);
+		}
+
+		$is_elementor = ( isset( $_GET['elementor-preview'] ) ) ? true : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( $this->is_mega_enabled( $item->ID ) ) {
 			$content_type = $settings['content_type'];
@@ -413,7 +436,37 @@ class Mega_Menu_Walker extends \Walker_Nav_Menu {
 
 			if ( $render_instance ) {
 
-				$render_data = $render_instance->get_render_data();
+				$template_cache = jet_menu()->settings_manager->options_manager->get_option( 'use-template-cache', 'true' );
+				$template_cache = filter_var( $template_cache, FILTER_VALIDATE_BOOLEAN ) ? true : false;
+
+				$dev = jet_menu_tools()->is_dev_mode( 'walker' );
+
+				$render_data = false;
+
+				$mega_template_id = absint( $mega_template_id );
+				$transient_key    = $mega_template_id ? md5( sprintf( 'jet_menu_elementor_template_data_%s', $mega_template_id ) ) : null;
+
+				$cache_expiration_slug = jet_menu()->settings_manager->options_manager->get_option( 'template-cache-expiration', '12hours' );
+				$ttl_ms = jet_menu_tools()->get_milliseconds_by_tag( $cache_expiration_slug );
+
+				if ( 'none' === $ttl_ms ) {
+					$ttl_ms = YEAR_IN_SECONDS * 1000;
+				}
+
+				$can_cache = $template_cache && ! $dev && ! $use_ajax && $mega_template_id;
+
+				if ( $can_cache && $transient_key ) {
+					$render_data = jet_get_transient( $transient_key, false );
+				}
+
+				if ( false === $render_data ) {
+					$render_data = $render_instance->get_render_data();
+
+					if ( $can_cache && ! empty( $render_data ) && $transient_key ) {
+						jet_set_transient( $transient_key, $render_data, $ttl_ms, $mega_template_id, 'jet-menu' );
+					}
+				}
+
 				$render_data = apply_filters( 'jet-plugins/render/render-data', $render_data, $mega_template_id, $content_type );
 
 				$mega_template_styles  = $render_data['styles'];

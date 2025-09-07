@@ -1,3 +1,4 @@
+<?php // phpcs:ignoreFile ?>
 <li
 	:id="'jet-mobile-menu-item-'+itemDataObject.itemId"
 	:class="itemClasses"

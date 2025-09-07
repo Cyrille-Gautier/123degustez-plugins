@@ -1,3 +1,4 @@
+<?php // phpcs:ignoreFile ?>
 <div
 	class="jet-mobile-menu__list"
 	role="navigation"

@@ -110,8 +110,9 @@ abstract class Base {
 	 */
 	public function generate_signature( $template_id ) {
 		$unique_id = $this->get_unique_id();
+		$nonce_key = defined( 'NONCE_KEY' ) ? NONCE_KEY : ( defined( 'AUTH_KEY' ) ? AUTH_KEY : 'jet_menu_fallback_nonce' );
 
-		return md5( $unique_id . $template_id . NONCE_KEY );
+		return md5( $unique_id . $template_id . $nonce_key );
 	}
 
 }

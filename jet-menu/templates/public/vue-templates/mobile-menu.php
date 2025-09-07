@@ -1,3 +1,4 @@
+<?php // phpcs:ignoreFile ?>
 <div
 	:class="instanceClass"
 	v-on:keyup.esc="escapeKeyHandler"

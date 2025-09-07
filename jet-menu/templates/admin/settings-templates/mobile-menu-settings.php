@@ -1,3 +1,4 @@
+<?php // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 <div
 	class="jet-menu-settings-page jet-menu-settings-page__mobile-menu"
 >
@@ -574,7 +575,7 @@
 				>
 					<cx-vui-tabs-panel
 						name="jet-mobile-items-normal-state"
-						label="<?php echo _e( 'Normal', 'jet-menu' ); ?>"
+						label="<?php echo esc_attr__( 'Normal', 'jet-menu' ); ?>"
 						key="jet-mobile-items-normal-state"
 					>
 						<cx-vui-colorpicker
@@ -601,7 +602,7 @@
 					</cx-vui-tabs-panel>
 					<cx-vui-tabs-panel
 						name="jet-mobile-items-active-state"
-						label="<?php echo _e( 'Active', 'jet-menu' ); ?>"
+						label="<?php echo esc_attr__( 'Active', 'jet-menu' ); ?>"
 						key="jet-mobile-items-active-state"
 					>
 						<cx-vui-colorpicker
@@ -903,3 +904,4 @@
 		</div>
 	</cx-vui-collapse>
 </div>
+<?php // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped ?>

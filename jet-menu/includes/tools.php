@@ -463,6 +463,7 @@ if ( ! class_exists( 'Jet_Menu_Tools' ) ) {
 		 * [my_wp_is_mobile description]
 		 * @return [type] [description]
 		 */
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		public static function is_phone() {
 			static $is_mobile;
 
@@ -484,12 +485,17 @@ if ( ! class_exists( 'Jet_Menu_Tools' ) ) {
 
 			return $is_mobile;
 		}
+		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 		/**
 		 * @return string
 		 */
 		public function get_current_device() {
 			$mobile_detect = new Mobile_Detect;
+
+			if ( isset( $_COOKIE['is_ipad_pro'] ) && 'true' === $_COOKIE['is_ipad_pro'] ) {
+				return 'tablet';
+			}
 
 			if ( $mobile_detect->isTablet() ) {
 				return 'tablet';
@@ -518,7 +524,7 @@ if ( ! class_exists( 'Jet_Menu_Tools' ) ) {
 
 			$raw_menus = wp_get_nav_menus();
 			$menus     = wp_list_pluck( $raw_menus, 'name', 'term_id' );
-			$parent    = isset( $_GET['parent_menu'] ) ? absint( $_GET['parent_menu'] ) : 0;
+			$parent    = isset( $_GET['parent_menu'] ) ? absint( $_GET['parent_menu'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 			if ( 0 < $parent && isset( $menus[ $parent ] ) ) {
 				unset( $menus[ $parent ] );
@@ -592,6 +598,127 @@ if ( ! class_exists( 'Jet_Menu_Tools' ) ) {
 		 */
 		public function has_elementor() {
 			return defined( 'ELEMENTOR_VERSION' );
+		}
+
+		/**
+		 * @return array
+		 */
+		public function get_menu_time_delay_list( $options = false ) {
+			$list = [
+				'none'      => esc_html__( 'None', 'jet-menu' ),
+				'minute'    => esc_html__( 'Minute', 'jet-menu' ),
+				'10minutes' => esc_html__( '10 Minutes', 'jet-menu' ),
+				'30minutes' => esc_html__( '30 Minutes', 'jet-menu' ),
+				'hour'      => esc_html__( '1 Hour', 'jet-menu' ),
+				'3hours'    => esc_html__( '3 Hours', 'jet-menu' ),
+				'6hours'    => esc_html__( '6 Hours', 'jet-menu' ),
+				'12hours'   => esc_html__( '12 Hours', 'jet-menu' ),
+				'day'       => esc_html__( 'Day', 'jet-menu' ),
+				'3days'     => esc_html__( '3 Days', 'jet-menu' ),
+				'week'      => esc_html__( 'Week', 'jet-menu' ),
+				'month'     => esc_html__( 'Month', 'jet-menu' ),
+			];
+
+			if ( $options ) {
+				$options = [];
+
+				foreach ( $list as $value => $label ) {
+					$options[] = [
+						'label' => $label,
+						'value' => $value,
+					];
+				}
+
+				return $options;
+			}
+
+			return $list;
+		}
+
+		/**
+		 * [get_milliseconds_by_tag description]
+		 * @param  string $tag [description]
+		 * @return [type]      [description]
+		 */
+		public static function get_milliseconds_by_tag( $tag = 'none' ) {
+
+			if ( 'none' === $tag ) {
+				return 'none';
+			}
+
+			switch ( $tag ) {
+
+				case 'minute':
+					$delay = MINUTE_IN_SECONDS * 1000;
+					break;
+
+				case '10minutes':
+					$delay = 10 * MINUTE_IN_SECONDS * 1000;
+					break;
+
+				case '30minutes':
+					$delay = 30 * MINUTE_IN_SECONDS * 1000;
+					break;
+
+				case 'hour':
+					$delay = HOUR_IN_SECONDS * 1000;
+					break;
+
+				case '3hours':
+					$delay = 3 * HOUR_IN_SECONDS * 1000;
+					break;
+
+				case '6hours':
+					$delay = 6 * HOUR_IN_SECONDS * 1000;
+					break;
+
+				case '12hours':
+					$delay = 12 * HOUR_IN_SECONDS * 1000;
+					break;
+
+				case 'day':
+					$delay = DAY_IN_SECONDS * 1000;
+					break;
+
+				case '3days':
+					$delay = 3 * DAY_IN_SECONDS * 1000;
+					break;
+
+				case 'week':
+					$delay = WEEK_IN_SECONDS * 1000;
+					break;
+
+				case 'month':
+					$delay = MONTH_IN_SECONDS * 1000;
+					break;
+
+				default:
+					$delay = 'none';
+					break;
+			}
+
+			return $delay;
+		}
+
+		/**
+		 * Returns TRUE if “dev mode” (no cache) is active for current user/context.
+		 * Default: users with 'edit_posts'. Overridable via 'jet-menu/template_cache/is_dev'.
+		 *
+		 * @param string $context Context label (e.g. 'localize', 'walker').
+		 * @param array  $args    Extra context (optional).
+		 * @return bool           TRUE = bypass cache, FALSE = use cache.
+		 */
+		function is_dev_mode( $context = 'localize', $args = [] ) {
+			$default = current_user_can( 'edit_posts' );
+
+			return (bool) apply_filters(
+				'jet-menu/template_cache/is_dev',
+				$default,
+				array_merge( [
+					'context' => $context,
+				], $args )
+			);
+
 		}
 	}
 

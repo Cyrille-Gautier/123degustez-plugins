@@ -81,7 +81,7 @@ class Mega_Menu_Render extends Base_Render {
 			} else {
 				echo sprintf(
 					'<span>' . esc_html__( '%3$s Go to the %1$sMenus screen%2$s to create one.', 'jet-menu' )  . '</span>',
-					sprintf( '<a href="%s" target="_blank">', admin_url( 'nav-menus.php?action=edit&menu=0' ) ),
+					sprintf( '<a href="%s" target="_blank">',  esc_url( admin_url( 'nav-menus.php?action=edit&menu=0' ) ) ),
 					'</a>',
 					'<span>' . esc_html__( 'There are no menus in your site.', 'jet-menu' ) . '</span>'
 				);
@@ -110,6 +110,9 @@ class Mega_Menu_Render extends Base_Render {
 
 		$dropdown_icon = $this->get( 'dropdown-icon', '' );
 
+		$sub_trigger    = $this->get( 'sub-trigger', 'item' );
+		$sub_menu_event = $this->get( 'sub-event', 'hover' );
+
 		//$dropdown_icon = ! empty( $dropdown_icon ) ? $dropdown_icon : jet_menu()->svg_manager->get_svg_html( 'arrow-down' );
 
 		$menu_args = array(
@@ -125,13 +128,15 @@ class Mega_Menu_Render extends Base_Render {
 			'walker'               => new \Jet_Menu\Render\Mega_Menu_Walker(),
 			'settings'             => array(
 				'roll-up'           => filter_var( $roll_up, FILTER_VALIDATE_BOOLEAN ),
+				'sub-trigger'       => $sub_trigger,
+				'sub-menu-event'    => $sub_menu_event,
 				'use-dropdown-icon' => $this->get( 'use-dropdown-icon', true ),
 				'dropdown-icon'     => $dropdown_icon,
 				'ajax-loading'      => $ajax_loading,
 			)
 		);
 
-		$menu_raw_data = jet_menu()->render_manager->generate_menu_raw_data( $menu_id );
+		$menu_raw_data = jet_menu()->render_manager->generate_menu_raw_data( $menu_id, false );
 
 		$signatures = [];
 
@@ -176,12 +181,12 @@ class Mega_Menu_Render extends Base_Render {
 		);
 
 		$instance_attr_string = jet_menu_tools()->get_attr_string( $instance_attributes );
-
-        ?><div<?php echo $instance_attr_string; ?> <?php echo $settings_attr ?>><?php
+        // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+        ?><div<?php echo $instance_attr_string; ?> <?php echo $settings_attr; ?>><?php
             echo $this->get_dropdown_toggle_html();
 			wp_nav_menu( $menu_args );
 		?></div><?php
-
+        // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 		$this->add_items_advanced_styles( $menu_args['menu'] );
 	}
 

@@ -14,6 +14,7 @@ function wpml_jet_menu( $links ) {
 	global $wp_query, $sitepress;
 
 	if ( wpml_is_ajax() ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$post_id = isset( $_SERVER['HTTP_REFERER'] ) ? url_to_postid( $_SERVER['HTTP_REFERER'] ) : false;
 
 		if ( $post_id ) {

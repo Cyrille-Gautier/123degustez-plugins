@@ -22,6 +22,12 @@
 			let $megaMenu   = $scope.find( '.jet-mega-menu--location-elementor' ),
 			    $mobileMenu = $scope.find( '.jet-mobile-menu' );
 
+			if ( JetMenuWidget.shouldSetIpadProCookie() ) {
+				document.cookie = "is_ipad_pro=true; path=/";
+				location.reload();
+				return;
+			}
+
 			if ( $megaMenu[0] ) {
 				let settings = $megaMenu.data( 'settings' );
 
@@ -49,6 +55,11 @@
 						megaContainer: 'jet-mega-menu-mega-container',
 					}
 				} );
+
+				requestAnimationFrame(() => {
+					window.dispatchEvent( new Event( 'resize' ) );
+				});
+
 			}
 
 			if ( $mobileMenu[0] ) {
@@ -97,6 +108,8 @@
 				event.preventDefault();
 				event.stopPropagation();
 
+				const isOpen = $this.hasClass( 'hover-state' );
+
 				if ( $this.hasClass( 'hover-state' ) ) {
 					$this.removeClass( 'hover-state' );
 				} else {
@@ -104,10 +117,20 @@
 					$this.siblings().removeClass( 'hover-state' );
 				}
 
+				if ( $this.is( '[aria-haspopup="true"]' ) ) {
+					$this.attr( 'aria-expanded', isOpen ? 'false' : 'true' );
+				}
+
+				$this.find('.jet-dropdown-arrow[aria-haspopup="true"]').attr('aria-expanded', isOpen ? 'false' : 'true');
 			}
 
 			function mouseEnterHandler( event ) {
 				menuItem = $( event.target ).parents( '.jet-custom-nav__item' );
+
+				if ( menuItem.is( '[aria-haspopup="true"]' ) ) {
+					menuItem.attr( 'aria-expanded', 'true' );
+				}
+
 				menuItem.addClass( 'hover-state' );
 			}
 
@@ -121,6 +144,12 @@
 
 				menuItem = $this;
 				menuItem.removeClass( 'hover-state' );
+
+				if ( $this.is( '[aria-haspopup="true"]' ) ) {
+					$this.attr( 'aria-expanded', 'false' );
+				}
+
+				$this.find( '.jet-dropdown-arrow[aria-haspopup="true"]' ).attr( 'aria-expanded', 'false' );
 			}
 
 			function touchStartItem( event ) {
@@ -162,8 +191,20 @@
 						return false;
 					}
 
+					const isOpen = $this.hasClass( 'hover-state' );
+
 					if ( ! $this.hasClass( 'hover-state' ) ) {
 						$this.addClass( 'hover-state' );
+
+						$siblingsItems.removeClass( 'hover-state' ).each( function() {
+							const $sibling = $( this );
+
+							if ( $sibling.is( '[aria-haspopup="true"]' ) ) {
+								$sibling.attr( 'aria-expanded', 'false' );
+							}
+
+							$sibling.find('> a > .jet-dropdown-arrow[aria-haspopup="true"]').attr( 'aria-expanded', 'false' );
+						} );
 
 						$siblingsItems.removeClass( 'hover-state' );
 						$( '.jet-custom-nav__item.menu-item-has-children', $siblingsItems ).removeClass( 'hover-state' );
@@ -172,6 +213,13 @@
 
 						$( '.jet-custom-nav__item.menu-item-has-children', $this ).removeClass( 'hover-state' );
 					}
+
+					if ( $this.is( '[aria-haspopup="true"]' ) ) {
+						$this.attr( 'aria-expanded', isOpen ? 'false' : 'true' );
+					}
+
+					$this.find( '> a > .jet-dropdown-arrow[aria-haspopup="true"]' ).attr( 'aria-expanded', isOpen ? 'false' : 'true' );
+
 				}
 
 				if ( $currentTarget.hasClass( 'jet-custom-nav__item-link' ) ) {
@@ -314,6 +362,22 @@
 			}
 
 			window.jetMenu.createMobileRenderInstance( menuInstanceId, menuId, menuOptions );
+		},
+
+		/**
+		 * Specific check for iPad Pro\Air in Safari with touch input,
+		 * only if the cookie has not been set yet.
+		 *
+		 * @return {boolean}
+		 */
+		shouldSetIpadProCookie: function() {
+			const isSafari  = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+			const isMacLike = navigator.userAgent.includes( 'Macintosh' );
+			const hasTouch  = 'ontouchend' in window || navigator.maxTouchPoints > 1;
+
+			const cookieNotSet = document.cookie.indexOf( 'is_ipad_pro=true' ) === -1;
+
+			return isSafari && isMacLike && hasTouch && cookieNotSet;
 		},
 
 		/**

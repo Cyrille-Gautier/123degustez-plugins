@@ -100,6 +100,7 @@
 							dataType: 'json',
 							data: {
 								action: 'jet_save_settings',
+								nonce: window.JetMenuNavSettingsConfig?._nonce || '',
 								data: {
 									menuId: self.navSettings.currentMenuId,
 									settings: self.locationSettings

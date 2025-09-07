@@ -1,3 +1,4 @@
+<?php // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 <div
 	class="jet-menu-settings-page jet-menu-settings-page__desktop-menu"
 >
@@ -431,7 +432,7 @@
 
                 <cx-vui-select
                     name="jet-menu-top-icon-ver-position"
-                    label="<?php echo _e( 'Icon vertical position', 'jet-menu' ); ?>"
+                    label="<?php echo esc_attr__( 'Icon vertical position', 'jet-menu' ); ?>"
                     :wrapper-css="[ 'equalwidth' ]"
                     size="fullwidth"
                     :options-list="pageOptions['jet-menu-top-icon-ver-position']['options']"
@@ -441,7 +442,7 @@
 
                 <cx-vui-select
                     name="jet-menu-top-icon-hor-position"
-                    label="<?php echo _e( 'Icon horizontal position', 'jet-menu' ); ?>"
+                    label="<?php echo esc_attr__( 'Icon horizontal position', 'jet-menu' ); ?>"
                     :wrapper-css="[ 'equalwidth' ]"
                     size="fullwidth"
                     :options-list="pageOptions['jet-menu-top-icon-hor-position']['options']"
@@ -551,7 +552,7 @@
 
                 <cx-vui-select
                     name="jet-menu-top-badge-ver-position"
-                    label="<?php echo _e( 'Badge vertical position (may be overridden with order)', 'jet-menu' ); ?>"
+                    label="<?php echo esc_attr__( 'Badge vertical position (may be overridden with order)', 'jet-menu' ); ?>"
                     :wrapper-css="[ 'equalwidth' ]"
                     size="fullwidth"
                     :options-list="pageOptions['jet-menu-top-badge-ver-position']['options']"
@@ -561,7 +562,7 @@
 
                 <cx-vui-select
                     name="jet-menu-top-badge-hor-position"
-                    label="<?php echo _e( 'Badge horizontal position', 'jet-menu' ); ?>"
+                    label="<?php echo esc_attr__( 'Badge horizontal position', 'jet-menu' ); ?>"
                     :wrapper-css="[ 'equalwidth' ]"
                     size="fullwidth"
                     :options-list="pageOptions['jet-menu-top-badge-hor-position']['options']"
@@ -681,7 +682,7 @@
 
                 <cx-vui-select
                     name="jet-menu-top-arrow-ver-position"
-                    label="<?php echo _e( 'Arrow vertical position', 'jet-menu' ); ?>"
+                    label="<?php echo esc_attr__( 'Arrow vertical position', 'jet-menu' ); ?>"
                     :wrapper-css="[ 'equalwidth' ]"
                     size="fullwidth"
                     :options-list="pageOptions['jet-menu-top-arrow-ver-position']['options']"
@@ -691,7 +692,7 @@
 
                 <cx-vui-select
                     name="jet-menu-top-arrow-hor-position"
-                    label="<?php echo _e( 'Arrow horizontal position', 'jet-menu' ); ?>"
+                    label="<?php echo esc_attr__( 'Arrow horizontal position', 'jet-menu' ); ?>"
                     :wrapper-css="[ 'equalwidth' ]"
                     size="fullwidth"
                     :options-list="pageOptions['jet-menu-top-arrow-hor-position']['options']"
@@ -929,7 +930,7 @@
 
                 <cx-vui-select
                     name="jet-menu-sub-icon-ver-position"
-                    label="<?php echo _e( 'Icon vertical position', 'jet-menu' ); ?>"
+                    label="<?php echo esc_attr__( 'Icon vertical position', 'jet-menu' ); ?>"
                     :wrapper-css="[ 'equalwidth' ]"
                     size="fullwidth"
                     :options-list="pageOptions['jet-menu-sub-icon-ver-position']['options']"
@@ -939,7 +940,7 @@
 
                 <cx-vui-select
                     name="jet-menu-sub-icon-hor-position"
-                    label="<?php echo _e( 'Icon horizontal position', 'jet-menu' ); ?>"
+                    label="<?php echo esc_attr__( 'Icon horizontal position', 'jet-menu' ); ?>"
                     :wrapper-css="[ 'equalwidth' ]"
                     size="fullwidth"
                     :options-list="pageOptions['jet-menu-sub-icon-hor-position']['options']"
@@ -1050,7 +1051,7 @@
 
                 <cx-vui-select
                     name="jet-menu-sub-badge-ver-position"
-                    label="<?php echo _e( 'Badge vertical position (may be overridden with order)', 'jet-menu' ); ?>"
+                    label="<?php echo esc_attr__( 'Badge vertical position (may be overridden with order)', 'jet-menu' ); ?>"
                     :wrapper-css="[ 'equalwidth' ]"
                     size="fullwidth"
                     :options-list="pageOptions['jet-menu-sub-badge-ver-position']['options']"
@@ -1060,7 +1061,7 @@
 
                 <cx-vui-select
                     name="jet-menu-sub-badge-hor-position"
-                    label="<?php echo _e( 'Badge horizontal position', 'jet-menu' ); ?>"
+                    label="<?php echo esc_attr__( 'Badge horizontal position', 'jet-menu' ); ?>"
                     :wrapper-css="[ 'equalwidth' ]"
                     size="fullwidth"
                     :options-list="pageOptions['jet-menu-sub-badge-hor-position']['options']"
@@ -1179,7 +1180,7 @@
 
                 <cx-vui-select
                     name="jet-menu-sub-arrow-ver-position"
-                    label="<?php echo _e( 'Arrow vertical position', 'jet-menu' ); ?>"
+                    label="<?php echo esc_attr__( 'Arrow vertical position', 'jet-menu' ); ?>"
                     :wrapper-css="[ 'equalwidth' ]"
                     size="fullwidth"
                     :options-list="pageOptions['jet-menu-sub-arrow-ver-position']['options']"
@@ -1189,7 +1190,7 @@
 
                 <cx-vui-select
                     name="jet-menu-sub-arrow-hor-position"
-                    label="<?php echo _e( 'Arrow horizontal position', 'jet-menu' ); ?>"
+                    label="<?php echo esc_attr__( 'Arrow horizontal position', 'jet-menu' ); ?>"
                     :wrapper-css="[ 'equalwidth' ]"
                     size="fullwidth"
                     :options-list="pageOptions['jet-menu-sub-arrow-hor-position']['options']"
@@ -1370,3 +1371,4 @@
     </cx-vui-collapse>
 
 </div>
+<?php // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped ?>

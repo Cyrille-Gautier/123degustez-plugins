@@ -78,7 +78,8 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 			)
 		);
 
-		$parent = isset( $_GET['parent_menu'] ) ? absint( $_GET['parent_menu'] ) : 0;
+		// Safe: used only in Elementor editor context, no processing or saving happens.
+		$parent = isset( $_GET['parent_menu'] ) ? absint( $_GET['parent_menu'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( $parent ) {
 			$this->add_control(
@@ -133,6 +134,9 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 						'default' => __( 'Default', 'jet-menu' ),
 						'push'    => __( 'Push', 'jet-menu' ),
 					),
+					'condition' => array (
+						'layout' => 'dropdown',
+					),
 				)
 			);
 
@@ -146,6 +150,9 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 						'right'  => __( 'Right', 'jet-menu' ),
 						'center' => __( 'Center', 'jet-menu' ),
 						'left'   => __( 'Left', 'jet-menu' ),
+					),
+					'condition' => array (
+						'layout' => 'dropdown',
 					),
 				)
 			);
@@ -1415,6 +1422,18 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 		);
 
 		$this->add_control(
+			'menu_sub_hover_item_icon_color',
+			array(
+				'label'   => __( 'Icon Color', 'jet-menu' ),
+				'type'    => Controls_Manager::COLOR,
+				'default'   => '',
+				'selectors' => array(
+					'{{WRAPPER}}' => '--jmm-sub-hover-item-icon-color: {{VALUE}}',
+				),
+			)
+		);
+
+		$this->add_control(
 			'menu_sub_hover_item_title_color',
 			array(
 				'label'   => __( 'Title Color', 'jet-menu' ),
@@ -1533,6 +1552,18 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 				'label'     => esc_html__( 'Sub Items', 'jet-menu' ),
 				'type'      => Controls_Manager::HEADING,
 				'separator' => 'before',
+			)
+		);
+
+		$this->add_control(
+			'menu_sub_active_item_icon_color',
+			array(
+				'label'   => __( 'Icon Color', 'jet-menu' ),
+				'type'    => Controls_Manager::COLOR,
+				'default'   => '',
+				'selectors' => array(
+					'{{WRAPPER}}' => '--jmm-sub-active-item-icon-color: {{VALUE}}',
+				),
 			)
 		);
 
@@ -2900,7 +2931,9 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 
 		$raw_menus = wp_get_nav_menus();
 		$menus     = wp_list_pluck( $raw_menus, 'name', 'term_id' );
-		$parent    = isset( $_GET['parent_menu'] ) ? absint( $_GET['parent_menu'] ) : 0;
+
+		// Safe: used only to exclude menu by ID for display purposes in Elementor context.
+		$parent    = isset( $_GET['parent_menu'] ) ? absint( $_GET['parent_menu'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( 0 < $parent && isset( $menus[ $parent ] ) ) {
 			unset( $menus[ $parent ] );
@@ -2943,9 +2976,7 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 
 		$is_mobile_render = $this->is_mobile_render();
 
-		$force_mobile_render = filter_var( $settings['force-mobile-render'], FILTER_VALIDATE_BOOLEAN );
-
-		if ( $is_mobile_render || $force_mobile_render ) {
+		if ( $is_mobile_render ) {
 			$render_widget_instance = new \Jet_Menu\Render\Mobile_Menu_Render( array(
 				'menu-id'                   => $settings[ 'menu' ],
 				'mobile-menu-id'            => $settings[ 'mobile-menu' ],
@@ -3019,6 +3050,14 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 	public function is_mobile_render() {
 		$settings = $this->get_settings();
 
+		if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
+			$force_mobile_render = filter_var( $settings['force-mobile-render'], FILTER_VALIDATE_BOOLEAN );
+
+			if ( $force_mobile_render ) {
+				return true;
+			}
+		}
+
 		$current_device = jet_menu_tools()->get_current_device();
 		$use_mobile_device_render = filter_var( $settings['use-mobile-device-render'], FILTER_VALIDATE_BOOLEAN );
 
@@ -3063,7 +3102,8 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 
 		$allowed_actions = array( 'elementor_render_widget', 'elementor', 'elementor_ajax' );
 
-		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $allowed_actions ) ) {
+		// Safe: action value is only checked, not executed, within Elementor context
+		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $allowed_actions ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return true;
 		}
 
@@ -3078,6 +3118,8 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 	public function fix_preview_css( $data ) {
 
 		if ( ! empty( $data['css'] ) ) {
+			// Safe: CSS is generated internally by CX_Dynamic_CSS and does not contain user input.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			printf( '<style>%s</style>', html_entity_decode( $data['css'] ) );
 		}
 

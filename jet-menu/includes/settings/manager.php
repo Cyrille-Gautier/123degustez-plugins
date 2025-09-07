@@ -346,6 +346,7 @@ class Settings_Manager {
 						'item'            => '%id%',
 						'menu'            => '%menuid%',
 						'content'         => '%content%',
+						'_nonce'          => wp_create_nonce( $this->nonce_key ),
 					),
 					esc_url( admin_url( '/' ) )
 				),
@@ -375,8 +376,8 @@ class Settings_Manager {
 
 		$nav_menus            = wp_get_nav_menus( array('orderby' => 'name') );
 		$menu_count           = count( $nav_menus );
-		$nav_menu_selected_id = isset( $_REQUEST['menu'] ) ? (int) $_REQUEST['menu'] : 0;
-		$add_new_screen       = ( isset( $_GET['menu'] ) && 0 == $_GET['menu'] ) ? true : false;
+		$nav_menu_selected_id = isset( $_REQUEST['menu'] ) ? (int) $_REQUEST['menu'] : 0; // phpcs:ignore WordPress.Security.NonceVerification
+		$add_new_screen       = ( isset( $_GET['menu'] ) && 0 == $_GET['menu'] ) ? true : false; // phpcs:ignore WordPress.Security.NonceVerification
 
 		$this->current_menu_id = $nav_menu_selected_id;
 
@@ -391,11 +392,13 @@ class Settings_Manager {
 		}
 
 		// Use $recently_edited if none are selected
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( empty( $this->current_menu_id ) && ! isset( $_GET['menu'] ) && is_nav_menu( $recently_edited ) ) {
 			$this->current_menu_id = $recently_edited;
 		}
 
 		// On deletion of menu, if another menu exists, show it
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! $add_new_screen && 0 < $menu_count && isset( $_GET['action'] ) && 'delete' == $_GET['action'] ) {
 			$this->current_menu_id = $nav_menus[0]->term_id;
 		}
@@ -742,7 +745,7 @@ class Settings_Manager {
 		}
 
 		// Get the data from the POST request.
-		$data = isset( $_POST['data'] ) ? $_POST['data'] : false;
+		$data = isset( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		// Ensure the data is valid and is an array.
 		if ( ! $this->is_valid_data( $data ) ) {
@@ -753,8 +756,10 @@ class Settings_Manager {
 			$this->send_error_response('itemId is empty');
 		}
 
+		$item_id = absint( $data['itemId'] );
+
 		// Get the current settings for the item.
-		$current_settings = $this->get_menu_item_settings( $data['itemId'] );
+		$current_settings = $this->get_menu_item_settings( $item_id );
 
 		// Send a success response.
 		$this->send_success_response( 'Menu settings have been saved', $current_settings );
@@ -814,7 +819,8 @@ class Settings_Manager {
 		}
 
 		// Get the data from the POST request.
-		$data = isset( $_POST['data'] ) ? $_POST['data'] : false;
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$data = isset( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : false;
 
 		// Ensure the data is valid and is an array.
 		if ( ! $this->is_valid_data( $data ) ) {
@@ -822,8 +828,12 @@ class Settings_Manager {
 		}
 
 		// Extract item ID and item settings from the data.
-		$item_id  = $data['itemId'];
-		$settings = $data['itemSettings'];
+		$item_id  = isset( $data['itemId'] ) ? absint( $data['itemId'] ) : 0;
+		$settings = isset( $data['itemSettings'] ) ? $data['itemSettings'] : false;
+
+		if ( false === $settings ) {
+			$this->send_error_response( 'Required data is missed' );
+		}
 
 		// Attach a template to a menu item
 		$this->attach_template_to_menu_item( $item_id, $settings );
@@ -907,8 +917,14 @@ class Settings_Manager {
 			$this->send_error_response('You are not allowed to do this');
 		}
 
+		// Verify the nonce for security.
+		if ( ! $this->is_valid_nonce() ) {
+			$this->send_error_response( 'Nonce validation failed' );
+		}
+
 		// Get the data from the POST request.
-		$data = isset( $_POST['data'] ) ? $_POST['data'] : false;
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$data = isset( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : false;
 
 		// Ensure the data is valid and is an array.
 		if ( ! $this->is_valid_data( $data ) ) {

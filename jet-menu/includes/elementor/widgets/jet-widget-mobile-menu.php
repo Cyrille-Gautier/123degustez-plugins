@@ -1704,7 +1704,7 @@ class Jet_Widget_Mobile_Menu extends Widget_Base {
 		$settings = $this->get_settings();
 
 		if ( ! isset( $settings['menu'] ) || empty( $settings['menu'] ) ) {
-			echo '<span>' . _e( 'Menu undefined', 'jet-menu' ) . '</span>';
+			echo '<span>' . esc_html_e( 'Menu undefined', 'jet-menu' ) . '</span>';
 			return;
 		}
 
@@ -1777,6 +1777,7 @@ class Jet_Widget_Mobile_Menu extends Widget_Base {
 
 		$allowed_actions = array( 'elementor_render_widget', 'elementor', 'elementor_ajax' );
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $allowed_actions ) ) {
 			return true;
 		}
@@ -1792,6 +1793,8 @@ class Jet_Widget_Mobile_Menu extends Widget_Base {
 	public function fix_preview_css( $data ) {
 
 		if ( ! empty( $data['css'] ) ) {
+			// Safe: CSS is generated internally by CX_Dynamic_CSS and does not contain user input.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			printf( '<style>%s</style>', html_entity_decode( $data['css'] ) );
 		}
 

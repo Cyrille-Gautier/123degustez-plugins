@@ -43,6 +43,8 @@
 			this.isRTL = this.$body.hasClass( 'rtl' );
 			this.isDropdownState = false;
 
+			this._prevViewportWidth = window.innerWidth || document.documentElement.clientWidth;
+
 			this.createInstance();
 		}
 
@@ -63,7 +65,6 @@
 			this.initEvents();
 			this.maybeRollUpItems();
 			this.rebuildSubContainers();
-			this.watchTick();
 
 			document.addEventListener( 'DOMContentLoaded', ( event ) => {
 				setTimeout( () => {
@@ -93,6 +94,10 @@
 
 						if ( $menuItem.hasClass( `${ this.settings.classes.menuItem }-has-children` ) ) {
 							$menuItem.addClass( `${ this.settings.classes.menuItem }--hover` );
+
+							$menuItem
+								.find( '[role="button"][aria-haspopup="true"]' )
+								.attr( 'aria-expanded', 'true' );
 
 							if ( templateId ) {
 								this.maybeTemplateLoad( templateId, templateContent, $subContainer );
@@ -125,8 +130,17 @@
 						if ( $menuItem.hasClass( `${ this.settings.classes.menuItem }-has-children` ) ) {
 							if ( ! $menuItem.hasClass( `${ this.settings.classes.menuItem }--hover` ) ) {
 								$menuItem.addClass( `${ this.settings.classes.menuItem }--hover` );
+
+								$menuItem
+									.find( '[role="button"][aria-haspopup="true"]' )
+									.attr( 'aria-expanded', 'true' );
+
 							} else {
 								$menuItem.removeClass( `${ this.settings.classes.menuItem }--hover` );
+
+								$menuItem
+									.find( '[role="button"][aria-haspopup="true"]' )
+									.attr( 'aria-expanded', 'false' );
 							}
 
 							if ( templateId ) {
@@ -155,17 +169,30 @@
 			this.$instance.on( `mouseleave.${ eventHandler }`, ( event ) => {
 				debounceTimer = setTimeout( () => {
 					$( `.${ this.settings.classes.menuItem }--hover`, this.$instance ).removeClass( `${ this.settings.classes.menuItem }--hover` );
+
+					this.$instance
+						.find( '[role="button"][aria-haspopup="true"]' )
+						.attr( 'aria-expanded', 'false' );
+
 				}, this.settings.mouseLeaveDelay );
 			} );
 
 			this.$window.on( `orientationchange.${ eventHandler } resize.${ eventHandler }`, ( event ) => {
+				const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+
+				if ( viewportWidth === this._prevViewportWidth ) {
+					return;
+				}
+
+				this._prevViewportWidth = viewportWidth;
+
 				$( `.${ this.settings.classes.menuItem }`, this.$instance ).removeClass( `${ this.settings.classes.menuItem }--hover` );
 				this.$instance.removeClass( `${ this.settings.classes.instance }--dropdown-open` );
 			} );
 
 			this.$document.on( `touchend.${ eventHandler }`, ( event ) => {
 
-				if ( $( event.target ).closest( `.${ this.settings.classes.menuItem }` ).length ) {
+				if ( $( event.target ).closest( `.${ this.settings.classes.menuItem }, .${ this.settings.classes.subMenuContainer }, .${ this.settings.classes.megaContainer }` ).length ) {
 					return;
 				}
 
@@ -198,6 +225,22 @@
 					this.$instance.removeClass( `${ this.settings.classes.instance }--dropdown-open` );
 				}
 			} );
+
+			this.$instance.on( `keydown.${ eventHandler }`, `.${ this.settings.classes.menuItem }__inner[role="button"], .${ this.settings.classes.menuItem }__dropdown[role="button"]`, ( event ) => {
+
+				if ( event.key === 'Enter' || event.key === ' ' ) {
+					event.preventDefault();
+
+					if ( this.settings.subEvent === 'click' ) {
+						$( event.currentTarget ).trigger( 'click' );
+					}
+
+					if ( this.settings.subEvent === 'hover' ) {
+						$( event.currentTarget ).trigger( 'mouseenter' );
+					}
+				}
+
+			});
 
 		}
 
@@ -1066,9 +1109,10 @@
 					let menuInstanceRenderData = false,
 						renderDataElement = document.getElementById( 'jetMenuMobileWidgetRenderData' + this.$root.menuOptions.menuUniqId );
 
-					if ( renderDataElement ) {
-						eval( renderDataElement.innerHTML );
-						menuInstanceRenderData = window[ 'jetMenuMobileWidgetRenderData' + this.$root.menuOptions.menuUniqId ] || false;
+					try {
+						menuInstanceRenderData = JSON.parse( renderDataElement.textContent );
+					} catch ( error ) {
+						menuInstanceRenderData = false;
 					}
 
 					if ( menuInstanceRenderData ) {
@@ -1135,8 +1179,6 @@
 											let templateContent = responce['content'],
 												templateScripts = responce['scripts'],
 												templateStyles  = responce['styles'];
-
-											console.log(responce)
 
 											for ( let scriptHandler in templateScripts ) {
 												jetMenu.addedAssetsPromises.push( jetMenu.loadScriptAsync( scriptHandler, templateScripts[ scriptHandler ] ) );

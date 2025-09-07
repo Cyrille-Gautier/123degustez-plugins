@@ -1,3 +1,4 @@
+<?php // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 <div
 	id="jet-menu-settings-fields"
 	class="jet-menu-settings-fields"
@@ -58,3 +59,4 @@
 		</div>
 	</div>
 </div>
+<?php // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped ?>

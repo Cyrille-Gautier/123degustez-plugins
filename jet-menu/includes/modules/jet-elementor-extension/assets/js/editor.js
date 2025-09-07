@@ -81,6 +81,7 @@
 									action:     'jet_query_control_options',
 									query_type: self.model.get( 'query_type' ),
 									query:      self.getQueryArgs(),
+									signature:  self.model.get( 'signature' ),
 								};
 							},
 							processResults: function( response ) {
@@ -116,7 +117,8 @@
 							action:     'jet_query_control_options',
 							query_type: self.model.get( 'query_type' ),
 							query:      self.getQueryArgs(),
-							ids:        query_ids
+							ids:        query_ids,
+							signature:  self.model.get( 'signature' ),
 						},
 						beforeSend: function() {
 							self.ui.select.prop( 'disabled', true );
@@ -262,12 +264,41 @@
 			var RepeaterControlItemView = elementor.modules.controls.Repeater.extend({
 				className: function className() {
 					return elementor.modules.controls.Repeater.prototype.className.apply( this, arguments ) + ' elementor-control-type-repeater';
+				},
+				callParentFunction( functionName, args = [] ) {
+					const widgetType     = this.options.container.model.get( 'widgetType' );
+					const parentFunction = elementor.modules.controls.Repeater.prototype[ functionName ];
+
+					if (  ! elementor.widgetsCache[ widgetType ] || ! elementor.widgetsCache[ widgetType ]?.support_nesting ) {
+						parentFunction.apply( this, args );
+						return;
+					}
+
+					elementor.widgetsCache[ widgetType ].support_nesting = false;
+					parentFunction.apply( this, args );
+					elementor.widgetsCache[ widgetType ].support_nesting = true;
+				},
+				onButtonAddRowClick() {
+					this.callParentFunction( 'onButtonAddRowClick' );
+				},
+				onChildviewClickRemove( childView ) {
+					this.callParentFunction( 'onChildviewClickRemove', [ childView ] );
+				},
+				onChildviewClickDuplicate( childView ) {
+					this.callParentFunction( 'onChildviewClickDuplicate', [ childView ] );
+				}
+			});
+
+			var Select2ControlItemView = elementor.modules.controls.Select2.extend({
+				className: function className() {
+					return elementor.modules.controls.Repeater.prototype.className.apply( this, arguments ) + ' elementor-control-type-select2';
 				}
 			});
 
 			// Add controls views
 			elementor.addControlView( 'jet-query',    QueryControlItemView );
 			elementor.addControlView( 'jet-repeater', RepeaterControlItemView );
+			elementor.addControlView( 'jet-select2',  Select2ControlItemView );
 		}
 
 	};

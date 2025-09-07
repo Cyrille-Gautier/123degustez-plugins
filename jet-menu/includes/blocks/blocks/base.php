@@ -119,7 +119,7 @@ abstract class Base {
 	 * @return boolean
 	 */
 	public function is_editor() {
-		return isset( $_REQUEST['context'] ) && $_REQUEST['context'] === 'edit' ? true : false;
+		return isset( $_REQUEST['context'] ) && $_REQUEST['context'] === 'edit' ? true : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**

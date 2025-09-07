@@ -1,3 +1,4 @@
+<?php // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 <cx-vui-switcher
 	name="<?php echo $args['name'] . '-box-shadow-switch'; ?>"
 	label="<?php echo sprintf( esc_html__( '%s box shadow settings', 'jet-menu' ), $args['label'] ); ?>"
@@ -86,4 +87,5 @@
 	</cx-vui-input>
 
 </cx-vui-component-wrapper>
+<?php // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 

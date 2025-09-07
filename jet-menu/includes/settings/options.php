@@ -171,15 +171,27 @@ class Options_Manager {
 	 */
 	public function process_reset() {
 
-		if ( ! isset( $_GET['jet-action'] ) || 'reset-options' !== $_GET['jet-action'] ) {
+		if ( ! isset( $_GET['jet-action'] ) || 'reset-options' !== $_GET['jet-action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
+		}
+
+		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'jet-menu-reset-options' ) ) {
+			wp_die( esc_html__( 'Nonce validation failed', 'jet-menu' ) );
 		}
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			die();
 		}
 
-		$this->save_options( $this->options_slug, array() );
+		$current_options = $this->get_option();
+
+		$new_options = array();
+
+		if ( isset( $current_options['plugin-nextgen-edition'] ) ) {
+			$new_options['plugin-nextgen-edition'] = $current_options['plugin-nextgen-edition'];
+		}
+
+		$this->save_options( $this->options_slug, $new_options );
 
 		wp_redirect(
 			add_query_arg( array( 'page' => 'jet-dashboard-settings-page', 'subpage' => 'jet-menu-general-settings' ), esc_url( admin_url( 'admin.php' ) ) )
@@ -191,9 +203,18 @@ class Options_Manager {
 	/**
 	 * Process reset options
 	 */
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended
 	public function service_actions_handler() {
 
 		if ( ! isset( $_GET['jet-action'] ) ) {
+			return false;
+		}
+
+		if ( 'export-options' === $_GET['jet-action'] ) {
+			return false;
+		}
+
+		if ( 'reset-options' === $_GET['jet-action'] ) {
 			return false;
 		}
 
@@ -210,19 +231,19 @@ class Options_Manager {
 		switch ( $_GET['jet-action'] ) {
 			case 'revamp-on':
 				$current_options['plugin-nextgen-edition'] = 'true';
+				update_option( $this->options_slug, $current_options );
 				break;
 			case 'revamp-off':
 				$current_options['plugin-nextgen-edition'] = 'false';
+				update_option( $this->options_slug, $current_options );
 				break;
 		}
 
-		update_option( $this->options_slug, $current_options );
-
-		wp_redirect( admin_url('admin.php?page=jet-dashboard-settings-page&subpage=jet-menu-general-settings') );
+		wp_safe_redirect( admin_url('admin.php?page=jet-dashboard-settings-page&subpage=jet-menu-general-settings') );
 
 		die;
 	}
-
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 	/**
 	 * Process settings export
@@ -231,8 +252,12 @@ class Options_Manager {
 	 */
 	public function process_export() {
 
-		if ( ! isset( $_GET['jet-action'] ) || 'export-options' !== $_GET['jet-action'] ) {
+		if ( ! isset( $_GET['jet-action'] ) || 'export-options' !== $_GET['jet-action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
+		}
+
+		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'jet-menu-export-options' ) ) {
+			wp_die( esc_html__( 'Nonce verification failed', 'jet-menu' ) );
 		}
 
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -263,7 +288,7 @@ class Options_Manager {
 		header( 'Content-Disposition: attachment; filename="' . $file . '"' );
 		header( 'Content-Transfer-Encoding: binary' );
 
-		echo $data;
+		echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		die();
 	}
@@ -279,7 +304,8 @@ class Options_Manager {
 			die();
 		}
 
-		$nonce = ! empty( $_POST['nonce'] ) ? $_POST['nonce'] : false;
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing
+		$nonce = ! empty( $_POST['nonce'] ) ? wp_unslash( $_POST['nonce'] ) : false;
 
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->nonce_key ) ) {
 			wp_send_json_error( array(
@@ -287,6 +313,7 @@ class Options_Manager {
 			) );
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$options = isset( $_POST['data'] ) ? $_POST['data'] : array();
 
 		if ( empty( $options['jet_menu'] ) || empty( $options['options'] ) ) {
@@ -942,16 +969,18 @@ class Options_Manager {
 
 		return array(
 			'optionsApiUrl'    => '/jet-menu-api/v2/plugin-settings',
+			'clearCachePath'   => '/jet-menu-api/v2/clear-cache',
 			'rawOptionsData'   => $this->get_option(),
 			'optionPresetList' => jet_menu()->settings_manager->options_manager->get_presets_select_options(),
 			'importUrl'        => add_query_arg( array( 'jet-action' => 'import-options' ), esc_url( admin_url( 'admin.php' ) ) ),
-			'exportUrl'        => add_query_arg( array( 'jet-action' => 'export-options' ), esc_url( admin_url( 'admin.php' ) ) ),
-			'resetUrl'         => add_query_arg( array( 'jet-action' => 'reset-options' ), esc_url( admin_url( 'admin.php' ) ) ),
+			'exportUrl'        => wp_nonce_url( add_query_arg( array( 'jet-action' => 'export-options' ), esc_url( admin_url( 'admin.php' ) ) ), 'jet-menu-export-options' ),
+			'resetUrl'         => wp_nonce_url( add_query_arg( array( 'jet-action' => 'reset-options' ), esc_url( admin_url( 'admin.php' ) ) ), 'jet-menu-reset-options' ),
 			'optionsPageUrl'   => add_query_arg( array( 'page' => 'jet-dashboard-settings-page', 'subpage' => 'jet-menu-general-settings' ), esc_url( admin_url( 'admin.php' ) ) ),
 			'optionsData'      => $this->get_options_data(),
 			'arrowsIcons'      => jet_menu_tools()->get_arrows_icons(),
 			'iconsFetchJson'   => jet_menu()->plugin_url( 'assets/public/lib/font-awesome/js/solid.js' ),
 			'templateList'     => jet_menu_tools()->get_elementor_templates_select_options(),
+			'cacheTimeoutOptions' => jet_menu_tools()->get_menu_time_delay_list( true ),
 			'_nonce'           => wp_create_nonce( $this->nonce_key ),
 		);
 	}
@@ -1006,8 +1035,8 @@ class Options_Manager {
 				'message' => esc_html__( 'You are not allowed to do this', 'jet-menu' ),
 			) );
 		}
-
-		$nonce = ! empty( $_POST['nonce'] ) ? $_POST['nonce'] : false;
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$nonce = ! empty( $_POST['nonce'] ) ? wp_unslash( $_POST['nonce'] ) : false;
 
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->nonce_key ) ) {
 			wp_send_json_error( array(
@@ -1015,8 +1044,8 @@ class Options_Manager {
 			) );
 		}
 
-		$name     = isset( $_POST[ 'name' ] ) ? esc_attr( $_POST[ 'name' ] ) : false;
-		$settings = isset( $_POST[ 'settings' ] ) ? $_POST[ 'settings' ] : false;
+		$name     = isset( $_POST[ 'name' ] ) ? esc_attr( wp_unslash( $_POST[ 'name' ] ) ) : false;
+		$settings = isset( $_POST[ 'settings' ] ) ? wp_unslash( $_POST[ 'settings' ] ) : false; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		if ( ! $settings ) {
 			wp_send_json_error( array (
@@ -1073,8 +1102,8 @@ class Options_Manager {
 				'message' => esc_html__( 'You are not allowed to do this', 'jet-menu' ),
 			) );
 		}
-
-		$nonce = ! empty( $_POST['nonce'] ) ? $_POST['nonce'] : false;
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$nonce = ! empty( $_POST['nonce'] ) ? wp_unslash( $_POST['nonce'] ) : false;
 
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->nonce_key ) ) {
 			wp_send_json_error( array(
@@ -1083,7 +1112,7 @@ class Options_Manager {
 		}
 
 		$preset   = isset( $_POST['preset'] ) ? absint( $_POST['preset'] ) : false;
-		$settings = isset( $_POST['settings'] ) ? $_POST['settings'] : false;
+		$settings = isset( $_POST['settings'] ) ? wp_unslash( $_POST['settings'] ) : false; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		if ( ! $preset ) {
 			wp_send_json_error( array(
@@ -1112,8 +1141,8 @@ class Options_Manager {
 				'message' => esc_html__( 'You are not allowed to do this', 'jet-menu' ),
 			) );
 		}
-
-		$nonce = ! empty( $_POST['nonce'] ) ? $_POST['nonce'] : false;
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$nonce = ! empty( $_POST['nonce'] ) ? wp_unslash( $_POST['nonce'] ) : false;
 
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->nonce_key ) ) {
 			wp_send_json_error( array(
@@ -1152,8 +1181,8 @@ class Options_Manager {
 				'message' => esc_html__( 'You are not allowed to do this', 'jet-menu' ),
 			) );
 		}
-
-		$nonce = ! empty( $_POST['nonce'] ) ? $_POST['nonce'] : false;
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$nonce = ! empty( $_POST['nonce'] ) ? wp_unslash( $_POST['nonce'] ) : false;
 
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->nonce_key ) ) {
 			wp_send_json_error( array(

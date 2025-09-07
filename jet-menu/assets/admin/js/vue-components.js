@@ -4,6 +4,8 @@ let jetMenuSettinsMixin = {
 	data: function() {
 		return {
 			pageOptions: window.JetMenuOptionsPageConfig.optionsData,
+			cacheTimeoutOptions: window.JetMenuOptionsPageConfig.cacheTimeoutOptions || [],
+			clearStatus: { template: false, css: false },
 			preparedOptions: {},
 			savingStatus: false,
 			savingSuccessReload: false,
@@ -78,6 +80,34 @@ let jetMenuSettinsMixin = {
 	},
 
 	methods: {
+
+		clearCache( type = 'template' ) {
+			this.clearStatus[type] = true;
+
+			wp.apiFetch( {
+				method: 'post',
+				path: window.JetMenuOptionsPageConfig.clearCachePath,
+				data: { type: type }
+			} ).then( ( response ) => {
+				this.clearStatus[type] = false;
+
+				const msg = response && response.message ? response.message : 'Done';
+				const ok  = response && response.status === 'success';
+
+				this.$CXNotice.add( {
+					message: msg,
+					type: ok ? 'success' : 'error',
+					duration: 3000,
+				} );
+			} ).catch( ( err ) => {
+				this.clearStatus[type] = false;
+				this.$CXNotice.add( {
+					message: err && err.message ? err.message : 'Request failed',
+					type: 'error',
+					duration: 3000,
+				} );
+			} );
+		},
 
 		getOptionValue: function( option = false ) {
 

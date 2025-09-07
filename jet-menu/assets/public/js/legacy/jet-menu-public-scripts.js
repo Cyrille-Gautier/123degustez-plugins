@@ -1218,9 +1218,10 @@
 					let menuInstanceRenderData = false,
 						renderDataElement = document.getElementById( 'jetMenuMobileWidgetRenderData' + this.$root.menuOptions.menuUniqId );
 
-					if ( renderDataElement ) {
-						eval( renderDataElement.innerHTML );
-						menuInstanceRenderData = window[ 'jetMenuMobileWidgetRenderData' + this.$root.menuOptions.menuUniqId ] || false;
+					try {
+						menuInstanceRenderData = JSON.parse( renderDataElement.textContent );
+					} catch ( error ) {
+						menuInstanceRenderData = false;
 					}
 
 					if ( menuInstanceRenderData ) {

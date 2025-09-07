@@ -17,6 +17,10 @@ class General_Options {
 			'value' => jet_menu()->settings_manager->options_manager->get_option( 'use-template-cache', 'true' ),
 		) );
 
+		jet_menu()->settings_manager->options_manager->add_option( 'template-cache-expiration', array(
+			'value' => jet_menu()->settings_manager->options_manager->get_option( 'template-cache-expiration', false ),
+		) );
+
 		$is_nextgen = ! get_option( jet_menu()->settings_manager->options_manager->options_slug ) ? 'true' : 'false';
 
 		jet_menu()->settings_manager->options_manager->add_option( 'plugin-nextgen-edition', array(

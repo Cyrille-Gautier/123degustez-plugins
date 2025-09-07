@@ -171,7 +171,7 @@ if ( ! class_exists( 'Jet_Menu_Assets' ) ) {
 					'getBlocksTemplateApiUrl'    => $rest_api_url . 'jet-menu-api/v2/get-blocks-template-content',
 					'menuItemsApiUrl'            => $rest_api_url . 'jet-menu-api/v2/get-menu-items',
 					'restNonce'                  => wp_create_nonce( 'wp_rest' ),
-					'devMode'                    => is_user_logged_in() ? 'true' : 'false',
+					'devMode'                    => jet_menu_tools()->is_dev_mode( 'localize' ) ? 'true' : 'false',
 					'wpmlLanguageCode'           => defined( 'ICL_LANGUAGE_CODE' ) ? ICL_LANGUAGE_CODE : false,
 					'menuSettings'               => array (
 						'jetMenuRollUp'            => jet_menu()->settings_manager->options_manager->get_option( 'jet-menu-roll-up', 'false' ),
@@ -212,7 +212,7 @@ if ( ! class_exists( 'Jet_Menu_Assets' ) ) {
 				$template_name = $path_info['filename'];
 
 				if ( in_array( $template_name, $vue_templates ) ) {?>
-					<script type="text/x-template" id="<?php echo $template_name; ?>-template"><?php
+					<script type="text/x-template" id="<?php echo esc_attr( $template_name ); ?>-template"><?php
 						require $file; ?>
 					</script><?php
 				}

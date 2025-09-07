@@ -32,6 +32,13 @@ class Menu_Post_Type {
 	protected $meta_key  = 'jet-menu-item';
 
 	/**
+	 * Jet Menu nonce key
+	 *
+	 * @var string
+	 */
+	protected $nonce_key = 'jet-menu-nav-settings';
+
+	/**
 	 * Returns the instance.
 	 *
 	 * @since  1.0.0
@@ -197,7 +204,8 @@ class Menu_Post_Type {
 		}
 
 		// Check if required parameters are present in the request
-		if ( empty( $_REQUEST['jet-open-editor'] ) || empty( $_REQUEST['item'] ) || empty( $_REQUEST['menu'] ) || empty( $_REQUEST['content'] ) ) {
+		// Safe: values are used only for conditional logic, not stored or trusted.
+		if ( empty( $_REQUEST['jet-open-editor'] ) || empty( $_REQUEST['item'] ) || empty( $_REQUEST['menu'] ) || empty( $_REQUEST['content'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
@@ -211,11 +219,16 @@ class Menu_Post_Type {
 	 *
 	 */
 	public function process_content() {
+
+		if ( ! isset( $_REQUEST['_nonce'] ) || ! wp_verify_nonce( $_REQUEST['_nonce'], $this->nonce_key ) ) {
+			wp_die( esc_html__( 'Security check failed', 'jet-menu' ) );
+		}
+
 		// Extract necessary request parameters
-		$menu_item_id = intval( $_REQUEST['item'] );
-		$content_type = $_REQUEST['content'];
-		$content_name = $_REQUEST['content_name'] ?? '';
-		$content_id   = $_REQUEST['content_id'] ?? '';
+		$menu_item_id = isset( $_REQUEST['item'] ) ? intval( $_REQUEST['item'] ) : 0;
+		$content_type = isset( $_REQUEST['content'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['content'] ) ) : '';
+		$content_name = isset( $_REQUEST['content_name'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['content_name'] ) ) : '';
+		$content_id   = isset( $_REQUEST['content_id'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['content_id'] ) ) : '';
 
 		// Determine the meta key for the content type.
 		$meta_key = $this->get_meta_key_for_content_type( $content_type );
@@ -267,7 +280,11 @@ class Menu_Post_Type {
 	 * @return string The edit link URL.
 	 */
 	private function generate_edit_link( $menu_item_id, $content_type ) {
-		$menu_id = intval( $_REQUEST['menu'] );
+		if ( ! isset( $_REQUEST['_nonce'] ) || ! wp_verify_nonce( $_REQUEST['_nonce'], $this->nonce_key ) ) {
+			return false;
+		}
+
+		$menu_id = isset( $_REQUEST['menu'] ) ? intval( $_REQUEST['menu'] ) : 0;
 
 		$edit_links = [
 			'elementor' => defined('ELEMENTOR_VERSION') ? add_query_arg(
@@ -276,6 +293,7 @@ class Menu_Post_Type {
 					'action'      => 'elementor',
 					'context'     => 'jet-menu',
 					'parent_menu' => $menu_id,
+					'_nonce'      => wp_create_nonce( $this->nonce_key ),
 				],
 				admin_url( 'post.php' )
 			) : false,
@@ -317,8 +335,8 @@ class Menu_Post_Type {
 		update_post_meta( $menu_item_id, '_content_type', $content_type );
 
 		// Redirect the user to the edit link
-		wp_redirect( $edit_link );
-		die();
+		wp_safe_redirect( $edit_link );
+		exit;
 	}
 
 
@@ -337,6 +355,10 @@ class Menu_Post_Type {
 		delete_post_meta( $template_id, '_is_script_deps' );
 		delete_post_meta( $template_id, '_is_style_deps' );
 		delete_post_meta( $template_id, '_is_content_elements' );
+
+		if ( class_exists( '\Jet_Cache\DB_Manager' ) ) {
+			\Jet_Cache\DB_Manager::get_instance()->delete_cache_by_instance_id( $template_id, 'jet-menu' );
+		}
 	}
 
 
@@ -352,7 +374,7 @@ class Menu_Post_Type {
 		// Check if the current page is a singular jet-menu type
 		if ( is_singular( $this->post_type ) ) {
 			// If it is, redirect the user to the home page
-			wp_redirect( home_url() );
+			wp_safe_redirect( home_url() );
 			exit;
 		}
 	}

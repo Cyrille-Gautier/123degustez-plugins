@@ -77,13 +77,13 @@ class Elementor_Content_Render extends Base_Render {
 	public function render() {
 
 		if ( ! jet_menu_tools()->has_elementor() ) {
-			echo __( 'Elementor not installed', 'jet-menu' );
+			echo esc_html__( 'Elementor not installed', 'jet-menu' );
 
 			return false;
 		}
 
 		if ( $this->is_editor() ) {
-			echo __( 'Elementor editor content is not available in the Blocks Editor', 'jet-menu' );
+			echo esc_html__( 'Elementor editor content is not available in the Blocks Editor', 'jet-menu' );
 
 			return false;
 		}
@@ -117,13 +117,10 @@ class Elementor_Content_Render extends Base_Render {
 	 */
 	public function get_render_data() {
 		$template_id = $this->get( 'template_id', false );
-		$template_id = apply_filters( 'jet-menu/popup-generator/before-define-popup-assets/popup-id', $template_id, $this->get_settings() );
 
 		$template_content = $this->get_content();
 		$template_styles  = [];
 		$template_scripts  = [];
-
-		do_action( 'jet_plugins/frontend/register_scripts' );
 
 		$styles_data = $this->get_content_style_data( $template_id );
 		$scripts_data = $this->get_content_script_data( $template_id );

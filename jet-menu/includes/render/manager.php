@@ -63,7 +63,7 @@ class Manager {
 	 * @param  boolean $is_return [description]
 	 * @return [type]             [description]
 	 */
-	public function generate_menu_raw_data( $menu_id = false ) {
+	public function generate_menu_raw_data( $menu_id = false, $with_render_data = false ) {
 
 		if ( ! $menu_id ) {
 			return false;
@@ -124,7 +124,7 @@ class Manager {
 						update_post_meta( $template_id, '_is_deps_ready', 'true' );
 					}
 	
-					if ( $render_instance ) {
+					if ( $render_instance &&  $with_render_data ) {
 						$mega_render_data = $render_instance->get_render_data();
 						$mega_render_data = apply_filters( 'jet-plugins/render/render-data', $mega_render_data, $template_id, $item_content_type );
 					}

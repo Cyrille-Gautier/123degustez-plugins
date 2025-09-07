@@ -76,7 +76,8 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 			)
 		);
 
-		$parent = isset( $_GET['parent_menu'] ) ? absint( $_GET['parent_menu'] ) : 0;
+		// Safe: used only in Elementor editor context, no processing or saving happens.
+		$parent = isset( $_GET['parent_menu'] ) ? absint( $_GET['parent_menu'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( $parent ) {
 			$this->add_control(
@@ -3003,7 +3004,9 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 
 		$raw_menus = wp_get_nav_menus();
 		$menus     = wp_list_pluck( $raw_menus, 'name', 'term_id' );
-		$parent    = isset( $_GET['parent_menu'] ) ? absint( $_GET['parent_menu'] ) : 0;
+
+		// Safe: used only to exclude menu by ID for display purposes in Elementor context.
+		$parent    = isset( $_GET['parent_menu'] ) ? absint( $_GET['parent_menu'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( 0 < $parent && isset( $menus[ $parent ] ) ) {
 			unset( $menus[ $parent ] );
@@ -3171,7 +3174,8 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 
 		$allowed_actions = array( 'elementor_render_widget', 'elementor' );
 
-		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $allowed_actions ) ) {
+		// Safe: action value is only checked, not executed, within Elementor context
+		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $allowed_actions ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return true;
 		}
 
@@ -3186,6 +3190,8 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 	public function fix_preview_css( $data ) {
 
 		if ( ! empty( $data['css'] ) ) {
+			// Safe: CSS is generated internally by CX_Dynamic_CSS and does not contain user input.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			printf( '<style>%s</style>', html_entity_decode( $data['css'] ) );
 		}
 

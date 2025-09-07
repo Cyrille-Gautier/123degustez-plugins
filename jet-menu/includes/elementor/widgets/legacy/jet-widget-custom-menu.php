@@ -2461,7 +2461,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 
 		$raw_menus = wp_get_nav_menus();
 		$menus     = wp_list_pluck( $raw_menus, 'name', 'term_id' );
-		$parent    = isset( $_GET['parent_menu'] ) ? absint( $_GET['parent_menu'] ) : 0;
+		$parent    = isset( $_GET['parent_menu'] ) ? absint( $_GET['parent_menu'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( 0 < $parent && isset( $menus[ $parent ] ) ) {
 			unset( $menus[ $parent ] );
@@ -2522,7 +2522,7 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 
 		$allowed_actions = array( 'elementor_render_widget', 'elementor' );
 
-		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $allowed_actions ) ) {
+		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $allowed_actions ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return true;
 		}
 
@@ -2535,9 +2535,9 @@ class Jet_Widget_Custom_Menu extends Widget_Base {
 	 * @return array
 	 */
 	public function fix_preview_css( $data ) {
-
+		// Safe: $data['css'] is generated internally by CX_Dynamic_CSS based on widget controls.
 		if ( ! empty( $data['css'] ) ) {
-			printf( '<style>%s</style>', html_entity_decode( $data['css'] ) );
+			printf( '<style>%s</style>', html_entity_decode( $data['css'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		return $data;

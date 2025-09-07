@@ -62,12 +62,23 @@ class Get_Blocks_Template_Content extends Base {
 
 		$transient_key = md5( sprintf( 'jet_menu_elementor_template_data_%s', $template_id ) );
 
-		$template_data = get_transient( $transient_key );
+		$template_data = false;
 
 		$template_cache = jet_menu()->settings_manager->options_manager->get_option( 'use-template-cache', 'true' );
 		$template_cache = filter_var( $template_cache, FILTER_VALIDATE_BOOLEAN ) ? true : false;
 
-		if ( ! empty( $template_data ) && ! $dev && $template_cache ) {
+		$cache_expiration_slug = jet_menu()->settings_manager->options_manager->get_option( 'template-cache-expiration', '12hours' );
+		$ttl_ms = jet_menu_tools()->get_milliseconds_by_tag( $cache_expiration_slug );
+
+		if ( 'none' === $ttl_ms ) {
+			$ttl_ms = YEAR_IN_SECONDS * 1000;
+		}
+
+		if ( ! $dev && $template_cache ) {
+			$template_data = jet_get_transient( $transient_key, false );
+		}
+
+		if ( ! empty( $template_data ) ) {
 			return rest_ensure_response( $template_data );
 		}
 
@@ -80,7 +91,7 @@ class Get_Blocks_Template_Content extends Base {
 
 		$template_data = $render_instance->get_render_data();
 
-		set_transient( $transient_key, $template_data, 12 * HOUR_IN_SECONDS );
+		jet_set_transient( $transient_key, $template_data, $ttl_ms, $template_id, 'jet-menu' );
 
 		return rest_ensure_response( $template_data );
 	}

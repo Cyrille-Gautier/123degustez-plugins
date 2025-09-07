@@ -250,7 +250,7 @@ class Vertical_Menu_Walker extends \Walker_Nav_Menu {
 		$item_output .= '</a>';
 		$item_output .= $args->after;
 
-		$is_elementor = ( isset( $_GET['elementor-preview'] ) ) ? true : false;
+		$is_elementor = ( isset( $_GET['elementor-preview'] ) ) ? true : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		$mega_item = get_post_meta( $item->ID, jet_menu()->post_type_manager->meta_key(), true );
 
