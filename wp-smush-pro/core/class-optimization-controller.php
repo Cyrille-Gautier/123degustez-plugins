@@ -13,7 +13,7 @@ class Optimization_Controller extends Controller {
 	public function __construct() {
 		$this->global_stats = Global_Stats::get();
 
-		$this->register_action( 'wp_smush_image_sizes_changed', array( $this, 'mark_global_stats_as_outdated' ) );
+		$this->register_action( 'wp_smush_image_sizes_changed', array( $this, 'mark_global_stats_as_outdated' ) );		 	   		 	    			   
 		$this->register_action( 'wp_smush_settings_updated', array(
 			$this,
 			'maybe_mark_global_stats_as_outdated',
