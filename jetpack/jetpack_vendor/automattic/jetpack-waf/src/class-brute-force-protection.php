@@ -21,6 +21,8 @@ use WP_Error;
 
 /**
  * Brute Force Protection class.
+ *
+ * @phan-constructor-used-for-side-effects
  */
 class Brute_Force_Protection {
 
@@ -515,15 +517,16 @@ class Brute_Force_Protection {
 	 *
 	 * Fires custom, plugable action jpp_log_failed_attempt with the IP
 	 *
-	 * @param string         $username - The username or email address attempting to log in.
-	 * @param \WP_Error|null $error    - A WP_Error object with the authentication failure details.
+	 * @param string|null           $username - The username or email address attempting to log in.
+	 * @param \WP_Error|string|null $error    - A WP_Error object or error message with the authentication failure details.
 	 *
 	 * @return void
 	 */
-	public function log_failed_attempt( string $username, ?\WP_Error $error = null ) {
+	public function log_failed_attempt( $username, $error = null ) {
+		$username = $username ?? '';
 
 		// Skip if Account protection password validation error.
-		if ( isset( $error->errors['password_detection_validation_error'] ) ) {
+		if ( is_object( $error ) && isset( $error->errors['password_detection_validation_error'] ) ) {
 			return;
 		}
 
@@ -568,8 +571,8 @@ class Brute_Force_Protection {
 	 * a busy IP that has a lot of good logins along with some forgotten passwords. Also saves current user's ip
 	 * to the ip address allow list
 	 *
-	 * @param string $user_login - the user loggign in.
-	 * @param string $user - the user.
+	 * @param string   $user_login - the user logging in.
+	 * @param \WP_User $user - the user.
 	 */
 	public function log_successful_login( $user_login, $user = null ) {
 		if ( ! $user ) { // For do_action( 'wp_login' ) calls that lacked passing the 2nd arg.
@@ -1164,9 +1167,11 @@ class Brute_Force_Protection {
 			$uri = network_home_url();
 		}
 
+		$domain  = '';
 		$uridata = wp_parse_url( $uri );
-
-		$domain = $uridata['host'];
+		if ( false !== $uridata ) {
+			$domain = $uridata['host'];
+		}
 
 		// If we still don't have the site_url, get it.
 		if ( ! $domain ) {

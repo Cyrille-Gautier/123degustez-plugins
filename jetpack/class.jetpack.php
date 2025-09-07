@@ -40,6 +40,10 @@ use Automattic\Jetpack\Sync\Sender;
 use Automattic\Jetpack\Terms_Of_Service;
 use Automattic\Jetpack\Tracking;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit( 0 );
+}
+
 /*
 Options:
 jetpack_options (array)
@@ -652,9 +656,6 @@ class Jetpack {
 		require_once JETPACK__PLUGIN_DIR . 'class-jetpack-stats-dashboard-widget.php';
 		add_action( 'wp_dashboard_setup', array( new Jetpack_Stats_Dashboard_Widget(), 'init' ) );
 
-		require_once JETPACK__PLUGIN_DIR . 'class-jetpack-newsletter-dashboard-widget.php';
-		add_action( 'wp_dashboard_setup', array( new Jetpack_Newsletter_Dashboard_Widget(), 'init' ) );
-
 		// Returns HTTPS support status.
 		add_action( 'wp_ajax_jetpack-recheck-ssl', array( $this, 'ajax_recheck_ssl' ) );
 
@@ -787,10 +788,6 @@ class Jetpack {
 		);
 
 		$config->ensure( 'search' );
-
-		if ( defined( 'ENABLE_WORDADS_SHARED_UI' ) && ENABLE_WORDADS_SHARED_UI ) {
-			$config->ensure( 'wordads' );
-		}
 
 		if ( ! $this->connection_manager ) {
 			$this->connection_manager = new Connection_Manager( 'jetpack' );
@@ -3198,7 +3195,7 @@ p {
 
 			if ( $throw ) {
 				/* translators: Plugin name to deactivate. */
-				throw new RuntimeException( sprintf( __( 'Jetpack contains the most recent version of the old “%1$s” plugin.', 'jetpack' ), 'WordPress.com Stats' ) );
+				throw new RuntimeException( sprintf( __( 'Jetpack contains the most recent version of the old "%1$s" plugin.', 'jetpack' ), 'WordPress.com Stats' ) );
 			}
 		}
 	}
@@ -3440,7 +3437,7 @@ p {
 					'meta' => (array) wp_get_attachment_metadata( $post_id ),
 				);
 
-				return (array) array( $response );
+				return array( $response );
 			}
 
 			$attachment_id = media_handle_upload(
@@ -4495,8 +4492,7 @@ endif;
 				if ( is_a( $jp_user, 'WP_User' ) ) {
 					wp_set_current_user( $jp_user->ID );
 					$user_can = is_multisite()
-						// @phan-suppress-next-line PhanDeprecatedFunction -- @todo Switch to current_user_can_for_site when we drop support for WP 6.6.
-						? current_user_can_for_blog( get_current_blog_id(), 'manage_options' )
+						? current_user_can_for_site( get_current_blog_id(), 'manage_options' )
 						: current_user_can( 'manage_options' );
 					if ( $user_can ) {
 						$token_type              = 'user';

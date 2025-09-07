@@ -13,6 +13,10 @@ use Automattic\Jetpack\Status;
 use Automattic\Jetpack\Waf\Brute_Force_Protection\Brute_Force_Protection;
 use Automattic\Jetpack\Waf\Brute_Force_Protection\Brute_Force_Protection_Shared_Functions;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit( 0 );
+}
+
 /**
  * This is the base class for every Core API endpoint Jetpack uses.
  */
@@ -499,6 +503,17 @@ class Jetpack_Core_API_Data extends Jetpack_Core_API_XMLRPC_Consumer_Endpoint {
 
 		$response['akismet'] = is_plugin_active( 'akismet/akismet.php' );
 
+		require_once JETPACK__PLUGIN_DIR . '/modules/memberships/class-jetpack-memberships.php';
+		if ( class_exists( 'Jetpack_Memberships' ) ) {
+			$response['newsletter_has_active_plan'] = count( Jetpack_Memberships::get_all_newsletter_plan_ids( false ) ) > 0;
+		}
+
+		// Make sure we are returning a consistent type
+		if ( ! class_exists( 'Jetpack_Newsletter_Category_Helper' ) ) {
+			require_once JETPACK__PLUGIN_DIR . '_inc/lib/class-jetpack-newsletter-category-helper.php';
+		}
+		$response['wpcom_newsletter_categories'] = Jetpack_Newsletter_Category_Helper::get_category_ids();
+
 		return rest_ensure_response( $response );
 	}
 
@@ -643,6 +658,10 @@ class Jetpack_Core_API_Data extends Jetpack_Core_API_XMLRPC_Consumer_Endpoint {
 				// Remove module from list so we don't go through it again.
 				unset( $params[ $option ] );
 			}
+		}
+
+		if ( ! class_exists( 'Jetpack_Newsletter_Category_Helper' ) ) {
+			require_once JETPACK__PLUGIN_DIR . '_inc/lib/class-jetpack-newsletter-category-helper.php';
 		}
 
 		foreach ( $params as $option => $value ) {
@@ -1043,6 +1062,26 @@ class Jetpack_Core_API_Data extends Jetpack_Core_API_XMLRPC_Consumer_Endpoint {
 						$updated = false;
 						$error   = esc_html__( 'Subscription Options failed to process.', 'jetpack' );
 					}
+					break;
+
+				case Jetpack_Newsletter_Category_Helper::NEWSLETTER_CATEGORIES_OPTION:
+					if ( ! is_array( $value ) || empty( $value ) ) {
+						break;
+					}
+
+					// If we are already current, do nothing
+					$current_value = Jetpack_Newsletter_Category_Helper::get_category_ids();
+					if ( $value === $current_value ) {
+						break;
+					}
+
+					if ( Jetpack_Newsletter_Category_Helper::save_category_ids( $value ) ) {
+						$updated = true;
+					} else {
+						$updated = false;
+						$error   = esc_html__( 'Newsletter category did not update.', 'jetpack' );
+					}
+
 					break;
 
 				default:

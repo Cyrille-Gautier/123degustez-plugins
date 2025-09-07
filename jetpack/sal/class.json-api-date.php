@@ -4,6 +4,11 @@
  *
  * @package automattic/jetpack
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit( 0 );
+}
+
 /**
  * Base class for WPCOM_JSON_API_Date.
  */
@@ -47,7 +52,7 @@ class WPCOM_JSON_API_Date {
 						$offset = $timezone->getOffset( $date_time );
 					}
 				} else {
-					$offset = 3600 * get_option( 'gmt_offset' );
+					$offset = 3600 * (float) get_option( 'gmt_offset' );
 				}
 			} else {
 				$offset = $timestamp - $timestamp_gmt;

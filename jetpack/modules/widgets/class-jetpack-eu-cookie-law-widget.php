@@ -217,6 +217,7 @@ if ( ! class_exists( 'Jetpack_EU_Cookie_Law_Widget' ) ) {
 		 * @html-template-var array $instance
 		 *
 		 * @param array $instance Previously saved values from database.
+		 * @return string|void
 		 */
 		public function form( $instance ) {
 			$instance = wp_parse_args( $instance, $this->defaults() );
@@ -308,7 +309,10 @@ if ( ! class_exists( 'Jetpack_EU_Cookie_Law_Widget' ) ) {
 			}
 
 			// Show the banner again if a setting has been changed.
-			setcookie( self::$cookie_name, '', time() - 86400, '/', COOKIE_DOMAIN, is_ssl(), false ); // phpcs:ignore Jetpack.Functions.SetCookie -- Fine to have accessible.
+			// Sometimes plugins send headers already, so we can't set a cookie and any attempt will throw a warning.
+			if ( ! headers_sent() ) {
+				setcookie( self::$cookie_name, '', time() - 86400, '/', COOKIE_DOMAIN, is_ssl(), false ); // phpcs:ignore Jetpack.Functions.SetCookie -- Fine to have accessible.
+			}
 
 			return $instance;
 		}
