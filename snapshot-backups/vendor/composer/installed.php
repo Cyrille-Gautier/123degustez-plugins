@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'incsub/snapshot-backups',
-        'pretty_version' => 'dev-release/4.32.2',
-        'version' => 'dev-release/4.32.2',
-        'reference' => '82b60ff8f49e59e3aea676824729cebabe8676ce',
+        'pretty_version' => 'dev-release/4.35.1',
+        'version' => 'dev-release/4.35.1',
+        'reference' => '09bdc090a5b113e494007e8b34e852dfdb2b75e0',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -74,9 +74,9 @@
             'dev_requirement' => false,
         ),
         'incsub/snapshot-backups' => array(
-            'pretty_version' => 'dev-release/4.32.2',
-            'version' => 'dev-release/4.32.2',
-            'reference' => '82b60ff8f49e59e3aea676824729cebabe8676ce',
+            'pretty_version' => 'dev-release/4.35.1',
+            'version' => 'dev-release/4.35.1',
+            'reference' => '09bdc090a5b113e494007e8b34e852dfdb2b75e0',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

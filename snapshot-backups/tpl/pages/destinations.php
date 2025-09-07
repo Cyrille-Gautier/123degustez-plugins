@@ -38,13 +38,20 @@ wp_nonce_field( 'snapshot_get_schedule', '_wpnonce-get-schedule' );
 			'is_branding_hidden' => $is_branding_hidden,
 		)
 	);
+	$branding_image = apply_filters( 'wpmudev_branding_hero_image', '' );
 	?>
 
 	<div class="sui-box sui-summary snapshot-destinations-summary<?php echo esc_html( $sui_branding_class ); ?>">
 
 		<div class="sui-summary-image-space" aria-hidden="true"
-			style="background-image: url( '<?php echo esc_url( apply_filters( 'wpmudev_branding_hero_image', '' ) ); ?>' )">
-		</div>
+			<?php
+			if ( ! empty( $branding_image ) ) {
+				?>
+				style="background-image: url( '<?php echo esc_url( $branding_image ); ?>' )"
+				<?php
+			}
+			?>
+		></div>
 
 		<div class="sui-summary-segment">
 
@@ -269,6 +276,14 @@ wp_nonce_field( 'snapshot_get_schedule', '_wpnonce-get-schedule' );
 		array(
 			'assets'   => $assets,
 			'auth_url' => $onedrive_auth_url,
+		)
+	);
+
+	$this->render(
+		'modals/destinations/dropbox/reauth',
+		array(
+			'assets'   => $assets,
+			'auth_url' => $dropbox_auth_url,
 		)
 	);
 	?>

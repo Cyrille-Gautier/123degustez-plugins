@@ -90,7 +90,7 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 								<input
 									placeholder="<?php echo esc_attr__( 'Place Account Name', 'snapshot' ); ?>"
 									id="azure-connection-secretkey" class="sui-form-control"
-									name="tpd_secretkey" aria-labelledby="label-azure-connection-secretkey" />
+									name="tpd_accountname" aria-labelledby="label-azure-connection-secretkey" />
 								<span id="error-azure-connection-secretkey" class="sui-error-message"
 									style="display: none; text-align: right;" role="alert"></span>
 							</div>

@@ -143,7 +143,7 @@ $settings_link = network_admin_url( 'options-general.php' );
 								</p>
 								<?php } else { ?>
 									<?php /* translators: %s - link */ ?>
-								<p><?php echo wp_kses_post( sprintf( __( 'A connection with the API couldn\'t be established. Give it another try below, and if you continue having connection issues, our <a href="%s" target="_blank">support team</a> is ready to help.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+								<p><?php echo wp_kses_post( sprintf( __( 'A connection with the API couldn\'t be established. Give it another try below, and if you continue having connection issues, our <a href="%s" target="_blank">support team</a> is ready to help.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 								</p>
 								<?php } ?>
 							</div>
@@ -271,7 +271,7 @@ $settings_link = network_admin_url( 'options-general.php' );
 								</p>
 								<?php } else { ?>
 									<?php /* translators: %s - link */ ?>
-								<p><?php echo wp_kses_post( sprintf( __( 'We were unable to proceed due to a connection problem. Please choose the storage region again, or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+								<p><?php echo wp_kses_post( sprintf( __( 'We were unable to proceed due to a connection problem. Please choose the storage region again, or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 								</p>
 								<?php } ?>
 							</div>

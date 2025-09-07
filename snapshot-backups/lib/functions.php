@@ -218,3 +218,62 @@ if ( ! function_exists( 'parse_size_readable' ) ) {
 		return size_format( $bytes, 2 );
 	}
 }
+
+if ( ! function_exists( 'snapshot_encrypt_data' ) ) {
+
+	/**
+	 * Encrypts data using AES-256-CBC encryption.
+	 *
+	 * This function encrypts the provided data using the AES-256-CBC algorithm and a specified encryption key.
+	 * The initialization vector (IV) used in the encryption process is prepended to the encrypted data and the
+	 * resulting string is encoded in base64 for safe storage.
+	 *
+	 * @param string $data The data to encrypt.
+	 * @param string $key  The encryption key. The key should be a secure, random string with the correct length (32 bytes for AES-256).
+	 *
+	 * @return string The base64-encoded string of the IV combined with the encrypted data.
+	 */
+	function snapshot_encrypt_data (string $data, string $key = '' ): string {
+    if ( empty( $key ) ) {
+        $key = 'snapshot-backups-' . SNAPSHOT_BACKUPS_VERSION;
+    }
+
+    $key_hash  = sodium_crypto_generichash( $key, '', SODIUM_CRYPTO_SECRETBOX_KEYBYTES );
+    $nonce     = random_bytes( SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
+    $encrypted = sodium_crypto_secretbox( $data, $nonce, $key_hash );
+
+    return base64_encode( $nonce . $encrypted );
+}
+}
+
+
+if ( ! function_exists( 'snapshot_decrypt_data' ) ) {
+
+	/**
+	 * Decrypts data encrypted with AES-256-CBC encryption.
+	 *
+	 * This function decrypts data that was encrypted using the AES-256-CBC algorithm. It expects the input
+	 * to be a base64-encoded string containing the IV concatenated with the encrypted data.
+	 *
+	 * @param string $encrypted_data The base64-encoded string containing the IV and encrypted data.
+	 * @param string $key            The decryption key. The key should match the key used during encryption.
+	 *
+	 * @return string|false The original decrypted data, or false on failure.
+	 */
+	function snapshot_decrypt_data(string $encrypted_data, string $key = ''): string {
+		if ( empty( $key ) ) {
+			$key = 'snapshot-backups-' . SNAPSHOT_BACKUPS_VERSION;
+		}
+
+		$decoded = base64_decode( $encrypted_data );
+		if ( $decoded === false || strlen( $decoded ) < SODIUM_CRYPTO_SECRETBOX_NONCEBYTES ) {
+			return $encrypted_data; // Not valid for decryption.
+		}
+
+		$nonce = substr( $decoded, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
+		$ciphertext = substr( $decoded, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
+		$key_hash = sodium_crypto_generichash( $key, '', SODIUM_CRYPTO_SECRETBOX_KEYBYTES );
+
+		return sodium_crypto_secretbox_open( $ciphertext, $nonce, $key_hash ) ?: $encrypted_data;
+	}
+}

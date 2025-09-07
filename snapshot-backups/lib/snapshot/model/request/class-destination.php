@@ -42,6 +42,34 @@ class Destination extends Model\Request {
 		$method = 'post';
 		$path   = $this->get_api_url();
 
+		if ( isset( $data['obfuscated'] ) && 'yes' === $data['obfuscated'] ) {
+			$change_key = false;
+			$access_key = isset( $data['tpd_accesskey'] ) ? $data['tpd_accesskey'] : null;
+			$secret_key = isset( $data['tpd_secretkey'] ) ? $data['tpd_secretkey'] : null;
+
+			if ( null === $access_key || '' === $access_key ) {
+				$access_key = $data['tpd_acctoken_gdrive'];
+				$change_key = true;
+			}
+
+			if ( $access_key && $secret_key ) {
+				// Decrpyt the keys.
+				$decoded_key    = snapshot_decrypt_data( $access_key );
+				$decoded_secret = snapshot_decrypt_data( $secret_key );
+			}
+
+
+			if ( $change_key ) {
+				$data['tpd_acctoken_gdrive'] = $decoded_key;
+			} else {
+				$data['tpd_accesskey'] = $decoded_key;
+			}
+
+			$data['tpd_secretkey'] = $decoded_secret;
+
+			unset( $data['obfuscated'] );
+		}
+
 		$response = $this->request( $path, $data, $method );
 
 		return $response;
@@ -117,8 +145,18 @@ class Destination extends Model\Request {
 			'tpd_save'      => 1,
 		);
 
+		if ( 'dropbox' === $tpd_type ) {
+			$data['tpd_acctoken_gdrive'] = $data['tpd_accesskey'];
+			unset( $data['tpd_accesskey'] );
+		}
+
 		if ( ! empty( $tpd_endpoint ) ) {
 			$data['tpd_endpoint'] = $tpd_endpoint;
+		}
+
+		if ( 'linode' === $tpd_type ) {
+			$data['ftp_host'] = 'linode';
+			$data['tpd_type'] = 's3_other';
 		}
 
 		if ( isset( $meta['ftp_timeout'] ) ) {
@@ -134,20 +172,25 @@ class Destination extends Model\Request {
 	/**
 	 * Update destination.
 	 *
-	 * @param string $tpd_id        Destination ID.
-	 * @param int    $aws_storage   Set destination as active if = 1.
+	 * @param string $tpd_id  Destination ID.
+	 * @param array  $data    Array of data to update the destination
 	 *
 	 * @return array|mixed|object array of sent info if success.
 	 */
-	public function activate_destination( $tpd_id, $aws_storage ) {
+	public function activate_destination( $tpd_id, $data ) {
 		$method = 'put';
 		$path   = $this->get_api_url() . '/' . $tpd_id;
 
-		$data = array(
-			'aws_storage' => $aws_storage,
+		$args = array(
+			'aws_storage' => $data['aws_storage'],
 		);
 
-		$response = $this->request( $path, $data, $method );
+		if ( isset( $data['tpd_type'] ) && 'linode' === $data['tpd_type'] ) {
+			$args['tpd_type'] = 's3_other';
+			$args['ftp_host'] = 'linode';
+		}
+
+		$response = $this->request( $path, $args, $method );
 
 		return $response;
 	}

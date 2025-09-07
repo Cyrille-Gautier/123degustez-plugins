@@ -43,13 +43,22 @@ $has_hosting_backups = Env::is_wpmu_hosting();
 	);
 
 	$this->render( 'notices/reauthenticate-google-drive' );
-	$this->render( 'notices/reauthenticate-onedrive')
+	$this->render( 'notices/reauthenticate-onedrive' );
+	$this->render( 'notices/reauthenticate-dropbox' );
+
+	$branding_image = apply_filters( 'wpmudev_branding_hero_image', '' );
 	?>
 	<div class="sui-box sui-summary snapshot-dashboard-summary<?php echo esc_html( $sui_branding_class ); ?>">
 
 		<div class="sui-summary-image-space" aria-hidden="true"
-			style="background-image: url( '<?php echo esc_url( apply_filters( 'wpmudev_branding_hero_image', '' ) ); ?>' )">
-		</div>
+			<?php
+			if ( ! empty( $branding_image ) ) {
+				?>
+				style="background-image: url( '<?php echo esc_url( $branding_image ); ?>' )"
+				<?php
+			}
+			?>
+		></div>
 
 		<div class="sui-summary-segment">
 
@@ -136,7 +145,7 @@ $has_hosting_backups = Env::is_wpmu_hosting();
 								</p>
 								<?php } else { ?>
 									<?php /* translators: %s - Link for support */ ?>
-								<p><?php echo wp_kses_post( sprintf( __( 'We were unable to fetch backup data from the API due to a connection problem. Give it another try below, or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+								<p><?php echo wp_kses_post( sprintf( __( 'We were unable to fetch backup data from the API due to a connection problem. Give it another try below, or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 								</p>
 								<?php } ?>
 							</div>
@@ -333,7 +342,7 @@ $has_hosting_backups = Env::is_wpmu_hosting();
 									</p>
 									<?php } else { ?>
 										<?php /* translators: %s - Link for support */ ?>
-									<p><?php echo wp_kses_post( sprintf( __( 'We were unable to fetch backup data from the API due to a connection problem. Give it another try below, or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+									<p><?php echo wp_kses_post( sprintf( __( 'We were unable to fetch backup data from the API due to a connection problem. Give it another try below, or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 									</p>
 									<?php } ?>
 								</div>

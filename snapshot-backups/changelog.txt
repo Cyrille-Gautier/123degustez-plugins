@@ -4,13 +4,49 @@ Tested up to: 6.7
 
 Change Log:
 ----------------------------------------------------------------------
+= 4.35.1 ( 2025-07-31 ) =
+
+- Improvement: Compatibility issue with Dropbox API
+
+= 4.35.0 ( 2025-07-23 ) =
+- Improvement: More accurate backup size calculation
+- Improvement: Enhanced validation for third-party destinations
+- Improvement: Strengthened security for API and Secret Keys
+- Improvement: Minor UI enhancements
+- Fix: Resolved an issue where the Destinations page failed to load on some sites
+
+
+= 4.34.0 ( 2025-06-10 ) =
+
+- Improvement: Implemented multiple user interface enhancements for a better user experience
+- Improvement: Enhanced security protocols for interactions with third-party destinations
+- Fix: Resolved an issue causing backup failures when using the "MySQLDump" database build method on several hosting platforms
+- Fix: Corrected Amazon S3 bucket name validation to ensure compliance with naming conventions
+- Fix: Addressed the validation issues related to FTP/SFTP destination naming
+- Fix: Fixed the Region field display issue on S3-compatible "Other" destinations
+- Fix: Eliminated console display errors that occurred during the editing of certain destinations
+- Fix: Resolved a PHP fatal error encountered when backing up specific database tables
+
+
+= 4.33.0 ( 2025-04-29 ) =
+
+- Feature: Linode Destination — Send Your Backup to Linode Object Storage
+- Improvement: Enable Reauthorization for Dropbox Destination
+- Improvement: Enhance Various User Interface Aspects
+- Improvement: Optimize Export Processes for Backups
+- Fix: Resolve FTP/SFTP Destination Test Connection Issue
+- Fix: Correct Username Validation for FTP/SFTP Destination
+
 = 4.32.2 ( 2025-04-07 ) =
+
 - Fix: Compatibility issue with Dropbox API
 
 = 4.32.1 ( 2025-03-07 ) =
+
 - Fix: Compatibility issues with PHP 7.4
 
 = 4.32.0 ( 2025-03-05 ) =
+
 - Improvement: Added compatibility with PHP version 8.4
 - Improvement: Enhanced the OneDrive reauthorization flow
 - Improvement: Optimized the database table backup process
@@ -22,6 +58,7 @@ Change Log:
 - Fix: Issue with updating OneDrive destination
 
 = 4.31.0 ( 2025-01-13 ) =
+
 - Improvement: Enhanced email templates
 - Improvement: Simplified onboarding by removing configs step
 - Improvement: Multisite compatibility
@@ -36,6 +73,7 @@ Change Log:
 
 
 = 4.30.0 ( 2024-11-27 ) =
+
 - New: Azure destination - Send your backup to Azure with ease
 - Improvement: Some UI improvements
 - Improvement: Translations improvements
@@ -582,4 +620,4 @@ Change Log:
 - New: Incremental backups
 
 
-805140-1744112797-au
+805140-1757055367-au

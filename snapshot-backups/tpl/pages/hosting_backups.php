@@ -33,11 +33,20 @@ wp_nonce_field( 'snapshot_download_hosting_backup', '_wpnonce-download-hosting-b
 			'is_branding_hidden' => $is_branding_hidden,
 		)
 	);
+	$branding_image = apply_filters( 'wpmudev_branding_hero_image', '' );
 	?>
 
 	<div class="sui-box sui-summary snapshot-hosting-backups-summary<?php echo esc_html( $sui_branding_class ); ?>">
 
-		<div class="sui-summary-image-space" aria-hidden="true" style="background-image: url( '<?php echo esc_url( apply_filters( 'wpmudev_branding_hero_image', '' ) ); ?>' )"></div>
+		<div class="sui-summary-image-space" aria-hidden="true"
+			<?php
+			if ( ! empty( $branding_image ) ) {
+				?>
+				style="background-image: url( '<?php echo esc_url( $branding_image ); ?>' )"
+				<?php
+			}
+			?>
+		></div>
 
 		<div class="sui-summary-segment">
 
@@ -100,7 +109,7 @@ wp_nonce_field( 'snapshot_download_hosting_backup', '_wpnonce-download-hosting-b
 						<div class="sui-notice-content">
 							<div class="sui-notice-message">
 								<span class="sui-notice-icon sui-icon-warning-alert sui-md" aria-hidden="true"></span>
-								<p><?php echo wp_kses_post( sprintf( 'We were unable to fetch backup data from the API due to a connection problem. Give it another try below, or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'https://wpmudev.com/hub2/support#get-support' ) ); ?></p>
+								<p><?php echo wp_kses_post( sprintf( 'We were unable to fetch backup data from the API due to a connection problem. Give it another try below, or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?></p>
 							</div>
 						</div>
 					</div>
@@ -148,7 +157,12 @@ wp_nonce_field( 'snapshot_download_hosting_backup', '_wpnonce-download-hosting-b
 						<img src="<?php echo esc_url( $assets->get_asset( 'img/no-backups-icon.svg' ) ); ?>" alt="<?php esc_attr_e( 'No Hosting Backup', 'snapshot' ); ?>" />
 					</div>
 					<div class="snapshot-no-backup-text sui-box-body">
-						<p><?php printf( esc_html__( 'Hey %1$s, your hosting backup is auto-scheduled to run %2$s, The automatic backup scheduling is managed by us, so you can rest assured.', 'snapshot' ), '<strong>' . esc_html( $user_name ) . '</strong>', '<strong>' . esc_html( $schedule_type ) . '</strong>' ); ?></p>
+						<p>
+						<?php
+						/* translators: %1$s - user name, %2$s - schedule type */
+						printf( esc_html__( 'Hey %1$s, your hosting backup is auto-scheduled to run %2$s, The automatic backup scheduling is managed by us, so you can rest assured.', 'snapshot' ), '<strong>' . esc_html( $user_name ) . '</strong>', '<strong>' . esc_html( $schedule_type ) . '</strong>' );
+						?>
+						</p>
 					</div>
 				</div>
 				<?php

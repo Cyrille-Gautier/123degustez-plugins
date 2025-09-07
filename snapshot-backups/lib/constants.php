@@ -31,7 +31,7 @@ if ( ! defined( 'SNAPSHOT_GOOGLE_DRIVE_CLIENT_ID' ) ) {
 }
 
 if ( ! defined( 'SNAPSHOT_DROPBOX_APP_ID' ) ) {
-	define( 'SNAPSHOT_DROPBOX_APP_ID', 'a6rvnpw1fgey5nu' );
+	define( 'SNAPSHOT_DROPBOX_APP_ID', '15m6g1kqj11nnxe' );
 }
 
 if ( ! defined( 'SNAPSHOT_DROPBOX_APP_FOLDER_NAME' ) ) {

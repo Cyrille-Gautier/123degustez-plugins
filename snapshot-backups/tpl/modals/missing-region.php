@@ -38,7 +38,7 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 								</p>
 								<?php } else { ?>
 									<?php /* translators: %s - link */ ?>
-								<p><?php echo wp_kses_post( sprintf( __( 'We were unable to proceed due to a connection problem.  Please choose thestorage region again, or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+								<p><?php echo wp_kses_post( sprintf( __( 'We were unable to proceed due to a connection problem.  Please choose thestorage region again, or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 								</p>
 								<?php } ?>
 							</div>

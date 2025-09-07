@@ -7,9 +7,11 @@
 
 use WPMUDEV\Snapshot4\Model\Request\Destination\Onedrive;
 use WPMUDEV\Snapshot4\Model\Request\Destination\Googledrive;
+use WPMUDEV\Snapshot4\Model\Request\Destination\Dropbox;
 
 $failed_exports_list = get_site_option( 'snapshot_failed_third_party_destination_exports', array() );
 $google_drives       = isset( $failed_exports_list['google_drive'] ) ? $failed_exports_list['google_drive'] : array();
+$onedrives_list      = isset( $failed_exports_list['onedrive'] ) ? $failed_exports_list['onedrive'] : array();
 $icon_class          = "row-icon-{$tpd_type}";
 
 if ( isset( $meta ) ) {
@@ -46,6 +48,10 @@ switch ( $tpd_type ) {
 		$icon_tooltip = __( 'S3/Other', 'snapshot' );
 		$endpoint     = $meta['tpd_endpoint'];
 		break;
+	case 'linode':
+		$icon_tooltip = __( 'Linode', 'snapshot' );
+		$endpoint     = $meta['tpd_endpoint'];
+		break;
 	case 'dropbox':
 		$icon_tooltip  = __( 'Dropbox', 'snapshot' );
 		$tpd_accesskey = $tpd_acctoken_gdrive;
@@ -77,6 +83,22 @@ switch ( $tpd_type ) {
 		break;
 }//end switch
 
+
+$is_linode = false;
+if ( 's3_other' === $tpd_type && isset( $meta['ftp_host'] ) && 'linode' === $meta['ftp_host'] ) {
+	$is_linode = true;
+	$tpd_type  = 'linode';
+	$icon_tooltip = __( 'S3/Linode', 'snapshot' );
+}
+
+if ( isset( $endpoint ) && '' !== $endpoint ) {
+	if ( str_contains( $endpoint, 'linodeobjects' ) ) {
+		$is_linode = true;
+		$tpd_type  = 'linode';
+		$icon_tooltip = __( 'S3/Linode', 'snapshot' );
+	}
+}
+
 if ( '' === $tpd_path || 'undefined' === $tpd_path || null === $tpd_path ) {
 	$tpd_path = '/';
 }
@@ -92,8 +114,9 @@ if ( 'sftp' === $tpd_type ) {
 
 $is_failed_export_gdrive = ! empty( $google_drives ) && in_array( $tpd_id, $google_drives, true );
 
-$oauth_link = '#';
-if ( 'gdrive' === $tpd_type && $is_failed_export_gdrive ) {
+$gdrive_oauth_link = '#';
+if ( 'gdrive' === $tpd_type && ( $is_failed_export_gdrive || $is_suspended ) ) {
+	delete_site_option( 'snapshot_gdrive_destination_suspended' );
 	$gdrive_oauth_link = Googledrive::create_oauth_link(
 		array(
 			'tpd_id' => $tpd_id,
@@ -103,62 +126,129 @@ if ( 'gdrive' === $tpd_type && $is_failed_export_gdrive ) {
 }
 
 $onedrive_ids = get_site_option( 'snapshot_onedrive_destination_suspended', array() );
+$dropbox_ids  = get_site_option( 'snapshot_dropbox_destination_suspended', array() );
 
 if ( ! $onedrive_ids ) {
 	$onedrive_ids = array();
 }
 
+if ( ! $dropbox_ids ) {
+	$dropbox_ids = array();
+}
+
+//
+$reauthorized = array();
+$unauthorized = array();
 if ( isset( $onedrive_ids['reauthorized'] ) && is_array( $onedrive_ids['reauthorized'] ) ) {
 	$reauthorized = $onedrive_ids['reauthorized'];
-} else {
-	$reauthorized = array();
 }
 
 if ( isset( $onedrive_ids['unauthorized'] ) && is_array( $onedrive_ids['unauthorized'] ) ) {
 	$unauthorized = $onedrive_ids['unauthorized'];
-} else {
-	$unauthorized = array();
 }
 
-if ( 'onedrive' === $tpd_type && $is_suspended ) {
-	if (
-		! in_array( $tpd_id, $reauthorized, true ) &&
-		! in_array( $tpd_id, $unauthorized, true )
-	) {
-		array_push( $unauthorized, $tpd_id );
-	}
-
-	$row_class .= ' onedrive--destination__expired';
-	$onedrive_oauth_link = Onedrive::create_oauth_link(
-		array(
-			'tpd_id' => $tpd_id,
-			'reauth' => 'yes',
-		)
-	);
-
-	if ( in_array( $tpd_id, $reauthorized, true ) ) {
-		$is_suspended = false;
-	}
+// Dropbox reauthorized and unauthorized arrays.
+$dropbox_reauthorized = array();
+$dropbox_unauthorized = array();
+if ( isset( $dropbox_ids['reauthorized'] ) && is_array( $dropbox_ids['reauthorized'] ) ) {
+	$dropbox_reauthorized = $dropbox_ids['reauthorized'];
 }
+
+if ( isset( $dropbox_ids['unauthorized'] ) && is_array( $dropbox_ids['unauthorized'] ) ) {
+	$dropbox_unauthorized = $dropbox_ids['unauthorized'];
+}
+
+$onedrive_oauth_link = '#';
+$dropbox_oauth_link  = '#';
+if ( $is_suspended ) {
+	if ( 'onedrive' === $tpd_type ) {
+		if (
+			! in_array( $tpd_id, $reauthorized, true ) &&
+			! in_array( $tpd_id, $unauthorized, true )
+		) {
+			array_push( $unauthorized, $tpd_id );
+		}
+
+		$row_class          .= ' onedrive--destination__expired';
+		$onedrive_oauth_link = Onedrive::create_oauth_link(
+			array(
+				'tpd_id' => $tpd_id,
+				'reauth' => 'yes',
+			)
+		);
+
+		if ( in_array( $tpd_id, $reauthorized, true ) ) {
+			$is_suspended = false;
+		}
+	}
+
+	if ( 'dropbox' === $tpd_type ) {
+		if (
+			! in_array( $tpd_id, $dropbox_reauthorized, true ) &&
+			! in_array( $tpd_id, $dropbox_unauthorized, true )
+		) {
+			array_push( $dropbox_unauthorized, $tpd_id );
+		}
+
+		$dropbox_oauth_link = Dropbox::create_oauth_link(
+			array(
+				'tpd_id' => $tpd_id,
+				'reauth' => 'yes',
+			)
+		);
+
+		if ( in_array( $tpd_id, $dropbox_reauthorized, true ) ) {
+			$is_suspended = false;
+		} else {
+			$row_class .= ' dropbox--destination__expired';
+		}
+	}//end if
+}//end if
 
 if ( ! in_array( $tpd_id, $reauthorized, true ) && in_array( $tpd_id, $unauthorized, true ) ) {
 	$unauthorized = array_diff( $unauthorized, array( $tpd_id ) );
 	array_push( $reauthorized, $tpd_id );
-
 }
 
-$data = array();
+$onedrive = array();
 if ( ! empty( $unauthorized ) || ! empty( $reauthorized ) ) {
-	$data['reauthorized'] = $reauthorized;
-	$data['unauthorized'] = $unauthorized;
-	update_site_option( 'snapshot_onedrive_destination_suspended', $data );
+	$onedrive['reauthorized'] = $reauthorized;
+	$onedrive['unauthorized'] = $unauthorized;
+	update_site_option( 'snapshot_onedrive_destination_suspended', $onedrive );
 }
+
+$dropbox = array();
+if ( ! empty( $dropbox_unauthorized ) || ! empty( $dropbox_reauthorized ) ) {
+	$dropbox['reauthorized'] = $dropbox_reauthorized;
+	$dropbox['unauthorized'] = $dropbox_unauthorized;
+	update_site_option( 'snapshot_dropbox_destination_suspended', $dropbox );
+}
+
+if ( $tpd_accesskey && $tpd_secretkey ) {
+	// Only encrypt if both keys are set.
+	$tpd_accesskey = snapshot_encrypt_data( $tpd_accesskey );
+	$tpd_secretkey = snapshot_encrypt_data( $tpd_secretkey );
+}
+
 ?>
 <tr class="destination-row <?php echo esc_attr( $row_class ); ?> <?php echo ! $aws_storage ? 'deactivated-destination' : ''; ?>"
 	data-tpd_id="<?php echo esc_attr( $tpd_id ); ?>" data-tpd_name="<?php echo esc_attr( $tpd_name ); ?>"
 	data-tpd_path="<?php echo 'azure' === $tpd_type ? esc_attr( '/' . ( isset( $path_parts[1] ) ? $path_parts[1] : '' ) ) : esc_attr( $tpd_path ); ?>"
-	data-tpd_accesskey="<?php echo esc_attr( $tpd_accesskey ); ?>"
-	data-tpd_secretkey="<?php echo esc_attr( $tpd_secretkey ); ?>"
+	<?php if ( 'ftp' !== $tpd_type && 'sftp' !== $tpd_type && 'azure' !== $tpd_type ) : ?>
+		data-tpd_accesskey="<?php echo esc_attr( $tpd_accesskey ); ?>"
+		data-tpd_secretkey="<?php echo esc_attr( $tpd_secretkey ); ?>"
+	<?php elseif ( 'azure' === $tpd_type ) : ?>
+		data-tpd_accountname="<?php echo esc_attr( $tpd_secretkey ); ?>"
+		data-tpd_accesskey="<?php echo esc_attr( $tpd_accesskey ); ?>"
+	<?php else: ?>
+		data-ftp_username="<?php echo esc_attr( $tpd_accesskey ); ?>"
+		data-ftp_password="<?php echo esc_attr( $tpd_secretkey ); ?>"
+	<?php endif; ?>
+
+	<?php if ( 'linode' === $tpd_type ) : ?>
+		data-ftp_host="<?php echo esc_attr( $meta['ftp_host'] ); ?>"
+	<?php endif; ?>
+
 	data-tpd_region="<?php echo esc_attr( $tpd_region ); ?>" data-tpd_limit="<?php echo esc_attr( $tpd_limit ); ?>"
 	data-tpd_type="<?php echo esc_attr( $tpd_type ); ?>"
 	<?php if ( 'aws' === $tpd_type && isset( $tpd_bucket ) ) : ?>
@@ -177,7 +267,7 @@ if ( ! empty( $unauthorized ) || ! empty( $reauthorized ) ) {
 		data-tpd_drive_id="<?php echo esc_attr( $tpd_drive_id ); ?>"
 		data-tpd_item_id="<?php echo esc_attr( $tpd_item_id ); ?>"
 	<?php endif; ?>
-	<?php if ( 's3_other' === $tpd_type && ! empty( $endpoint ) ) : ?>
+	<?php if ( in_array( $tpd_type, array( 's3_other', 'linode' ), true ) && ! empty( $endpoint ) ) : ?>
 		data-tpd_endpoint="<?php echo esc_url_raw( $endpoint ); ?>"
 	<?php endif; ?>
 	>
@@ -190,9 +280,9 @@ if ( ! empty( $unauthorized ) || ! empty( $reauthorized ) ) {
 				</div>
 				<span class="tpd-name"><?php echo esc_html( $tpd_name ); ?></span>
 			</div>
-			<?php if ( $is_failed_export_gdrive ) : ?>
+			<?php if ( ( $is_failed_export_gdrive || $is_suspended ) && 'gdrive' === $tpd_type ) : ?>
 			<div class="sui-tooltip sui-tooltip-constrained"
-				data-tooltip="<?php esc_attr_e( 'It seems Google Drive is not syncing with Snapshot. To make it work, we need to re-authenticate it from the Destination page.', 'snapshot' ); ?>"
+				data-tooltip="<?php esc_attr_e( 'It seems Google Drive is not syncing with Snapshot. To make it work again, please reauthenticate.', 'snapshot' ); ?>"
 				aria-hidden="true">
 				<span class="sui-icon-warning-alert color-yellow"></span>
 			</div>
@@ -200,7 +290,15 @@ if ( ! empty( $unauthorized ) || ! empty( $reauthorized ) ) {
 
 			<?php if ( 'onedrive' === $tpd_type && $is_suspended ) : ?>
 			<div class="sui-tooltip sui-tooltip-constrained"
-				data-tooltip="<?php esc_attr_e( 'It seems OneDrive has stopped syncing with Snapshot. To make it work again, please reauthenticate it on the Destinations page.', 'snapshot' ); ?>"
+				data-tooltip="<?php esc_attr_e( 'It seems OneDrive has stopped syncing with Snapshot. To make it work again, please reauthenticate.', 'snapshot' ); ?>"
+				aria-hidden="true">
+				<span class="sui-icon-warning-alert color-yellow"></span>
+			</div>
+			<?php endif; ?>
+
+			<?php if ( 'dropbox' === $tpd_type && $is_suspended ) : ?>
+			<div class="sui-tooltip sui-tooltip-constrained"
+				data-tooltip="<?php esc_attr_e( 'It seems Dropbox has stopped syncing with Snapshot. To make it work again, please reauthenticate.', 'snapshot' ); ?>"
 				aria-hidden="true">
 				<span class="sui-icon-warning-alert color-yellow"></span>
 			</div>
@@ -241,22 +339,30 @@ if ( ! empty( $unauthorized ) || ! empty( $reauthorized ) ) {
 
 	<td class="destination-actions-cell">
 		<div class="destination-actions <?php echo $is_failed_export_gdrive || $is_suspended ? 'reconnect-button' : ''; ?>">
-			<?php if ( $is_failed_export_gdrive ) : ?>
-			<a href="<?php echo esc_url( $gdrive_oauth_link ); ?>" class="sui-button">
-				<?php esc_html_e( 'Reconnect', 'snapshot' ); ?>
-			</a>
-			<?php elseif ( $is_suspended ) : ?>
-				<a href="<?php echo esc_url( $onedrive_oauth_link ); ?>" class="sui-button">
+			<?php if ( ( $is_failed_export_gdrive || $is_suspended ) && 'gdrive' === $tpd_type ) : ?>
+				<a href="<?php echo esc_url( $gdrive_oauth_link ); ?>" class="sui-button">
 					<?php esc_html_e( 'Reconnect', 'snapshot' ); ?>
 				</a>
+			<?php elseif ( $is_suspended && 'onedrive' === $tpd_type ) : ?>
+				<?php if ( '' !== $onedrive_oauth_link ) : ?>
+					<a href="<?php echo esc_url( $onedrive_oauth_link ); ?>" class="sui-button">
+						<?php esc_html_e( 'Reconnect', 'snapshot' ); ?>
+					</a>
+				<?php endif; ?>
+			<?php elseif ( $is_suspended && 'dropbox' === $tpd_type ) : ?>
+				<?php if ( '' !== $dropbox_oauth_link ) : ?>
+					<a href="<?php echo esc_url( $dropbox_oauth_link ); ?>" class="sui-button">
+						<?php esc_html_e( 'Reconnect', 'snapshot' ); ?>
+					</a>
+				<?php endif; ?>
 			<?php else : ?>
-			<div class="sui-form-field">
-				<label class="sui-toggle sui-tooltip"
-					data-tooltip="<?php $aws_storage ? esc_attr_e( 'Deactivate destination', 'snapshot' ) : esc_attr_e( 'Activate destination', 'snapshot' ); ?>">
-					<input type="checkbox" class="toggle-active" <?php echo $aws_storage ? 'checked' : ''; ?>>
-					<span class="sui-toggle-slider" aria-hidden="true"></span>
-				</label>
-			</div>
+				<div class="sui-form-field">
+					<label class="sui-toggle sui-tooltip"
+						data-tooltip="<?php $aws_storage ? esc_attr_e( 'Deactivate destination', 'snapshot' ) : esc_attr_e( 'Activate destination', 'snapshot' ); ?>">
+						<input type="checkbox" class="toggle-active" <?php echo $aws_storage ? 'checked' : ''; ?>>
+						<span class="sui-toggle-slider" aria-hidden="true"></span>
+					</label>
+				</div>
 			<?php endif; ?>
 			<div class="sui-dropdown sui-tooltip" data-tooltip="<?php esc_attr_e( 'Settings', 'snapshot' ); ?>">
 				<button class="sui-button-icon sui-dropdown-anchor">
@@ -269,7 +375,7 @@ if ( ! empty( $unauthorized ) || ! empty( $reauthorized ) ) {
 						<button><span class="sui-icon-pencil" aria-hidden="true"></span>
 							<?php esc_html_e( 'Edit destination', 'snapshot' ); ?></button>
 					</li>
-					<?php if ( 'ftp' !== $tpd_type && 'sftp' !== $tpd_type && 'azure' !== $tpd_type ) : ?>
+					<?php if ( 'ftp' !== $tpd_type && 'sftp' !== $tpd_type && 'azure' !== $tpd_type && 'linode' !== $tpd_type ) : ?>
 						<li class="destination-view">
 							<a href="<?php echo esc_url( $view_url ); ?>"
 								<?php

@@ -30,7 +30,7 @@ if ( ! empty( $active_v3 ) ) {
 								<p><?php echo wp_kses_post( __( 'Note: <strong>Your local backups will be removed after uninstalling the plugin</strong>, and Snapshot v4 does not currently support all v3 features.', 'snapshot' ) ); ?></p>
 							<?php } else { ?>
 								<?php /* translators: %s - link for Feature Request modal in DEV site */ ?>
-								<p><?php echo wp_kses_post( sprintf( __( 'You\'re using the new Snapshot v4 plugin, but it looks like you still have the old Snapshot plugin installed. You can safely use Snapshot v3 and v4 side by side, please let us know <a href="%s" target="_blank">here</a> if you have any suggestions or feature requests for v4, as it will be our focus going forward!', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?></p>
+								<p><?php echo wp_kses_post( sprintf( __( 'You\'re using the new Snapshot v4 plugin, but it looks like you still have the old Snapshot plugin installed. You can safely use Snapshot v3 and v4 side by side, please let us know <a href="%s" target="_blank">here</a> if you have any suggestions or feature requests for v4, as it will be our focus going forward!', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?></p>
 
 								<?php /* translators: %s - link for Snapshot 4.0 migration Q&A in DEV site */ ?>
 								<p><?php echo wp_kses_post( sprintf( __( 'Note: <strong>Your local Snapshots will be removed after uninstalling the plugin</strong>, and Snapshot v4 does not currently support all v3 features. Learn more in our <a href="%s" target="_blank">Snapshot 4.0 migration Q&A</a>.', 'snapshot' ), 'https://wpmudev.com/docs/wpmu-dev-plugins/snapshot-4-0/#faq' ) ); ?></p>

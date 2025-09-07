@@ -90,7 +90,7 @@
 		</div>
 
 		<div class="sui-box-footer sui-content-right sui-flatten">
-			<button class="sui-button sui-button-icon-right snapshot-next-destination-screen" disabled data-modal-slide="snapshot-add-destination-dialog-slide-2-s3" data-modalslide="snapshot-add-destination-dialog-slide-2-s3" data-modal-slide-intro="next">
+			<button class="sui-button sui-button-icon-right snapshot-next-destination-screen" disabled data-modal-slide="snapshot-add-destination-dialog-slide-2-s3" data-modal-slide-intro="next">
 				<?php esc_html_e( 'Next', 'snapshot' ); ?>
 				<span class="sui-icon-arrow-right" aria-hidden="true"></span>
 			</button>

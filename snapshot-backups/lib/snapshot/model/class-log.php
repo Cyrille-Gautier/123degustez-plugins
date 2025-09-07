@@ -40,11 +40,16 @@ class Log {
 	 */
 	public function all( ?array $args = null ) {
 		$defaults = array(
-			'number'  => 100, // Retrieve 100 log entries
-			'offset'  => 0, // Offset for pagination.
-			'action'  => null, // Filter by action.
-			'order'   => 'DESC', // In descending order.
-			'orderby' => 'id', // Ordered by id.
+			'number'                  => 100,
+			// Retrieve 100 log entries
+							'offset'  => 0,
+			// Offset for pagination.
+							'action'  => null,
+			// Filter by action.
+							'order'   => 'DESC',
+			// In descending order.
+							'orderby' => 'id',
+		// Ordered by id.
 		);
 
 		$args = wp_parse_args( $args, $defaults );

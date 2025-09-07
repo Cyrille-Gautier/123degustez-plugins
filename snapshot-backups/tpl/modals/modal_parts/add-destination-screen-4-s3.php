@@ -81,7 +81,7 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 								sprintf(
 									/* translators: %s - Link for support */
 									__( 'You\'re trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ),
-									'https://wpmudev.com/hub2/support#get-support'
+									'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support'
 								)
 							);
 							?>
@@ -119,7 +119,7 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 								sprintf(
 								/* translators: %s - Link for support */
 									__( 'You\'re trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different bucket or create a new folder. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ),
-									'https://wpmudev.com/hub2/support#get-support'
+									'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support'
 								)
 							);
 							?>

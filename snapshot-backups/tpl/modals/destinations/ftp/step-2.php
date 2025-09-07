@@ -70,7 +70,7 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 						</p>
 						<?php } else { ?>
 							<?php /* translators: %s - Link for support */ ?>
-						<p><?php echo wp_kses_post( sprintf( __( 'You\'re trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+						<p><?php echo wp_kses_post( sprintf( __( 'You\'re trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 						</p>
 						<?php } ?>
 						<div>
@@ -87,15 +87,15 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 			<form method="post" id="snapshot-ftp-destination-form-final">
 				<div class="sui-form-field">
 					<label for="ftp-name" id="ftp-destination-name" class="sui-label">
-						<?php esc_html_e( 'Destination Name', 'snapshot' ); ?>
+						<?php esc_html_e( 'Destination Name', 'snapshot' ); ?> <span><?php echo esc_html( '*' ); ?></span>
 					</label>
 					<input class="sui-form-control" name="tpd_name" id="ftp-name" aria-labelledby="ftp-name"
 						aria-describedby="error-ftp-destination-name" placeholder="FTP Backups">
 					<span id="error-ftp-destination-name" class="sui-error-message"
 						style="display: none; text-align: right;"></span>
 				</div>
-				<input name="tpd_accesskey" type="hidden">
-				<input name="tpd_secretkey" type="hidden">
+				<input name="ftp_username" type="hidden">
+				<input name="ftp_password" type="hidden">
 				<input name="tpd_type" type="hidden">
 				<input name="tpd_path" type="hidden">
 				<input name="tpd_limit" type="hidden">

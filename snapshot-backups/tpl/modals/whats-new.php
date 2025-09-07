@@ -24,7 +24,7 @@ wp_nonce_field( 'snapshot_whats_new_seen', '_wpnonce-whats_new_seen' );
 					<img
 						src="<?php echo esc_url( $assets->get_asset( 'img/snapshot-modal-whats-new.png' ) ); ?>"
 						srcset="<?php echo esc_url( $assets->get_asset( 'img/snapshot-modal-whats-new.png' ) ); ?> 1x, <?php echo esc_url( $assets->get_asset( 'img/snapshot-modal-whats-new@2x.png' ) ); ?> 2x"
-						alt="<?php esc_attr_e( 'New: Selective Backup Restoration', 'snapshot' ); ?>"
+						alt="<?php esc_attr_e( 'New: Store Backups to Linode', 'snapshot' ); ?>"
 						style="margin-top: 0;"
 					/>
 				</figure>
@@ -34,13 +34,13 @@ wp_nonce_field( 'snapshot_whats_new_seen', '_wpnonce-whats_new_seen' );
 				</button>
 
 				<div class="sui-box-title sui-lg" style="padding: 0 10px; white-space: normal;">
-					<?php esc_html_e( 'New: Store Backups to Azure', 'snapshot' ); ?>
+					<?php esc_html_e( 'New: Store Backups to Linode', 'snapshot' ); ?>
 				</div>
 			</div>
 
 			<div class="sui-box-body sui-content-left" style="padding-bottom: 30px; padding-top: 15px;">
 				<div class="contents">
-					<p class="sui-description"><?php esc_html_e( 'Good news! Now you can store your website backups in Azure. Connect your Microsoft Azure account via Snapshot\'s Destinations page, and your backups will be automatically uploaded to Azure. Simple as that!', 'snapshot' ); ?></p>
+					<p class="sui-description"><?php esc_html_e( 'Good news! Now you can store your website backups in Linode. Connect your Linode account via Snapshot’s Destinations page, and your backups will be automatically uploaded to Linode. Simple as that!', 'snapshot' ); ?></p>
 				</div>
 			</div>
 			<div class="sui-box-footer sui-content-center sui-flatten" style="padding-bottom: 40px;">

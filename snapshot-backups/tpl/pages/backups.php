@@ -86,7 +86,15 @@ $custom_html_filter = array(
 		'role'        => array(),
 	),
 );
-$db_dump_method     = ( null !== $db_dump_method ) ? $db_dump_method : 'php_code';
+
+$db_dump_method  = ( null !== $db_dump_method ) ? $db_dump_method : 'php_code';
+
+/**
+ * Filters added to override the database dump method and WPMU Hosting status.
+ */
+$db_dump_method  = apply_filters( 'snapshot_database_build_method', $db_dump_method );
+$is_wpmu_hosting = apply_filters( 'snapshot_is_wpmu_hosting', $is_wpmu_hosting );
+
 // Set to default 'php_code' method.
 ?>
 <input type="hidden" name="snapshot-php-version" id="snapshot-php-version"
@@ -117,13 +125,22 @@ $db_dump_method     = ( null !== $db_dump_method ) ? $db_dump_method : 'php_code
 
 	$this->render( 'notices/reauthenticate-google-drive' );
 	$this->render( 'notices/reauthenticate-onedrive' );
+	$this->render( 'notices/reauthenticate-dropbox' );
+
+	$branding_image = apply_filters( 'wpmudev_branding_hero_image', '' );
 	?>
 
 	<div class="sui-box sui-summary snapshot-backups-summary<?php echo esc_html( $sui_branding_class ); ?>">
 
 		<div class="sui-summary-image-space" aria-hidden="true"
-			style="background-image: url( '<?php echo esc_url( apply_filters( 'wpmudev_branding_hero_image', '' ) ); ?>' )">
-		</div>
+			<?php
+			if ( ! empty( $branding_image ) ) {
+				?>
+				style="background-image: url( '<?php echo esc_url( $branding_image ); ?>' )"
+				<?php
+			}
+			?>
+		></div>
 
 		<div class="sui-summary-segment">
 
@@ -255,7 +272,7 @@ $db_dump_method     = ( null !== $db_dump_method ) ? $db_dump_method : 'php_code
 							</p>
 							<?php } else { ?>
 								<?php /* translators: %s - Link for support */ ?>
-							<p><?php echo wp_kses_post( sprintf( __( 'We were unable to fetch backup data from the API due to a connection problem. Give it another try below, or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+							<p><?php echo wp_kses_post( sprintf( __( 'We were unable to fetch backup data from the API due to a connection problem. Give it another try below, or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 							</p>
 							<?php } ?>
 						</div>

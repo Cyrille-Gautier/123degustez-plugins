@@ -35,13 +35,31 @@ class Dropbox extends Model\Request\Destination {
 	/**
 	 * Creates Oauth link.
 	 *
+	 * @var array $data Additional data to be inject for reauthorization
+	 *
 	 * @return string Dropbox oauth link.
 	 */
-	public static function create_oauth_link() {
-		$site_hash            = hash_hmac( 'sha256', untrailingslashit( network_site_url() ), Api::get_api_key() );
-		$redirect_after_login = add_query_arg( 'snapshot_dropbox_nonce', wp_create_nonce( 'snapshot_dropbox_connection' ), network_admin_url() . 'admin.php?page=snapshot-destinations&snapshot_action=dropbox-auth&snapshot_site_id=' . Api::get_site_id() . '&snapshot_site_hash=' . $site_hash );
+	public static function create_oauth_link( array $args = array() ) {
+		$site_hash = hash_hmac( 'sha256', untrailingslashit( network_site_url() ), Api::get_api_key() );
 
-		$dropbox_info = array(
+		$data = array(
+			'page'                   => 'snapshot-destinations',
+			'snapshot_action'        => 'dropbox-auth',
+			'snapshot_site_id'       => Api::get_site_id(),
+			'snapshot_site_hash'     => $site_hash,
+			'snapshot_dropbox_nonce' => wp_create_nonce( 'snapshot_dropbox_connection' ),
+		);
+
+		if ( ! empty( $args ) && isset( $args['tpd_id'] ) ) {
+			$data = array_merge( $data, $args );
+		}
+
+		$redirect_after_login = add_query_arg(
+			$data,
+			network_admin_url( 'admin.php' )
+		);
+
+		$params = array(
 			'client_id'         => defined( 'SNAPSHOT_DROPBOX_APP_ID' ) ? SNAPSHOT_DROPBOX_APP_ID : 'atco25zpknnbtly',
 			'token_access_type' => 'offline',
 			'response_type'     => 'code',
@@ -50,14 +68,8 @@ class Dropbox extends Model\Request\Destination {
 			'force_reapprove'   => 'true',
 		);
 
-		/**
-		 * Build the Dropbox Authorization URL.
-		 */
-		$raw_auth_url = add_query_arg( $dropbox_info, 'https://www.dropbox.com/oauth2/authorize' );
+		$auth_url = add_query_arg( $params, 'https://www.dropbox.com/oauth2/authorize' );
 
-		/**
-		 * Sanitize and return the auth url.
-		 */
-		return filter_var( $raw_auth_url, FILTER_SANITIZE_URL );
+		return filter_var( $auth_url, FILTER_SANITIZE_URL );
 	}
 }

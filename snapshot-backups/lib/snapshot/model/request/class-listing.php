@@ -18,7 +18,6 @@ use WPMUDEV\Snapshot4\Model;
  */
 class Listing extends Model\Request {
 
-
 	/**
 	 * Listing backups request endpoint
 	 *
@@ -356,6 +355,7 @@ class Listing extends Model\Request {
 
 		$tpd_exp_done = ( isset( $backup['tpd_exp_done'] ) && '' !== $backup['tpd_exp_done'] ) ? json_decode( $backup['tpd_exp_done'], true ) : array();
 		$done_tpd_ids = array();
+
 		if ( isset( $tpd_exp_done['tpd_s3'] ) ) {
 			foreach ( $tpd_exp_done['tpd_s3'] as $tpd_value => $export_status ) {
 				if ( 'export_success' === $export_status ) {

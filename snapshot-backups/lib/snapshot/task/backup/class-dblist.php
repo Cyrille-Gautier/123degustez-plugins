@@ -88,7 +88,14 @@ class Dblist extends Task {
 		if ( empty( $tables ) ) {
 			$tables = empty( self::$all_tables ) ? Db::get_all_database_tables() : self::$all_tables;
 			if ( ! empty( $tables ) ) {
-				$filtered_tables = apply_filters( 'snapshot_tables_for_backup', array_column( $tables, 'name' ) );
+				$table_names     = array_column( $tables, 'name' );
+				$filtered_tables = apply_filters( 'snapshot_tables_for_backup', $table_names );
+				$filtered_tables = empty( $filtered_tables ) ? $table_names : $filtered_tables;
+
+				if ( defined( 'SNAPSHOT_FORCE_FAIL_BACKUP' ) && SNAPSHOT_IS_BETA && SNAPSHOT_FORCE_FAIL_BACKUP ) {
+					$filtered_tables = false;
+				}
+
 				foreach ( $tables as $table ) {
 					if ( in_array( $table['name'], $filtered_tables, true ) ) {
 						$new_tables[] = $table;

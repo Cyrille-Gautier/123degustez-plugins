@@ -2,16 +2,16 @@
 # This file is distributed under the GNU General Public License (Version 2 - GPLv2).
 msgid ""
 msgstr ""
-"Project-Id-Version: Snapshot Pro 4.32.2\n"
+"Project-Id-Version: Snapshot Pro 4.35.1\n"
 "Report-Msgid-Bugs-To: https://wpmudev.com\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-04-07T05:59:16+00:00\n"
+"POT-Creation-Date: 2025-08-01T07:53:14+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.11.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: snapshot\n"
 
 #. Plugin Name of the plugin
@@ -32,8 +32,8 @@ msgstr ""
 #. Author of the plugin
 #: snapshot-backups.php
 #: lib/snapshot/helper/class-settings.php:247
-#: tpl/pages/backups.php:101
-#: tpl/pages/dashboard.php:125
+#: tpl/pages/backups.php:109
+#: tpl/pages/dashboard.php:134
 msgid "WPMU DEV"
 msgstr ""
 
@@ -49,8 +49,8 @@ msgstr ""
 #: lib/snapshot/authentication/class-ajax.php:217
 #: lib/snapshot/authentication/class-ajax.php:291
 #: lib/snapshot/configs/class-ajax.php:213
-#: lib/snapshot/controller/class-ajax.php:86
-#: lib/snapshot/controller/class-ajax.php:97
+#: lib/snapshot/controller/class-ajax.php:87
+#: lib/snapshot/controller/class-ajax.php:98
 #: lib/snapshot/helper/class-explorer.php:48
 msgid "You are not authorized to perform this action."
 msgstr ""
@@ -81,37 +81,40 @@ msgid "Password is empty."
 msgstr ""
 
 #: lib/snapshot/class-main.php:261
-#: lib/snapshot/controller/class-ajax.php:256
-#: lib/snapshot/controller/class-ajax.php:790
+#: lib/snapshot/controller/class-ajax.php:257
+#: lib/snapshot/controller/class-ajax.php:791
 msgid "The backup region had a different value than expected and it wasn't stored properly system-side."
 msgstr ""
 
 #: lib/snapshot/class-main.php:269
-#: lib/snapshot/controller/class-ajax.php:269
-#: lib/snapshot/controller/class-ajax.php:798
+#: lib/snapshot/controller/class-ajax.php:270
+#: lib/snapshot/controller/class-ajax.php:799
 msgid "The backup region has been set system-side."
 msgstr ""
 
 #. translators: %s - Request was not successful
 #: lib/snapshot/class-task.php:110
+#, php-format
 msgid "%s - An empty or invalid request body."
 msgstr ""
 
 #. translators: %s - Request was not successful
 #: lib/snapshot/class-task.php:121
+#, php-format
 msgid "%1$s - A %2$s parameter must be provided."
 msgstr ""
 
 #. translators: %s - Request was not successful
 #: lib/snapshot/class-task.php:129
+#, php-format
 msgid "%1$s - The %2$s parameter is not valid."
 msgstr ""
 
 #: lib/snapshot/cli/command/class-backup.php:27
-#: tpl/pages/backups.php:294
-#: tpl/pages/dashboard.php:153
-#: tpl/pages/dashboard.php:350
-#: tpl/pages/hosting_backups.php:115
+#: tpl/pages/backups.php:311
+#: tpl/pages/dashboard.php:162
+#: tpl/pages/dashboard.php:359
+#: tpl/pages/hosting_backups.php:124
 msgid "Loading backups..."
 msgstr ""
 
@@ -122,6 +125,7 @@ msgstr ""
 
 #. translators: %s - Backup ID
 #: lib/snapshot/cli/command/class-backup.php:106
+#, php-format
 msgid "Backup with ID %s is now running"
 msgstr ""
 
@@ -131,6 +135,7 @@ msgstr ""
 
 #. translators: %s - Backup progress as a percentage
 #: lib/snapshot/cli/command/class-backup.php:111
+#, php-format
 msgid "%s completed"
 msgstr ""
 
@@ -150,11 +155,13 @@ msgstr ""
 #: lib/snapshot/cli/command/class-backup.php:215
 #: lib/snapshot/cli/command/class-backup.php:233
 #: lib/snapshot/cli/command/class-backup.php:264
+#, php-format
 msgid "Export ID: %s"
 msgstr ""
 
 #. translators: %s - Backup ID
 #: lib/snapshot/cli/command/class-backup.php:253
+#, php-format
 msgid "Requesting the API to export the backup with ID %s"
 msgstr ""
 
@@ -164,11 +171,13 @@ msgstr ""
 
 #. translators: %s - Backup ID and name
 #: lib/snapshot/cli/command/class-backup.php:304
+#, php-format
 msgid "Last backup: %s"
 msgstr ""
 
 #. translators: %s - Backup ID
 #: lib/snapshot/cli/command/class-backup.php:314
+#, php-format
 msgid "Backup with ID %s not found "
 msgstr ""
 
@@ -230,6 +239,7 @@ msgstr ""
 
 #. translators: error message
 #: lib/snapshot/configs/traits/trait-helper.php:173
+#, php-format
 msgid "Error: %s."
 msgstr ""
 
@@ -278,13 +288,20 @@ msgstr ""
 msgid "Cannot read the file."
 msgstr ""
 
+#: lib/snapshot/controller/ajax/class-destination.php:414
+#: lib/snapshot/controller/ajax/class-destination.php:422
+msgid "Invalid type provided."
+msgstr ""
+
 #. translators: %s - brand name
 #: lib/snapshot/controller/ajax/class-hosting.php:59
+#, php-format
 msgid "%s Automate backup"
 msgstr ""
 
 #. translators: %s - brand name
 #: lib/snapshot/controller/ajax/class-hosting.php:61
+#, php-format
 msgid "%s Hosting backup"
 msgstr ""
 
@@ -292,11 +309,13 @@ msgstr ""
 #. translators: %s - Plugin Name
 #: lib/snapshot/controller/ajax/class-hosting.php:66
 #: lib/snapshot/model/request/class-listing.php:484
+#, php-format
 msgid "%s (Automate)"
 msgstr ""
 
 #. translators: %s - brand name
 #: lib/snapshot/controller/ajax/class-hosting.php:68
+#, php-format
 msgid "%s (Hosting)"
 msgstr ""
 
@@ -310,11 +329,13 @@ msgstr ""
 
 #. translators: %s - Backup schedule
 #: lib/snapshot/controller/ajax/class-hosting.php:94
+#, php-format
 msgid "The hosting backups are running %s. You can't update the schedule of hosting backups."
 msgstr ""
 
 #. translators: %s - Website hostname
 #: lib/snapshot/controller/ajax/class-hosting.php:148
+#, php-format
 msgid "We are preparing your backup export for <strong>%s</strong>. You will recieve an email with the backup file to download."
 msgstr ""
 
@@ -336,6 +357,7 @@ msgstr ""
 
 #. translators: %s - Total downloaded size
 #: lib/snapshot/controller/ajax/class-restore.php:158
+#, php-format
 msgid "Proceeding with the restoration of backup id: %s"
 msgstr ""
 
@@ -382,6 +404,7 @@ msgstr ""
 
 #. translators: %1$s - Downloaded file size, %2$s - Total download size
 #: lib/snapshot/controller/ajax/class-restore.php:606
+#, php-format
 msgid "(Downloading %1$s of %2$s)"
 msgstr ""
 
@@ -391,6 +414,7 @@ msgstr ""
 
 #. translators: %s - Total downloaded size
 #: lib/snapshot/controller/ajax/class-restore.php:615
+#, php-format
 msgid "(Download complete - %s)"
 msgstr ""
 
@@ -428,6 +452,7 @@ msgstr ""
 
 #. translators: %s - Backup ID
 #: lib/snapshot/controller/ajax/class-restore.php:901
+#, php-format
 msgid "Finishing the restoration of backup id: %s"
 msgstr ""
 
@@ -466,6 +491,7 @@ msgstr ""
 #. translators: %s - plugin name
 #: lib/snapshot/controller/class-admin.php:106
 #: lib/snapshot/controller/class-admin.php:108
+#, php-format
 msgctxt "page label"
 msgid "%s Backups"
 msgstr ""
@@ -517,442 +543,477 @@ msgctxt "menu label"
 msgid "Tutorials"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:198
+#: lib/snapshot/controller/class-admin.php:214
 msgid "View Snapshot Documentation"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:198
+#: lib/snapshot/controller/class-admin.php:214
 #: tpl/common/footer.php:30
 msgid "Docs"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:199
+#: lib/snapshot/controller/class-admin.php:215
 msgid "Go to Snapshot Settings"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:199
+#: lib/snapshot/controller/class-admin.php:215
 #: tpl/modals/create-manual-backup.php:95
-#: tpl/pages/backups.php:210
-#: tpl/pages/backups.php:221
-#: tpl/pages/backups.php:350
-#: tpl/pages/destinations/row.php:261
+#: tpl/pages/backups.php:227
+#: tpl/pages/backups.php:238
+#: tpl/pages/backups.php:367
+#: tpl/pages/destinations/row.php:367
 #: tpl/pages/settings.php:28
 #: tpl/pages/settings.php:254
 msgid "Settings"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:702
+#: lib/snapshot/controller/class-admin.php:718
 msgid "Are you sure you want to apply the {configName} config to this site?"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:703
+#: lib/snapshot/controller/class-admin.php:719
 msgid "{configName} has been applied successfully."
 msgstr ""
 
 #. translators: %s - admin url
-#: lib/snapshot/controller/class-admin.php:722
+#: lib/snapshot/controller/class-admin.php:738
+#, php-format
 msgid "Your site has Password Protection enabled. Please navigate to the <a href=\"%s\">Settings > Password Protection</a> to add your site's credentials."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:724
+#: lib/snapshot/controller/class-admin.php:740
 msgid "Connection successful"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:725
+#: lib/snapshot/controller/class-admin.php:741
 msgid "Failed to connect. Incorrect HTTP/HTTPS authentication username or password. Please try again."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:726
+#: lib/snapshot/controller/class-admin.php:742
 msgid "Authentication credentials stored successfully!"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:727
+#: lib/snapshot/controller/class-admin.php:743
 msgid "Authentication credentials updated successfully!"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:728
+#: lib/snapshot/controller/class-admin.php:744
 msgid "Authentication credentials deleted successfully!"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:745
+#: lib/snapshot/controller/class-admin.php:761
 msgid "Cleared global file exclusions successfully."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:746
+#: lib/snapshot/controller/class-admin.php:762
 msgid "Undo"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:750
-#: lib/snapshot/controller/class-ajax.php:379
+#: lib/snapshot/controller/class-admin.php:766
+#: lib/snapshot/controller/class-ajax.php:380
 msgid "Your settings have been updated successfully."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:751
+#: lib/snapshot/controller/class-admin.php:767
 msgid "You deleted 1 backup."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:752
+#: lib/snapshot/controller/class-admin.php:768
 msgid "Your settings have been reset."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:753
+#: lib/snapshot/controller/class-admin.php:769
 msgid "Your settings couldn't be reset."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:754
+#: lib/snapshot/controller/class-admin.php:770
 msgid "Sorry we are unable to process this request at the moment. Please try again later."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:755
+#: lib/snapshot/controller/class-admin.php:771
 msgid "Your comment has been successfully added."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:756
+#: lib/snapshot/controller/class-admin.php:772
 msgid "Your comment has been successfully updated."
 msgstr ""
 
 #. translators: %s - number of backups
-#: lib/snapshot/controller/class-admin.php:758
+#: lib/snapshot/controller/class-admin.php:774
 msgid "Request to save settings was not successful."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:759
-#: lib/snapshot/controller/class-admin.php:760
+#: lib/snapshot/controller/class-admin.php:775
+#: lib/snapshot/controller/class-admin.php:776
 msgid "Request for a backup schedule was not successful."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:761
+#: lib/snapshot/controller/class-admin.php:777
 msgid "We couldn't connect to the API."
 msgstr ""
 
 #. translators: %s - date of scheduled backups
-#: lib/snapshot/controller/class-admin.php:764
+#: lib/snapshot/controller/class-admin.php:780
+#, php-format
 msgid "You set your backup schedule to %s."
 msgstr ""
 
 #. translators: %s - date of scheduled backups
-#: lib/snapshot/controller/class-admin.php:766
+#: lib/snapshot/controller/class-admin.php:782
+#, php-format
 msgid "Backup schedule has been changed to %s."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:767
+#: lib/snapshot/controller/class-admin.php:783
 msgid "You have turned off the backup schedule"
 msgstr ""
 
 #. translators: %s - date of next scheduled backup
-#: lib/snapshot/controller/class-admin.php:769
+#: lib/snapshot/controller/class-admin.php:785
+#, php-format
 msgid "Your next backup is scheduled to run on %s. Note: the first backup may take some time to complete, subsequent backups will be much faster."
 msgstr ""
 
 #. translators: %s - date of next scheduled backup
-#: lib/snapshot/controller/class-admin.php:771
+#: lib/snapshot/controller/class-admin.php:787
+#, php-format
 msgid "The next scheduled backup will be on %s."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:772
+#: lib/snapshot/controller/class-admin.php:788
 msgid "You can also <a href=\"#\">run on-demand manual backups</a>."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:773
+#: lib/snapshot/controller/class-admin.php:789
 msgid "You set up your account successfully. You are now ready to <a href=\"#\">create your first backup</a> or you can <a href=\"#\">set a schedule</a> to create backups automatically."
 msgstr ""
 
 #. translators: %s - website name
-#: lib/snapshot/controller/class-admin.php:775
+#: lib/snapshot/controller/class-admin.php:791
+#, php-format
 msgid "We are preparing your backup export for <strong>%s</strong>, it will be sent to your email when it is ready."
 msgstr ""
 
 #. translators: %s - website name
-#: lib/snapshot/controller/class-admin.php:777
+#: lib/snapshot/controller/class-admin.php:793
+#, php-format
 msgid "We are preparing your backup export for <strong>%s</strong>, You will be notified once the download is ready."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:778
+#: lib/snapshot/controller/class-admin.php:794
 msgid "Your backup has been successfully exported and is available for download. Please download your backup within the next 7 days before the link expires."
 msgstr ""
 
 #. translators: %s - backup name
-#: lib/snapshot/controller/class-admin.php:781
+#: lib/snapshot/controller/class-admin.php:797
+#, php-format
 msgid "You’ve already requested a download link for the backup <strong>%s</strong>. The backup export is in progress, and a download link will be sent to your email when complete. Please wait an hour before submitting another request."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:784
+#: lib/snapshot/controller/class-admin.php:800
 #: tpl/modals/backup/download.php:74
 msgid "Step 1 of 2"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:785
+#: lib/snapshot/controller/class-admin.php:801
 msgid "Step 2 of 2"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:788
+#: lib/snapshot/controller/class-admin.php:804
 msgid "We couldn't send the backup export to your email due to a connection problem. Please try downloading the backup again, or contact support if the issue persists."
 msgstr ""
 
 #. translators: %s - HUB link
-#: lib/snapshot/controller/class-admin.php:790
+#: lib/snapshot/controller/class-admin.php:806
+#, php-format
 msgid "We couldn't send the backup export to your email due to a connection problem. Please try downloading the backup again, or <a href=\"%s\" target=\"_blank\">contact our support team</a> if the issue persists."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:792
+#: lib/snapshot/controller/class-admin.php:808
 msgid "Your backup is in progress. First time backups can take some time to complete, though subsequent backups will be much faster."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:793
+#: lib/snapshot/controller/class-admin.php:809
 msgid "Your backup is in progress. The duration of the backup depends on your website size. Small sites won't take longer than a few minutes, but larger sites can take a couple of hours."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:794
+#: lib/snapshot/controller/class-admin.php:810
 msgid "Request to create manual backup was not successful."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:795
+#: lib/snapshot/controller/class-admin.php:811
 msgid "The logs couldn't be loaded at the moment. Please try again later."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:796
+#: lib/snapshot/controller/class-admin.php:812
 msgid "This backup doesn't exist"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:797
+#: lib/snapshot/controller/class-admin.php:813
 msgid "No logs found."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:798
+#: lib/snapshot/controller/class-admin.php:814
 msgid "Log for this backup doesn't exist"
 msgstr ""
 
 #. translators: %s - brand name
-#: lib/snapshot/controller/class-admin.php:800
+#: lib/snapshot/controller/class-admin.php:816
+#, php-format
 msgid "The %s API Key is copied successfully."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:801
+#: lib/snapshot/controller/class-admin.php:817
 msgid "The Site ID is copied successfully."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:802
+#: lib/snapshot/controller/class-admin.php:818
 msgid "Couldn't return info for the running backup."
 msgstr ""
 
 #. translators: %s - IPs list
-#: lib/snapshot/controller/class-admin.php:805
+#: lib/snapshot/controller/class-admin.php:821
+#, php-format
 msgid "The backup failed. Please <strong>add the following IPs to the allowlist</strong> and then run another backup.<pre class=\"sui-code-snippet snapshot-ips-snippet\">%s</pre>"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:808
+#: lib/snapshot/controller/class-admin.php:824
 msgid "The backup failed because another backup is already running. Please <a href=\"#\">check the logs</a> for more information, and then <a href=\"#\">run another backup</a>."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:809
+#: lib/snapshot/controller/class-admin.php:825
 msgid "The backup failed because another backup started running at the same time. Please <a href=\"#\">check the logs</a> for more information, and then <a href=\"#\">run another backup</a>."
 msgstr ""
 
 #. translators: %s - Website link
-#: lib/snapshot/controller/class-admin.php:812
+#: lib/snapshot/controller/class-admin.php:828
+#, php-format
 msgid "Your website has been restored successfully. <a href=\"%s\" target=\"_blank\">View website</a>"
 msgstr ""
 
 #. translators: %s - Skipped file path
-#: lib/snapshot/controller/class-admin.php:814
+#: lib/snapshot/controller/class-admin.php:830
+#, php-format
 msgid "Your website has been restored successfully. We found 1 unwritable file <strong>%s</strong> which we were unable to restore due to its file permissions. We recommend <a href=\"#\" class=\"snapshot-view-log\">checking the restoration logs</a> for more information."
 msgstr ""
 
 #. translators: %s - Number of skipped files
-#: lib/snapshot/controller/class-admin.php:816
+#: lib/snapshot/controller/class-admin.php:832
+#, php-format
 msgid "Your website has been restored successfully. We found %s unwritable files which we were unable to restore due to their file permissions. We recommend <a href=\"#\" class=\"snapshot-view-log\">checking the restoration logs</a> for more information."
 msgstr ""
 
 #. translators: %s - Skipped table name
-#: lib/snapshot/controller/class-admin.php:818
+#: lib/snapshot/controller/class-admin.php:834
+#, php-format
 msgid "Your website restored successfully. *Note: During restoration we found a db table <strong>%s</strong> with the wrong database prefix. If needed you can export the backup and manually add it to the database. Refer to <a href=\"#\" class=\"snapshot-view-log\">restoration logs</a> for more information."
 msgstr ""
 
 #. translators: %s - Number of skipped tables
-#: lib/snapshot/controller/class-admin.php:820
+#: lib/snapshot/controller/class-admin.php:836
+#, php-format
 msgid "Your website restored successfully. *Note: During restoration we found %s db tables with the wrong database prefix. If needed you can export the backup and manually add the tables to the database. Refer to <a href=\"#\" class=\"snapshot-view-log\">restoration logs</a> for more information."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:821
+#: lib/snapshot/controller/class-admin.php:837
 msgid "We excluded <strong>wp-config.php</strong> from being restored, so the backup restore process will finish without fail. Note, the wp-config.php file is available in the backup, just isn't restored."
 msgstr ""
 
 #. translators: %s - Stage of the restore
-#: lib/snapshot/controller/class-admin.php:825
+#: lib/snapshot/controller/class-admin.php:841
+#, php-format
 msgid "The backup failed to restore while %s. <a href=\"#\" class=\"snapshot-view-log\">Check the logs</a> for more information and then try restoring the backup again. Contact support if the issue persists."
 msgstr ""
 
 #. translators: %s - Stage of the restore
-#: lib/snapshot/controller/class-admin.php:827
-msgid "The backup failed to restore while %s. <a href=\"#\" class=\"snapshot-view-log\">Check the logs</a> for more information and then try restoring the backup again. Alternatively, you can try <a href=\"#\" class=\"snapshot-ftp-restoration-hub\">FTP restoration</a> via The Hub. <a href=\"https://wpmudev.com/hub2/support#get-support\" target=\"_blank\">Contact our support</a> team if the issue persists."
+#: lib/snapshot/controller/class-admin.php:843
+#, php-format
+msgid "The backup failed to restore while %s. <a href=\"#\" class=\"snapshot-view-log\">Check the logs</a> for more information and then try restoring the backup again. Alternatively, you can try <a href=\"#\" class=\"snapshot-ftp-restoration-hub\">FTP restoration</a> via The Hub. <a href=\"https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support\" target=\"_blank\">Contact our support</a> team if the issue persists."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:830
+#: lib/snapshot/controller/class-admin.php:846
 msgid "The backup failed to restore. <a href=\"#\" class=\"snapshot-view-log\">Check the logs</a> for more information and then try restoring the backup again. Contact support if the issue persists."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:831
-msgid "The backup failed to restore. <a href=\"#\" class=\"snapshot-view-log\">Check the logs</a> for more information and then try restoring the backup again. Alternatively, you can try <a href=\"#\" class=\"snapshot-ftp-restoration-hub\">FTP restoration</a> via The Hub. <a href=\"https://wpmudev.com/hub2/support#get-support\" target=\"_blank\">Contact our support</a> team if the issue persists."
+#: lib/snapshot/controller/class-admin.php:847
+msgid "The backup failed to restore. <a href=\"#\" class=\"snapshot-view-log\">Check the logs</a> for more information and then try restoring the backup again. Alternatively, you can try <a href=\"#\" class=\"snapshot-ftp-restoration-hub\">FTP restoration</a> via The Hub. <a href=\"https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support\" target=\"_blank\">Contact our support</a> team if the issue persists."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:832
+#: lib/snapshot/controller/class-admin.php:848
 msgid "Your site is currently being restored from a backup. Please keep this page open until the process has finished - this could take a few minutes for small sites to a few hours for larger sites."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:833
+#: lib/snapshot/controller/class-admin.php:849
 msgid "The running restore is cancelled."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:834
+#: lib/snapshot/controller/class-admin.php:850
 msgid "The running restore couldn't be cancelled."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:835
+#: lib/snapshot/controller/class-admin.php:851
 msgid "You have deleted all backups."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:836
+#: lib/snapshot/controller/class-admin.php:852
 msgid "We weren't able to delete your backups."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:837
+#: lib/snapshot/controller/class-admin.php:853
 msgid "All your logs have been deleted successfully."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:838
+#: lib/snapshot/controller/class-admin.php:854
 msgid "We weren't able to delete your logs."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:840
+#: lib/snapshot/controller/class-admin.php:856
 msgid "The running backup couldn't be cancelled."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:841
+#: lib/snapshot/controller/class-admin.php:857
 msgid "Backup aborted. Please run the backup again."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:843
+#: lib/snapshot/controller/class-admin.php:859
 msgid "The backup region was changed successfully. Because all the existing backups have been removed, we recommend you <a href=\"#\">create a backup now</a> or <a href=\"#\">set a schedule</a> to run backups automatically."
 msgstr ""
 
 #. translators: %s - Schedule frequency
-#: lib/snapshot/controller/class-admin.php:845
+#: lib/snapshot/controller/class-admin.php:861
+#, php-format
 msgid "The backup region was changed successfully, and all the previous backups have been removed. %s scheduled backups will continue in the new region."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:848
+#: lib/snapshot/controller/class-admin.php:864
 msgid "We were unable to change the backup storage region. Please try again or contact support if the problem persists."
 msgstr ""
 
 #. translators: %s - HUB link
-#: lib/snapshot/controller/class-admin.php:850
+#: lib/snapshot/controller/class-admin.php:866
+#, php-format
 msgid "We were unable to change the backup storage region. Please try again or <a href=\"%s\" target=\"_blank\">contact our support team</a> if the problem persists."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:852
+#: lib/snapshot/controller/class-admin.php:868
 #: tpl/common/v4-admin-prompt.php:30
 msgid "You uninstalled the old version of Snapshot successfully."
 msgstr ""
 
 #. translators: %s - Email recipient name
-#: lib/snapshot/controller/class-admin.php:855
+#: lib/snapshot/controller/class-admin.php:871
+#, php-format
 msgid "%s been added as a recipient. Make sure to save your changes below to set this live."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:857
+#: lib/snapshot/controller/class-admin.php:873
 #: lib/snapshot/model/class-schedule.php:146
 msgid "Never"
 msgstr ""
 
 #. translators: %s - Name of the missing cred
-#: lib/snapshot/controller/class-admin.php:860
+#: lib/snapshot/controller/class-admin.php:876
+#, php-format
 msgid "%s is required."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:861
+#: lib/snapshot/controller/class-admin.php:877
 msgid "Choose Provider to proceed."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:862
+#: lib/snapshot/controller/class-admin.php:878
 msgid "Choose Region"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:863
+#: lib/snapshot/controller/class-admin.php:879
 msgid "Choose Non AWS Storage Provider"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:864
+#: lib/snapshot/controller/class-admin.php:880
 msgid "AWS Region is required."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:865
+#: lib/snapshot/controller/class-admin.php:881
 msgid "AWS bucket name is required."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:866
+#: lib/snapshot/controller/class-admin.php:882
 msgid "Choose Bucket"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:867
+#: lib/snapshot/controller/class-admin.php:883
 msgid "A valid storage limit is required."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:868
+#: lib/snapshot/controller/class-admin.php:884
+msgid "A valid endpoint url is required."
+msgstr ""
+
+#: lib/snapshot/controller/class-admin.php:885
 msgid "Provided name is not valid."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:869
+#: lib/snapshot/controller/class-admin.php:886
 msgid "Destination name is required."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:870
+#: lib/snapshot/controller/class-admin.php:887
 msgid "A Directory ID is required."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:871
+#: lib/snapshot/controller/class-admin.php:888
 msgid "Path must start with \"/\" and contain only letters, numbers, underscores, and dashes."
 msgstr ""
 
 #. translators: %1$s - Chosen name of the destination, %2$s - Active current schedule, %3$s - Link to set the schedule
-#: lib/snapshot/controller/class-admin.php:873
+#: lib/snapshot/controller/class-admin.php:890
+#, php-format
 msgid "%1$s has been added as a destination. The backups will be running %2$s, according to the schedule set <a href=\"%3$s\">here</a>."
 msgstr ""
 
 #. translators: %1$s - Chosen name of the destination, %2$s - Link to set the schedule, %3$s - Link to run a backup
-#: lib/snapshot/controller/class-admin.php:875
+#: lib/snapshot/controller/class-admin.php:892
+#, php-format
 msgid "%1$s has been added as a destination. <a href=\"%2$s\">Set a schedule</a> to create backups automatically or <a href=\"%3$s\">run a manual backup</a> now."
 msgstr ""
 
 #. translators: %s - Name of the destination
-#: lib/snapshot/controller/class-admin.php:877
+#: lib/snapshot/controller/class-admin.php:894
+#, php-format
 msgid "You have successfully deleted <strong>%s</strong> destination."
 msgstr ""
 
 #. translators: %s - Name of the destination
-#: lib/snapshot/controller/class-admin.php:879
+#: lib/snapshot/controller/class-admin.php:896
+#, php-format
 msgid "You have successfully activated <strong>%s</strong> destination."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:882
+#: lib/snapshot/controller/class-admin.php:899
 msgid "Your OneDrive set up is reconnected successfully."
 msgstr ""
 
+#: lib/snapshot/controller/class-admin.php:900
+msgid "Your Dropbox set up is reconnected successfully."
+msgstr ""
+
 #. translators: %s - Name of the destination
-#: lib/snapshot/controller/class-admin.php:885
+#: lib/snapshot/controller/class-admin.php:903
+#, php-format
 msgid "You have successfully deactivated <strong>%s</strong> destination."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:886
-#: tpl/pages/destinations/row.php:255
+#: lib/snapshot/controller/class-admin.php:904
+#: tpl/pages/destinations/row.php:361
 msgid "Deactivate destination"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:887
-#: tpl/pages/destinations/row.php:255
+#: lib/snapshot/controller/class-admin.php:905
+#: tpl/pages/destinations/row.php:361
 msgid "Activate destination"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:889
+#: lib/snapshot/controller/class-admin.php:907
 #: lib/snapshot/model/backup/class-progress.php:153
 #: lib/snapshot/model/backup/class-progress.php:192
 #: lib/snapshot/model/backup/class-progress.php:267
@@ -963,11 +1024,11 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:890
+#: lib/snapshot/controller/class-admin.php:908
 #: lib/snapshot/model/backup/class-progress.php:198
 #: lib/snapshot/model/class-schedule.php:97
 #: lib/snapshot/model/class-schedule.php:98
-#: lib/snapshot/model/request/class-listing.php:156
+#: lib/snapshot/model/request/class-listing.php:155
 #: lib/snapshot/model/request/class-listing.php:507
 #: tpl/modals/edit-schedule.php:63
 #: tpl/modals/welcome.php:371
@@ -975,295 +1036,309 @@ msgid "None"
 msgstr ""
 
 #. translators: %d - Number of configured 3rd party destinations
-#: lib/snapshot/controller/class-admin.php:892
+#: lib/snapshot/controller/class-admin.php:910
 #: lib/snapshot/model/request/class-listing.php:625
+#, php-format
 msgid " + %d more"
 msgstr ""
 
 #. translators: %s - Field to be completed
-#: lib/snapshot/controller/class-admin.php:894
+#: lib/snapshot/controller/class-admin.php:912
+#, php-format
 msgid "Place %s here"
 msgstr ""
 
 #. translators: %s - Storage provider to be configured
-#: lib/snapshot/controller/class-admin.php:896
+#: lib/snapshot/controller/class-admin.php:914
+#, php-format
 msgid "Configure %s"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:898
+#: lib/snapshot/controller/class-admin.php:916
 #: tpl/pages/tutorials.php:17
 msgid "Tutorials"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:899
+#: lib/snapshot/controller/class-admin.php:917
 msgid "Snapshot Tutorials"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:901
+#: lib/snapshot/controller/class-admin.php:919
 #: tpl/pages/backups/snapshot-details-row.php:203
 #: tpl/pages/backups/snapshot-details-row.php:204
 msgid "Add comment"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:902
+#: lib/snapshot/controller/class-admin.php:920
 msgid "Save edits"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:904
+#: lib/snapshot/controller/class-admin.php:922
 msgid "Host is required"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:905
+#: lib/snapshot/controller/class-admin.php:923
 msgid "Port number is required"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:906
+#: lib/snapshot/controller/class-admin.php:924
 msgid "Username is required"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:907
+#: lib/snapshot/controller/class-admin.php:925
 msgid "Password is required"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:908
+#: lib/snapshot/controller/class-admin.php:926
 msgid "Path is required"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:913
+#: lib/snapshot/controller/class-admin.php:931
 msgid "Directory ID is empty."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:914
+#: lib/snapshot/controller/class-admin.php:932
 msgid "Item ID is empty."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:917
+#: lib/snapshot/controller/class-admin.php:935
 msgid "Step 0/4"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:918
+#: lib/snapshot/controller/class-admin.php:936
 msgid "Step 1/4"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:919
+#: lib/snapshot/controller/class-admin.php:937
 msgid "Step 2/4"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:920
+#: lib/snapshot/controller/class-admin.php:938
 msgid "Step 3/4"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:921
+#: lib/snapshot/controller/class-admin.php:939
 msgid "Step 4/4"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:925
+#: lib/snapshot/controller/class-admin.php:943
 msgid "Step 0/5"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:926
+#: lib/snapshot/controller/class-admin.php:944
 msgid "Step 1/5"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:927
+#: lib/snapshot/controller/class-admin.php:945
 msgid "Step 2/5"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:928
+#: lib/snapshot/controller/class-admin.php:946
 msgid "Step 3/5"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:929
+#: lib/snapshot/controller/class-admin.php:947
 msgid "Step 4/5"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:930
+#: lib/snapshot/controller/class-admin.php:948
 msgid "Step 5/5"
 msgstr ""
 
 #. translators: %s - brand name
-#: lib/snapshot/controller/class-admin.php:937
+#: lib/snapshot/controller/class-admin.php:955
+#, php-format
 msgid "Are you sure you want to apply <strong>%s</strong> to this site?"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:939
+#: lib/snapshot/controller/class-admin.php:957
 msgid "Applying Config..."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:941
+#: lib/snapshot/controller/class-admin.php:959
 msgid "Your account authentication failed. Please try again or contact our support team for help."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:942
-msgid "Your account authentication failed. Please try again or contact our <a href=\"https://wpmudev.com/hub2/support#get-support\" target=\"_blank\">support team</a> for help."
+#: lib/snapshot/controller/class-admin.php:960
+msgid "Your account authentication failed. Please try again or contact our <a href=\"https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support\" target=\"_blank\">support team</a> for help."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:948
+#: lib/snapshot/controller/class-admin.php:966
 msgid "You are currently using Email & Password as your preferred login method. Please try to re-authenticate using your email and password."
 msgstr ""
 
 #. translators: %s - wpmudev account link
-#: lib/snapshot/controller/class-admin.php:950
+#: lib/snapshot/controller/class-admin.php:968
+#, php-format
 msgid "You are currently using Email & Password as your preferred login method. Please try to re-authenticate using your email and password. Or, if you wish to change the login method, you can change it from your <a href=\"%s\" target=\"_blank\">Account page</a>."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:953
+#: lib/snapshot/controller/class-admin.php:971
 msgid "You are currently using Google Account as your preferred login method. Please try to re-authenticate using your Google Account."
 msgstr ""
 
 #. translators: %s - Create Backup link
-#: lib/snapshot/controller/class-admin.php:955
+#: lib/snapshot/controller/class-admin.php:973
+#, php-format
 msgid "You are currently using Google Account as your preferred login method. Please try to re-authenticate using your Google Account. Or, if you wish to change the login method, you can change it from your <a href=\"%s\" target=\"_blank\">Account page</a>."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:958
-msgid "Sorry, something went wrong!"
-msgstr ""
-
 #. translators: %s - Create Backup link
-#: lib/snapshot/controller/class-admin.php:969
+#: lib/snapshot/controller/class-admin.php:987
+#, php-format
 msgid "Last scheduled backup failed. We recommend creating a <a href=\"%s\" class=\"blue-link\">manual backup</a>. If the issue persists, please get in touch with our support team."
 msgstr ""
 
 #. translators: %1$s - Create Bakup link, %2$s - Hub link
-#: lib/snapshot/controller/class-admin.php:974
+#: lib/snapshot/controller/class-admin.php:992
+#, php-format
 msgid "Last scheduled backup failed. We recommend creating a <a href=\"%1$s\" class=\"blue-link\">manual backup</a>. If the issue persists, please get in touch with our <a href=\"%2$s\" target=\"_blank\">support team</a>."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1033
+#: lib/snapshot/controller/class-admin.php:1051
 msgid "Backup created and stored successfully."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1034
+#: lib/snapshot/controller/class-admin.php:1052
 msgid "Backup created and exported successfully."
 msgstr ""
 
 #. translators: %s - brand name
-#: lib/snapshot/controller/class-admin.php:1036
+#: lib/snapshot/controller/class-admin.php:1054
+#, php-format
 msgid "The backup is stored on %s storage, but has failed to export to the connected destination(s). Make sure you have the destination set up correctly and try to run the backup again."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1037
+#: lib/snapshot/controller/class-admin.php:1055
 msgid "The storage limit has been saved successfully."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1038
+#: lib/snapshot/controller/class-admin.php:1056
 msgid "An error occurred while saving your storage limit. Please try it again."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1039
+#: lib/snapshot/controller/class-admin.php:1057
 msgid "Please add a number between 1 and 30."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1043
+#: lib/snapshot/controller/class-admin.php:1061
 msgid "There is insufficient space to upload backups. Please contact your administrator to upgrade your storage space. Once upgraded, return here and set your schedule or run a manual backup."
 msgstr ""
 
 #. translators: %1$s - Add storage space link, %2$s - Hub account link
-#: lib/snapshot/controller/class-admin.php:1047
+#: lib/snapshot/controller/class-admin.php:1065
+#, php-format
 msgid "There is insufficient space to upload backups. <a href=\"%1$s\" target=\"_blank\">Add storage space</a> to continue backing up your site. You can upgrade your storage plan from your <a href=\"%2$s\" target=\"_blank\">Hub / Account page</a>. Once upgraded, return here and set your schedule or run a manual backup."
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1069
+#: lib/snapshot/controller/class-admin.php:1087
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:54
 msgid "Amazon S3"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1072
-#: tpl/modals/destination-s3-edit.php:174
+#: lib/snapshot/controller/class-admin.php:1090
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:124
 msgid "AWS Access Key ID"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1073
-#: tpl/modals/destination-s3-edit.php:189
+#: lib/snapshot/controller/class-admin.php:1091
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:141
 msgid "AWS Secret Access Key"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1074
-#: lib/snapshot/controller/class-admin.php:1084
-#: lib/snapshot/controller/class-admin.php:1093
+#: lib/snapshot/controller/class-admin.php:1092
 #: lib/snapshot/controller/class-admin.php:1102
 #: lib/snapshot/controller/class-admin.php:1111
-#: lib/snapshot/controller/class-admin.php:1119
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:396
+#: lib/snapshot/controller/class-admin.php:1120
+#: lib/snapshot/controller/class-admin.php:1129
+#: lib/snapshot/controller/class-admin.php:1146
+#: tpl/modals/destination-s3-edit.php:239
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:479
 msgid "Region"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1078
+#: lib/snapshot/controller/class-admin.php:1096
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:314
 msgid "Backblaze"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1081
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:335
+#: lib/snapshot/controller/class-admin.php:1099
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:336
 #: tpl/modals/modal_parts/add-destination-screen-3-s3.php:131
 msgid "Bucket Name"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1082
+#: lib/snapshot/controller/class-admin.php:1100
 msgid "Key ID"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1083
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:375
+#: lib/snapshot/controller/class-admin.php:1101
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:377
 msgid "Application Key"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1088
+#: lib/snapshot/controller/class-admin.php:1106
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:316
 msgid "Google Cloud"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1091
-#: lib/snapshot/controller/class-admin.php:1117
+#: lib/snapshot/controller/class-admin.php:1109
+#: lib/snapshot/controller/class-admin.php:1136
+#: lib/snapshot/controller/class-admin.php:1144
 msgid "Access Key"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1092
+#: lib/snapshot/controller/class-admin.php:1110
 msgid "Secret"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1097
+#: lib/snapshot/controller/class-admin.php:1115
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:318
 msgid "DigitalOcean Spaces"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1100
-#: lib/snapshot/controller/class-admin.php:1109
+#: lib/snapshot/controller/class-admin.php:1118
+#: lib/snapshot/controller/class-admin.php:1127
 msgid "Access Key ID"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1101
-#: lib/snapshot/controller/class-admin.php:1110
+#: lib/snapshot/controller/class-admin.php:1119
+#: lib/snapshot/controller/class-admin.php:1128
 msgid "Secret Access Key"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1106
+#: lib/snapshot/controller/class-admin.php:1124
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:319
 msgid "Wasabi"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1115
+#: lib/snapshot/controller/class-admin.php:1133
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:321
-msgid "Other"
+#: tpl/pages/destinations/row.php:52
+msgid "Linode"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1118
+#: lib/snapshot/controller/class-admin.php:1137
+#: lib/snapshot/controller/class-admin.php:1145
 msgid "Secret Key"
 msgstr ""
 
-#: lib/snapshot/controller/class-admin.php:1120
-#: tpl/modals/destination-s3-edit.php:265
-#: tpl/modals/destinations/azure/edit.php:282
+#: lib/snapshot/controller/class-admin.php:1138
+#: lib/snapshot/controller/class-admin.php:1147
+#: tpl/modals/destination-s3-edit.php:252
+#: tpl/modals/destinations/azure/edit.php:288
 #: tpl/modals/destinations/azure/step-2.php:156
 #: tpl/modals/destinations/azure/step-3.php:363
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:469
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:460
 msgid "Endpoint"
 msgstr ""
 
-#: lib/snapshot/controller/class-ajax.php:420
+#: lib/snapshot/controller/class-admin.php:1142
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:323
+msgid "Other"
+msgstr ""
+
+#: lib/snapshot/controller/class-ajax.php:421
 msgid "Snapshot settings have been reset."
 msgstr ""
 
@@ -1285,6 +1360,7 @@ msgstr ""
 
 #. translators: %s - number of files
 #: lib/snapshot/controller/service/backup/class-fetching.php:71
+#, php-format
 msgid "Snapshot has sent back the filelist consisting of %s files but the file iteration hasn't been completed yet. Awaiting for the next filelist request from the API."
 msgstr ""
 
@@ -1298,6 +1374,7 @@ msgstr ""
 
 #. translators: %s - number of tables
 #: lib/snapshot/controller/service/backup/class-fetching.php:132
+#, php-format
 msgid "Snapshot has sent back the DB tablelist consisting of %s tables but the table iteration hasn't been completed yet. Awaiting for the next DB tablelist request from the API."
 msgstr ""
 
@@ -1311,11 +1388,13 @@ msgstr ""
 
 #. translators: %1s - number of files completed, %2s - number of files requested
 #: lib/snapshot/controller/service/backup/class-zipstreaming.php:78
+#, php-format
 msgid "The plugin has completed the backup of %1$s out of the %2$s requested files."
 msgstr ""
 
 #. translators: %s - large file relative path
 #: lib/snapshot/controller/service/backup/class-zipstreaming.php:123
+#, php-format
 msgid "The API has requested the separate backing up of a large file: %1$s [%2$s-%3$s] "
 msgstr ""
 
@@ -1325,38 +1404,47 @@ msgstr ""
 
 #. translators: %1s - name of db table, %2s - index of starting row
 #: lib/snapshot/controller/service/backup/class-zipstreaming.php:167
+#, php-format
 msgid "The table to be backed up: %1$s, starting from row: %2$s."
 msgstr ""
 
 #. translators: %s - name of db table
 #: lib/snapshot/controller/service/backup/class-zipstreaming.php:198
+#, php-format
 msgid "The plugin has completed the backup of the %s table."
 msgstr ""
 
 #. translators: %1s - name of db table, %2s - index of current row
 #: lib/snapshot/controller/service/backup/class-zipstreaming.php:201
+#, php-format
 msgid "The plugin has backed up the %1$s table until row #%2$s ."
 msgstr ""
 
-#: lib/snapshot/controller/service/class-backup.php:51
+#: lib/snapshot/controller/service/class-backup.php:53
 msgid "The API has requested backup initiation."
 msgstr ""
 
-#: lib/snapshot/controller/service/class-backup.php:83
+#: lib/snapshot/controller/service/class-backup.php:85
 msgid "A backup has been initiated."
 msgstr ""
 
-#: lib/snapshot/controller/service/class-backup.php:122
+#: lib/snapshot/controller/service/class-backup.php:124
 msgid "The backup has been completed."
 msgstr ""
 
 #. translators: %s - Backups status from the API
-#: lib/snapshot/controller/service/class-backup.php:128
+#: lib/snapshot/controller/service/class-backup.php:132
+#, php-format
 msgid "The backup has failed to complete. The API responded with: %s"
 msgstr ""
 
-#: lib/snapshot/controller/service/class-backup.php:167
+#: lib/snapshot/controller/service/class-backup.php:171
 msgid "The backup has been cancelled."
+msgstr ""
+
+#: lib/snapshot/controller/service/class-backup.php:412
+#, php-format
+msgid "The backup export has failed: %1$s: %2$s"
 msgstr ""
 
 #: lib/snapshot/controller/service/class-hub.php:40
@@ -1385,6 +1473,7 @@ msgstr ""
 
 #. translators: %s - export failure code
 #: lib/snapshot/controller/service/export/class-email.php:127
+#, php-format
 msgid "The backup export has failed: %s."
 msgstr ""
 
@@ -1415,6 +1504,7 @@ msgstr ""
 
 #. translators: %1$s: Time based on settings, %2$s: Timezone offset
 #: lib/snapshot/helper/class-datetime.php:142
+#, php-format
 msgid "%1$s UTC %2$s"
 msgstr ""
 
@@ -1436,6 +1526,7 @@ msgstr ""
 
 #. translators: 1: Number of email recipients
 #: lib/snapshot/helper/class-settings.php:144
+#, php-format
 msgid "Email notifications are enabled for %d recipient."
 msgid_plural "Email notifications are enabled for %d recipients."
 msgstr[0] ""
@@ -1444,6 +1535,7 @@ msgstr[1] ""
 #. translators: %1$d - Chunk Size, %2$d - Start Index, %3$d - Total Entries
 #: lib/snapshot/helper/zip/class-archive.php:113
 #: lib/snapshot/helper/zip/class-pcl.php:135
+#, php-format
 msgid "Extracting %1$d files from %2$d of %3$d."
 msgstr ""
 
@@ -1465,8 +1557,8 @@ msgstr ""
 
 #: lib/snapshot/model/backup/class-progress.php:181
 #: lib/snapshot/model/backup/class-progress.php:256
-#: lib/snapshot/model/request/class-listing.php:241
-#: tpl/pages/backups.php:313
+#: lib/snapshot/model/request/class-listing.php:240
+#: tpl/pages/backups.php:330
 #: tpl/pages/backups/log-row.php:62
 #: tpl/pages/backups/log-tab-content.php:41
 msgid "Storage"
@@ -1474,15 +1566,15 @@ msgstr ""
 
 #: lib/snapshot/model/backup/class-progress.php:188
 #: lib/snapshot/model/backup/class-progress.php:263
-#: tpl/pages/backups.php:314
+#: tpl/pages/backups.php:331
 #: tpl/pages/backups/log-tab-content.php:42
 msgid "Export Destination"
 msgstr ""
 
 #: lib/snapshot/model/backup/class-progress.php:197
 #: lib/snapshot/model/backup/class-progress.php:272
-#: lib/snapshot/model/request/class-listing.php:269
-#: tpl/pages/backups.php:315
+#: lib/snapshot/model/request/class-listing.php:268
+#: tpl/pages/backups.php:332
 #: tpl/pages/backups/snapshot-details-row.php:358
 msgid "Frequency"
 msgstr ""
@@ -1493,6 +1585,7 @@ msgstr ""
 
 #. translators: %1$d - step, %2$d - step max
 #: lib/snapshot/model/backup/class-progress.php:211
+#, php-format
 msgid "Step %1$d/%2$d"
 msgstr ""
 
@@ -1566,7 +1659,7 @@ msgid "Cancel"
 msgstr ""
 
 #: lib/snapshot/model/backup/class-progress.php:246
-#: lib/snapshot/model/request/class-listing.php:130
+#: lib/snapshot/model/request/class-listing.php:129
 #: tpl/pages/backups/snapshot-details-row.php:237
 #: tpl/pages/backups/snapshot-details-row.php:435
 msgid "View logs"
@@ -1578,11 +1671,13 @@ msgstr ""
 
 #. translators: %s - DB table name
 #: lib/snapshot/model/backup/zipstream/class-tables.php:216
+#, php-format
 msgid "Snapshot table export for %s"
 msgstr ""
 
 #. translators: %s - DB view name
 #: lib/snapshot/model/backup/zipstream/class-tables.php:225
+#, php-format
 msgid "Snapshot view export for %s"
 msgstr ""
 
@@ -1590,61 +1685,65 @@ msgstr ""
 msgid "Failed to create directory for download"
 msgstr ""
 
-#: lib/snapshot/model/class-download.php:187
-#: lib/snapshot/model/class-download.php:243
+#: lib/snapshot/model/class-download.php:191
+#: lib/snapshot/model/class-download.php:247
+#, php-format
 msgid "Download attempt %1$d failed. Retrying in %2$d seconds..."
 msgstr ""
 
-#: lib/snapshot/model/class-download.php:200
+#: lib/snapshot/model/class-download.php:204
 msgid "cURL download failed"
 msgstr ""
 
-#: lib/snapshot/model/class-download.php:250
+#: lib/snapshot/model/class-download.php:254
 msgid "Switching to cURL for download."
 msgstr ""
 
-#: lib/snapshot/model/class-download.php:284
+#: lib/snapshot/model/class-download.php:288
 msgid "The downloaded zip file was invalid and cannot be opened. Please try restoration from the beginning."
 msgstr ""
 
-#: lib/snapshot/model/class-download.php:318
+#: lib/snapshot/model/class-download.php:322
+#, php-format
 msgid "Downloaded %s bytes of data."
 msgstr ""
 
-#: lib/snapshot/model/class-download.php:341
+#: lib/snapshot/model/class-download.php:345
 msgid "the exported backup was being downloaded"
 msgstr ""
 
-#: lib/snapshot/model/class-download.php:350
+#: lib/snapshot/model/class-download.php:354
 msgid "The provided download link is invalid or is expired."
 msgstr ""
 
 #. translators: %s - Request action
 #: lib/snapshot/model/class-request.php:249
+#, php-format
 msgid "Communication with the service API, in order to %s, was successful."
 msgstr ""
 
 #. translators: %s - Request action
 #: lib/snapshot/model/class-request.php:261
+#, php-format
 msgid "Communication with the service API, in order to %s, has failed."
 msgstr ""
 
 #: lib/snapshot/model/class-schedule.php:88
-#: lib/snapshot/model/request/class-listing.php:147
+#: lib/snapshot/model/request/class-listing.php:146
 #: tpl/modals/edit-schedule.php:54
 #: tpl/modals/welcome.php:360
 msgid "Daily"
 msgstr ""
 
 #: lib/snapshot/model/class-schedule.php:91
-#: lib/snapshot/model/request/class-listing.php:150
+#: lib/snapshot/model/request/class-listing.php:149
 #: tpl/modals/edit-schedule.php:58
 #: tpl/modals/welcome.php:365
 msgid "Weekly"
 msgstr ""
 
 #: lib/snapshot/model/class-schedule.php:94
-#: lib/snapshot/model/request/class-listing.php:153
+#: lib/snapshot/model/request/class-listing.php:152
 #: tpl/modals/edit-schedule.php:61
 #: tpl/modals/welcome.php:370
 msgid "Monthly"
@@ -1694,68 +1793,72 @@ msgstr ""
 msgid "requesting for a backup export"
 msgstr ""
 
-#: lib/snapshot/model/request/class-listing.php:112
+#: lib/snapshot/model/request/class-listing.php:111
 msgid "Exporting..."
 msgstr ""
 
-#: lib/snapshot/model/request/class-listing.php:120
+#: lib/snapshot/model/request/class-listing.php:119
 #: tpl/pages/backups/snapshot-details-row.php:328
 #: tpl/pages/backups/snapshot-details-row.php:383
 msgid "Download backup"
 msgstr ""
 
-#: lib/snapshot/model/request/class-listing.php:133
+#: lib/snapshot/model/request/class-listing.php:132
 msgid "View log"
 msgstr ""
 
-#: lib/snapshot/model/request/class-listing.php:136
-#: lib/snapshot/model/request/class-listing.php:138
+#: lib/snapshot/model/request/class-listing.php:135
+#: lib/snapshot/model/request/class-listing.php:137
 #: tpl/modals/delete-backup.php:53
 #: tpl/modals/destination-gdrive-edit.php:236
-#: tpl/modals/destination-s3-edit.php:227
+#: tpl/modals/destination-s3-edit.php:201
 #: tpl/modals/destinations-delete.php:34
-#: tpl/modals/destinations/azure/edit.php:244
+#: tpl/modals/destinations/azure/edit.php:250
 #: tpl/modals/destinations/dropbox/edit.php:198
 #: tpl/modals/destinations/ftp/edit.php:253
 #: tpl/modals/destinations/onedrive/edit.php:204
 #: tpl/modals/settings-delete-backups.php:34
 #: tpl/modals/settings-delete-logs.php:34
-#: tpl/pages/backups.php:815
+#: tpl/pages/backups.php:832
 #: tpl/pages/backups/snapshot-details-row.php:217
 #: tpl/pages/backups/snapshot-details-row.php:220
 #: tpl/pages/backups/snapshot-details-row.php:228
-#: tpl/pages/destinations/row.php:289
+#: tpl/pages/destinations/row.php:395
 #: tpl/pages/settings.php:167
 #: tpl/pages/settings.php:297
 msgid "Delete"
 msgstr ""
 
-#: lib/snapshot/model/request/class-listing.php:163
+#: lib/snapshot/model/request/class-listing.php:162
 msgid "This backup has failed. Check the logs for further information."
 msgstr ""
 
-#: lib/snapshot/model/request/class-listing.php:261
+#: lib/snapshot/model/request/class-listing.php:260
 #: tpl/pages/backups/log-row.php:71
 msgid "Export destination"
 msgstr ""
 
 #. translators: %s - brand name
 #: lib/snapshot/model/request/class-listing.php:461
+#, php-format
 msgid "%s Scheduled backup"
 msgstr ""
 
 #. translators: %s - brand name
 #: lib/snapshot/model/request/class-listing.php:464
+#, php-format
 msgid "%s Automated backup"
 msgstr ""
 
 #. translators: %s - brand name
 #: lib/snapshot/model/request/class-listing.php:467
+#, php-format
 msgid "%s Manual backup"
 msgstr ""
 
 #. translators: %d - exports count
 #: lib/snapshot/model/request/class-listing.php:583
+#, php-format
 msgid "Export Destination %d"
 msgstr ""
 
@@ -1768,6 +1871,7 @@ msgstr ""
 #. translators: %s - Plugin Name
 #: lib/snapshot/model/request/class-listing.php:597
 #: lib/snapshot/model/request/class-listing.php:602
+#, php-format
 msgid "The backup is stored on %s storage, but has failed to export to the connected destination. Make sure you have the destination set up correctly and try to run the backup again."
 msgstr ""
 
@@ -1817,36 +1921,43 @@ msgstr ""
 
 #. translators: %s - allowed actions
 #: lib/snapshot/model/request/class-schedule.php:174
+#, php-format
 msgid "Request for a backup schedule was not successful - A schedule_action must be one of: %s."
 msgstr ""
 
 #. translators: %s - scheduled action
 #: lib/snapshot/model/request/class-schedule.php:190
+#, php-format
 msgid "Request for a backup schedule (%s) was not successful - A data parameter must be provided"
 msgstr ""
 
 #. translators: %s - scheduled action
 #: lib/snapshot/model/request/class-schedule.php:198
+#, php-format
 msgid "Request for a backup schedule (%s) was not successful - A data parameter is invalid"
 msgstr ""
 
 #. translators: %s - scheduled action
 #: lib/snapshot/model/request/class-schedule.php:222
+#, php-format
 msgid "Request for a backup schedule (%1$s) was not successful - A data parameter is invalid, empty fields: %2$s"
 msgstr ""
 
 #. translators: %s - scheduled action
 #: lib/snapshot/model/request/class-schedule.php:229
+#, php-format
 msgid "Request for a backup schedule (%s) was not successful - Time in data parameter is invalid"
 msgstr ""
 
 #. translators: %s - scheduled action
 #: lib/snapshot/model/request/class-schedule.php:238
+#, php-format
 msgid "Request for a backup schedule (%s) was not successful - frequency_weekday in data parameter is invalid"
 msgstr ""
 
 #. translators: %s - scheduled action
 #: lib/snapshot/model/request/class-schedule.php:248
+#, php-format
 msgid "Request for a backup schedule (%s) was not successful - frequency_monthday in data parameter is invalid"
 msgstr ""
 
@@ -1854,16 +1965,17 @@ msgstr ""
 msgid "a backup was being exported"
 msgstr ""
 
-#: lib/snapshot/model/restore/class-files.php:47
+#: lib/snapshot/model/restore/class-files.php:48
 msgid "the files were being restored"
 msgstr ""
 
 #. translators: %1$d is the number of attempts.
-#: lib/snapshot/model/restore/class-files.php:91
+#: lib/snapshot/model/restore/class-files.php:92
+#, php-format
 msgid "Extract attempt: %1$d - failed. Retrying..."
 msgstr ""
 
-#: lib/snapshot/model/restore/class-files.php:103
+#: lib/snapshot/model/restore/class-files.php:104
 msgid "Couldn't extract the downloaded backup zip in order to restore."
 msgstr ""
 
@@ -1873,6 +1985,7 @@ msgstr ""
 
 #. translators: %1$s - current table name, %2$s - new table name
 #: lib/snapshot/model/restore/class-tables.php:175
+#, php-format
 msgid "Table %1$s already exists. Renaming it to %2$s"
 msgstr ""
 
@@ -1880,113 +1993,135 @@ msgstr ""
 #. translators: %1s - errored statement, %2s - db error
 #: lib/snapshot/model/restore/class-tables.php:242
 #: lib/snapshot/model/restore/class-tables.php:347
+#, php-format
 msgid "Error in statement %1$s: The database said: %2$s"
 msgstr ""
 
 #. translators: %1s - sql create statement, %2s - original db table
 #: lib/snapshot/model/restore/class-tables.php:317
+#, php-format
 msgid "Table creation issue with %1$s - attempting to drop the original %2$s first"
 msgstr ""
 
 #. translators: %1s - original table name, %2s - temporary table name
 #: lib/snapshot/model/restore/class-tables.php:330
+#, php-format
 msgid "Deleted the original %1$s table, let's retry to create the temp %2$s table."
 msgstr ""
 
 #. translators: %s - Local File
 #: lib/snapshot/model/restore/class-tables.php:358
+#, php-format
 msgid "Error in statement %1$s: The database said: %2$s."
 msgstr ""
 
 #. translators: %s - Temporary db
 #: lib/snapshot/model/restore/class-tables.php:364
+#, php-format
 msgid "Created the temp %s table, so now we can import the actual data there."
 msgstr ""
 
 #. translators: %s - db table name
 #: lib/snapshot/model/restore/class-tables.php:390
+#, php-format
 msgid "Couldn't read the exported %s table in order to restore it."
 msgstr ""
 
 #. translators: %s - db table name
 #: lib/snapshot/model/restore/class-tables.php:540
+#, php-format
 msgid "Unable to read table %1$s data from %2$s"
 msgstr ""
 
 #. translators: %s - db table name
 #: lib/snapshot/model/restore/class-tables.php:660
+#, php-format
 msgid "Error finalizing %1$s ( %2$s )"
 msgstr ""
 
 #. translators: %s - table name
 #: lib/snapshot/model/restore/class-tables.php:669
+#, php-format
 msgid "Table %s is restored."
 msgstr ""
 
 #. translators: %1s - destination table, %2s - temporary destination table
 #: lib/snapshot/model/restore/class-tables.php:700
+#, php-format
 msgid "Destination table %1$s exists, renaming it to %2$s first."
 msgstr ""
 
 #. translators: %s - db table name
 #: lib/snapshot/model/restore/class-tables.php:720
+#, php-format
 msgid "Error moving destination table to temporary destination: %s"
 msgstr ""
 
 #. translators: %1s - source table, %2s - destination table
 #: lib/snapshot/model/restore/class-tables.php:730
+#, php-format
 msgid "Move source table %1$s to destination: %2$s"
 msgstr ""
 
 #. translators: %s - db table name
 #: lib/snapshot/model/restore/class-tables.php:753
+#, php-format
 msgid "Error renaming table %1$s to %2$s. The DB said: %3$s"
 msgstr ""
 
 #. translators: %s - temporary destination table
 #: lib/snapshot/model/restore/class-tables.php:764
+#, php-format
 msgid "Clean up destination table: %s"
 msgstr ""
 
 #. translators: %1s - temporary destination table, %2s - db error
 #: lib/snapshot/model/restore/class-tables.php:783
+#, php-format
 msgid "Error removing intermediate backup table %1$s: %2$s"
 msgstr ""
 
 #. translators: %s - db table name - db error
 #: lib/snapshot/model/restore/class-tables.php:840
+#, php-format
 msgid "A db table was found with the wrong db prefix and wasn't imported: %s "
 msgstr ""
 
 #. translators: %s - website URL
 #: lib/snapshot/task/backup/class-complete.php:46
+#, php-format
 msgid "The backup for %s was created and stored successfully."
 msgstr ""
 
 #. translators: %s - "mail to" address
 #: lib/snapshot/task/backup/class-complete.php:60
 #: lib/snapshot/task/backup/class-fail.php:111
+#: lib/snapshot/task/backup/export/class-fail.php:68
 #: lib/snapshot/task/export/class-fail.php:85
+#, php-format
 msgid "Unable to send email to %s"
 msgstr ""
 
-#: lib/snapshot/task/backup/class-dblist.php:117
+#: lib/snapshot/task/backup/class-dblist.php:124
 msgid "Empty db - Snapshot faced an issue when trying to get the db's tables."
 msgstr ""
 
 #. translators: %s - table name
-#: lib/snapshot/task/backup/class-dblist.php:138
+#: lib/snapshot/task/backup/class-dblist.php:145
+#, php-format
 msgid "Unreachable table %s: Snapshot faced an issue when trying to get the table's checksum."
 msgstr ""
 
 #. translators: %s - website URL
 #: lib/snapshot/task/backup/class-fail.php:83
+#, php-format
 msgid "The backup for %s failed to create."
 msgstr ""
 
 #. translators: %s - Service's backup error message
 #: lib/snapshot/task/backup/class-fail.php:89
 #: lib/snapshot/task/export/class-fail.php:73
+#, php-format
 msgid "ERROR: %s"
 msgstr ""
 
@@ -2011,6 +2146,7 @@ msgstr ""
 
 #. translators: %1$s - manual/scheduled backup, %2$s - Site URL, %3$s - Site domain
 #: lib/snapshot/task/backup/class-fail.php:152
+#, php-format
 msgid "The %1$s for <a href=\"%2$s\" target=\"_blank\">%3$s</a> failed due to the API connection with The Hub. The following error message is listed in the Snapshot log:"
 msgstr ""
 
@@ -2021,6 +2157,7 @@ msgstr ""
 #: lib/snapshot/task/export/class-fail.php:117
 #: lib/snapshot/task/export/class-fail.php:124
 #: lib/snapshot/task/export/class-fail.php:132
+#, php-format
 msgid "Please run another backup, and contact our <a href=\"%s\" target=\"_blank\">support team</a> if the issue persists."
 msgstr ""
 
@@ -2032,11 +2169,13 @@ msgstr ""
 
 #. translators: %1$s - manual/scheduled backup, %2$s - Site URL, %3$s - Site domain
 #: lib/snapshot/task/backup/class-fail.php:163
+#, php-format
 msgid "The %1$s for <a href=\"%2$s\" target=\"_blank\">%3$s</a> failed due to insufficient storage space. To continue backing up your websites without any issues, free up your storage space, or upgrade your storage plan."
 msgstr ""
 
 #. translators: %s - support link
 #: lib/snapshot/task/backup/class-fail.php:170
+#, php-format
 msgid "Please add more storage space and run another backup. If you are unable to add more storage space, contact our <a href=\"%s\" target=\"_blank\">support team</a> for assistance."
 msgstr ""
 
@@ -2045,27 +2184,31 @@ msgid "Please add more storage space and run another backup. If you are unable t
 msgstr ""
 
 #: lib/snapshot/task/backup/class-fail.php:176
-#: tpl/pages/backups.php:155
+#: tpl/pages/backups.php:172
 msgid "Add Storage Space"
 msgstr ""
 
 #. translators: %1$s - manual/scheduled backup, %2$s - Site URL, %3$s - Site domain
 #: lib/snapshot/task/backup/class-fail.php:183
+#, php-format
 msgid "The %1$s for <a href=\"%2$s\" target=\"_blank\">%3$s</a> failed due to a problem iterating over your site's files and building the file list. The following error message is listed in the Snapshot log:"
 msgstr ""
 
 #. translators: %1$s - URL to logs, %2$s - support link
 #: lib/snapshot/task/backup/class-fail.php:186
+#, php-format
 msgid "Please add <strong>define( 'SNAPSHOT4_FILELIST_LOG_VERBOSE', true );</strong> to the site's wp-config.php file and run another backup. Then check <a href=\"%1$s\" target=\"_blank\">the logs</a> to identify files that cannot be backed up. Contact our <a href=\"%2$s\" target=\"_blank\">support team</a> if the issue persists."
 msgstr ""
 
 #. translators: %1$s - URL to logs
 #: lib/snapshot/task/backup/class-fail.php:189
+#, php-format
 msgid "Please add <strong>define( 'SNAPSHOT4_FILELIST_LOG_VERBOSE', true );</strong> to the site's wp-config.php file and run another backup. Then check <a href=\"%1$s\" target=\"_blank\">the logs</a> to identify files that cannot be backed up. Contact our support team if the issue persists."
 msgstr ""
 
 #. translators: %1$s - manual/scheduled backup, %2$s - Site URL, %3$s - Site domain
 #: lib/snapshot/task/backup/class-fail.php:194
+#, php-format
 msgid "The %1$s for <a href=\"%2$s\" target=\"_blank\">%3$s</a> failed while attempting to send files to our API. The following error message is listed in the Snapshot log:"
 msgstr ""
 
@@ -2074,6 +2217,7 @@ msgstr ""
 #: lib/snapshot/task/backup/class-fail.php:228
 #: lib/snapshot/task/backup/class-fail.php:238
 #: lib/snapshot/task/backup/class-fail.php:259
+#, php-format
 msgid "Please increase <strong>max_execution_time</strong> and PHP Memory, and then run another backup. Contact our <a href=\"%s\" target=\"_blank\">support team</a> if the issue persists."
 msgstr ""
 
@@ -2086,11 +2230,13 @@ msgstr ""
 
 #. translators: %1$s - manual/scheduled backup, %2$s - Site URL, %3$s - Site domain
 #: lib/snapshot/task/backup/class-fail.php:204
+#, php-format
 msgid "The %1$s for <a href=\"%2$s\" target=\"_blank\">%3$s</a> failed while attempting to send files to our API because a file was renamed or deleted during the backup process. The following error message is listed in the Snapshot log:"
 msgstr ""
 
 #. translators: %s - support link
 #: lib/snapshot/task/backup/class-fail.php:207
+#, php-format
 msgid "Please add <strong>define( 'SNAPSHOT4_FILE_ZIPSTREAM_LOG_VERBOSE', true );</strong> to the site's wp-config.php file and run another backup. Then, check the logs for any folder(s) that contain files that are rapidly changing (most often a cache folder) and exclude the folder(s) from subsequent backups. Contact our <a href=\"%s\" target=\"_blank\">support team</a> if the issue persists."
 msgstr ""
 
@@ -2100,41 +2246,49 @@ msgstr ""
 
 #. translators: %1$s - manual/scheduled backup, %2$s - Site URL, %3$s - Site domain
 #: lib/snapshot/task/backup/class-fail.php:214
+#, php-format
 msgid "The %1$s for <a href=\"%2$s\" target=\"_blank\">%3$s</a> failed while attempting to back up a large file over 100MB. The following error message is listed in the Snapshot log:"
 msgstr ""
 
 #. translators: %1$s - URL to logs, %2$s - support link
 #: lib/snapshot/task/backup/class-fail.php:217
+#, php-format
 msgid "Please add <strong>define( 'SNAPSHOT4_FILELIST_LOG_VERBOSE', true );</strong> to the site's wp-config.php file and run another backup. Then check <a href=\"%1$s\" target=\"_blank\">the logs</a> to identify the file, and exclude it from subsequent backups. Contact our <a href=\"%2$s\" target=\"_blank\">support team</a> if the issue persists."
 msgstr ""
 
 #. translators: %1$s - URL to logs
 #: lib/snapshot/task/backup/class-fail.php:220
+#, php-format
 msgid "Please add <strong>define( 'SNAPSHOT4_FILELIST_LOG_VERBOSE', true );</strong> to the site's wp-config.php file and run another backup. Then check <a href=\"%1$s\" target=\"_blank\">the logs</a> to identify the file, and exclude it from subsequent backups. Contact our support team if the issue persists."
 msgstr ""
 
 #. translators: %1$s - manual/scheduled backup, %2$s - Site URL, %3$s - Site domain
 #: lib/snapshot/task/backup/class-fail.php:225
+#, php-format
 msgid "The %1$s for <a href=\"%2$s\" target=\"_blank\">%3$s</a> failed due to a problem iterating the database's tables and building the table list. The following error message is listed in the Snapshot log:"
 msgstr ""
 
 #. translators: %1$s - manual/scheduled backup, %2$s - Site URL, %3$s - Site domain
 #: lib/snapshot/task/backup/class-fail.php:235
+#, php-format
 msgid "The %1$s for <a href=\"%2$s\" target=\"_blank\">%3$s</a> failed while attempting to send a database table to our API. The following error message is listed in the Snapshot log:"
 msgstr ""
 
 #. translators: %1$s - manual/scheduled backup, %2$s - Site URL, %3$s - Site domain
 #: lib/snapshot/task/backup/class-fail.php:245
+#, php-format
 msgid "The %1$s for <a href=\"%2$s\" target=\"_blank\">%3$s</a> failed while backing up a large table. The following error message is listed in the Snapshot log:"
 msgstr ""
 
 #. translators: %1$s - URL to logs, %2$s - support link
 #: lib/snapshot/task/backup/class-fail.php:248
+#, php-format
 msgid "Please check <a href=\"%1$s\" target=\"_blank\">the logs</a> to identify the table, and contact our <a href=\"%2$s\" target=\"_blank\">support team</a> to exclude the table from subsequent backups, if necessary."
 msgstr ""
 
 #. translators: %1$s - URL to logs
 #: lib/snapshot/task/backup/class-fail.php:251
+#, php-format
 msgid "Please check <a href=\"%1$s\" target=\"_blank\">the logs</a> to identify the table, and contact our support team to exclude the table from subsequent backups, if necessary."
 msgstr ""
 
@@ -2142,6 +2296,7 @@ msgstr ""
 #: lib/snapshot/task/backup/class-fail.php:256
 #: lib/snapshot/task/backup/class-fail.php:266
 #: lib/snapshot/task/backup/class-fail.php:277
+#, php-format
 msgid "The %1$s for <a href=\"%2$s\" target=\"_blank\">%3$s</a> failed. The following error message is listed in the Snapshot log:"
 msgstr ""
 
@@ -2151,38 +2306,45 @@ msgstr ""
 
 #. translators: %s - root path for filelist task
 #: lib/snapshot/task/backup/class-filelist.php:70
+#, php-format
 msgid "The \"Filelist\" task - root path: %s"
 msgstr ""
 
 #. translators: %s - current path in filelist task
 #: lib/snapshot/task/backup/class-filelist.php:85
+#, php-format
 msgid "The \"Filelist\" task - current path: %s"
 msgstr ""
 
 #. translators: %d - current number of files in filelist task
 #: lib/snapshot/task/backup/class-filelist.php:105
+#, php-format
 msgid "The \"Filelist\" task - number of files: %d"
 msgstr ""
 
 #. translators: %s - current file/dir item in filelist task
 #: lib/snapshot/task/backup/class-filelist.php:110
+#, php-format
 msgid "The \"Filelist\" task - current item: %s"
 msgstr ""
 
 #. translators: %s - filename
 #: lib/snapshot/task/backup/class-filelist.php:122
 #: lib/snapshot/task/backup/class-filelist.php:148
+#, php-format
 msgid "The %s file is not readable, so it is not included in the backup."
 msgstr ""
 
 #. translators: %s - filename
 #: lib/snapshot/task/backup/class-filelist.php:129
 #: lib/snapshot/task/backup/class-filelist.php:155
+#, php-format
 msgid "The %s file is not writable. It has been included in the backup, but will not be able to be restored from Snapshot."
 msgstr ""
 
 #. translators: %s - exceeded timelimit in filelist task
 #: lib/snapshot/task/backup/class-filelist.php:175
+#, php-format
 msgid "The \"Filelist\" task - time limit exceeded: %s"
 msgstr ""
 
@@ -2194,6 +2356,7 @@ msgstr ""
 #: lib/snapshot/task/backup/class-progress.php:81
 #: lib/snapshot/task/backup/class-progress.php:131
 #: lib/snapshot/task/backup/class-progress.php:142
+#, php-format
 msgid "Please run another backup, and <a href=\"%s\" target=\"_blank\">contact our support team</a> if the issue persists."
 msgstr ""
 
@@ -2203,6 +2366,7 @@ msgstr ""
 
 #. translators: %1$s - add storage link, %2$s - support link
 #: lib/snapshot/task/backup/class-progress.php:86
+#, php-format
 msgid "Please <a href=\"%1$s\" target=\"_blank\">add more storage space</a> and run another backup. If you are unable to add more storage space, <a href=\"%2$s\" target=\"_blank\">contact our support team</a> for assistance."
 msgstr ""
 
@@ -2212,6 +2376,7 @@ msgstr ""
 
 #. translators: %s - support link
 #: lib/snapshot/task/backup/class-progress.php:91
+#, php-format
 msgid "Please add <strong>define('SNAPSHOT4_FILELIST_LOG_VERBOSE', true);</strong> to your site's wp-config.php file and run another backup. Then, <a href=\"#\" class=\"snapshot-log-link\">check the logs</a> to identify files that cannot be backed up. <a href=\"%s\" target=\"_blank\">Contact our support team</a> if the issue persists."
 msgstr ""
 
@@ -2224,6 +2389,7 @@ msgstr ""
 #: lib/snapshot/task/backup/class-progress.php:111
 #: lib/snapshot/task/backup/class-progress.php:116
 #: lib/snapshot/task/backup/class-progress.php:126
+#, php-format
 msgid "Please increase <strong>max_execution_time</strong> and <strong>PHP Memory</strong>, and then run another backup. <a href=\"%s\" target=\"_blank\">Contact our support team</a> if the issue persists."
 msgstr ""
 
@@ -2233,6 +2399,7 @@ msgstr ""
 
 #. translators: %s - support link
 #: lib/snapshot/task/backup/class-progress.php:101
+#, php-format
 msgid "Please add <strong>define('SNAPSHOT4_FILE_ZIPSTREAM_LOG_VERBOSE', true);</strong> to your site's wp-config.php file and run another backup. Then, <a href=\"#\" class=\"snapshot-log-link\">check the logs</a> for any folder(s) that contain files that are rapidly changing (most often a cache folder) and exclude the folder(s) from subsequent backups. <a href=\"%s\" target=\"_blank\">Contact our support team</a> if the issue persists."
 msgstr ""
 
@@ -2242,6 +2409,7 @@ msgstr ""
 
 #. translators: %s - support link
 #: lib/snapshot/task/backup/class-progress.php:106
+#, php-format
 msgid "Please add <strong>define('SNAPSHOT4_FILELIST_LOG_VERBOSE', true);</strong> to your site's wp-config.php file and run another backup. Then, <a href=\"#\" class=\"snapshot-log-link\">check the logs</a> to identify the file, and exclude it from subsequent backups. <a href=\"%s\" target=\"_blank\">Contact our support team</a> if the issue persists."
 msgstr ""
 
@@ -2259,6 +2427,7 @@ msgstr ""
 
 #. translators: %s - support link
 #: lib/snapshot/task/backup/class-progress.php:121
+#, php-format
 msgid "Please <a href=\"#\" class=\"snapshot-log-link\">check the logs</a> to identify the table, and <a href=\"%s\" target=\"_blank\">contact our support team</a> to exclude the table from subsequent backups, if necessary."
 msgstr ""
 
@@ -2277,12 +2446,21 @@ msgstr ""
 
 #. translators: %1$s - guide link, %2$s - support link
 #: lib/snapshot/task/backup/class-progress.php:136
+#, php-format
 msgid "Please manually delete the nonce with the help of <a href=\"%1$s\" target=\"_blank\">our guide</a>, and then run another backup. <a href=\"%2$s\" target=\"_blank\">Contact our support team</a> if the issue persists."
 msgstr ""
 
 #. translators: %1$s - Date and time, %2$s - Backup error status
 #: lib/snapshot/task/backup/class-progress.php:158
+#, php-format
 msgid "Log: [%1$s] - <span class=\"backup-status\">ERROR: %2$s</span>"
+msgstr ""
+
+#. translators: %s - website URL
+#: lib/snapshot/task/backup/export/class-fail.php:47
+#: lib/snapshot/task/export/class-fail.php:67
+#, php-format
+msgid "The backup export for %s failed."
 msgstr ""
 
 #: lib/snapshot/task/backup/zipstream/class-files.php:67
@@ -2291,43 +2469,51 @@ msgstr ""
 
 #. translators: %d - Batch files count
 #: lib/snapshot/task/backup/zipstream/class-files.php:100
+#, php-format
 msgid "Number of files requested: %d"
 msgstr ""
 
 #. translators: %s - current path in filelist task
 #: lib/snapshot/task/backup/zipstream/class-files.php:111
+#, php-format
 msgid "The \"Zipstream\" task - current file: %s"
 msgstr ""
 
 #. translators: %s - filename
 #: lib/snapshot/task/backup/zipstream/class-files.php:115
 #: lib/snapshot/task/backup/zipstream/class-largefiles.php:84
+#, php-format
 msgid "The requested %s file does not exist and is not included in the backup."
 msgstr ""
 
 #. translators: %s - filename
 #: lib/snapshot/task/backup/zipstream/class-files.php:122
 #: lib/snapshot/task/backup/zipstream/class-largefiles.php:90
+#, php-format
 msgid "The requested %s file is not readable and can not be included in the backup."
 msgstr ""
 
 #. translators: %s - exceeded timelimit in filelist task
 #: lib/snapshot/task/backup/zipstream/class-files.php:134
+#, php-format
 msgid "The \"Zipstream\" task - time limit exceeded: %s"
 msgstr ""
 
 #. translators: %s - Temp sql file name
 #: lib/snapshot/task/backup/zipstream/class-tables.php:80
+#, php-format
 msgid "Snapshot couldn't clear out the temporary sql file before exporting the db: %s"
 msgstr ""
 
 #. translators: $s - Scheduled backup name
 #: lib/snapshot/task/export/class-email.php:101
+#, php-format
 msgid "Scheduled - %s"
 msgstr ""
 
 #. translators: %s - website URL
 #: lib/snapshot/task/export/class-email.php:105
+#, php-format
 msgid "The backup for %s is ready to download!"
 msgstr ""
 
@@ -2335,20 +2521,17 @@ msgstr ""
 msgid "Unable to send email"
 msgstr ""
 
-#. translators: %s - website URL
-#: lib/snapshot/task/export/class-fail.php:67
-msgid "The backup export for %s failed."
-msgstr ""
-
 #. translators: %1$s - Site URL, %2$s - Site domain
 #: lib/snapshot/task/export/class-fail.php:115
 #: lib/snapshot/task/export/class-fail.php:122
 #: lib/snapshot/task/export/class-fail.php:130
+#, php-format
 msgid "The backup export for <a href=\"%1$s\" target=\"_blank\">%2$s</a> failed. The following error message is listed in the Snapshot log:"
 msgstr ""
 
 #. translators: %s - difference between two timestamps
 #: lib/snapshot/task/hosting/class-listing.php:73
+#, php-format
 msgid "%s ago"
 msgstr ""
 
@@ -2357,6 +2540,7 @@ msgstr ""
 #: tpl/mail/backup-export-done.php:120
 #: tpl/mail/backup-fail.php:59
 #: tpl/mail/backup-fail/storage-limit.php:115
+#: tpl/mail/backup/export-fail.php:75
 #: tpl/mail/export-fail.php:59
 msgid "Snapshot"
 msgstr ""
@@ -2368,16 +2552,19 @@ msgstr ""
 #. translators: %1s - temp file path, %2s - restored file path
 #: lib/snapshot/task/restore/class-files.php:104
 #: lib/snapshot/task/restore/class-files.php:135
+#, php-format
 msgid "Couldn't move the temp %1$1s file to its restored path: %2$2s."
 msgstr ""
 
 #. translators: %1s - number of statements, %2s - db table
 #: lib/snapshot/task/restore/class-tables.php:88
+#, php-format
 msgid "We are about to perform %1$s SQL statements for the %2$s table."
 msgstr ""
 
 #. translators: %1s - number of statements, %2s - db table
 #: lib/snapshot/task/restore/class-tables.php:107
+#, php-format
 msgid "%1$s SQL statements performed seamlessly for the %2$s table."
 msgstr ""
 
@@ -2391,7 +2578,7 @@ msgid "The Hub"
 msgstr ""
 
 #: tpl/common/footer.php:18
-#: tpl/pages/backups.php:499
+#: tpl/pages/backups.php:516
 msgid "Plugins"
 msgstr ""
 
@@ -2417,6 +2604,7 @@ msgstr ""
 
 #. translators: %s - icon
 #: tpl/common/footer.php:47
+#, php-format
 msgid "Made with %s by WPMU DEV"
 msgstr ""
 
@@ -2440,12 +2628,14 @@ msgstr ""
 #. translators: %s - link for Feature Request modal in DEV site
 #: tpl/common/v3-prompt.php:33
 #: tpl/common/v4-admin-prompt.php:50
+#, php-format
 msgid "You're using the new Snapshot v4 plugin, but it looks like you still have the old Snapshot plugin installed. You can safely use Snapshot v3 and v4 side by side, please let us know <a href=\"%s\" target=\"_blank\">here</a> if you have any suggestions or feature requests for v4, as it will be our focus going forward!"
 msgstr ""
 
 #. translators: %s - link for Snapshot 4.0 migration Q&A in DEV site
 #: tpl/common/v3-prompt.php:36
 #: tpl/common/v4-admin-prompt.php:53
+#, php-format
 msgid "Note: <strong>Your local Snapshots will be removed after uninstalling the plugin</strong>, and Snapshot v4 does not currently support all v3 features. Learn more in our <a href=\"%s\" target=\"_blank\">Snapshot 4.0 migration Q&A</a>."
 msgstr ""
 
@@ -2521,6 +2711,7 @@ msgstr ""
 
 #. translators: %1$s - Site URL, %2$s - Site domain
 #: tpl/mail/backup-complete.php:34
+#, php-format
 msgid "Backup successful for <a href=\"%1$s\" target=\"_blank\">%2$s</a>."
 msgstr ""
 
@@ -2529,12 +2720,15 @@ msgstr ""
 #: tpl/mail/backup-export-done.php:38
 #: tpl/mail/backup-fail.php:37
 #: tpl/mail/backup-fail/storage-limit.php:37
+#: tpl/mail/backup/export-fail.php:37
 #: tpl/mail/export-fail.php:37
+#, php-format
 msgid "Hi %s,"
 msgstr ""
 
 #. translators: %1$s - Site URL, %2$s - Site domain
 #: tpl/mail/backup-complete.php:44
+#, php-format
 msgid "The backup for <a href=\"%1$s\" target=\"_blank\">%2$s</a> was created and stored successfully. Backups are retained for up to 50 days, or until the storage limit has been reached."
 msgstr ""
 
@@ -2542,6 +2736,7 @@ msgstr ""
 #: tpl/mail/backup-export-done.php:118
 #: tpl/mail/backup-fail.php:58
 #: tpl/mail/backup-fail/storage-limit.php:114
+#: tpl/mail/backup/export-fail.php:74
 #: tpl/mail/export-fail.php:58
 msgid "Stay protected,"
 msgstr ""
@@ -2554,17 +2749,21 @@ msgstr ""
 #: tpl/mail/backup-export-done.php:125
 #: tpl/mail/backup-fail.php:63
 #: tpl/mail/backup-fail/storage-limit.php:119
+#: tpl/mail/backup/export-fail.php:79
 #: tpl/mail/export-fail.php:63
+#, php-format
 msgid "%s Backup Hero"
 msgstr ""
 
 #. translators: %1$s - Site URL, %2$s - Site domain
 #: tpl/mail/backup-export-done.php:35
+#, php-format
 msgid "Backup of <a href=\"%1$s\" target=\"_blank\">%2$s</a> is ready for download."
 msgstr ""
 
 #. translators: %s - Backup URL
 #: tpl/mail/backup-export-done.php:41
+#, php-format
 msgid "Your exported <a href=\"%s\" target=\"_blank\">backup</a> can be downloaded using the link below. This link will expire in 7 days, but don't worry, your backup will be kept for 50 days from the date it was created."
 msgstr ""
 
@@ -2595,6 +2794,7 @@ msgstr ""
 
 #. translators: %s - Snapshot Installer URL
 #: tpl/mail/backup-export-done.php:91
+#, php-format
 msgid "Download the <a href=\"%s\" target=\"_blank\">snapshot-installer.php</a> file."
 msgstr ""
 
@@ -2604,27 +2804,32 @@ msgstr ""
 
 #. translators: %1$s - Snapshot Installer path, %2$s - Snapshot Installer path
 #: tpl/mail/backup-export-done.php:104
+#, php-format
 msgid "Navigate to the <strong>snapshot-installer.php</strong> file in your web browser (<a href=\"%1$s\" target=\"_blank\">%1$s</a>) and follow the on-screen steps to complete the restore process."
 msgstr ""
 
 #. translators: %s - Restore guide URL
 #: tpl/mail/backup-export-done.php:114
+#, php-format
 msgid "For more detailed instructions, check out our <a href=\"%s\" target=\"_blank\">restore guide</a>."
 msgstr ""
 
 #. translators: %1$s - Site URL, %2$s - Site domain
 #: tpl/mail/backup-fail.php:34
 #: tpl/mail/backup-fail/storage-limit.php:34
+#, php-format
 msgid "Backup failed for <a href=\"%1$s\" target=\"_blank\">%2$s</a>."
 msgstr ""
 
 #: tpl/mail/backup-fail.php:41
 #: tpl/mail/backup-fail/storage-limit.php:41
+#: tpl/mail/backup/export-fail.php:49
 #: tpl/mail/export-fail.php:41
 msgid "Backup Error Log"
 msgstr ""
 
 #: tpl/mail/backup-fail/storage-limit.php:11
+#: tpl/mail/backup/export-fail.php:11
 msgid "GB"
 msgstr ""
 
@@ -2652,12 +2857,34 @@ msgstr ""
 msgid "Manage Storage"
 msgstr ""
 
+#. translators: %1$s - Backup destination %1$s - Site URL, %2$s - Site domain
+#: tpl/mail/backup/export-fail.php:34
+#, php-format
+msgid "Backup export to <strong>%1$s</strong> failed for <a href=\"%2$s\" target=\"_blank\">%3$s</a>."
+msgstr ""
+
+#: tpl/mail/backup/export-fail.php:43
+#, php-format
+msgid "The backup for <strong>%1$s</strong> completed successfully on <strong>%2$s</strong>, but we encountered an issue while exporting it to <strong>%3$s</strong>.The following error message is listed in the Snapshot log:"
+msgstr ""
+
+#: tpl/mail/backup/export-fail.php:60
+#, php-format
+msgid "Please verify your <strong>%1$s</strong> connection settings, check available storage space in your %1$s account and run another backup. Or contact our support team if the issue persists."
+msgstr ""
+
+#: tpl/mail/backup/export-fail.php:65
+#, php-format
+msgid "Please verify your <strong>%1$s</strong> connection settings, check available storage space in your %1$s account and run another backup. Or contact our <a href=\"%s\" target=\"_blank\">support team</a> if the issue persists."
+msgstr ""
+
 #: tpl/mail/common/footer.php:73
 msgid "Follow us"
 msgstr ""
 
 #. translators: %1$s - Site URL, %2$s - Site domain
 #: tpl/mail/export-fail.php:34
+#, php-format
 msgid "Backup export failed for <a href=\"%1$s\" target=\"_blank\">%2$s</a>."
 msgstr ""
 
@@ -2674,6 +2901,7 @@ msgstr ""
 
 #. translators: %s - Config name
 #: tpl/modals/apply-config-region-change.php:24
+#, php-format
 msgid "Are you sure you want to apply the %s to this site?"
 msgstr ""
 
@@ -2710,6 +2938,7 @@ msgstr ""
 
 #. translators: Masked email address
 #: tpl/modals/backup/download.php:113
+#, php-format
 msgid "The backup will be sent to the default email address %s."
 msgstr ""
 
@@ -2742,7 +2971,7 @@ msgstr ""
 #: tpl/modals/destinations/onedrive/step-1.php:105
 #: tpl/modals/destinations/onedrive/step-2.php:188
 #: tpl/modals/modal_parts/add-destination-screen-1.php:94
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:450
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:441
 msgid "Next"
 msgstr ""
 
@@ -2789,6 +3018,7 @@ msgstr ""
 #: tpl/modals/confirm-v3-uninstall.php:23
 #: tpl/modals/delete-backup.php:26
 #: tpl/modals/destinations-delete.php:22
+#: tpl/modals/destinations/dropbox/reauth.php:31
 #: tpl/modals/destinations/onedrive/reauth.php:31
 #: tpl/modals/file-explorer.php:21
 #: tpl/modals/settings-delete-backups.php:22
@@ -2971,11 +3201,13 @@ msgstr ""
 
 #. translators: %s - site name
 #: tpl/modals/check/modal_parts/system-result.php:43
+#, php-format
 msgid "The memory allocated to the %s server is less than the recommended 256MB limit, which may affect the performance of the backup processes."
 msgstr ""
 
 #. translators: %s - wp_memory_limit
 #: tpl/modals/check/modal_parts/system-result.php:57
+#, php-format
 msgid "You can set the %s of your site to any value above 128M by using any of the following methods:"
 msgstr ""
 
@@ -2985,6 +3217,7 @@ msgstr ""
 
 #. translators: %s - file name
 #: tpl/modals/check/modal_parts/system-result.php:67
+#, php-format
 msgid "In the WordPress installation directory, select %s file > Edit"
 msgstr ""
 
@@ -3011,6 +3244,7 @@ msgstr ""
 
 #. translators: %s - minimum max_execution_time
 #: tpl/modals/check/modal_parts/system-result.php:134
+#, php-format
 msgid "Max execution time defines how long a PHP script can run before it returns an error. Snapshot will often require longer than the default setting, so we recommend increasing your Max Execution time to %s to ensure backups have the best chance of succeeding."
 msgstr ""
 
@@ -3021,11 +3255,13 @@ msgstr ""
 
 #. translators: %1$s - host name, %2$s - actual limit
 #: tpl/modals/check/modal_parts/system-result.php:148
+#, php-format
 msgid "Max execution time on %1$s is %2$s seconds."
 msgstr ""
 
 #. translators: %s - max_execution_time
 #: tpl/modals/check/modal_parts/system-result.php:162
+#, php-format
 msgid "You can set the %s of your site to any value above 60s by using any of the following methods:"
 msgstr ""
 
@@ -3154,6 +3390,7 @@ msgstr ""
 
 #. translators: %s - WPMU DEV user email
 #: tpl/modals/confirm-wpmudev-password.php:45
+#, php-format
 msgid "As a security measure, you'll need to confirm your WPMU DEV account to continue. Please enter the password for your connected account <strong>(%s)</strong> or authenticate with Google."
 msgstr ""
 
@@ -3193,6 +3430,7 @@ msgstr ""
 
 #. translators: %s - Link to the Hub
 #: tpl/modals/confirm-wpmudev-password.php:140
+#, php-format
 msgid "You can enable/disable this password protection step from <a href=\"%s\" target=\"_blank\">The Hub</a>."
 msgstr ""
 
@@ -3232,6 +3470,7 @@ msgstr ""
 
 #. translators: %s - Settings page anchor
 #: tpl/modals/create-manual-backup.php:91
+#, php-format
 msgid "Apply global file exclusions set in %s page."
 msgstr ""
 
@@ -3241,6 +3480,7 @@ msgstr ""
 
 #. translators: %s - Link for Destination page
 #: tpl/modals/create-manual-backup.php:114
+#, php-format
 msgid "Note: The full backup copy will be exported to all the destinations that are connected and active on the <a href=\"%s\">Destinations page</a>."
 msgstr ""
 
@@ -3266,6 +3506,7 @@ msgstr ""
 
 #. translators: %s - Link for support
 #: tpl/modals/delete-backup.php:40
+#, php-format
 msgid "We were unable to delete the backup due to the API connection problem. Please try again below, or <a href=\"%s\" target=\"_blank\">contact our support team</a> if the issue persists."
 msgstr ""
 
@@ -3289,6 +3530,7 @@ msgstr ""
 #. translators: %s - Link for support
 #: tpl/modals/destination-gdrive-edit.php:70
 #: tpl/modals/modal_parts/add-destination-screen-3-gd.php:52
+#, php-format
 msgid "The testing results have failed. We were unable to access the directory. Please double-check your Directory ID and if you run into further issues, you can <a href=\"%s\" target=\"_blank\">contact our Support team</a> for help."
 msgstr ""
 
@@ -3339,6 +3581,7 @@ msgstr ""
 
 #. translators: %s - Link for support
 #: tpl/modals/destination-gdrive-edit.php:123
+#, php-format
 msgid "The testing results have failed. We were unable to access the directory. Please double-check your Directory ID and if you run into further issues, you can contact our <a href=\"%s\" target=\"_blank\">Support team</a> for help."
 msgstr ""
 
@@ -3350,6 +3593,7 @@ msgstr ""
 
 #: tpl/modals/destination-gdrive-edit.php:154
 #: tpl/modals/destinations/dropbox/edit.php:78
+#: tpl/modals/destinations/dropbox/reauth.php:76
 #: tpl/modals/destinations/dropbox/step-2.php:72
 #: tpl/modals/destinations/ftp/edit.php:83
 #: tpl/modals/destinations/ftp/step-1.php:53
@@ -3368,6 +3612,7 @@ msgstr ""
 #: tpl/modals/destinations/azure/edit.php:102
 #: tpl/modals/destinations/azure/step-4.php:74
 #: tpl/modals/destinations/dropbox/edit.php:81
+#: tpl/modals/destinations/dropbox/reauth.php:79
 #: tpl/modals/destinations/dropbox/step-2.php:76
 #: tpl/modals/destinations/ftp/edit.php:87
 #: tpl/modals/destinations/ftp/step-1.php:57
@@ -3379,6 +3624,7 @@ msgstr ""
 #: tpl/modals/modal_parts/add-destination-screen-3-s3.php:90
 #: tpl/modals/modal_parts/add-destination-screen-4-gd.php:73
 #: tpl/modals/modal_parts/add-destination-screen-4-s3.php:83
+#, php-format
 msgid "You're trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href=\"%s\" target=\"_blank\">Support team</a> for help."
 msgstr ""
 
@@ -3388,8 +3634,8 @@ msgid "Connected Google Drive Account"
 msgstr ""
 
 #: tpl/modals/destination-gdrive-edit.php:187
-#: tpl/modals/destination-s3-edit.php:134
-#: tpl/modals/destinations/azure/edit.php:136
+#: tpl/modals/destination-s3-edit.php:136
+#: tpl/modals/destinations/azure/edit.php:138
 #: tpl/modals/destinations/azure/step-4.php:137
 #: tpl/modals/destinations/dropbox/edit.php:141
 #: tpl/modals/destinations/dropbox/step-3.php:89
@@ -3402,8 +3648,8 @@ msgid "Destination Name"
 msgstr ""
 
 #: tpl/modals/destination-gdrive-edit.php:190
-#: tpl/modals/destination-s3-edit.php:138
-#: tpl/modals/destinations/azure/edit.php:140
+#: tpl/modals/destination-s3-edit.php:140
+#: tpl/modals/destinations/azure/edit.php:142
 #: tpl/modals/destinations/dropbox/edit.php:145
 #: tpl/modals/destinations/ftp/edit.php:159
 #: tpl/modals/destinations/onedrive/edit.php:147
@@ -3420,8 +3666,8 @@ msgid "Place Directory ID here"
 msgstr ""
 
 #: tpl/modals/destination-gdrive-edit.php:213
-#: tpl/modals/destination-s3-edit.php:202
-#: tpl/modals/destinations/azure/edit.php:219
+#: tpl/modals/destination-s3-edit.php:179
+#: tpl/modals/destinations/azure/edit.php:225
 #: tpl/modals/destinations/dropbox/edit.php:172
 #: tpl/modals/destinations/dropbox/step-2.php:142
 #: tpl/modals/destinations/ftp/edit.php:192
@@ -3434,15 +3680,15 @@ msgid "Backup Storage Limit"
 msgstr ""
 
 #: tpl/modals/destination-gdrive-edit.php:225
-#: tpl/modals/destinations/azure/edit.php:231
+#: tpl/modals/destinations/azure/edit.php:237
 #: tpl/modals/destinations/dropbox/edit.php:187
 #: tpl/modals/destinations/onedrive/edit.php:193
 msgid "Set the number of backups you want to store before removing the older ones. It must be greater than 0."
 msgstr ""
 
 #: tpl/modals/destination-gdrive-edit.php:245
-#: tpl/modals/destination-s3-edit.php:236
-#: tpl/modals/destinations/azure/edit.php:253
+#: tpl/modals/destination-s3-edit.php:210
+#: tpl/modals/destinations/azure/edit.php:259
 #: tpl/modals/destinations/dropbox/edit.php:205
 #: tpl/modals/destinations/dropbox/step-2.php:170
 #: tpl/modals/destinations/ftp/edit.php:262
@@ -3454,8 +3700,8 @@ msgid "Test Connection"
 msgstr ""
 
 #: tpl/modals/destination-gdrive-edit.php:249
-#: tpl/modals/destination-s3-edit.php:240
-#: tpl/modals/destinations/azure/edit.php:257
+#: tpl/modals/destination-s3-edit.php:214
+#: tpl/modals/destinations/azure/edit.php:263
 #: tpl/modals/destinations/dropbox/edit.php:210
 #: tpl/modals/destinations/dropbox/step-2.php:174
 #: tpl/modals/destinations/ftp/edit.php:267
@@ -3466,20 +3712,20 @@ msgid "Testing..."
 msgstr ""
 
 #: tpl/modals/destination-gdrive-edit.php:256
-#: tpl/modals/destination-s3-edit.php:246
-#: tpl/modals/destinations/azure/edit.php:263
+#: tpl/modals/destination-s3-edit.php:220
+#: tpl/modals/destinations/azure/edit.php:269
 #: tpl/modals/destinations/dropbox/edit.php:217
 #: tpl/modals/destinations/ftp/edit.php:274
 #: tpl/modals/destinations/onedrive/edit.php:223
-#: tpl/pages/backups.php:829
-#: tpl/pages/backups.php:957
+#: tpl/pages/backups.php:846
+#: tpl/pages/backups.php:974
 #: tpl/pages/settings.php:325
 msgid "Save changes"
 msgstr ""
 
 #: tpl/modals/destination-gdrive-edit.php:261
-#: tpl/modals/destination-s3-edit.php:251
-#: tpl/modals/destinations/azure/edit.php:268
+#: tpl/modals/destination-s3-edit.php:225
+#: tpl/modals/destinations/azure/edit.php:274
 #: tpl/modals/destinations/dropbox/edit.php:222
 #: tpl/modals/destinations/ftp/edit.php:279
 #: tpl/modals/destinations/onedrive/edit.php:228
@@ -3513,42 +3759,38 @@ msgstr ""
 
 #. translators: %s - Link for support
 #: tpl/modals/destination-s3-edit.php:119
+#, php-format
 msgid "The testing results have failed. We were unable to authorize your account and access the bucket. Please check your access credentials and bucket/folder path again. If you run into further issues, you can contact our <a href=\"%s\" target=\"_blank\">Support team</a> for help."
 msgstr ""
 
-#: tpl/modals/destination-s3-edit.php:147
+#: tpl/modals/destination-s3-edit.php:149
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:157
 msgid "Bucket name"
 msgstr ""
 
-#: tpl/modals/destination-s3-edit.php:161
+#: tpl/modals/destination-s3-edit.php:163
 #: tpl/modals/destinations/ftp/step-1.php:188
 msgid "Directory Path"
 msgstr ""
 
-#: tpl/modals/destination-s3-edit.php:164
+#: tpl/modals/destination-s3-edit.php:166
 msgid "Place Directory Path here"
 msgstr ""
 
-#: tpl/modals/destination-s3-edit.php:178
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:129
-msgid "Place Access Key ID here"
-msgstr ""
-
-#: tpl/modals/destination-s3-edit.php:193
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:146
-msgid "Place Secret Access Key here"
-msgstr ""
-
-#: tpl/modals/destination-s3-edit.php:214
+#: tpl/modals/destination-s3-edit.php:191
 msgid "Set the number of exported backups you want to store in the third-party destination before removing the older ones. It must be greater than 0."
 msgstr ""
 
-#: tpl/modals/destination-s3-edit.php:269
-#: tpl/modals/destinations/azure/edit.php:286
+#: tpl/modals/destination-s3-edit.php:243
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:484
+msgid "Place Region here"
+msgstr ""
+
+#: tpl/modals/destination-s3-edit.php:256
+#: tpl/modals/destinations/azure/edit.php:292
 #: tpl/modals/destinations/azure/step-2.php:161
 #: tpl/modals/destinations/azure/step-3.php:368
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:474
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:465
 msgid "Place Endpoint here"
 msgstr ""
 
@@ -3574,40 +3816,21 @@ msgstr ""
 
 #. translators: %s - Link for support
 #: tpl/modals/destinations/azure/edit.php:119
+#, php-format
 msgid "The testing results have failed. We were unable to authorize your account and access the container. Please check your access credentials and container/folder path again. If you run into further issues, you can contact our <a href=\"%s\" target=\"_blank\">Support team</a> for help."
 msgstr ""
 
-#: tpl/modals/destinations/azure/edit.php:150
+#: tpl/modals/destinations/azure/edit.php:152
 msgid "Containers"
 msgstr ""
 
-#: tpl/modals/destinations/azure/edit.php:157
+#: tpl/modals/destinations/azure/edit.php:159
 #: tpl/modals/destinations/azure/step-3.php:142
 msgid "Choose Container"
 msgstr ""
 
-#: tpl/modals/destinations/azure/edit.php:168
+#: tpl/modals/destinations/azure/edit.php:170
 msgid "Azure Folder Path"
-msgstr ""
-
-#: tpl/modals/destinations/azure/edit.php:187
-#: tpl/modals/destinations/azure/step-2.php:86
-msgid "Azure Account Name"
-msgstr ""
-
-#: tpl/modals/destinations/azure/edit.php:192
-#: tpl/modals/destinations/azure/step-2.php:91
-msgid "Place Account Name"
-msgstr ""
-
-#: tpl/modals/destinations/azure/edit.php:203
-#: tpl/modals/destinations/azure/step-2.php:102
-msgid "Azure Access Key"
-msgstr ""
-
-#: tpl/modals/destinations/azure/edit.php:208
-#: tpl/modals/destinations/azure/step-2.php:107
-msgid "Place Access Key"
 msgstr ""
 
 #: tpl/modals/destinations/azure/step-2.php:26
@@ -3638,7 +3861,7 @@ msgstr ""
 #: tpl/modals/destinations/onedrive/step-1.php:99
 #: tpl/modals/destinations/onedrive/step-2.php:172
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:45
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:444
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:435
 #: tpl/modals/modal_parts/add-destination-screen-4-s3.php:33
 #: tpl/modals/modal_parts/add-destination-screen-4-s3.php:171
 msgid "Back"
@@ -3646,6 +3869,7 @@ msgstr ""
 
 #. translators: %s - Class name to expand instructions
 #: tpl/modals/destinations/azure/step-2.php:53
+#, php-format
 msgid "Unsure how to get your Azure credentials? <span class=\"%s\">Follow the instructions</span> below."
 msgstr ""
 
@@ -3657,7 +3881,24 @@ msgstr ""
 #. translators: %s - Link for support
 #: tpl/modals/destinations/azure/step-2.php:70
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:88
+#, php-format
 msgid "It appears the authorization credentials you used were invalid. Please enter your credentials again or follow the instructions below to find them. If you run into further issues, you can <a href=\"%s\" target=\"_blank\">contact our Support</a> team for help."
+msgstr ""
+
+#: tpl/modals/destinations/azure/step-2.php:86
+msgid "Azure Account Name"
+msgstr ""
+
+#: tpl/modals/destinations/azure/step-2.php:91
+msgid "Place Account Name"
+msgstr ""
+
+#: tpl/modals/destinations/azure/step-2.php:102
+msgid "Azure Access Key"
+msgstr ""
+
+#: tpl/modals/destinations/azure/step-2.php:107
+msgid "Place Access Key"
 msgstr ""
 
 #: tpl/modals/destinations/azure/step-2.php:142
@@ -3665,7 +3906,7 @@ msgstr ""
 #: tpl/modals/destinations/dropbox/step-1.php:117
 #: tpl/modals/destinations/ftp/step-1.php:303
 #: tpl/modals/destinations/onedrive/step-1.php:111
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:456
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:447
 msgid "Connecting..."
 msgstr ""
 
@@ -3689,6 +3930,7 @@ msgstr ""
 
 #. translators: %s - Link for support
 #: tpl/modals/destinations/azure/step-3.php:77
+#, php-format
 msgid "It appears the authorization credentials you used were invalid. Please enter your credentials again or follow the given instructions to find them. If you run into further issues, you can <a href=\"%s\" target=\"_blank\">contact our Support</a> team for help."
 msgstr ""
 
@@ -3700,6 +3942,7 @@ msgstr ""
 #. translators: %s - Link for support
 #: tpl/modals/destinations/azure/step-3.php:101
 #: tpl/modals/destinations/azure/step-3.php:240
+#, php-format
 msgid "The destination already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href=\"%s\" target=\"_blank\">Support team</a> for help."
 msgstr ""
 
@@ -3733,6 +3976,7 @@ msgstr ""
 #. translators: %s - Link for support
 #: tpl/modals/destinations/azure/step-3.php:216
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:267
+#, php-format
 msgid "It appears the authorization credentials you used were invalid. Follow the instructions below for guidance and add the credentials again. If you run into further issues, you can <a href=\"%s\" target=\"_blank\">contact our Support</a> team for help."
 msgstr ""
 
@@ -3782,6 +4026,7 @@ msgstr ""
 #: tpl/modals/destinations/azure/step-4.php:108
 #: tpl/modals/modal_parts/add-destination-screen-3-s3.php:111
 #: tpl/modals/modal_parts/add-destination-screen-4-s3.php:121
+#, php-format
 msgid "You're trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different bucket or create a new folder. If you run into further issues, you can contact our <a href=\"%s\" target=\"_blank\">Support team</a> for help."
 msgstr ""
 
@@ -3810,6 +4055,7 @@ msgstr ""
 #: tpl/modals/destinations/ftp/edit.php:122
 #: tpl/modals/destinations/onedrive/edit.php:110
 #: tpl/modals/destinations/onedrive/step-2.php:52
+#, php-format
 msgid "The testing results have failed. We were unable to access the directory. Please double-check your Directory and if you run into further issues, you can contact our <a href=\"%s\" target=\"_blank\">Support team</a> for help."
 msgstr ""
 
@@ -3820,9 +4066,9 @@ msgstr ""
 
 #: tpl/modals/destinations/dropbox/edit.php:156
 #: tpl/modals/destinations/dropbox/step-2.php:121
-#: tpl/pages/destinations.php:133
-#: tpl/pages/destinations.php:177
-#: tpl/pages/destinations/row.php:224
+#: tpl/pages/destinations.php:140
+#: tpl/pages/destinations.php:184
+#: tpl/pages/destinations/row.php:322
 msgid "Directory"
 msgstr ""
 
@@ -3830,41 +4076,63 @@ msgstr ""
 msgid "Place directory name here"
 msgstr ""
 
+#: tpl/modals/destinations/dropbox/reauth.php:34
 #: tpl/modals/destinations/dropbox/step-1.php:29
 #: tpl/modals/destinations/dropbox/step-2.php:25
 #: tpl/modals/destinations/dropbox/step-3.php:25
 msgid "Connect Dropbox"
 msgstr ""
 
+#: tpl/modals/destinations/dropbox/reauth.php:36
 #: tpl/modals/destinations/dropbox/step-1.php:31
 msgid "Easily connect with Dropbox to authorize Snapshot and store your backups in their directory."
 msgstr ""
 
+#: tpl/modals/destinations/dropbox/reauth.php:49
 #: tpl/modals/destinations/dropbox/step-1.php:50
 msgid "It appears the authorization process went wrong. Please try again by clicking the \"Authenticate\" button and make sure you authorize Snapshot to access your Dropbox. If you run into further issues, you can contact our Support team for help."
 msgstr ""
 
 #. translators: %s - Link for support
+#: tpl/modals/destinations/dropbox/reauth.php:53
 #: tpl/modals/destinations/dropbox/step-1.php:54
+#, php-format
 msgid "It appears the authorization process went wrong. Please try again by clicking the \"Authenticate\" button and make sure you authorize Snapshot to access your Dropbox. If you run into further issues, you can <a href=\"%s\" target=\"_blank\">contact our Support</a> team for help."
 msgstr ""
 
-#: tpl/modals/destinations/dropbox/step-1.php:66
-msgid "Snapshot has been successfully authorized in Dropbox."
+#: tpl/modals/destinations/dropbox/reauth.php:65
+msgid "Snapshot has been successfully reauthorized in Dropbox."
 msgstr ""
 
+#: tpl/modals/destinations/dropbox/reauth.php:86
 #: tpl/modals/destinations/dropbox/step-1.php:73
 msgid "Dropbox authorization"
 msgstr ""
 
+#: tpl/modals/destinations/dropbox/reauth.php:98
 #: tpl/modals/destinations/dropbox/step-1.php:87
 msgid "Connect with Dropbox integration by authenticating it using the button below. Note that you'll be taken to the Dropbox website to grant access to Snapshot and then redirected back."
 msgstr ""
 
+#: tpl/modals/destinations/dropbox/reauth.php:104
 #: tpl/modals/destinations/dropbox/step-1.php:94
 #: tpl/modals/destinations/onedrive/reauth.php:104
 #: tpl/modals/destinations/onedrive/step-1.php:88
 msgid "Authenticate"
+msgstr ""
+
+#: tpl/modals/destinations/dropbox/reauth.php:129
+#: tpl/modals/destinations/onedrive/reauth.php:129
+msgid "Finish"
+msgstr ""
+
+#: tpl/modals/destinations/dropbox/reauth.php:134
+#: tpl/modals/destinations/onedrive/reauth.php:134
+msgid "Finishing..."
+msgstr ""
+
+#: tpl/modals/destinations/dropbox/step-1.php:66
+msgid "Snapshot has been successfully authorized in Dropbox."
 msgstr ""
 
 #: tpl/modals/destinations/dropbox/step-2.php:28
@@ -3882,6 +4150,7 @@ msgstr ""
 
 #. translators: %s - Dropbox app folder name
 #: tpl/modals/destinations/dropbox/step-2.php:135
+#, php-format
 msgid "Apps/%s"
 msgstr ""
 
@@ -3905,6 +4174,7 @@ msgstr ""
 #. translators: %s - Link for support
 #: tpl/modals/destinations/dropbox/step-3.php:66
 #: tpl/modals/destinations/onedrive/step-3.php:66
+#, php-format
 msgid "You're trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different directory. If you run into further issues, you can contact our <a href=\"%s\" target=\"_blank\">Support team</a> for help"
 msgstr ""
 
@@ -3974,6 +4244,7 @@ msgstr ""
 
 #. translators: %s - WPMU hosted ftp/sftp url.
 #: tpl/modals/destinations/ftp/step-1.php:32
+#, php-format
 msgid "You can get your credentials <a target=\"_blank\" href=\"%s\">here</a>."
 msgstr ""
 
@@ -3983,6 +4254,7 @@ msgstr ""
 
 #. translators: %s - Link for support
 #: tpl/modals/destinations/ftp/step-1.php:75
+#, php-format
 msgid "Connection failed. Please double-check username and password. If you run into further issues, you can contact our <a href=\"%s\" target=\"_blank\">Support team</a> for help."
 msgstr ""
 
@@ -3992,6 +4264,7 @@ msgstr ""
 
 #. translators: %s - Link for support
 #: tpl/modals/destinations/ftp/step-1.php:92
+#, php-format
 msgid "Test Connection failed. Please double-check <span id=\"connection_failed_group_text\"> username and password </span>. If you run into further issues, you can contact our <a href=\"%s\" target=\"_blank\">Support team</a> for help."
 msgstr ""
 
@@ -4000,12 +4273,12 @@ msgid "The testing results were successful. We are able to connect to your desti
 msgstr ""
 
 #: tpl/modals/destinations/ftp/step-1.php:117
-#: tpl/pages/destinations/row.php:56
+#: tpl/pages/destinations/row.php:62
 msgid "FTP"
 msgstr ""
 
 #: tpl/modals/destinations/ftp/step-1.php:121
-#: tpl/pages/destinations/row.php:61
+#: tpl/pages/destinations/row.php:67
 msgid "SFTP"
 msgstr ""
 
@@ -4094,6 +4367,7 @@ msgstr ""
 #. translators: %s - Link for support
 #: tpl/modals/destinations/onedrive/reauth.php:53
 #: tpl/modals/destinations/onedrive/step-1.php:50
+#, php-format
 msgid "It appears the authorization process went wrong. Please try again by clicking the \"Authenticate\" button and make sure you authorize Snapshot to access your OneDrive. If you run into further issues, you can <a href=\"%s\" target=\"_blank\">contact our Support</a> team for help."
 msgstr ""
 
@@ -4109,14 +4383,6 @@ msgstr ""
 #: tpl/modals/destinations/onedrive/reauth.php:98
 #: tpl/modals/destinations/onedrive/step-1.php:82
 msgid "Connect with OneDrive integration by authenticating it using the button below. Note that you'll be taken to the OneDrive website to grant access to Snapshot and then redirected back."
-msgstr ""
-
-#: tpl/modals/destinations/onedrive/reauth.php:129
-msgid "Finish"
-msgstr ""
-
-#: tpl/modals/destinations/onedrive/reauth.php:134
-msgid "Finishing..."
 msgstr ""
 
 #: tpl/modals/destinations/onedrive/step-1.php:62
@@ -4223,17 +4489,19 @@ msgstr ""
 
 #. translators: %s - Link for Destination page
 #: tpl/modals/edit-schedule.php:187
+#, php-format
 msgid "The backup schedule will be applied to all destinations connected on the <a href=\"%s\">Destinations page</a>."
 msgstr ""
 
 #. translators: %1$s: Time format, %2$s: Link to settings page.
 #: tpl/modals/edit-schedule.php:200
 #: tpl/modals/welcome.php:501
+#, php-format
 msgid "Your site's current time is <strong>%1$s</strong> based on your <a href=\"%2$s\">WordPress Settings.</a>"
 msgstr ""
 
 #: tpl/modals/file-explorer.php:25
-#: tpl/pages/backups.php:509
+#: tpl/pages/backups.php:526
 msgid "Choose Files and Folders"
 msgstr ""
 
@@ -4256,6 +4524,7 @@ msgstr ""
 
 #. translators: %s - Admin name
 #: tpl/modals/membership-expired.php:29
+#, php-format
 msgid "%s, it looks like your membership has expired. Reactivate your WPMU DEV membership today to continue backing up your sites, and to carry on scheduling, managing, and restoring your secure incremental backups."
 msgstr ""
 
@@ -4265,6 +4534,7 @@ msgstr ""
 
 #. translators: %s - support link
 #: tpl/modals/membership-expired.php:38
+#, php-format
 msgid "Need help? <a href=\"%s\" target=\"_blank\">Get Support</a>"
 msgstr ""
 
@@ -4283,12 +4553,13 @@ msgstr ""
 
 #. translators: %s - link
 #: tpl/modals/missing-region.php:41
+#, php-format
 msgid "We were unable to proceed due to a connection problem.  Please choose thestorage region again, or <a href=\"%s\" target=\"_blank\">contact our support team</a> if the problem persists."
 msgstr ""
 
 #: tpl/modals/missing-region.php:55
 #: tpl/modals/welcome.php:287
-#: tpl/pages/backups.php:750
+#: tpl/pages/backups.php:767
 msgid "Storage Region"
 msgstr ""
 
@@ -4303,7 +4574,7 @@ msgid "Europe (EU data protection directive compliant)"
 msgstr ""
 
 #: tpl/modals/modal_parts/add-destination-screen-1.php:55
-#: tpl/pages/destinations/row.php:50
+#: tpl/pages/destinations/row.php:56
 msgid "Dropbox"
 msgstr ""
 
@@ -4312,7 +4583,7 @@ msgid "FTP/SFTP"
 msgstr ""
 
 #: tpl/modals/modal_parts/add-destination-screen-1.php:75
-#: tpl/pages/destinations/row.php:67
+#: tpl/pages/destinations/row.php:73
 msgid "OneDrive"
 msgstr ""
 
@@ -4337,6 +4608,7 @@ msgstr ""
 
 #. translators: %s - Link for support
 #: tpl/modals/modal_parts/add-destination-screen-2-gd.php:52
+#, php-format
 msgid "It appears the authorization process went wrong. Please try again by clicking the \"Connect with Google\" button and make sure you authorize Snapshot to access your Google Drive. If you run into further issues, you can <a href=\"%s\" target=\"_blank\">contact our Support</a> team for help."
 msgstr ""
 
@@ -4351,6 +4623,7 @@ msgstr ""
 
 #. translators: %s - Privacy Policy link
 #: tpl/modals/modal_parts/add-destination-screen-2-gd.php:94
+#, php-format
 msgid "Connect with Google to authorize Snapshot to access your Google Drive account. Please read the <a href=\"%s\" target=\"_blank\">privacy policy</a> concerning the use of our Google Drive authorisation."
 msgstr ""
 
@@ -4370,6 +4643,7 @@ msgstr ""
 
 #. translators: %s - WPMU DEV link
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:35
+#, php-format
 msgid "Connect with Amazon S3 and store your backups in their directory, or choose one of the available <a href=\"%s\" target=\"_blank\">S3 Compatible providers</a> and store the backups there."
 msgstr ""
 
@@ -4379,12 +4653,22 @@ msgstr ""
 
 #. translators: %s - Class name to expand instructions
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:67
+#, php-format
 msgid "Unsure how to get your Amazon S3 credentials? <span class=\"%s\">Follow the instructions</span> below."
 msgstr ""
 
 #. translators: %1$s - Name of selected region, %2$s - Link for AWS console
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:107
+#, php-format
 msgid "You don't have an available bucket in the <strong class=\"snapshot-selected-region-no-buckets\">%1$s</strong> region. In order to continue, you will need to <a href=\"%2$s\" target=\"_blank\" >create a bucket</a> with that region, or choose another region where you have available buckets."
+msgstr ""
+
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:129
+msgid "Place Access Key ID here"
+msgstr ""
+
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:146
+msgid "Place Secret Access Key here"
 msgstr ""
 
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:163
@@ -4481,6 +4765,7 @@ msgstr ""
 
 #. translators: %1$s - Name of selected region, %2$s - Link for AWS console
 #: tpl/modals/modal_parts/add-destination-screen-2-s3.php:287
+#, php-format
 msgid "You don't have an available bucket in the <strong class=\"snapshot-selected-region-no-buckets\">%1$s</strong> region. In order to continue, you will need to <a href=\"%2$s\" target=\"_blank\" class=\"snapshot-s3-compatible-login-link\" >create a bucket</a> with that region, or choose another region where you have available buckets."
 msgstr ""
 
@@ -4492,24 +4777,20 @@ msgstr ""
 msgid "Guide to find the credentials"
 msgstr ""
 
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:341
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:342
 msgid "Place Bucket name here"
 msgstr ""
 
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:354
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:356
 msgid "key ID"
 msgstr ""
 
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:360
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:362
 msgid "Place keyID here"
 msgstr ""
 
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:381
+#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:383
 msgid "Place applicationKey here"
-msgstr ""
-
-#: tpl/modals/modal_parts/add-destination-screen-2-s3.php:401
-msgid "Place Region here"
 msgstr ""
 
 #: tpl/modals/modal_parts/add-destination-screen-3-gd.php:29
@@ -4576,6 +4857,7 @@ msgstr ""
 
 #. translators: %s - Link for AWS docs
 #: tpl/modals/modal_parts/aws-instructions-accordion.php:41
+#, php-format
 msgid "<a href=\"%s\" target=\"_blank\">Sign in</a> to the AWS Management Console as the root user."
 msgstr ""
 
@@ -4602,6 +4884,7 @@ msgstr ""
 
 #. translators: %s - Link for AWS docs
 #: tpl/modals/modal_parts/aws-instructions-accordion.php:52
+#, php-format
 msgid "<a href=\"%s\" target=\"_blank\">Sign in</a> to the AWS Management Console as an IAM user."
 msgstr ""
 
@@ -4619,6 +4902,7 @@ msgstr ""
 
 #. translators: %s - Link for AWS docs
 #: tpl/modals/modal_parts/aws-instructions-accordion.php:64
+#, php-format
 msgid "Source: <a href=\"%s\" target=\"_blank\">AWS Documentation</a>"
 msgstr ""
 
@@ -4633,6 +4917,7 @@ msgstr ""
 
 #. translators: %s - Link for Azure docs
 #: tpl/modals/modal_parts/azure-instructions-accordion.php:34
+#, php-format
 msgid "<a href=\"%s\" target=\"_blank\">Sign in</a> to the Microsoft Azure Portal as the root user."
 msgstr ""
 
@@ -4650,6 +4935,7 @@ msgstr ""
 
 #. translators: %s - Link for Azure docs
 #: tpl/modals/modal_parts/azure-instructions-accordion.php:43
+#, php-format
 msgid "You can find more info in the <a href=\"%s\" target=\"_blank\">Azure Documentation</a>"
 msgstr ""
 
@@ -4664,6 +4950,7 @@ msgstr ""
 
 #. translators: %s - Link for Backblaze login
 #: tpl/modals/modal_parts/backblaze-instructions-accordion.php:31
+#, php-format
 msgid "<a href=\"%s\" target=\"_blank\">Sign in</a> to your Blackbaze account."
 msgstr ""
 
@@ -4705,6 +4992,7 @@ msgstr ""
 
 #. translators: %s - Link for DigitalOcean login
 #: tpl/modals/modal_parts/do-spaces-instructions-accordion.php:31
+#, php-format
 msgid "<a href=\"%s\" target=\"_blank\">Sign in</a> to your DigitalOcean account."
 msgstr ""
 
@@ -4735,6 +5023,7 @@ msgstr ""
 
 #. translators: %s - Link for Google Drive login
 #: tpl/modals/modal_parts/gd-instructions-accordion.php:31
+#, php-format
 msgid "<a href=\"%s\" target=\"_blank\">Sign in</a> to your Google Drive account."
 msgstr ""
 
@@ -4761,6 +5050,7 @@ msgstr ""
 
 #. translators: %s - Link for Google Cloud login docs
 #: tpl/modals/modal_parts/google-cloud-instructions-accordion.php:31
+#, php-format
 msgid "Open the <strong>Cloud Storage</strong> browser in the <a href=\"%s\" target=\"_blank\">Google Cloud Console</a>."
 msgstr ""
 
@@ -4788,6 +5078,32 @@ msgstr ""
 msgid "Navigate to the <strong>Storage tab</strong> from the main menu to view the region, under the <i>location</i> column, you have chosen for the bucket."
 msgstr ""
 
+#: tpl/modals/modal_parts/linode-instructions-accordion.php:15
+msgid "How to get Linode credentials?"
+msgstr ""
+
+#: tpl/modals/modal_parts/linode-instructions-accordion.php:26
+msgid "Follow the instructions below to retrieve your Linode credentials."
+msgstr ""
+
+#. translators: %s - Link for Wasabi login
+#: tpl/modals/modal_parts/linode-instructions-accordion.php:29
+#, php-format
+msgid "<strong>Log in to your Linode account</strong> <br>Visit <a href=\"%s\" target=\"_blank\">login.linode.com/login</a>"
+msgstr ""
+
+#: tpl/modals/modal_parts/linode-instructions-accordion.php:30
+msgid "<strong>Navigate to Object Storage</strong> <br>Go to Storage > Object Storage in your Linode dashboard."
+msgstr ""
+
+#: tpl/modals/modal_parts/linode-instructions-accordion.php:31
+msgid "<strong>Create or Access a Bucket</strong> <br> If you already have a bucket, proceed to the next step.<br>If not, create a new bucket in your preferred region."
+msgstr ""
+
+#: tpl/modals/modal_parts/linode-instructions-accordion.php:32
+msgid "<strong>Generate Access Keys </strong><br>Go to the Access Keys tab. <br>Click Create a New Key. <br>Make sure to select the same region as your bucket. <br>After creation, you’ll receive an Access Key, Secret Key & the Endpoint."
+msgstr ""
+
 #: tpl/modals/modal_parts/wasabi-instructions-accordion.php:15
 msgid "How to get Wasabi credentials?"
 msgstr ""
@@ -4798,6 +5114,7 @@ msgstr ""
 
 #. translators: %s - Link for Wasabi login
 #: tpl/modals/modal_parts/wasabi-instructions-accordion.php:29
+#, php-format
 msgid "<a href=\"%s\" target=\"_blank\">Sign in</a> to your Wasabi account."
 msgstr ""
 
@@ -4822,7 +5139,7 @@ msgid "Close this dialog."
 msgstr ""
 
 #: tpl/modals/notification-add-recipient.php:27
-#: tpl/pages/backups.php:917
+#: tpl/pages/backups.php:934
 msgid "Add Recipient"
 msgstr ""
 
@@ -4868,6 +5185,7 @@ msgstr ""
 
 #. translators: %s - PHP version
 #: tpl/modals/requirements-check-failure.php:60
+#, php-format
 msgid "Your site is running on PHP v%s, and Snapshot requires v7.0 or newer. Update your PHP version to proceed. If you use a managed host, contact them directly to have it updated."
 msgstr ""
 
@@ -4952,7 +5270,7 @@ msgid "It may take a while to restore the files, depending on the size of your s
 msgstr ""
 
 #: tpl/modals/settings-delete-backups.php:25
-#: tpl/pages/backups.php:802
+#: tpl/pages/backups.php:819
 msgid "Delete Backups"
 msgstr ""
 
@@ -4983,8 +5301,8 @@ msgid "Reset"
 msgstr ""
 
 #: tpl/modals/welcome-activation.php:18
-#: tpl/pages/backups.php:185
-#: tpl/pages/hosting_backups.php:69
+#: tpl/pages/backups.php:202
+#: tpl/pages/hosting_backups.php:78
 msgid "Backup schedule"
 msgstr ""
 
@@ -5023,6 +5341,7 @@ msgstr ""
 
 #. translators: %s - Admin name
 #: tpl/modals/welcome-activation.php:49
+#, php-format
 msgid "%s, welcome to the hottest backup plugin for WordPress. It looks like you haven't activated the WPMU DEV Dashboard plugin. The plugin is the API connection between WPMU DEV and your site, so if you want to use WPMU DEV to store your backups simply activate the plugin."
 msgstr ""
 
@@ -5056,16 +5375,19 @@ msgstr ""
 
 #. translators: %s - Admin name
 #: tpl/modals/welcome-activation.php:86
+#, php-format
 msgid "%s, welcome back to the hottest backup plugin for WordPress. We have saved all your settings and old backups. You'll be able to restore the backups anytime and use already configured settings."
 msgstr ""
 
 #. translators: %s - Admin name
 #: tpl/modals/welcome-activation.php:89
+#, php-format
 msgid "%s, welcome to the hottest backup plugin for WordPress. The backup has been successfully connected to the WPMU DEV remote destination and you're ready to create your first backup."
 msgstr ""
 
 #. translators: %s - Admin name
 #: tpl/modals/welcome-activation.php:91
+#, php-format
 msgid "%s, welcome to the hottest backup plugin for WordPress. Snapshot Pro is successfully connected with the WPMU DEV Dashboard plugin and you're ready to create your first backup."
 msgstr ""
 
@@ -5095,16 +5417,18 @@ msgstr ""
 
 #. translators: %s - Admin name
 #: tpl/modals/welcome.php:43
+#, php-format
 msgid "%s, welcome to the hottest backup plugin for WordPress. Both Hosting and plugin backups are available within the plugin."
 msgstr ""
 
 #. translators: %s - Admin name
 #: tpl/modals/welcome.php:43
+#, php-format
 msgid "%s, welcome to the hottest backup plugin for WordPress. We've detected you're hosting this website with us. Great! Both Hosting and Snapshot backups are available within the plugin."
 msgstr ""
 
 #: tpl/modals/welcome.php:75
-#: tpl/pages/dashboard.php:317
+#: tpl/pages/dashboard.php:326
 #: tpl/pages/hosting_backups.php:22
 msgid "Hosting Backups"
 msgstr ""
@@ -5120,20 +5444,22 @@ msgstr ""
 
 #: tpl/modals/welcome.php:81
 #: tpl/modals/welcome.php:109
-#: tpl/pages/backups.php:102
-#: tpl/pages/dashboard.php:125
+#: tpl/pages/backups.php:110
+#: tpl/pages/dashboard.php:134
 msgid "Snapshot Backups"
 msgstr ""
 
 #. translators: %s - Brand name
 #: tpl/modals/welcome.php:88
 #: tpl/modals/welcome.php:116
+#, php-format
 msgid "Plugin backups are incremental, allowing you to back up your site more frequently. You can set a storage limit, up to 30 manual backups and 30 scheduled backups (60 in total), and keep them on %s Storage Cloud until you reach our 50-days expiry policy for backups."
 msgstr ""
 
 #. translators: %s - Brand name
 #: tpl/modals/welcome.php:96
 #: tpl/modals/welcome.php:124
+#, php-format
 msgid "Snapshot backups are incremental, allowing you to back up your site more frequently. You can set a storage limit, up to 30 manual backups and 30 scheduled backups (60 in total), and keep them on %s Storage Cloud until you reach our 50-days expiry policy for backups."
 msgstr ""
 
@@ -5143,16 +5469,17 @@ msgstr ""
 
 #. translators: %s - link
 #: tpl/modals/welcome.php:146
+#, php-format
 msgid "A connection with the API couldn't be established. Give it another try below, and if you continue having connection issues, our <a href=\"%s\" target=\"_blank\">support team</a> is ready to help."
 msgstr ""
 
 #: tpl/modals/welcome.php:157
 #: tpl/modals/welcome.php:161
-#: tpl/pages/backups.php:266
-#: tpl/pages/dashboard.php:147
-#: tpl/pages/dashboard.php:344
-#: tpl/pages/destinations.php:230
-#: tpl/pages/hosting_backups.php:107
+#: tpl/pages/backups.php:283
+#: tpl/pages/dashboard.php:156
+#: tpl/pages/dashboard.php:353
+#: tpl/pages/destinations.php:237
+#: tpl/pages/hosting_backups.php:116
 msgid "Reload"
 msgstr ""
 
@@ -5190,6 +5517,7 @@ msgstr ""
 
 #. translators: %s - link
 #: tpl/modals/welcome.php:274
+#, php-format
 msgid "We were unable to proceed due to a connection problem. Please choose the storage region again, or <a href=\"%s\" target=\"_blank\">contact our support team</a> if the problem persists."
 msgstr ""
 
@@ -5202,20 +5530,17 @@ msgid "Choose your backup schedule."
 msgstr ""
 
 #: tpl/modals/welcome.php:515
-#: tpl/pages/backups.php:680
+#: tpl/pages/backups.php:697
 msgid "Save"
 msgstr ""
 
 #: tpl/modals/whats-new.php:27
-msgid "New: Selective Backup Restoration"
-msgstr ""
-
 #: tpl/modals/whats-new.php:37
-msgid "New: Store Backups to Azure"
+msgid "New: Store Backups to Linode"
 msgstr ""
 
 #: tpl/modals/whats-new.php:43
-msgid "Good news! Now you can store your website backups in Azure. Connect your Microsoft Azure account via Snapshot's Destinations page, and your backups will be automatically uploaded to Azure. Simple as that!"
+msgid "Good news! Now you can store your website backups in Linode. Connect your Linode account via Snapshot’s Destinations page, and your backups will be automatically uploaded to Linode. Simple as that!"
 msgstr ""
 
 #: tpl/modals/whats-new.php:47
@@ -5224,7 +5549,32 @@ msgstr ""
 
 #. translators: %s: Backup page URL.
 #: tpl/notices/exported-backup-notification.php:17
+#, php-format
 msgid "Your backup has been successfully exported and is <a href=\"%s\" class=\"snapshot-notice__dismiss\">available for download</a>. Please download your backup within the next 7 days before the link expires."
+msgstr ""
+
+#: tpl/notices/reauthenticate-dropbox.php:41
+msgid "Dropbox icon"
+msgstr ""
+
+#: tpl/notices/reauthenticate-dropbox.php:47
+msgid "Reconnect Dropbox"
+msgstr ""
+
+#: tpl/notices/reauthenticate-dropbox.php:48
+msgid "It appears that Dropbox is not syncing with Snapshot. Please reauthenticate your Dropbox to ensure it works properly."
+msgstr ""
+
+#: tpl/notices/reauthenticate-dropbox.php:49
+#: tpl/notices/reauthenticate-google-drive.php:38
+#: tpl/notices/reauthenticate-onedrive.php:49
+msgid "Reconnect Now"
+msgstr ""
+
+#: tpl/notices/reauthenticate-dropbox.php:50
+#: tpl/notices/reauthenticate-google-drive.php:39
+#: tpl/notices/reauthenticate-onedrive.php:50
+msgid "Don't remind me again"
 msgstr ""
 
 #: tpl/notices/reauthenticate-google-drive.php:30
@@ -5237,16 +5587,6 @@ msgstr ""
 
 #: tpl/notices/reauthenticate-google-drive.php:37
 msgid "It appears that Google Drive is not syncing with Snapshot. Please reauthenticate your Google Drive to ensure it works properly."
-msgstr ""
-
-#: tpl/notices/reauthenticate-google-drive.php:38
-#: tpl/notices/reauthenticate-onedrive.php:49
-msgid "Reconnect Now"
-msgstr ""
-
-#: tpl/notices/reauthenticate-google-drive.php:39
-#: tpl/notices/reauthenticate-onedrive.php:50
-msgid "Don't remind me again"
 msgstr ""
 
 #: tpl/notices/reauthenticate-onedrive.php:41
@@ -5263,327 +5603,333 @@ msgstr ""
 
 #. translators: %s - Admin display name
 #: tpl/pages/backups.php:30
+#, php-format
 msgid "%s, you haven't created any backups yet. Let's get started."
 msgstr ""
 
 #. translators: %1$s - File example #1, %2$s - File example #2
 #: tpl/pages/backups.php:33
+#, php-format
 msgid "Use relative paths to the file or folder. For example %1$s or %2$s. Press enter to add each exclusion. You can also view your WordPress installation files and folders and choose the ones you want to exclude."
 msgstr ""
 
-#: tpl/pages/backups.php:103
-#: tpl/pages/backups.php:204
-#: tpl/pages/backups.php:219
-#: tpl/pages/backups.php:671
-#: tpl/pages/dashboard.php:125
+#: tpl/pages/backups.php:111
+#: tpl/pages/backups.php:221
+#: tpl/pages/backups.php:236
+#: tpl/pages/backups.php:688
+#: tpl/pages/dashboard.php:134
 msgid "Backups"
 msgstr ""
 
-#: tpl/pages/backups.php:134
-#: tpl/pages/dashboard.php:60
-#: tpl/pages/hosting_backups.php:48
+#: tpl/pages/backups.php:151
+#: tpl/pages/dashboard.php:69
+#: tpl/pages/hosting_backups.php:57
 msgid "Backups available"
 msgstr ""
 
-#: tpl/pages/backups.php:141
+#: tpl/pages/backups.php:158
 msgid "Storage space"
 msgstr ""
 
-#: tpl/pages/backups.php:152
+#: tpl/pages/backups.php:169
 #: tpl/pages/hosting_backups/row.php:50
 msgid "Manage"
 msgstr ""
 
-#: tpl/pages/backups.php:172
-#: tpl/pages/dashboard.php:78
-#: tpl/pages/hosting_backups.php:59
+#: tpl/pages/backups.php:189
+#: tpl/pages/dashboard.php:87
+#: tpl/pages/hosting_backups.php:68
 msgid "Last backup"
 msgstr ""
 
-#: tpl/pages/backups.php:178
-#: tpl/pages/hosting_backups.php:64
+#: tpl/pages/backups.php:195
+#: tpl/pages/hosting_backups.php:73
 msgid "Next scheduled backup"
 msgstr ""
 
-#: tpl/pages/backups.php:207
-#: tpl/pages/backups.php:220
+#: tpl/pages/backups.php:224
+#: tpl/pages/backups.php:237
 msgid "Logs"
 msgstr ""
 
-#: tpl/pages/backups.php:213
-#: tpl/pages/backups.php:222
-#: tpl/pages/backups.php:842
+#: tpl/pages/backups.php:230
+#: tpl/pages/backups.php:239
+#: tpl/pages/backups.php:859
 msgid "Notifications"
 msgstr ""
 
-#: tpl/pages/backups.php:230
+#: tpl/pages/backups.php:247
 msgid "Available backups"
 msgstr ""
 
-#: tpl/pages/backups.php:236
-#: tpl/pages/backups.php:242
-#: tpl/pages/backups.php:281
-#: tpl/pages/dashboard.php:180
-#: tpl/pages/dashboard.php:185
-#: tpl/pages/dashboard.php:202
+#: tpl/pages/backups.php:253
+#: tpl/pages/backups.php:259
+#: tpl/pages/backups.php:298
+#: tpl/pages/dashboard.php:189
+#: tpl/pages/dashboard.php:194
+#: tpl/pages/dashboard.php:211
 msgid "Backup now"
 msgstr ""
 
-#: tpl/pages/backups.php:240
-#: tpl/pages/dashboard.php:183
+#: tpl/pages/backups.php:257
+#: tpl/pages/dashboard.php:192
 msgid "The backup plugin is just catching his breath. You can run another backup in a minute."
 msgstr ""
 
-#: tpl/pages/backups.php:240
-#: tpl/pages/dashboard.php:183
+#: tpl/pages/backups.php:257
+#: tpl/pages/dashboard.php:192
 msgid "Snapshot is just catching his breath. You can run another backup in a minute."
 msgstr ""
 
-#: tpl/pages/backups.php:254
-#: tpl/pages/dashboard.php:135
-#: tpl/pages/dashboard.php:332
+#: tpl/pages/backups.php:271
+#: tpl/pages/dashboard.php:144
+#: tpl/pages/dashboard.php:341
 msgid "We were unable to fetch backup data from the API due to a connection problem. Give it another try below, or contact support if the problem persists."
 msgstr ""
 
 #. translators: %s - Link for support
-#: tpl/pages/backups.php:258
-#: tpl/pages/dashboard.php:139
-#: tpl/pages/dashboard.php:336
+#: tpl/pages/backups.php:275
+#: tpl/pages/dashboard.php:148
+#: tpl/pages/dashboard.php:345
+#, php-format
 msgid "We were unable to fetch backup data from the API due to a connection problem. Give it another try below, or <a href=\"%s\" target=\"_blank\">contact our support team</a> if the problem persists."
 msgstr ""
 
-#: tpl/pages/backups.php:303
+#: tpl/pages/backups.php:320
 msgid "Here are all of your available manual and scheduled backups, retained for up to 50 days. You can restore from them while they’re available."
 msgstr ""
 
-#: tpl/pages/backups.php:312
-#: tpl/pages/dashboard.php:166
-#: tpl/pages/dashboard.php:358
-#: tpl/pages/hosting_backups.php:131
+#: tpl/pages/backups.php:329
+#: tpl/pages/dashboard.php:175
+#: tpl/pages/dashboard.php:367
+#: tpl/pages/hosting_backups.php:140
 msgid "Title"
 msgstr ""
 
-#: tpl/pages/backups.php:357
+#: tpl/pages/backups.php:374
 msgid "File Exclusions"
 msgstr ""
 
-#: tpl/pages/backups.php:359
+#: tpl/pages/backups.php:376
 msgid "Define files or folders you want to exclude from manual or scheduled backups."
 msgstr ""
 
-#: tpl/pages/backups.php:373
+#: tpl/pages/backups.php:390
 msgid "Exclude Large-Size folders"
 msgstr ""
 
-#: tpl/pages/backups.php:374
+#: tpl/pages/backups.php:391
 msgid "Enable this to exclude large folders and other plugins' backup files, which can generate issues during backup."
 msgstr ""
 
-#: tpl/pages/backups.php:382
+#: tpl/pages/backups.php:399
 msgid "Toggle"
 msgstr ""
 
-#: tpl/pages/backups.php:403
+#: tpl/pages/backups.php:420
 msgid "The following folders will be excluded from backups:"
 msgstr ""
 
-#: tpl/pages/backups.php:445
+#: tpl/pages/backups.php:462
 msgid "Global File Exclusions"
 msgstr ""
 
-#: tpl/pages/backups.php:446
+#: tpl/pages/backups.php:463
 msgid "Define which specific files or folders you want to exclude from backups."
 msgstr ""
 
-#: tpl/pages/backups.php:455
+#: tpl/pages/backups.php:472
 msgid "File Exclusion Filter"
 msgstr ""
 
-#: tpl/pages/backups.php:461
+#: tpl/pages/backups.php:478
 msgid "Clear Exclusions"
 msgstr ""
 
-#: tpl/pages/backups.php:464
+#: tpl/pages/backups.php:481
 msgid "Clearing exclusions will remove all excluded files and folders and disable the Exclude Large-Size Folders option."
 msgstr ""
 
-#: tpl/pages/backups.php:477
+#: tpl/pages/backups.php:494
 msgid "Global file exclusions"
 msgstr ""
 
-#: tpl/pages/backups.php:480
+#: tpl/pages/backups.php:497
 msgid "Enter file or folder URLs "
 msgstr ""
 
-#: tpl/pages/backups.php:493
+#: tpl/pages/backups.php:510
 msgid "WordPress Core"
 msgstr ""
 
-#: tpl/pages/backups.php:496
+#: tpl/pages/backups.php:513
 msgid "Themes"
 msgstr ""
 
-#: tpl/pages/backups.php:521
+#: tpl/pages/backups.php:538
 msgid "Database Exclusions"
 msgstr ""
 
-#: tpl/pages/backups.php:523
+#: tpl/pages/backups.php:540
 msgid "Select the tables you want to exclude from your backup. Selected tables will be excluded from manual and scheduled backups."
 msgstr ""
 
-#: tpl/pages/backups.php:535
+#: tpl/pages/backups.php:552
 msgid "Search using table name"
 msgstr ""
 
-#: tpl/pages/backups.php:545
+#: tpl/pages/backups.php:562
 msgid "RESET SELECTION"
 msgstr ""
 
-#: tpl/pages/backups.php:548
+#: tpl/pages/backups.php:565
 msgid "Showing result of"
 msgstr ""
 
-#: tpl/pages/backups.php:551
+#: tpl/pages/backups.php:568
 msgid "No result available for"
 msgstr ""
 
-#: tpl/pages/backups.php:609
+#: tpl/pages/backups.php:626
 #: tpl/pages/backups/log-row.php:99
 msgid "All"
 msgstr ""
 
-#: tpl/pages/backups.php:614
+#: tpl/pages/backups.php:631
 msgid "WordPress core tables"
 msgstr ""
 
-#: tpl/pages/backups.php:619
+#: tpl/pages/backups.php:636
 msgid "WordPress Non-core tables"
 msgstr ""
 
-#: tpl/pages/backups.php:624
+#: tpl/pages/backups.php:641
 msgid "Other tables"
 msgstr ""
 
-#: tpl/pages/backups.php:646
+#: tpl/pages/backups.php:663
 msgid "Storage Limit"
 msgstr ""
 
-#: tpl/pages/backups.php:648
+#: tpl/pages/backups.php:665
 msgid "Choose the number of backups you wish to keep for manual and scheduled backups each. When this number is reached, older backups will be removed as new ones are added."
 msgstr ""
 
-#: tpl/pages/backups.php:653
+#: tpl/pages/backups.php:670
 msgid "Set storage limit"
 msgstr ""
 
-#: tpl/pages/backups.php:657
+#: tpl/pages/backups.php:674
 msgid "Snapshot backups are incremental, allowing you to back up your site more frequently. Configure a storage limit, up to 30 manual backups and 30 scheduled backups (60 in total), and keep them until you reach our 50-days expiry policy for backups."
 msgstr ""
 
 #. translators: %s - WPMU DEV URL
-#: tpl/pages/backups.php:660
+#: tpl/pages/backups.php:677
+#, php-format
 msgid "Snapshot backups are <a href=\"%s\" target=\"_blank\">incremental</a>, allowing you to back up your site more frequently. Configure a storage limit, up to 30 manual backups and 30 scheduled backups (60 in total), and keep them until you reach our 50-days expiry policy for backups."
 msgstr ""
 
-#: tpl/pages/backups.php:688
+#: tpl/pages/backups.php:705
 msgid "Note: Set a number of backups between 1 and 30."
 msgstr ""
 
-#: tpl/pages/backups.php:697
+#: tpl/pages/backups.php:714
 msgid "Database Build Type"
 msgstr ""
 
-#: tpl/pages/backups.php:699
+#: tpl/pages/backups.php:716
 msgid "The database settings allow you to customize the database build process of your backups."
 msgstr ""
 
-#: tpl/pages/backups.php:704
+#: tpl/pages/backups.php:721
 msgid "SQL Script"
 msgstr ""
 
-#: tpl/pages/backups.php:706
+#: tpl/pages/backups.php:723
 msgid "Choose how you want to back up the database tables. We recommend using MySQLDump method whenever possible. However, if your host doesn't support this, or it is causing some issues in the backup build process, you can fall back to PHP Code to backup the database tables."
 msgstr ""
 
-#: tpl/pages/backups.php:716
+#: tpl/pages/backups.php:733
 msgid "MySQL Dump"
 msgstr ""
 
-#: tpl/pages/backups.php:723
+#: tpl/pages/backups.php:740
 msgid "PHP Code"
 msgstr ""
 
-#: tpl/pages/backups.php:737
+#: tpl/pages/backups.php:754
 msgid "We couldn't find MySQLDump at the default location. If it is installed, please verify that the <strong>exec</strong> and <strong>escapeshellcmd</strong> functions are enabled or contact your hosting support to help you with the installation."
 msgstr ""
 
 #. translators: %s - brand name
-#: tpl/pages/backups.php:754
+#: tpl/pages/backups.php:771
+#, php-format
 msgid "Choose which data center you want to use to store your %s backups."
 msgstr ""
 
-#: tpl/pages/backups.php:767
+#: tpl/pages/backups.php:784
 msgid "United States"
 msgstr ""
 
-#: tpl/pages/backups.php:770
+#: tpl/pages/backups.php:787
 msgid "Recommended for better performance"
 msgstr ""
 
-#: tpl/pages/backups.php:777
+#: tpl/pages/backups.php:794
 msgid "Europe"
 msgstr ""
 
-#: tpl/pages/backups.php:780
+#: tpl/pages/backups.php:797
 msgid "EU data protection directive compliant"
 msgstr ""
 
-#: tpl/pages/backups.php:789
+#: tpl/pages/backups.php:806
 msgid "If you switch to a new region, your existing backups will be deleted, and any new backups will be stored in the newly selected region."
 msgstr ""
 
 #. translators: %s - plugin name
-#: tpl/pages/backups.php:806
+#: tpl/pages/backups.php:823
+#, php-format
 msgid "Manually delete all backups of this site stored in %s storage."
 msgstr ""
 
-#: tpl/pages/backups.php:847
+#: tpl/pages/backups.php:864
 msgid "Get notified when manual or scheduled backups fail or complete."
 msgstr ""
 
-#: tpl/pages/backups.php:864
+#: tpl/pages/backups.php:881
 msgid "Email Notifications"
 msgstr ""
 
-#: tpl/pages/backups.php:866
+#: tpl/pages/backups.php:883
 msgid "Choose when you want to get notified and who should receive an email."
 msgstr ""
 
-#: tpl/pages/backups.php:879
+#: tpl/pages/backups.php:896
 msgid "Enable notifications"
 msgstr ""
 
-#: tpl/pages/backups.php:883
+#: tpl/pages/backups.php:900
 msgid "Send an email when backups fail or complete"
 msgstr ""
 
-#: tpl/pages/backups.php:887
+#: tpl/pages/backups.php:904
 msgid "Recipients"
 msgstr ""
 
-#: tpl/pages/backups.php:895
+#: tpl/pages/backups.php:912
 msgid "You've removed all recipients. If you save without a recipient, we'll automatically turn off the notification."
 msgstr ""
 
-#: tpl/pages/backups.php:923
+#: tpl/pages/backups.php:940
 msgid "Choose when you want to get a notification:"
 msgstr ""
 
-#: tpl/pages/backups.php:931
+#: tpl/pages/backups.php:948
 msgid "When a backup fails"
 msgstr ""
 
-#: tpl/pages/backups.php:940
+#: tpl/pages/backups.php:957
 msgid "When a backup completes"
 msgstr ""
 
@@ -5634,6 +5980,7 @@ msgstr ""
 
 #. translators: %s - Admin name
 #: tpl/pages/backups/log-tab-content.php:15
+#, php-format
 msgid "%s, you don't have any log history yet. Once you create your first backup, logs will be available here."
 msgstr ""
 
@@ -5656,6 +6003,7 @@ msgstr ""
 
 #. translators: %1$s - Destination, %2$s - Link for Destination page
 #: tpl/pages/backups/snapshot-details-row.php:30
+#, php-format
 msgid "The backup is stored on the %1$s Cloud and a full copy of the backup is exported to the connected and active <a href=\"%2$s\">destinations</a>."
 msgstr ""
 
@@ -5805,11 +6153,11 @@ msgid "Finalizing restoration"
 msgstr ""
 
 #: tpl/pages/backups/snapshot-details-row.php:351
-#: tpl/pages/dashboard.php:167
-#: tpl/pages/dashboard.php:245
-#: tpl/pages/dashboard.php:359
-#: tpl/pages/destinations.php:57
-#: tpl/pages/hosting_backups.php:132
+#: tpl/pages/dashboard.php:176
+#: tpl/pages/dashboard.php:254
+#: tpl/pages/dashboard.php:368
+#: tpl/pages/destinations.php:64
+#: tpl/pages/hosting_backups.php:141
 msgid "Destination"
 msgstr ""
 
@@ -5817,171 +6165,186 @@ msgstr ""
 msgid "Dashboard"
 msgstr ""
 
-#: tpl/pages/dashboard.php:71
+#: tpl/pages/dashboard.php:80
 msgid "Active destinations"
 msgstr ""
 
 #. translators: %s - plugin name
 #. translators: %s - plugin custom name
-#: tpl/pages/dashboard.php:87
-#: tpl/pages/destinations.php:78
+#: tpl/pages/dashboard.php:96
+#: tpl/pages/destinations.php:85
+#, php-format
 msgid "%s storage space"
 msgstr ""
 
-#: tpl/pages/dashboard.php:159
+#: tpl/pages/dashboard.php:168
 msgid "Here are your latest backups. Check backups page for the full list of available backups."
 msgstr ""
 
-#: tpl/pages/dashboard.php:177
-#: tpl/pages/dashboard.php:299
-#: tpl/pages/dashboard.php:369
+#: tpl/pages/dashboard.php:186
+#: tpl/pages/dashboard.php:308
+#: tpl/pages/dashboard.php:378
 #: tpl/pages/tutorials.php:21
 msgid "View all"
 msgstr ""
 
-#: tpl/pages/dashboard.php:197
+#: tpl/pages/dashboard.php:206
 msgid "Create full backups and send them to your connected destinations. Let's go!"
 msgstr ""
 
-#: tpl/pages/dashboard.php:223
+#: tpl/pages/dashboard.php:232
 #: tpl/pages/destinations.php:27
-#: tpl/pages/destinations.php:58
-#: tpl/pages/destinations.php:105
+#: tpl/pages/destinations.php:65
+#: tpl/pages/destinations.php:112
 msgid "Destinations"
 msgstr ""
 
-#: tpl/pages/dashboard.php:229
-#: tpl/pages/destinations.php:118
+#: tpl/pages/dashboard.php:238
+#: tpl/pages/destinations.php:125
 msgid "View and manage your available destinations. After each backup, a full backup copy will be sent to all enabled third-party destinations."
 msgstr ""
 
 #. translators: %s - plugin name
 #. translators: %s plugin custom name
-#: tpl/pages/dashboard.php:235
-#: tpl/pages/destinations.php:124
+#: tpl/pages/dashboard.php:244
+#: tpl/pages/destinations.php:131
+#, php-format
 msgid "View and manage your available destinations. After each backup, the %s API will send a full site backup to all enabled third-party destinations."
 msgstr ""
 
-#: tpl/pages/dashboard.php:292
-#: tpl/pages/destinations.php:209
+#: tpl/pages/dashboard.php:301
+#: tpl/pages/destinations.php:216
 msgid "Loading destinations..."
 msgstr ""
 
-#: tpl/pages/dashboard.php:305
+#: tpl/pages/dashboard.php:314
 msgid "Add Destination"
 msgstr ""
 
-#: tpl/pages/dashboard.php:322
+#: tpl/pages/dashboard.php:331
 msgid "Here are your latest hosting backups. Check the Hosting Backups page for the full list of available backups."
 msgstr ""
 
-#: tpl/pages/destinations.php:69
+#: tpl/pages/destinations.php:76
 msgid "Last backup destination"
 msgstr ""
 
-#: tpl/pages/destinations.php:110
+#: tpl/pages/destinations.php:117
 msgid "Add destination"
 msgstr ""
 
-#: tpl/pages/destinations.php:132
+#: tpl/pages/destinations.php:139
 msgid "Name"
 msgstr ""
 
-#: tpl/pages/destinations.php:134
-#: tpl/pages/destinations.php:184
-#: tpl/pages/destinations/row.php:230
+#: tpl/pages/destinations.php:141
+#: tpl/pages/destinations.php:191
+#: tpl/pages/destinations/row.php:328
 msgid "Schedule"
 msgstr ""
 
-#: tpl/pages/destinations.php:135
-#: tpl/pages/destinations.php:191
-#: tpl/pages/destinations/row.php:236
+#: tpl/pages/destinations.php:142
+#: tpl/pages/destinations.php:198
+#: tpl/pages/destinations/row.php:334
 msgid "Exported Backups"
 msgstr ""
 
-#: tpl/pages/destinations.php:218
+#: tpl/pages/destinations.php:225
 msgid "We were unable to list the destinations due to a connection problem. Give it another try below, or contact support if the problem persists."
 msgstr ""
 
 #. translators: %s - Link for support
-#: tpl/pages/destinations.php:222
+#: tpl/pages/destinations.php:229
+#, php-format
 msgid "We were unable to list the destinations due to a connection problem. Give it another try below, or <a href=\"%s\" target=\"_blank\">contact our support team</a> if the problem persists."
 msgstr ""
 
-#: tpl/pages/destinations/row.php:25
+#: tpl/pages/destinations/row.php:27
 msgid "S3/Amazon"
 msgstr ""
 
-#: tpl/pages/destinations/row.php:28
+#: tpl/pages/destinations/row.php:30
 msgid "S3/Wasabi"
 msgstr ""
 
-#: tpl/pages/destinations/row.php:31
+#: tpl/pages/destinations/row.php:33
 msgid "S3/DigitalOcean"
 msgstr ""
 
-#: tpl/pages/destinations/row.php:34
+#: tpl/pages/destinations/row.php:36
 msgid "S3/Backblaze"
 msgstr ""
 
-#: tpl/pages/destinations/row.php:37
+#: tpl/pages/destinations/row.php:39
 msgid "S3/Google Cloud"
 msgstr ""
 
-#: tpl/pages/destinations/row.php:40
+#: tpl/pages/destinations/row.php:42
 msgid "Google Drive"
 msgstr ""
 
-#: tpl/pages/destinations/row.php:46
+#: tpl/pages/destinations/row.php:48
 msgid "S3/Other"
 msgstr ""
 
-#: tpl/pages/destinations/row.php:74
+#: tpl/pages/destinations/row.php:80
 msgid "S3/"
 msgstr ""
 
-#: tpl/pages/destinations/row.php:195
-msgid "It seems Google Drive is not syncing with Snapshot. To make it work, we need to re-authenticate it from the Destination page."
+#: tpl/pages/destinations/row.php:91
+#: tpl/pages/destinations/row.php:98
+msgid "S3/Linode"
 msgstr ""
 
-#: tpl/pages/destinations/row.php:203
-msgid "It seems OneDrive has stopped syncing with Snapshot. To make it work again, please reauthenticate it on the Destinations page."
+#: tpl/pages/destinations/row.php:285
+msgid "It seems Google Drive is not syncing with Snapshot. To make it work again, please reauthenticate."
 msgstr ""
 
-#: tpl/pages/destinations/row.php:246
-#: tpl/pages/destinations/row.php:250
+#: tpl/pages/destinations/row.php:293
+msgid "It seems OneDrive has stopped syncing with Snapshot. To make it work again, please reauthenticate."
+msgstr ""
+
+#: tpl/pages/destinations/row.php:301
+msgid "It seems Dropbox has stopped syncing with Snapshot. To make it work again, please reauthenticate."
+msgstr ""
+
+#: tpl/pages/destinations/row.php:344
+#: tpl/pages/destinations/row.php:349
+#: tpl/pages/destinations/row.php:355
 msgid "Reconnect"
 msgstr ""
 
-#: tpl/pages/destinations/row.php:265
+#: tpl/pages/destinations/row.php:371
 msgid "Destination actions"
 msgstr ""
 
-#: tpl/pages/destinations/row.php:270
+#: tpl/pages/destinations/row.php:376
 msgid "Edit destination"
 msgstr ""
 
-#: tpl/pages/destinations/row.php:282
+#: tpl/pages/destinations/row.php:388
 msgid "View Directory"
 msgstr ""
 
-#: tpl/pages/hosting_backups.php:86
+#: tpl/pages/hosting_backups.php:95
 msgid "Hosting Backups (Automated)"
 msgstr ""
 
-#: tpl/pages/hosting_backups.php:93
+#: tpl/pages/hosting_backups.php:102
 msgid "Here are all of your available hosting backups."
 msgstr ""
 
-#: tpl/pages/hosting_backups.php:133
+#: tpl/pages/hosting_backups.php:142
 msgid "Time"
 msgstr ""
 
-#: tpl/pages/hosting_backups.php:148
+#: tpl/pages/hosting_backups.php:157
 msgid "No Hosting Backup"
 msgstr ""
 
-#: tpl/pages/hosting_backups.php:151
+#. translators: %1$s - user name, %2$s - schedule type
+#: tpl/pages/hosting_backups.php:163
+#, php-format
 msgid "Hey %1$s, your hosting backup is auto-scheduled to run %2$s, The automatic backup scheduling is managed by us, so you can rest assured."
 msgstr ""
 
@@ -6018,16 +6381,19 @@ msgstr ""
 
 #. translators: %s - plugin name
 #: tpl/pages/settings.php:91
+#, php-format
 msgid "%s API Key"
 msgstr ""
 
 #. translators: %s - plugin name
 #: tpl/pages/settings.php:97
+#, php-format
 msgid "This is your %s API Key."
 msgstr ""
 
 #. translators: %s - plugin name
 #: tpl/pages/settings.php:106
+#, php-format
 msgid "Your %s API Key"
 msgstr ""
 
@@ -6087,6 +6453,7 @@ msgstr ""
 
 #. translators: %1$s - File example #1, %2$s - File example #2
 #: tpl/pages/settings.php:278
+#, php-format
 msgid "This option will not restore the default  <a href=\"%1$s\" target=\"_blank\" >storage limit</a> nor will it delete all connected  <a href=\"%2$s\" target=\"_blank\" >destinations</a>. Please either make those changes manually or use the Reset settings option below before uninstalling the plugin."
 msgstr ""
 

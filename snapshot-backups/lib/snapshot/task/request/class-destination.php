@@ -65,7 +65,7 @@ class Destination extends Task {
 					'tpd_limit' => 'sanitize_text_field',
 				);
 
-				if ( 's3_other' === $type ) {
+				if ( 's3_other' === $type || 'linode' === $type ) {
 					$extra['tpd_endpoint'] = 'esc_url_raw';
 				}
 
@@ -76,10 +76,18 @@ class Destination extends Task {
 
 			}//end if
 		} elseif ( 'activate_destination' === $action ) {
-			$this->required_params = array(
+
+			$params = array(
 				'tpd_id'      => 'sanitize_text_field',
 				'aws_storage' => 'intval',
 			);
+
+			if ( 'linode' === $type ) {
+				$params['tpd_type'] = 'sanitize_text_field';
+				$params['ftp_host'] = 'sanitize_text_field';
+			}
+
+			$this->required_params = $params;
 		} elseif ( 'delete_all_destinations' === $action ) {
 			$this->required_params = array();
 		}//end if
@@ -138,7 +146,16 @@ class Destination extends Task {
 				);
 				break;
 			case 'activate_destination':
-				$response = $request_model->activate_destination( $args['tpd_id'], $args['aws_storage'] );
+				$data = [
+					'aws_storage' => $args['aws_storage'],
+				];
+
+				if ( isset( $args['tpd_type'] ) && 'linode' === $args['tpd_type'] ) {
+					$data['tpd_type'] = 'linode';
+					$data['ftp_host'] = 'linode';
+				}
+
+				$response = $request_model->activate_destination( $args['tpd_id'], $data );
 				break;
 			case 'delete_all_destinations':
 				$empty_for_404 = true;

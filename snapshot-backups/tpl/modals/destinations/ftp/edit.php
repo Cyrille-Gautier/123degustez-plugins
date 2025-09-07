@@ -84,7 +84,7 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 							</p>
 							<?php } else { ?>
 								<?php /* translators: %s - Link for support */ ?>
-							<p><?php echo wp_kses_post( sprintf( __( 'You\'re trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+							<p><?php echo wp_kses_post( sprintf( __( 'You\'re trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 							</p>
 							<?php } ?>
 						</div>
@@ -119,7 +119,7 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 							</p>
 							<?php } else { ?>
 								<?php /* translators: %s - Link for support */ ?>
-							<p><?php echo wp_kses_post( sprintf( __( 'The testing results have failed. We were unable to access the directory. Please double-check your Directory and if you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+							<p><?php echo wp_kses_post( sprintf( __( 'The testing results have failed. We were unable to access the directory. Please double-check your Directory and if you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 							</p>
 							<?php } ?>
 						</div>
@@ -146,14 +146,14 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 					<input type="hidden" name="tpd_action" value="update_destination">
 					<input type="hidden" name="tpd_id">
 					<input type="hidden" name="tpd_type">
-					<input type="hidden" name="tpd_accesskey">
-					<input type="hidden" name="tpd_secretkey">
+					<input type="hidden" name="ftp_username">
+					<input type="hidden" name="ftp_password">
 					<input type="hidden" name="ftp-host">
 					<input type="hidden" name="ftp-port">
 
 					<div class="sui-form-field">
 						<label for="edit-ftp-connection-name" id="label-edit-ftp-connection-name" class="sui-label">
-							<?php echo esc_html( __( 'Destination name', 'snapshot' ) ); ?><span>
+							<?php echo esc_html( __( 'Destination name', 'snapshot' ) ); ?> <span><?php echo esc_html( '*' ); ?></span>
 						</label>
 
 						<input placeholder="<?php esc_attr_e( 'Place Destination Name here', 'snapshot' ); ?>"

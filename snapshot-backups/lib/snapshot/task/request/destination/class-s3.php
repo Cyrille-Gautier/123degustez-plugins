@@ -56,6 +56,9 @@ class S3 extends Task\Request\Destination {
 				case 'backblaze':
 					$this->required_params['tpd_bucketname'] = 'sanitize_text_field';
 					break;
+				case 'linode':
+					$this->required_params['tpd_endpoint'] = 'esc_url_raw';
+					break;
 				case 's3_other':
 					$this->required_params['tpd_endpoint'] = 'esc_url_raw';
 					break;
@@ -124,7 +127,8 @@ class S3 extends Task\Request\Destination {
 			$data['tpd_bucketname'] = $args['tpd_bucketname'];
 		}
 
-		if ( 's3_other' === $args['tpd_type'] ) {
+		if ( 's3_other' === $args['tpd_type'] || 'linode' === $args['tpd_type'] ) {
+			$data['tpd_type']     = 's3_other';
 			$data['tpd_endpoint'] = $args['tpd_endpoint'];
 		}
 
@@ -151,8 +155,21 @@ class S3 extends Task\Request\Destination {
 			'tpd_type'      => $args['tpd_type'],
 		);
 
+		if ( isset( $args['obfuscated'] ) && 'yes' === $args['obfuscated'] ) {
+			$data['obfuscated'] = 'yes';
+		}
+
 		if ( isset( $args['tpd_endpoint'] ) && ! empty( $args['tpd_endpoint'] ) ) {
 			$data['tpd_endpoint'] = $args['tpd_endpoint'];
+		}
+
+		// Store the original type for later use.
+		if ( 'linode' === $args['tpd_type'] ) {
+			$data['tpd_type'] = 's3_other';
+
+			if ( 1 === $data['tpd_save'] ) {
+				$data['ftp_host'] = 'linode';
+			}
 		}
 
 		return $request_model->test_connection_final( $data );

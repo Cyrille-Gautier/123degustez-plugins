@@ -99,7 +99,7 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 							</p>
 							<?php } else { ?>
 								<?php /* translators: %s - Link for support */ ?>
-							<p><?php echo wp_kses_post( sprintf( __( 'You\'re trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+							<p><?php echo wp_kses_post( sprintf( __( 'You\'re trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 							</p>
 							<?php } ?>
 						</div>
@@ -116,7 +116,7 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 							</p>
 							<?php } else { ?>
 								<?php /* translators: %s - Link for support */ ?>
-							<p><?php echo wp_kses_post( sprintf( __( 'The testing results have failed. We were unable to authorize your account and access the bucket. Please check your access credentials and bucket/folder path again. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+							<p><?php echo wp_kses_post( sprintf( __( 'The testing results have failed. We were unable to authorize your account and access the bucket. Please check your access credentials and bucket/folder path again. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 							</p>
 							<?php } ?>
 						</div>
@@ -128,6 +128,8 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 					<input type="hidden" name="tpd_id">
 					<input type="hidden" name="tpd_region">
 					<input type="hidden" name="tpd_type">
+					<input type="hidden" name="tpd_accesskey">
+					<input type="hidden" name="tpd_secretkey">
 
 					<div class="sui-form-field">
 						<label for="edit-s3-connection-name" id="label-edit-s3-connection-name" class="sui-label">
@@ -168,34 +170,9 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 							style="display: none; text-align: right;" role="alert"></span>
 					</div>
 
-					<div class="sui-form-field">
-						<label for="edit-s3-connection-access-key-id" id="label-edit-s3-connection-access-key-id"
-							class="sui-label">
-							<?php echo esc_html( __( 'AWS Access Key ID', 'snapshot' ) ); ?><span
-								style="margin-left: 3px; "><?php echo esc_html( '*' ); ?></span>
-						</label>
+					<div class="snapshot-edit-destination-additional--fields"></div>
 
-						<input placeholder="<?php esc_attr_e( 'Place Access Key ID here', 'snapshot' ); ?>"
-							id="edit-s3-connection-access-key-id" class="sui-form-control" name="tpd_accesskey"
-							aria-labelledby="label-edit-s3-connection-access-key-id" />
-						<span id="error-edit-s3-connection-access-key-id" class="sui-error-message"
-							style="display: none; text-align: right;" role="alert"></span>
-
-					</div>
-
-					<div class="sui-form-field">
-						<label for="edit-s3-connection-secret-access-key"
-							id="label-edit-s3-connection-secret-access-key" class="sui-label">
-							<?php echo esc_html( __( 'AWS Secret Access Key', 'snapshot' ) ); ?><span
-								style=" margin-left: 3px; "><?php echo esc_html( '*' ); ?></span>
-						</label>
-
-						<input placeholder="<?php esc_attr_e( 'Place Secret Access Key here', 'snapshot' ); ?>"
-							id="edit-s3-connection-secret-access-key" class="sui-form-control" name="tpd_secretkey"
-							aria-labelledby="label-edit-s3-connection-secret-access-key" />
-						<span id="error-edit-s3-connection-secret-access-key" class="sui-error-message"
-							style="display: none; text-align: right;" role="alert"></span>
-					</div>
+					<div class="sui-form-field"></div>
 
 					<div class="sui-form-field">
 						<label for="edit-s3-connection-limit" id="label-edit-s3-connection-limit" class="sui-label">
@@ -213,9 +190,6 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 						<span id="description-edit-s3-connection-limit"
 							class="sui-description"><?php echo esc_html_e( 'Set the number of exported backups you want to store in the third-party destination before removing the older ones. It must be greater than 0.', 'snapshot' ); ?></span>
 					</div>
-
-					<div class="snapshot-edit-destination-additional--fields"></div>
-
 				</form>
 
 			</div>
@@ -259,11 +233,24 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 </div>
 
 <script type="text/html" id="snapshot-edit-destination--s3_other">
-	<div class="sui-form-field">
+	<div class="sui-form-field form-field--region">
+		<label for="edit-s3-connection-region"
+			id="label-edit-s3-connection-region" class="sui-label">
+			<?php echo esc_html( __( 'Region', 'snapshot' ) ); ?><span
+				style=" margin-left: 3px; "><?php echo esc_html( '*' ); ?></span>
+		</label>
+
+		<input placeholder="<?php esc_attr_e( 'Place Region here', 'snapshot' ); ?>"
+			id="edit-s3-connection-region" class="sui-form-control" name="tpd_region"
+			aria-labelledby="label-edit-s3-connection-region" />
+		<span id="error-edit-s3-connection-region" class="sui-error-message"
+			style="display: none; text-align: right;" role="alert"></span>
+	</div>
+	<div class="sui-form-field form-field--endpoint">
 		<label for="edit-s3-connection-endpoint"
 			id="label-edit-s3-connection-endpoint" class="sui-label">
-			<?php echo esc_html( __( 'Endpoint', 'snapshot' ) ); ?><span
-				style=" margin-left: 3px; "><?php echo esc_html( '*' ); ?></span>
+			<span class="s3-edit-compatible-connection-endpoint-label"><?php echo esc_html( __( 'Endpoint', 'snapshot' ) ); ?></span>
+			<span style=" margin-left: 3px; "><?php echo esc_html( '*' ); ?></span>
 		</label>
 
 		<input placeholder="<?php esc_attr_e( 'Place Endpoint here', 'snapshot' ); ?>"

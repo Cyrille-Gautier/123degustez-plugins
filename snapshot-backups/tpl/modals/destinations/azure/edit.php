@@ -99,7 +99,7 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 							</p>
 							<?php } else { ?>
 								<?php /* translators: %s - Link for support */ ?>
-							<p><?php echo wp_kses_post( sprintf( __( 'You\'re trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+							<p><?php echo wp_kses_post( sprintf( __( 'You\'re trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 							</p>
 							<?php } ?>
 						</div>
@@ -116,7 +116,7 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 							</p>
 							<?php } else { ?>
 								<?php /* translators: %s - Link for support */ ?>
-							<p><?php echo wp_kses_post( sprintf( __( 'The testing results have failed. We were unable to authorize your account and access the container. Please check your access credentials and container/folder path again. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+							<p><?php echo wp_kses_post( sprintf( __( 'The testing results have failed. We were unable to authorize your account and access the container. Please check your access credentials and container/folder path again. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 							</p>
 							<?php } ?>
 						</div>
@@ -128,6 +128,8 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 					<input type="hidden" name="tpd_id">
 					<input type="hidden" name="tpd_region">
 					<input type="hidden" name="tpd_type">
+					<input type="hidden" name="tpd_accesskey">
+					<input type="hidden" name="tpd_accountname">
 
 					<div class="sui-form-field">
 						<label for="edit-azure-connection-name" id="label-edit-azure-connection-name" class="sui-label">
@@ -180,6 +182,8 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 						<span id="error-edit-azure-connection-path" class="sui-error-message" style="display: none; text-align:right;" role="alert"></span>
 					</div>
 
+
+					<?php /**
 					<div class="sui-form-field">
 						<label for="edit-azure-connection-secretkey"
 							id="label-edit-azure-connection-secretkey" class="sui-label">
@@ -211,6 +215,8 @@ wp_nonce_field( 'snapshot_update_destination', '_wpnonce-snapshot-update-destina
 						<span id="error-edit-azure-connection-accesskey" class="sui-error-message"
 							style="display: none; text-align: right;" role="alert"></span>
 					</div>
+
+					<?php */ ?>
 
 					<div class="sui-form-field">
 						<label for="edit-azure-connection-limit" id="label-edit-azure-connection-limit" class="sui-label">

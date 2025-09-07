@@ -99,7 +99,7 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 												sprintf(
 													/* translators: %s - Link for support */
 													__( 'The destination already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ),
-													'https://wpmudev.com/hub2/support#get-support'
+													'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support'
 												)
 											);
 											?>
@@ -125,7 +125,7 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 							<form method="post" id="snapshot-test-azure-existing-container" data-type="container_exists">
 								<input type="hidden" name="tpd_action" value="test_connection_final">
 								<input type="hidden" name="tpd_save" value="0">
-								<input type="hidden" name="tpd_secretkey" />
+								<input type="hidden" name="tpd_accountname" />
 								<input type="hidden" name="tpd_accesskey" />
 
 								<div class="sui-form-field">
@@ -238,7 +238,7 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 												sprintf(
 													/* translators: %s - Link for support */
 													__( 'The destination already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ),
-													'https://wpmudev.com/hub2/support#get-support'
+													'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support'
 												)
 											);
 											?>
@@ -252,7 +252,7 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 							<form method="post" id="snapshot-test-azure-new-container" data-type="create_container">
 								<input type="hidden" name="tpd_action" value="test_connection_final">
 								<input type="hidden" name="tpd_save" value="0">
-								<input type="hidden" class="azure-connection-secretkey" name="tpd_secretkey" />
+								<input type="hidden" class="azure-connection-secretkey" name="tpd_accountname" />
 								<input type="hidden" class="azure-connection-accesskey" name="tpd_accesskey" />
 
 

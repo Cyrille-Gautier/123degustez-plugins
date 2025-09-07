@@ -49,6 +49,10 @@ class Azure extends Controller\Ajax\Destination {
 		$data['tpd_type'] = 'azure';
 		$data['tpd_path'] = empty( $data['tpd_path'] ) ? $data['tpd_bucketname'] : $data['tpd_bucketname'] . '/' . trim( $data['tpd_path'], '/\\' );
 
+		if ( null === $data['tpd_secretkey'] ) {
+			$data['tpd_secretkey'] = $_POST['tpd_accountname'] ?? null; // phpcs:ignore
+		}
+
 		$task = new Task\Request\Destination\Azure( $data['tpd_action'] );
 
 		$validated_data = $task->validate_request_data( $data );

@@ -7,10 +7,12 @@
 
 namespace WPMUDEV\Snapshot4\Controller\Service;
 
+use PHPMailer\PHPMailer\Exception;
 use WPMUDEV\Snapshot4\Controller;
 use WPMUDEV\Snapshot4\Task;
 use WPMUDEV\Snapshot4\Model;
 use WPMUDEV\Snapshot4\Helper;
+use WPMUDEV\Snapshot4\Helper\Exports;
 use WPMUDEV\Snapshot4\Helper\Log;
 use WPMUDEV\Snapshot4\Helper\Notifications;
 use WPMUDEV\Snapshot4\Helper\Settings;
@@ -120,8 +122,10 @@ class Backup extends Controller\Service {
 		if ( true === $is_successful_backup ) {
 			delete_transient( 'snapshot_current_stats' );
 			Log::info( __( 'The backup has been completed.', 'snapshot' ) );
-			$this->maybe_find_any_failed_exports( $data );
+			// $this->maybe_find_any_failed_exports( $data );
+			$this->maybe_find_failed_exports( $data );
 			$this->send_email_success_notifications( $data['bu_frequency'], $data['snapshot_id'] );
+			$this->find_any_failed_exports( $data );
 		} else {
 			$time = time();
 			/* translators: %s - Backups status from the API */
@@ -167,6 +171,13 @@ class Backup extends Controller\Service {
 		Log::info( __( 'The backup has been cancelled.', 'snapshot' ) );
 
 		$this->send_response_success( true, $request );
+	}
+
+	private function find_any_failed_exports( $snapshot ) {
+		$exports = new Exports( $snapshot );
+		if ( $exports->has_failed_export() ) {
+			$this->send_failed_exports_notification( $exports );
+		}
 	}
 
 	/**
@@ -219,7 +230,83 @@ class Backup extends Controller\Service {
 	 *
 	 * @param array $data The backup data to check for failed exports.
 	 */
-	protected function maybe_find_any_failed_exports( $data ) {
+	protected function store_failed_exports( $data ) {
+		$exports_list = isset( $data['tpd_exp_done'] ) && is_string( $data['tpd_exp_done'] ) && ! empty( $data['tpd_exp_done'] )
+			? str_replace( "'", '"', $data['tpd_exp_done'] )
+			: $data['tpd_exp_done'] ?? '';
+
+		if ( is_null( $exports_list ) ) {
+			return;
+		}
+
+		if ( is_string( $exports_list ) ) {
+			$exports_list = ( '' !== $exports_list ) ? json_decode( $exports_list, true ) : array();
+		} elseif ( is_object( $exports_list ) ) {
+			$exports_list = (array) $exports_list;
+		}
+
+		$failed_tpds  = get_site_option( 'snapshot_failed_third_party_destination_exports', array() );
+		$google_drive = isset( $failed_tpds['google_drive'] ) ? $failed_tpds['google_drive'] : array();
+		$onedrive     = isset( $failed_tpds['onedrive'] ) ? $failed_tpds['onedrive'] : array();
+
+		if ( isset( $exports_list['tpd_gdrive'] ) ) {
+			foreach ( $exports_list['tpd_gdrive'] as $tpd_value => $export_status ) {
+				if ( 'export_failed' === $export_status || 'export_failed_due_to_missing_folder' === $export_status ) {
+					// Currently handling export failed scenario for Google Drive only.
+					if ( ! in_array( $tpd_value, $google_drive, true ) ) {
+						$google_drive[] = $tpd_value;
+					}
+				}
+
+				if ( 'export_success' === $export_status && in_array( $tpd_value, $google_drive, true ) ) {
+					// Edge case but if the previous export failed and then succeeded on subsequent backups,
+					// we should remove it from the failed list.
+					$google_drive = array_diff( $google_drive, array( $tpd_value ) );
+				}
+
+				$failed_tpds['google_drive'] = $google_drive;
+			}
+		}
+
+		if ( isset( $exports_list['tpd_onedrive'] ) ) {
+			foreach ( $exports_list['tpd_onedrive'] as $tpd_value => $export_status ) {
+				if ( 'export_failed' === $export_status ) {
+					// Currently handling export failed scenario for Google Drive only.
+					if ( ! in_array( $tpd_value, $onedrive, true ) ) {
+						$onedrive[] = $tpd_value;
+					}
+				}
+
+				if ( 'export_success' === $export_status && in_array( $tpd_value, $onedrive, true ) ) {
+					// Edge case but if the previous export failed and then succeeded on subsequent backups,
+					// we should remove it from the failed list.
+					$onedrive = array_diff( $onedrive, array( $tpd_value ) );
+				}
+
+				$failed_tpds['onedrive'] = $onedrive;
+			}
+		}
+
+		if ( ! empty( $failed_tpds ) ) {
+			// Only update if there are any failed exports to the connected third party destinations.
+			update_site_option( 'snapshot_failed_third_party_destination_exports', $failed_tpds );
+		}
+	}
+
+	protected function maybe_find_failed_exports( $data ) {
+		$exports = new Exports( $data );
+		if ( $exports->has_export() ) {
+			$all_exports = $exports->get_exports();
+		}
+	}
+
+	/**
+	 * Checks for any failed third party destination exports in the provided data.
+	 * Updates the snapshot_failed_third_party_destination_exports option with any failed exports.
+	 *
+	 * @param array $data The backup data to check for failed exports.
+	 */
+	protected function maybe_find_any_failed_exports( $exports_list ) {
 		$exports_list = isset( $data['tpd_exp_done'] ) && is_string( $data['tpd_exp_done'] ) && ! empty( $data['tpd_exp_done'] )
 			? str_replace( "'", '"', $data['tpd_exp_done'] )
 			: $data['tpd_exp_done'] ?? '';
@@ -303,6 +390,39 @@ class Backup extends Controller\Service {
 				'backup_id'  => $backup_id,
 			)
 		);
+	}
+
+	/**
+	 * Send email when a backup completes but export fails.
+	 *
+	 * @param Exports $export
+	 * @return void
+	 */
+	protected function send_failed_exports_notification( Exports $export ): void {
+		$failed_exports = $export->get_failed_exports();
+		$backup_id      = $export->get_snapshot_id();
+		$backup_date    = $export->get_snapshot_date();
+
+		$recipients = Settings::get_email_settings()['email_settings']['on_fail_recipients'];
+		$task       = new Task\Backup\Export\Fail();
+
+		foreach ( $failed_exports as $key => $failed_export ) {
+			$first_key   = array_key_first( $failed_export );
+			$destination = $export->extract_destination_name( $first_key );
+			$reason      = sprintf( __( 'The backup export has failed: %1$s: %2$s', 'snapshot' ), $destination, $failed_export[ $first_key ] );
+
+			$task->apply(
+				array(
+					'recipients'       => $recipients,
+					'service_error'    => $reason,
+					'timestamp'        => time(),
+					'backup_type'      => 'scheduled',
+					'backup_id'        => $backup_id,
+					'backup_date'      => $backup_date,
+					'destination_name' => $destination,
+				)
+			);
+		}
 	}
 
 	/**

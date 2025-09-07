@@ -153,14 +153,18 @@ class Download extends Model {
 			curl_setopt( $ch, CURLOPT_URL, $download_link );
 			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 			curl_setopt( $ch, CURLOPT_TIMEOUT, 120 );
-			curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
-				"Range: bytes=$start-$end",
-				"Connection: keep-alive",
-			) );
+			curl_setopt(
+				$ch,
+				CURLOPT_HTTPHEADER,
+				array(
+					"Range: bytes=$start-$end",
+					'Connection: keep-alive',
+				)
+			);
 			curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
 			curl_setopt( $ch, CURLOPT_FILE, fopen( $local_file . '.part' . $data['index'], 'wb' ) );
 
-			$response = curl_exec( $ch );
+			$response  = curl_exec( $ch );
 			$http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
 
 			curl_close( $ch );
@@ -193,13 +197,13 @@ class Download extends Model {
 			if ( $attempts < $this->max_retries ) {
 				sleep( $this->retry_delay );
 			}
-		}
+		}//end while
 
 		if ( $http_code != 206 && $http_code != 200 ) {
 			return array(
-				'response' => new WP_Error( 'curl_error', __( 'cURL download failed', 'snapshot' ) ),
-				'start'    => $start,
-				'end'      => $end,
+				'response'     => new WP_Error( 'curl_error', __( 'cURL download failed', 'snapshot' ) ),
+				'start'        => $start,
+				'end'          => $end,
 				'is_last_part' => false,
 			);
 		}
@@ -254,7 +258,7 @@ class Download extends Model {
 			if ( $attempts < $this->max_retries ) {
 				sleep( $this->retry_delay );
 			}
-		}
+		}//end while
 
 		return $response;
 	}

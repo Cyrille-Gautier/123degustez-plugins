@@ -146,16 +146,19 @@ class Datetime {
 	}
 
 	/**
-	 * Check if the given datetime is older than Feb 15, 2025
+	 * Check if the given datetime is older than the comparision date.
+	 *
 	 * @param string $datetime
+	 * @param string $comparision_date Date to be compared. Generally this is the release date when we change something.
 	 *
 	 * @since 4.32.0
 	 *
 	 * @return bool
 	 */
-	public static function is_older_than( string $datetime ) {
-		$created_at     = new \DateTime( $datetime );
-		$release        = new \DateTime( '2025-02-15 00:00:00' );
+	public static function is_older_than( string $datetime, string $comparision_date = '' ) {
+		$created_at = new \DateTime( $datetime );
+		$date       = ! empty( $comparision_date ) ? $comparision_date : '2025-02-15 00:00:00';
+		$release    = new \DateTime( $date );
 
 		return $created_at < $release;
 	}

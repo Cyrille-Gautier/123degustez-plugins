@@ -53,6 +53,15 @@ class S3 extends Controller\Ajax\Destination {
 			$data['tpd_bucket'] = isset( $_POST['tpd_bucket'] ) ? $_POST['tpd_bucket'] : null; // phpcs:ignore
 		}
 
+		if ( 'linode' === $data['tpd_type'] ) {
+			$endpoint = isset( $_POST['tpd_endpoint'] ) ? $_POST['tpd_endpoint'] : null; // phpcs:ignore
+			if ( strpos( $endpoint, 'https://' ) !== 0 ) {
+				$endpoint = 'https://' . $endpoint;
+			}
+			$data['tpd_endpoint'] = $endpoint;
+			$data['tpd_region']   = 'test';
+		}
+
 		if ( 's3_other' === $data['tpd_type'] ) {
 			$data['tpd_endpoint'] = isset( $_POST['tpd_endpoint'] ) ? $_POST['tpd_endpoint'] : null; // phpcs:ignore
 		}
@@ -60,8 +69,14 @@ class S3 extends Controller\Ajax\Destination {
 		$task = new Task\Request\Destination\S3( $data['tpd_action'], $data['tpd_type'] );
 
 		$validated_data = $task->validate_request_data( $data );
+
 		if ( is_wp_error( $validated_data ) ) {
 			wp_send_json_error( $validated_data );
+		}
+
+		// Manually assigning some data.
+		if ( isset( $_POST['obfuscated'] ) && 'yes' === $_POST['obfuscated'] ) {
+			$validated_data['obfuscated'] = 'yes';
 		}
 
 		$args                  = $validated_data;

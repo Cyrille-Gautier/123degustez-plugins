@@ -143,8 +143,8 @@ class Tables extends Model {
 
 		$table_rows = self::get_rows_count( $table );
 		$table_size = self::get_table_size( $table );
-		$asr        = $table_rows > 0 ? $table_size / $table_rows : 1;
-		$chunk      = (int) ( $size_limit / $asr );
+		$asr        = ($table_rows > 0 && $table_size > 0) ? $table_size / $table_rows : 1;
+		$chunk      = $asr == 0 ? $size_limit : (int) ( $size_limit / $asr );
 
 		return $chunk;
 	}

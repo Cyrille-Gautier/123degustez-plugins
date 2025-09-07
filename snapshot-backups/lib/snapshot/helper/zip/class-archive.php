@@ -97,11 +97,11 @@ class Archive extends Abstraction {
 			return false;
 		}
 
-		$entries       = $this->_zip->count();
-		$chunk_count   = apply_filters( 'snapshot_restore_extraction_chunk', 1000 );
-		$lock_content  = Lock::read( $backup_id );
-		$start_index   = empty( $lock_content['extracted_index'] ) ? 0 : $lock_content['extracted_index'];
-		$end_index     = $start_index + $chunk_count;
+		$entries      = $this->_zip->count();
+		$chunk_count  = apply_filters( 'snapshot_restore_extraction_chunk', 1000 );
+		$lock_content = Lock::read( $backup_id );
+		$start_index  = empty( $lock_content['extracted_index'] ) ? 0 : $lock_content['extracted_index'];
+		$end_index    = $start_index + $chunk_count;
 
 		if ( $start_index > $entries ) {
 			$start_index = $entries;

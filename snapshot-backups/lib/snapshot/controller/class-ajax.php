@@ -53,6 +53,7 @@ class Ajax extends Controller {
 		add_action( 'wp_ajax_snapshot-whats_new_seen', array( $this, 'json_whats_new_seen' ) );
 		add_action( 'wp_ajax_snapshot-tutorials_slider_seen', array( $this, 'json_tutorials_slider_seen' ) );
 		add_action( 'wp_ajax_snapshot-dismiss_export_notice', array( $this, 'dismiss_export_notice' ) );
+		add_action( 'wp_ajax_snapshot-decode_credentials', array( $this, 'json_decode_credentials' ) );
 
 		/**
 		 * Instantiate the explorer class, that is going to handle the AJAX request.
@@ -852,5 +853,19 @@ class Ajax extends Controller {
 		$this->do_request_sanity_check( 'snapshot-dismiss-exported-backup-notification', self::TYPE_GET );
 		delete_site_transient( 'snapshot_download_link_notification' );
 		wp_send_json_success();
+	}
+
+	public function json_decode_credentials() {
+		$this->do_request_sanity_check( 'snapshot-decode-credentials', self::TYPE_POST );
+
+		if ( isset( $_POST['accesskey'] ) && isset( $_POST['secretkey'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$accesskey = snapshot_decrypt_data( $_POST['accesskey'] ); // phpcs:ignore
+			$secretkey = snapshot_decrypt_data( $_POST['secretkey'] ); // phpcs:ignore
+
+			wp_send_json_success( array( 'accesskey' => $accesskey, 'secretkey' => $secretkey ) );
+		}
+
+		wp_send_json_error();
 	}
 }

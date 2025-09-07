@@ -41,8 +41,8 @@ class Ftp extends Controller\Ajax\Destination {
 
 		$data = array(
 			'tpd_type'            => isset( $_POST['tpd_type'] ) ? $_POST['tpd_type'] : null, // phpcs:ignore
-			'tpd_accesskey'       => isset( $_POST['tpd_accesskey'] ) ? $_POST['tpd_accesskey'] : null,	//phpcs:ignore
-			'tpd_secretkey'       => isset( $_POST['tpd_secretkey'] ) ? $_POST['tpd_secretkey'] : null, // phpcs:ignore
+			'tpd_accesskey'       => isset( $_POST['ftp_username'] ) ? $_POST['ftp_username'] : null,	//phpcs:ignore
+			'tpd_secretkey'       => isset( $_POST['ftp_password'] ) ? $_POST['ftp_password'] : null, // phpcs:ignore
 			'tpd_action'          => isset( $_POST['tpd_action'] ) ? $_POST['tpd_action'] : null, // phpcs:ignore
 			'tpd_path'            => isset( $_POST['tpd_path'] ) ? $_POST['tpd_path'] : null, // phpcs:ignore
 			'tpd_name'            => isset( $_POST['tpd_name'] ) ? $_POST['tpd_name'] : null, // phpcs:ignore

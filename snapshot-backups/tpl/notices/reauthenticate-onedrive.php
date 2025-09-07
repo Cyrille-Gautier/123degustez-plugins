@@ -7,7 +7,7 @@
  */
 
 $onedrive_lists = get_site_option( 'snapshot_onedrive_destination_suspended', array() );
-$notice_status = get_site_option( 'snapshot_reconnect_onedrive_notice_status' );
+$notice_status  = get_site_option( 'snapshot_reconnect_onedrive_notice_status' );
 
 if ( empty( $onedrive_lists ) ) {
 	return;
@@ -29,7 +29,7 @@ wp_enqueue_style( 'snapshot-onedrive-notice' );
 global $pagenow;
 $class = 'snapshot-notice--box snapshot-connect-onedrive--notice';
 if ( 'index.php' === $pagenow ) {
-	$class .=  ' snapshot-admin--dashboard notice';
+	$class .= ' snapshot-admin--dashboard notice';
 }
 ?>
 

@@ -54,7 +54,7 @@ use WPMUDEV\Snapshot4\Model\Env;
 						</p>
 						<?php } else { ?>
 							<?php /* translators: %s - Link for support */ ?>
-						<p><?php echo wp_kses_post( sprintf( __( 'You\'re trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' ) ); ?>
+						<p><?php echo wp_kses_post( sprintf( __( 'You\'re trying to save a destination that already exists. If you want to create a new destination with the same credentials, please choose a different folder or create a new one. If you run into further issues, you can contact our <a href="%s" target="_blank">Support team</a> for help.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' ) ); ?>
 						</p>
 						<?php } ?>
 					</div>
@@ -127,7 +127,7 @@ use WPMUDEV\Snapshot4\Model\Env;
 						<div class="sui-col">
 							<div class="sui-form-field">
 								<label class="sui-label" for="ftp-host" id="destination-ftp-host">
-									<?php esc_html_e( 'Host', 'snapshot' ); ?><span><?php echo esc_html( '*' ); ?>
+									<?php esc_html_e( 'Host', 'snapshot' ); ?><span><?php echo esc_html( '*' ); ?></span>
 								</label>
 								<input class="sui-form-control" name="ftp-host" id="ftp-host" value=""
 									aria-describedby="destination-ftp-host" aria-labelledby="error-destination-ftp-host"
@@ -140,7 +140,7 @@ use WPMUDEV\Snapshot4\Model\Env;
 						<div class="sui-col">
 							<div class="sui-form-field">
 								<label class="sui-label" for="ftp-port" id="destination-ftp-port">
-									<?php esc_html_e( 'Port', 'snapshot' ); ?><span><?php echo esc_html( '*' ); ?>
+									<?php esc_html_e( 'Port', 'snapshot' ); ?><span><?php echo esc_html( '*' ); ?></span>
 								</label>
 								<input class="sui-form-control" name="ftp-port" id="ftp-port" value="21"
 									aria-describedby="destination-ftp-port" aria-labelledby="error-destination-ftp-port"
@@ -153,9 +153,9 @@ use WPMUDEV\Snapshot4\Model\Env;
 
 					<div class="sui-form-field">
 						<label class="sui-label" for="ftp-user" id="destination-ftp-user">
-							<?php esc_html_e( 'User', 'snapshot' ); ?><span><?php echo esc_html( '*' ); ?>
+							<?php esc_html_e( 'User', 'snapshot' ); ?><span><?php echo esc_html( '*' ); ?></span>
 						</label>
-						<input class="sui-form-control" name="tpd_accesskey" id="ftp-user" value=""
+						<input class="sui-form-control" name="ftp_username" id="ftp-user" value=""
 							aria-describedby="destination-ftp-user" aria-labelledby="error-destination-ftp-user"
 							placeholder="<?php esc_attr_e( 'FTP username', 'snapshot' ); ?>">
 						<span id="error-destination-ftp-user" class="sui-error-message" style="display: none;"
@@ -164,10 +164,10 @@ use WPMUDEV\Snapshot4\Model\Env;
 
 					<div class="sui-form-field">
 						<label class="sui-label" for="ftp-password" id="destination-ftp-password">
-							<?php esc_html_e( 'Password', 'snapshot' ); ?><span><?php echo esc_html( '*' ); ?>
+							<?php esc_html_e( 'Password', 'snapshot' ); ?><span><?php echo esc_html( '*' ); ?></span>
 						</label>
 						<div class="sui-with-button sui-with-button-icon">
-							<input type="password" class="sui-form-control" name="tpd_secretkey" id="ftp-password"
+							<input type="password" class="sui-form-control" name="ftp_password" id="ftp-password"
 								value="" aria-describedby="destination-ftp-password"
 								aria-labelledby="error-destination-ftp-password"
 								placeholder="<?php esc_attr_e( 'Password', 'snapshot' ); ?>">
@@ -185,7 +185,7 @@ use WPMUDEV\Snapshot4\Model\Env;
 
 					<div class="sui-form-field">
 						<label class="sui-label" for="ftp-directory" id="destination-ftp-directory">
-							<?php esc_html_e( 'Directory Path', 'snapshot' ); ?><span><?php echo esc_html( '*' ); ?>
+							<?php esc_html_e( 'Directory Path', 'snapshot' ); ?><span><?php echo esc_html( '*' ); ?></span>
 						</label>
 						<input type="text" class="sui-form-control" name="tpd_path" id="ftp-directory" value=""
 							placeholder="/home/user/public_html" aria-describedby="destination-ftp-directory"

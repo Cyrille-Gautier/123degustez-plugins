@@ -21,6 +21,7 @@ class Files extends Model {
 
 	/**
 	 * Retry delay.
+	 *
 	 * @var int
 	 */
 	protected $retry_delay = 2;
@@ -58,13 +59,13 @@ class Files extends Model {
 			wp_mkdir_p( $destination );
 		}
 
-		$backup_id    = $this->get( 'backup_id' );
+		$backup_id = $this->get( 'backup_id' );
 
 		$lock_content = Lock::read( $backup_id );
 		$attempts     = ! isset( $lock_content['extract_retries'] ) ? 1 : absint( $lock_content['extract_retries'] );
 
-		$zip_loc      = path_join( Lock::get_lock_dir(), $backup_id . '/' . $backup_id . '.zip' );
-		$zip          = Zip::get( $zip_loc );
+		$zip_loc = path_join( Lock::get_lock_dir(), $backup_id . '/' . $backup_id . '.zip' );
+		$zip     = Zip::get( $zip_loc );
 
 		if ( $chunk_enabled ) {
 			$extract_status = $zip->extract_in_chunks( $destination, $backup_id );
@@ -92,7 +93,7 @@ class Files extends Model {
 				$attempts,
 			)
 		);
-		$attempts++;
+		++$attempts;
 		$lock_content['extract_retries'] = $attempts;
 		Lock::write( $lock_content, $backup_id );
 		sleep( $this->retry_delay );
@@ -103,7 +104,6 @@ class Files extends Model {
 				__( 'Couldn\'t extract the downloaded backup zip in order to restore.', 'snapshot' ),
 			);
 		}
-
 	}
 
 	/**

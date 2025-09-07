@@ -98,7 +98,7 @@ class Files extends Task {
 				continue;
 			}
 
-			if ( ! rename( $item, $dest_file ) ) { //phpcs:ignore
+			if ( ! @rename( $item, $dest_file ) ) { //phpcs:ignore
 				$error_code = 'failed_file_move';
 				/* translators: %1s - temp file path, %2s - restored file path */
 				$error_message = sprintf( __( 'Couldn\'t move the temp %1$1s file to its restored path: %2$2s.', 'snapshot' ), $item, $dest_file );

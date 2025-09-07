@@ -160,9 +160,11 @@ class Admin extends Controller {
 			add_action( "load-{$tutorials}", array( $this, 'add_tutorials_dependencies' ) );
 		}
 
-		add_action( 'load-index.php',
-			function(){
+		add_action(
+			'load-index.php',
+			function () {
 				add_action( 'admin_notices', array( $this, 'snapshot_display_onedrive_notice' ) );
+				add_action( 'admin_notices', array( $this, 'snapshot_display_dropbox_notice' ) );
 			}
 		);
 
@@ -171,11 +173,25 @@ class Admin extends Controller {
 		do_action( 'snapshot_after_admin_menu_rendered' );
 	}
 
-	public function snapshot_display_onedrive_notice() {
-		$template   = new Helper\Template();
+	/**
+	 * Display the OneDrive re-authentication notice.
+	 *
+	 * @return void
+	 */
+	public function snapshot_display_onedrive_notice(): void {
+		$template = new Helper\Template();
 		$template->render( 'notices/reauthenticate-onedrive' );
 	}
 
+	/**
+	 * Display the Dropbox re-authentication notice.
+	 *
+	 * @return void
+	 */
+	public function snapshot_display_dropbox_notice(): void {
+		$template = new Helper\Template();
+		$template->render( 'notices/reauthenticate-dropbox' );
+	}
 
 	public function snapshot_enqueue_styles_scripts( $hook ) {
 		$assets = new Helper\Assets();
@@ -787,7 +803,7 @@ class Admin extends Controller {
 		$this->localized_messages['backup_export_error'] = $hide_doc_link
 			? __( 'We couldn\'t send the backup export to your email due to a connection problem. Please try downloading the backup again, or contact support if the issue persists.', 'snapshot' )
 			/* translators: %s - HUB link */
-			: sprintf( __( 'We couldn\'t send the backup export to your email due to a connection problem. Please try downloading the backup again, or <a href="%s" target="_blank">contact our support team</a> if the issue persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' );
+			: sprintf( __( 'We couldn\'t send the backup export to your email due to a connection problem. Please try downloading the backup again, or <a href="%s" target="_blank">contact our support team</a> if the issue persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' );
 
 		$this->localized_messages['manual_backup_success'] = __( 'Your backup is in progress. First time backups can take some time to complete, though subsequent backups will be much faster.', 'snapshot' );
 		$this->localized_messages['backup_is_in_progress'] = __( 'Your backup is in progress. The duration of the backup depends on your website size. Small sites won\'t take longer than a few minutes, but larger sites can take a couple of hours.', 'snapshot' );
@@ -824,11 +840,11 @@ class Admin extends Controller {
 			/* translators: %s - Stage of the restore */
 			? __( 'The backup failed to restore while %s. <a href="#" class="snapshot-view-log">Check the logs</a> for more information and then try restoring the backup again. Contact support if the issue persists.', 'snapshot' )
 			/* translators: %s - Stage of the restore */
-			: __( 'The backup failed to restore while %s. <a href="#" class="snapshot-view-log">Check the logs</a> for more information and then try restoring the backup again. Alternatively, you can try <a href="#" class="snapshot-ftp-restoration-hub">FTP restoration</a> via The Hub. <a href="https://wpmudev.com/hub2/support#get-support" target="_blank">Contact our support</a> team if the issue persists.', 'snapshot' );
+			: __( 'The backup failed to restore while %s. <a href="#" class="snapshot-view-log">Check the logs</a> for more information and then try restoring the backup again. Alternatively, you can try <a href="#" class="snapshot-ftp-restoration-hub">FTP restoration</a> via The Hub. <a href="https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support" target="_blank">Contact our support</a> team if the issue persists.', 'snapshot' );
 
 		$this->localized_messages['trigger_restore_generic_error'] = $hide_doc_link
 			? __( 'The backup failed to restore. <a href="#" class="snapshot-view-log">Check the logs</a> for more information and then try restoring the backup again. Contact support if the issue persists.', 'snapshot' )
-			: __( 'The backup failed to restore. <a href="#" class="snapshot-view-log">Check the logs</a> for more information and then try restoring the backup again. Alternatively, you can try <a href="#" class="snapshot-ftp-restoration-hub">FTP restoration</a> via The Hub. <a href="https://wpmudev.com/hub2/support#get-support" target="_blank">Contact our support</a> team if the issue persists.', 'snapshot' );
+			: __( 'The backup failed to restore. <a href="#" class="snapshot-view-log">Check the logs</a> for more information and then try restoring the backup again. Alternatively, you can try <a href="#" class="snapshot-ftp-restoration-hub">FTP restoration</a> via The Hub. <a href="https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support" target="_blank">Contact our support</a> team if the issue persists.', 'snapshot' );
 		$this->localized_messages['trigger_restore_info']          = __( 'Your site is currently being restored from a backup. Please keep this page open until the process has finished - this could take a few minutes for small sites to a few hours for larger sites.', 'snapshot' );
 		$this->localized_messages['restore_cancel_success']        = __( 'The running restore is cancelled.', 'snapshot' );
 		$this->localized_messages['restore_cancel_error']          = __( 'The running restore couldn\'t be cancelled.', 'snapshot' );
@@ -847,7 +863,7 @@ class Admin extends Controller {
 		$this->localized_messages['change_region_failure'] = $hide_doc_link
 			? __( 'We were unable to change the backup storage region. Please try again or contact support if the problem persists.', 'snapshot' )
 			/* translators: %s - HUB link */
-			: sprintf( __( 'We were unable to change the backup storage region. Please try again or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support#get-support' );
+			: sprintf( __( 'We were unable to change the backup storage region. Please try again or <a href="%s" target="_blank">contact our support team</a> if the problem persists.', 'snapshot' ), 'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support' );
 
 		$this->localized_messages['snapshot_v3_uninstall_success'] = __( 'You uninstalled the old version of Snapshot successfully.', 'snapshot' );
 
@@ -865,6 +881,7 @@ class Admin extends Controller {
 		$this->localized_messages['require_bucket_name']     = __( 'AWS bucket name is required.', 'snapshot' );
 		$this->localized_messages['choose_bucket']           = __( 'Choose Bucket', 'snapshot' );
 		$this->localized_messages['require_limit']           = __( 'A valid storage limit is required.', 'snapshot' );
+		$this->localized_messages['require_valid_endpoint']  = __( 'A valid endpoint url is required.', 'snapshot' );
 		$this->localized_messages['require_valid_container'] = __( 'Provided name is not valid.', 'snapshot' );
 		$this->localized_messages['require_name']            = __( 'Destination name is required.', 'snapshot' );
 		$this->localized_messages['require_directory_id']    = __( 'A Directory ID is required.', 'snapshot' );
@@ -880,6 +897,7 @@ class Admin extends Controller {
 
 		// OneDrive reconnected notice.
 		$this->localized_messages['onedrive_reauthorized'] = __( 'Your OneDrive set up is reconnected successfully.', 'snapshot' );
+		$this->localized_messages['dropbox_reauthorized']  = __( 'Your Dropbox set up is reconnected successfully.', 'snapshot' );
 
 		/* translators: %s - Name of the destination */
 		$this->localized_messages['destination_notice_deactivated'] = __( 'You have successfully deactivated <strong>%s</strong> destination.', 'snapshot' );
@@ -939,7 +957,7 @@ class Admin extends Controller {
 		$this->localized_messages['applying_config']    = __( 'Applying Config...', 'snapshot' );
 		$this->localized_messages['google_auth_failed'] = $hide_doc_link
 			? __( 'Your account authentication failed. Please try again or contact our support team for help.', 'snapshot' )
-			: __( 'Your account authentication failed. Please try again or contact our <a href="https://wpmudev.com/hub2/support#get-support" target="_blank">support team</a> for help.', 'snapshot' );
+			: __( 'Your account authentication failed. Please try again or contact our <a href="https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support" target="_blank">support team</a> for help.', 'snapshot' );
 
 		// Authentication method.
 		$account_link = 'https://wpmudev.com/hub2/account/details';
@@ -955,7 +973,7 @@ class Admin extends Controller {
 		: sprintf( __( 'You are currently using Google Account as your preferred login method. Please try to re-authenticate using your Google Account. Or, if you wish to change the login method, you can change it from your <a href="%s" target="_blank">Account page</a>.', 'snapshot' ), esc_url( $account_link ) );
 
 		// HTTP Authentication.
-		$this->localized_messages['general_error'] = __( 'Sorry, something went wrong!', 'snapshot' );
+		$this->localized_messages['snapshot_decode_credentials_nonce'] = wp_create_nonce( 'snapshot-decode-credentials' );
 
 		/**
 		 * Scheduled backups failed notification.
@@ -973,7 +991,7 @@ class Admin extends Controller {
 					/* translators: %1$s - Create Bakup link, %2$s - Hub link */
 					__( 'Last scheduled backup failed. We recommend creating a <a href="%1$s" class="blue-link">manual backup</a>. If the issue persists, please get in touch with our <a href="%2$s" target="_blank">support team</a>.', 'snapshot' ),
 					network_admin_url( 'admin.php?page=snapshot-backups#create-backup' ),
-					'https://wpmudev.com/hub2/support#get-support'
+					'https://wpmudev.com/hub2/support?utm_source=snapshot&utm_medium=email&utm_campaign=snapshot-email-get-support#get-support'
 				);
 
 			// Clear notifications.
@@ -1109,6 +1127,15 @@ class Admin extends Controller {
 					'access-key-id'     => esc_html__( 'Access Key ID', 'snapshot' ),
 					'secret-access-key' => esc_html__( 'Secret Access Key', 'snapshot' ),
 					'region'            => esc_html__( 'Region', 'snapshot' ),
+				),
+			),
+			'linode'       => array(
+				'providerName' => esc_html__( 'Linode', 'snapshot' ),
+				'link'         => 'https://linode.com/products/object-storage/',
+				'fields'       => array(
+					'access-key-id'     => esc_html__( 'Access Key', 'snapshot' ),
+					'secret-access-key' => esc_html__( 'Secret Key', 'snapshot' ),
+					'endpoint'          => esc_html__( 'Endpoint', 'snapshot' ),
 				),
 			),
 			's3_other'     => array(

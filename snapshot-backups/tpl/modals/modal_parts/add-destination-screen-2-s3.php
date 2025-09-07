@@ -318,13 +318,14 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 											<?php echo esc_html( __( 'DigitalOcean Spaces', 'snapshot' ) ); ?></option>
 										<option value="wasabi"><?php echo esc_html( __( 'Wasabi', 'snapshot' ) ); ?>
 										</option>
+										<option value="linode"><?php echo esc_html( __( 'Linode', 'snapshot' ) ); ?>
+										</option>
 										<option value="s3_other"><?php echo esc_html( __( 'Other', 'snapshot' ) ); ?>
 										</option>
 
 									</select>
 									<span id="error-s3-compatible-connection-provider" class="sui-error-message"
 										style="display: none;  text-align: right;" role="alert"></span>
-
 								</div>
 
 								<div class="s3-compatible-creds" style="display: none;">
@@ -347,6 +348,7 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 										<span id="error-s3-compatible-connection-bucket-name" class="sui-error-message"
 											style="display: none; text-align: right;" role="alert"></span>
 									</div>
+
 									<div class="sui-form-field s3-compatible-accessKey">
 										<label for="s3-compatible-connection-access-key-id"
 											id="label-s3-compatible-connection-access-key-id" class="sui-label">
@@ -389,23 +391,8 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 											role="alert"></span>
 									</div>
 
-									<div class="sui-form-field s3-compatible-region">
-										<label for="s3-compatible-connection-region"
-											id="label-s3-compatible-connection-region" class="sui-label">
-											<span
-												class="s3-compatible-connection-region-label"><?php echo esc_html( __( 'Region', 'snapshot' ) ); ?></span><span
-												style=" margin-left: 3px; ">*</span>
-										</label>
-
-										<input
-											placeholder="<?php echo esc_attr__( 'Place Region here', 'snapshot' ); ?>"
-											id="s3-compatible-connection-region" class="sui-form-control"
-											name="tpd_region" aria-labelledby="label-s3-compatible-connection-region" />
-										<span id="error-s3-compatible-connection-region" class="sui-error-message"
-											style="display: none; text-align: right;" role="alert"></span>
-									</div>
-
-									<div class="snapshot-s3-compatible--additional_fields"></div>
+									<div class="sui-form-field snapshot-s3-compatible--additional_fields--general"></div>
+									<div class="sui-form-field snapshot-s3-compatible--additional_fields"></div>
 
 								</div>
 
@@ -428,6 +415,10 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 							);
 							$this->render(
 								'modals/modal_parts/wasabi-instructions-accordion',
+								array()
+							);
+							$this->render(
+								'modals/modal_parts/linode-instructions-accordion',
 								array()
 							);
 							?>
@@ -475,6 +466,25 @@ use WPMUDEV\Snapshot4\Helper\Settings;
 			id="s3-compatible-connection-endpoint" class="sui-form-control"
 			name="tpd_endpoint" aria-labelledby="label-s3-compatible-connection-endpoint"  />
 		<span id="error-s3-compatible-connection-endpoint" class="sui-error-message"
+			style="display: none; text-align: right;" role="alert"></span>
+	</div>
+</script>
+
+
+<script type="text/html" id="snapshot-s3-compatible-destination--general">
+	<div class="sui-form-field s3-compatible-region">
+		<label for="s3-compatible-connection-region"
+			id="label-s3-compatible-connection-region" class="sui-label">
+			<span
+				class="s3-compatible-connection-region-label"><?php echo esc_html( __( 'Region', 'snapshot' ) ); ?></span><span
+				style=" margin-left: 3px; ">*</span>
+		</label>
+
+		<input
+			placeholder="<?php echo esc_attr__( 'Place Region here', 'snapshot' ); ?>"
+			id="s3-compatible-connection-region" class="sui-form-control"
+			name="tpd_region" aria-labelledby="label-s3-compatible-connection-region" />
+		<span id="error-s3-compatible-connection-region" class="sui-error-message"
 			style="display: none; text-align: right;" role="alert"></span>
 	</div>
 </script>
