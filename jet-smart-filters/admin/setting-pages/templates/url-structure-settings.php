@@ -42,6 +42,10 @@
 				:wrapper-css="[ 'equalwidth' ]"
 				v-model="settings.url_taxonomy_term_name"
 			/>
+			<div v-if="settings.url_taxonomy_term_name==='slug'"
+				 class="url-taxonomy-type-name-notification">
+				<?php _e( 'All term slugs must be unique. Duplicate slugs may cause errors or unexpected behavior.', 'jet-smart-filters' ); ?>
+			</div>
 		</div>
 		<div class="url-custom-symbols">
 			<cx-vui-switcher

@@ -2,6 +2,44 @@
 
 # ChangeLog
 
+## 3.6.9
+- FIX: Pagination for Products Loop is incorrect in some cases;
+- FIX: Fatal error when submitting form on the page built with Bricks;
+- FIX: PHP error in some cases.
+
+## 3.6.8.2
+
+- FIX: slug name in hierarchical select
+- FIX: rollback if filter is not displayed
+
+## 3.6.8.1
+
+- FIX: active filter not working and breaks all filters on the page
+- FIX: additional providers doesn't work
+- FIX: filter indexer doesn't work properly
+- FIX: Cross-site scripting(XSS) vulnerabilities
+
+## 3.6.8
+
+- FIX: Woocommerce archive pagination
+- FIX: Wrong apply type if there are multiple identical filters on the same page
+- FIX: woocommerse shortcode with query ID
+- FIX: more than one plain query parameter
+- FIX: js uniqueFilters update
+
+## 3.6.7.1
+
+- UPD: JetQuery Control module to the latest secure version
+
+## 3.6.7
+
+- ADD: Default Woo Archive provider
+- ADD: cct checkboxes info
+- FIX: Ensure parent class Jet_Smart_Filters_Provider_WooCommerce_Archive is included
+- FIX: better compatibility with various themes & not found msg
+- FIX: Apply Button Active Button State doesn't recognize Location & Distance filter
+- FIX: Error when receiving cct data when jet engine is disabled
+
 ## 3.6.6
 
 - FIX: range filters apply on Enter in Safari browser
@@ -59,7 +97,7 @@
 - ADD: custom URL symbols options
 - ADD: allow to get options from the postmeta table
 - FIX: exclude taxonomy terms options
-- FIX: default filter value with JetEngine Lazy Load 
+- FIX: default filter value with JetEngine Lazy Load
 - FIX: Sanitize the incoming settings using a dedicated method
 - FIX: Disable 'Fixed position' option for Provider Preloader in Bricks query loop
 - FIX: Vertical alignment for Preloader provider in Bricks query loop
@@ -101,14 +139,14 @@
 - FIX: work of two searches with different types together
 - FIX: Sorting filter WPML
 - FIX: filters are broken on front with "Dynamic Visibility"
-- FIX: indexer with taxonomy source and _tax_query key 
+- FIX: indexer with taxonomy source and _tax_query key
 - FIX: posts disappearing when translating with Polylang
 - FIX: included element section
 - FIX: added props to event ajaxFilters/updated
 
 ## 3.5.6
 
-- ADD: checkboxes list filter relational operator option between items 
+- ADD: checkboxes list filter relational operator option between items
 - ADD: page reload apply type on value change
 - ADD: search filter input focus styles
 - UPD: initialize filter styles before rendering the filters themselves
@@ -217,7 +255,7 @@
 
 - FIX: indexer value with quotation mark
 - FIX: datepicker on mobile devices
-- FIX: ePro archive products pagination on reload 
+- FIX: ePro archive products pagination on reload
 - FIX: epro-archive-products removed the addition of jet_smart_filters argument from the archive query
 - FIX: plain URL aliases with pagination on direct link or reload
 - FIX: Warning after update

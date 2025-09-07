@@ -11,6 +11,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Settings' ) ) {
 	class Jet_Smart_Filters_Settings {
 
 		public $key = 'jet-smart-filters-settings';
+		public $all_settings = null;
 
 		// global settings
 		public $url_structure_type;
@@ -41,9 +42,18 @@ if ( ! class_exists( 'Jet_Smart_Filters_Settings' ) ) {
 
 		public function get( $setting, $default = false ) {
 
-			$current = get_option( $this->key, array() );
+			if ( null === $this->all_settings ) {
+				$this->all_settings = apply_filters(
+					'jet-smart-filters/settings/loaded-settings',
+					get_option( $this->key, array() )
+				);
+			}
 
-			return isset( $current[ $setting ] ) ? $current[ $setting ] : $default;
+			$current = $this->all_settings;
+
+			$value = isset( $current[ $setting ] ) ? $current[ $setting ] : $default;
+
+			return apply_filters( 'jet-smart-filters/settings/get/' . $setting, $value, $this );
 		}
 
 		public function update( $setting, $value ) {

@@ -591,6 +591,9 @@ class Jet_Smart_Filters_Bricks_Search extends Jet_Smart_Filters_Bricks_Base {
 		$icon                 = '';
 
 		if ( ! empty( $settings['apply_button_icon'] ) ) {
+			if ( isset( $settings['apply_button_icon']['icon'] ) ) {
+				$settings['apply_button_icon']['icon'] = esc_attr( $settings['apply_button_icon']['icon'] );
+			}
 			$rendered_icon = Element::render_icon( $settings['apply_button_icon'] );
 			$format        = '<span class="jet-search-filter__submit-icon">%s</span>';
 			$icon          = sprintf( $format, $rendered_icon );

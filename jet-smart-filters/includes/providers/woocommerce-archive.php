@@ -1,7 +1,7 @@
 <?php
 /**
  * Class: Jet_Smart_Filters_Provider_WooCommerce_Archive
- * Name: WooCommerce Archive (Jet Woo Builder)
+ * Name: WooCommerce Archive (JetWooBuilder)
  */
 
 // If this file is called directly, abort.
@@ -21,6 +21,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_WooCommerce_Archive' ) ) {
 
 			if ( ! jet_smart_filters()->query->is_ajax_filter() ) {
 				//add_filter( 'posts_pre_query', array( $this, 'store_archive_query' ), 0, 2 );
+				//add_action( 'woocommerce_product_loop_start', array( $this, 'store_props' ) );
+				add_filter( 'the_posts', array( $this, 'store_props' ), 999, 2 );
 				add_filter( 'woocommerce_product_query', array( $this, 'store_archive_query' ) );
 				add_filter( 'woocommerce_shop_loop', array( $this, 'set_loop_props' ) );
 				add_action( 'elementor/widget/before_render_content', array( $this, 'store_default_settings' ), 0 );
@@ -277,9 +279,26 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_WooCommerce_Archive' ) ) {
 		/**
 		 * Store query ptoperties
 		 */
-		public function store_props() {
+		public function store_props( $posts, $query ) {
 
-			global $woocommerce_loop;
+			if ( ! $query->get( 'wc_query' ) && ! $query->get( 'jet_smart_filters' ) ) {
+				return $posts;
+			}
+
+			if ( ! in_array( $query->get( 'jet_smart_filters' ), array( 'woocommerce-archive', 'default-woo-archive' ) ) ) {
+				return $posts;
+			}
+
+			jet_smart_filters()->query->set_props(
+				$this->get_id(),
+				array(
+					'found_posts'   => $query->found_posts,
+					'max_num_pages' => $query->max_num_pages,
+					'page'          => get_query_var( 'paged' ),
+				)
+			);
+
+			/* global $woocommerce_loop;
 
 			jet_smart_filters()->query->set_props(
 				$this->get_id(),
@@ -288,7 +307,9 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_WooCommerce_Archive' ) ) {
 					'max_num_pages' => $woocommerce_loop['total_pages'],
 					'page'          => $woocommerce_loop['current_page'],
 				)
-			);
+			); */
+
+			return $posts;
 		}
 
 		/**

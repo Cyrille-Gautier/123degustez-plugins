@@ -73,7 +73,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 			}
 
 			if ( $this->is_ajax_filter() ) {
-		
+
 				$request_provider = $this->get_current_provider();
 
 				if ( ! $request_provider ) {
@@ -83,7 +83,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				if ( ! $query_id ) {
 					$query_id = 'default';
 				}
-				
+
 				// store default query only if we trying to set default query for requested provider
 				// its important because multiple different queries could trigger this method during AJAX filters request
 				if ( $request_provider['provider'] === $provider_id && $request_provider['query_id'] === $query_id ) {
@@ -140,7 +140,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 			}
 		}
 
-		
+
 		/**
 		 * Check if is ajax filter processed
 		 */
@@ -204,7 +204,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 			if ( empty( $this->_props[ $provider ][ $query_id ] ) ) {
 				$this->_props[ $provider ][ $query_id ] = array();
 			}
-			
+
 			do_action( 'jet-smart-filters/query/store-query-props/' . $provider, $this, $query_id );
 
 			$this->_props[ $provider ][ $query_id ]['found_posts']   = $query->found_posts;
@@ -387,7 +387,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 						}
 
 						$key   = str_replace( jet_smart_filters()->data->url_symbol['var_suffix'], '|', $key_value[0] ); // replace query var suffix separator
-						$value = strpos( $key_value[1], jet_smart_filters()->data->url_symbol['value_separator'] ) 
+						$value = strpos( $key_value[1], jet_smart_filters()->data->url_symbol['value_separator'] )
 							? explode( jet_smart_filters()->data->url_symbol['value_separator'], $key_value[1] )
 							: $key_value[1];
 
@@ -401,10 +401,15 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 					break;
 
 				case 'plain_query':
+					$pairs = explode( ';', $query_var_value );
 
-					$key_data = explode( ':', $query_var_value, 2 );
-					$value    = strpos( $key_data[1], ',' ) ? explode( ',', $key_data[1] ) : $key_data[1];
-					$_REQUEST[ '_' . $query_var . '_' . $key_data[0] ] = $value;
+					foreach ( $pairs as $pair ) {
+						$key_data = explode( ':', $pair, 2 );
+						$value    = strpos( $key_data[1], ',' ) ? explode( ',', $key_data[1] ) : $key_data[1];
+
+						$_REQUEST[ '_' . $query_var . '_' . $key_data[0] ] = $value;
+					}
+
 					break;
 
 				case 'date':
@@ -562,25 +567,25 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 											case 'price':
 												$data['orderby']  = 'meta_value_num';
 												$data['meta_key'] = '_price';
-	
+
 												break;
-	
+
 											case 'sales_number':
 												$data['orderby']  = 'meta_value_num';
 												$data['meta_key'] = 'total_sales';
-	
+
 												break;
-	
+
 											case 'rating':
 												$data['orderby']  = 'meta_value_num';
 												$data['meta_key'] = '_wc_average_rating';
-	
+
 												break;
-	
+
 											case 'reviews_number':
 												$data['orderby']  = 'meta_value_num';
 												$data['meta_key'] = '_wc_review_count';
-	
+
 												break;
 										}
 									}
@@ -673,6 +678,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 			}
 
 			$this->_query = apply_filters( 'jet-smart-filters/query/final-query', $this->_query );
+
 			return $this->_query;
 		}
 
@@ -821,7 +827,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				case 'date':
 					$this->_query['date_query']['column'] = 'post_date';
 					break;
-				
+
 				case 'm_date':
 					$this->_query['date_query']['column'] = 'post_modified';
 					break;
@@ -902,16 +908,16 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 
 			foreach ($keys as $key) {
 				$key = trim( $key );
-				
+
 				if ( 'check-range' === $filter_type || ( $is_custom_checkbox && is_array( $value ) ) ) {
 					$nested_query = array(
 						'relation' => $operator ? $operator : 'OR',
 					);
-	
+
 					foreach ( $value as $value_row ) {
 						$nested_query[] = $this->prepare_meta_query_row( $value_row, $key, $additional_options );
 					}
-	
+
 					$meta_query[] = $nested_query;
 				} else {
 					$meta_query[] = $this->prepare_meta_query_row( $value, $key, $additional_options );

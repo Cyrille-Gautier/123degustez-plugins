@@ -35,7 +35,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Blocks_Manager' ) ) {
 			if ( empty( $blocks_providers ) ) {
 				return;
 			}
-			
+
 			$this->register_block_types();
 
 			add_action( 'enqueue_block_editor_assets', [ $this, 'blocks_assets' ] );
@@ -96,7 +96,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Blocks_Manager' ) ) {
 		public function blocks_providers() {
 
 			if ( null === $this->blocks_providers ) {
-				
+
 				$blocks_providers = [];
 
 				if ( class_exists( 'Jet_Engine' ) ) {
@@ -105,6 +105,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Blocks_Manager' ) ) {
 
 				if ( class_exists( 'WooCommerce' ) ) {
 					$blocks_providers['woocommerce-shortcode'] = __( 'WooCommerce Shortcode', 'jet-smart-filters' );
+					$blocks_providers['default-woo-archive'] = __( 'Default WooCommerce Archive (Classic)', 'jet-smart-filters' );
 				}
 
 				$this->blocks_providers = apply_filters( 'jet-smart-filters/blocks/allowed-providers', $blocks_providers );

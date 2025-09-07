@@ -128,6 +128,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 				? $_REQUEST['provider']
 				: $_REQUEST['jsf'];
 
+			if ( ! is_string( $provider_name ) ) {
+				return;
+			}
+
 			jet_smart_filters()->query->set_provider_from_request( $provider_name );
 
 			$provider_id = $this->request_provider( 'provider' );
@@ -155,6 +159,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 		public function apply_filters_from_permalink( $query ) {
 
 			if ( empty( $query->query_vars['jsf'] ) || isset( $_REQUEST['jsf'] ) ) {
+				return;
+			}
+
+			if ( apply_filters( 'jet-smart-filters/render/filters-applied', false, $query ) ) {
 				return;
 			}
 
@@ -206,7 +214,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 		 * Verify request signature.
 		 * Request signature made on provider settings store.
 		 * It helps to prevent from injecting any 3rd party data into the request.
-		 * 
+		 *
 		 * @return [type] [description]
 		 */
 		public function verify_request_signature() {
@@ -232,7 +240,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 
 		/**
 		 * Create signature based on input array
-		 * 
+		 *
 		 * @return [type] [description]
 		 */
 		public function create_signature( $data = [] ) {
@@ -247,12 +255,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 
 		/**
 		 * Prepare data for signature to ensure consistency
-		 * 
+		 *
 		 * @param  array  $data [description]
 		 * @return [type]       [description]
 		 */
 		public function prepare_data_for_sign( $data = [] ) {
-			
+
 			$prepared_data = [];
 
 			foreach ( $data as $key => $value ) {
@@ -260,7 +268,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 				if ( is_array( $value ) && ! empty( $value ) ) {
 					$prepared_data[ $key ] = $this->prepare_data_for_sign( $value );
 				} elseif ( ! is_array( $value ) ) {
-					
+
 					// convert booleans into strings manually
 					if ( false === $value ) {
 						$value = 'false';

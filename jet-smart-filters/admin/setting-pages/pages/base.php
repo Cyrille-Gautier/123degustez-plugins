@@ -134,7 +134,10 @@ abstract class Jet_Smart_Filters_Admin_Setting_Page_Base extends Page_Module_Bas
 				'provider_preloader_css'            => jet_smart_filters()->provider_preloader->css,
 				'use_seo_sitemap'                   => jet_smart_filters()->settings->is_seo_enabled,
 				'seo_sitemap_rules'                 => jet_smart_filters()->seo->sitemap->rules,
-				'wc_hide_out_of_stock_variations'   => jet_smart_filters()->settings->wc_hide_out_of_stock_variations
+				'wc_hide_out_of_stock_variations'   => jet_smart_filters()->settings->wc_hide_out_of_stock_variations,
+				'wc_archive_pager_cont_selector'    => jet_smart_filters()->settings->get( 'wc_archive_pager_cont_selector', '.woocommerce-pagination' ),
+				'wc_archive_pager_item_selector'    => jet_smart_filters()->settings->get( 'wc_archive_pager_item_selector', '.woocommerce-pagination a.page-numbers' ),
+
 			),
 			'data'           => array(
 				'avaliable_providers_options'  => $this->get_avaliable_providers(),
@@ -202,7 +205,7 @@ abstract class Jet_Smart_Filters_Admin_Setting_Page_Base extends Page_Module_Bas
 			if ( in_array( $post_type->name, $rewritable_post_types_exceptions ) || empty( $post_type->rewrite ) ) {
 				continue;
 			}
-			
+
 			$rewritable_post_types[$post_type->name] = $post_type->label;
 		}
 
@@ -214,7 +217,7 @@ abstract class Jet_Smart_Filters_Admin_Setting_Page_Base extends Page_Module_Bas
 	 */
 	public function get_post_types_for_options() {
 
-		$indexed_post_types_exceptions = apply_filters( 'jet-smart-filters/indexed-post-types-exceptions', array( 
+		$indexed_post_types_exceptions = apply_filters( 'jet-smart-filters/indexed-post-types-exceptions', array(
 			'attachment',
 			'elementor_library',
 			'e-landing-page',

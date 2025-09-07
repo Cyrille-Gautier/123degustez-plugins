@@ -3,7 +3,7 @@
  * Plugin Name: JetSmartFilters
  * Plugin URI:  https://crocoblock.com/plugins/jetsmartfilters/
  * Description: Adds easy-to-use AJAX filters to the pages built with Elementor which contain the dynamic listings.
- * Version:     3.6.6
+ * Version:     3.6.9
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-smart-filters
@@ -27,7 +27,7 @@ if ( ! class_exists( 'Jet_Smart_Filters' ) ) {
 		/**
 		 * Plugin version
 		 */
-		private $version = '3.6.6';
+		private $version = '3.6.9';
 
 		/**
 		 * Holder for base plugin URL
@@ -122,7 +122,6 @@ if ( ! class_exists( 'Jet_Smart_Filters' ) ) {
 		 * Returns plugin version
 		 */
 		public function get_version() {
-
 			return $this->version;
 		}
 
@@ -369,7 +368,7 @@ if ( ! class_exists( 'Jet_Smart_Filters' ) ) {
 			$href = $this->is_classic_admin
 				? get_admin_url() . 'post.php?post=' . $filter_id . '&action=edit'
 				: get_admin_url() . 'admin.php?page=jet-smart-filters#/' . $filter_id;
-			
+
 			$this->admin_bar->register_post_item( $filter_id, array(
 				'href' => $href
 			) );

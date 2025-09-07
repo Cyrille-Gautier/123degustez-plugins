@@ -110,14 +110,15 @@ if ( ! class_exists( 'Jet_Smart_Filters_Color_Image_Filter' ) ) {
 					$tax              = get_post_meta( $filter_id, '_source_taxonomy', true );
 					$only_child       = filter_var( get_post_meta( $filter_id, '_only_child', true ), FILTER_VALIDATE_BOOLEAN );
 					$show_empty_terms = filter_var( get_post_meta( $filter_id, '_show_empty_terms', true ), FILTER_VALIDATE_BOOLEAN );
-					$custom_query_var = $this->get_custom_query_var( $filter_id );
 					$query_type       = 'tax_query';
 					$query_var        = $tax;
+					$custom_query_var = $this->get_custom_query_var( $filter_id );
+					$is_terms_slugs   = jet_smart_filters()->settings->url_taxonomy_term_name === 'slug' && ! $custom_query_var;
 
 					// merging options with taxonomy terms
 					$options = jet_smart_filters()->utils->mergeArraysByKeyAndValue(
 						$options,
-						jet_smart_filters()->data->get_terms_for_options( $tax, $only_child, array(
+						jet_smart_filters()->data->get_terms_for_options( $tax, $only_child, $is_terms_slugs, array(
 							'hide_empty' => ! $show_empty_terms,
 						) )
 					);

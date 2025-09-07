@@ -85,10 +85,11 @@ if ( ! class_exists( 'Jet_Smart_Filters_Radio_Filter' ) ) {
 					$tax              = get_post_meta( $filter_id, '_source_taxonomy', true );
 					$only_child       = filter_var( get_post_meta( $filter_id, '_only_child', true ), FILTER_VALIDATE_BOOLEAN );
 					$show_empty_terms = filter_var( get_post_meta( $filter_id, '_show_empty_terms', true ), FILTER_VALIDATE_BOOLEAN );
-					$custom_query_var = $this->get_custom_query_var( $filter_id );
 					$terms_orderby    = get_post_meta( $filter_id, '_terms_orderby', true );
 					$terms_order      = get_post_meta( $filter_id, '_terms_order', true );
 					$terms_meta_key   = '';
+					$custom_query_var = $this->get_custom_query_var( $filter_id );
+					$is_terms_slugs   = jet_smart_filters()->settings->url_taxonomy_term_name === 'slug' && ! $custom_query_var;
 
 					if ( in_array( $terms_orderby, array( 'meta_value', 'meta_value_num' ) ) ) {
 						$terms_meta_key = get_post_meta( $filter_id, '_terms_orderby_meta_value', '' );
@@ -107,7 +108,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Radio_Filter' ) ) {
 							'meta_key'   => $terms_meta_key
 						) );
 					} else {
-						$options = jet_smart_filters()->data->get_terms_for_options( $tax, $only_child, array(
+						$options = jet_smart_filters()->data->get_terms_for_options( $tax, $only_child, $is_terms_slugs, array(
 							'hide_empty' => ! $show_empty_terms,
 							'orderby'    => ! empty( $terms_orderby ) ? $terms_orderby : 'name',
 							'order'      => ! empty( $terms_order ) ? $terms_order : 'ASC',

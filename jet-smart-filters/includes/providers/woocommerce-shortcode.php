@@ -138,7 +138,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_WooCommerce_Shortcode' ) ) {
 		 */
 		public function get_wrapper_selector() {
 
-			return 'body .woocommerce[class*="columns"]';
+			return '.woocommerce[class*="columns"]';
 		}
 
 		/**

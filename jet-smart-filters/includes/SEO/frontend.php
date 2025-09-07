@@ -302,7 +302,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_SEO_Frontend' ) ) {
 				if ( isset( $this->current_provider_data[1] ) && $this->current_provider_data[1] === 'default' ) {
 					unset( $this->current_provider_data[1] );
 				}
-			} else if ( ! empty( $_REQUEST['jsf'] ) ) {
+			} else if ( ! empty( $_REQUEST['jsf'] && is_string( $_REQUEST['jsf'] ) ) ) {
 				$this->current_provider_data = explode( ':', $_REQUEST['jsf'] );
 			} else {
 				$this->current_provider_data = array();

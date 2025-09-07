@@ -42,7 +42,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			require jet_smart_filters()->plugin_path( 'includes/indexer/controls.php' );
 
 			if ( $this->has_bricks() ) {
-				require jet_smart_filters()->plugin_path( 'includes/indexer/bricks/controls.php' );
+				require_once jet_smart_filters()->plugin_path( 'includes/indexer/bricks/controls.php' );
 				$this->controls = new Jet_Smart_Filters_Bricks_Indexer_Controls();
 			}
 

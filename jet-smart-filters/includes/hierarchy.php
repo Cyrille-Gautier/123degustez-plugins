@@ -164,6 +164,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Hierarchy' ) ) {
 
 			$parent          = false;
 			$prepared_values = array();
+			$is_terms_slugs  = jet_smart_filters()->settings->url_taxonomy_term_name === 'slug';
 
 			/**
 			 * Ensure we left only latest child of each taxonomy
@@ -204,6 +205,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Hierarchy' ) ) {
 				$result = jet_smart_filters()->data->get_terms_for_options(
 					$curr_level['tax'],
 					false,
+					$is_terms_slugs,
 					array(
 						'parent' => $parent,
 						'orderby'    => $this->sort_data['orderby'],
@@ -269,6 +271,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Hierarchy' ) ) {
 				$result = jet_smart_filters()->data->get_terms_for_options(
 					$curr_level['tax'],
 					false,
+					$is_terms_slugs,
 					$terms_args
 				);
 			}

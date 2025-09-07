@@ -25,6 +25,7 @@ class Jet_Smart_Filters_Compatibility_JE {
 		// for CCT
 		add_filter( 'jet-smart-filters/post-type/options-data-sources', array( $this, 'cct_data_sources' ) );
 		add_filter( 'jet-smart-filters/post-type/meta-fields-settings', array( $this, 'cct_register_controls' ) );
+		add_filter( 'jet-smart-filters/admin/settings-data', array( $this, 'cct_modification_editor_settings' ) );
 
 		// Filter query macros
 		add_action( 'jet-engine/register-macros', array( $this, 'register_macros' ) );
@@ -84,5 +85,44 @@ class Jet_Smart_Filters_Compatibility_JE {
 		$fields = jet_smart_filters()->utils->add_control_condition( $fields, '_query_var', '_cct_notice!', 'is_visible' );
 
 		return $fields;
+	}
+
+	public function cct_modification_editor_settings( $data ) {
+
+		if (
+			function_exists( 'jet_engine' )
+			&& jet_engine()->modules->is_module_active( 'custom-content-types' )
+			&& ! jet_smart_filters()->is_classic_admin
+		) {
+			$settings = $data['settings'];
+			$keys     = array_keys( $settings );
+			$index    = array_search( '_data_source', $keys );
+
+			if ( $index ) {
+				$before = array_slice( $settings, 0, $index + 1, true );
+				$after  = array_slice( $settings, $index + 1, null, true );
+
+				$warning_text =apply_filters(
+					'jet-smart-filters/compatibility/cct/checkboxes-warning-text',
+					'<strong>Please note:</strong> The JetEngine Custom Content Types source with the Checkboxes filter works correctly only if the appropriate Custom Content Type field is also of the Checkbox type. In other cases, you need to select a different filter type or a different Data Source.'
+				);
+
+				$cct_checkboxes_info = array(
+					'_cct_checkboxes_info' => array(
+						'type'       => 'html',
+						'fullwidth'  => true,
+						'html'       => $warning_text,
+						'conditions' => array(
+							'_filter_type' => 'checkboxes',
+							'_data_source' => 'cct'
+						),
+					)
+				);
+
+				$data['settings'] = $before + $cct_checkboxes_info + $after;
+			}
+		}
+
+		return $data;
 	}
 }

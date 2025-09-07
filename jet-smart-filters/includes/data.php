@@ -325,7 +325,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 		 */
 		public function get_choices_from_cct_data( $field_key ) {
 
-			$result             = array();
+			$result = array();
+
+			if ( ! function_exists( 'jet_engine' ) || ! jet_engine()->modules->is_module_active( 'custom-content-types' ) ) {
+				return $result;
+			}
+
 			$found_field        = null;
 			$all_content_types  = jet_engine()->modules->get_module( 'custom-content-types' )->instance->manager->get_content_types();
 
@@ -441,7 +446,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 		/**
 		 * Get terms of passed taxonomy for checkbox/select/radio options
 		 */
-		public function get_terms_for_options( $tax = null, $child_of_current = false, $custom_args = array() ) {
+		public function get_terms_for_options( $tax = null, $child_of_current = false, $is_slugs = false, $custom_args = array() ) {
 
 			$terms   = $this->get_terms_objects( $tax, $child_of_current, $custom_args );
 			$options = array();
@@ -452,7 +457,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 					'label' => $term->name
 				) );
 
-				if ( jet_smart_filters()->settings->url_taxonomy_term_name === 'slug' ) {
+				if ( $is_slugs ) {
 					$options[count($options) - 1]['data_attrs'] = array(
 						'url-value' => $term->slug
 					);

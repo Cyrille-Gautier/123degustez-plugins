@@ -201,6 +201,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Instance' ) ) {
 
 			$args = $this->args;
 
+			do_action( 'jet-smart-filters/filters/before-render', $args, $this );
+
 			if ( ! empty( $args['is_hierarchical'] ) ) {
 
 				if ( ! class_exists( 'Jet_Smart_Filters_Hierarchy' ) ) {

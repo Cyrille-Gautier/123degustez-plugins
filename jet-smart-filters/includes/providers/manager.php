@@ -87,7 +87,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Providers_Manager' ) ) {
 				$name = $data['name'];
 
 				if ( $name ) {
-					$enabled = isset( $available_providers[ $class ] ) ? $available_providers[ $class ] : '';
+
+					// Assume that the provider is enabled if it wasn't directly set in settings
+					// This is required to enable by default new providers
+					$enabled = isset( $available_providers[ $class ] ) ? $available_providers[ $class ] : true;
 
 					if ( filter_var( $enabled, FILTER_VALIDATE_BOOLEAN ) || ! $available_providers ) {
 						$default_providers[ $data['class'] ] = $file;
@@ -121,7 +124,9 @@ if ( ! class_exists( 'Jet_Smart_Filters_Providers_Manager' ) ) {
 				return;
 			}
 
-			require $provider_file;
+			if ( ! class_exists( $provider_class ) ) {
+				require $provider_file;
+			}
 
 			if ( class_exists( $provider_class ) ) {
 				$instance = new $provider_class();

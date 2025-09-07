@@ -95,7 +95,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Manager' ) ) {
 			if ( jet_smart_filters()->render->use_signature_verification && ! empty( $localized_data['settings'] ) ) {
 				foreach( $localized_data['settings'] as $provider => $provider_queries ) {
 					foreach( $provider_queries as $query_id => $query_settings ) {
-						
+
 						if ( ! empty( $query_settings['jsf_signature'] ) ) {
 							unset( $query_settings['jsf_signature'] );
 						}

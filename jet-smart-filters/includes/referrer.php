@@ -23,14 +23,32 @@ class Jet_Smart_Filters_Referrer_Manager {
 	/**
 	 * Query varaibale key to define front referrer request
 	 */
-	public $front_query_key = 'jsf_ajax';
+	public static $front_query_key = 'jsf_ajax';
+
+	/**
+	 * Query varaibale key to define referrer method while request and not on the settings
+	 *
+	 * @var string
+	 */
+	public static $force_referrer_key = 'jsf_force_referrer';
+
+	/**
+	 * Query varaibale key to define referrer firing sequence - early or late
+	 *
+	 * @var string
+	 */
+	public static $sequence_referrer_key = 'jsf_referrer_sequence';
 
 	/**
 	 * Constructor for the class
 	 */
 	public function __construct() {
 
-		$this->referrer_type = jet_smart_filters()->settings->get( 'ajax_request_types' );
+		if ( ! empty( $_GET[ self::$force_referrer_key ] ) ) {
+			$this->referrer_type = sanitize_key( $_GET[ self::$force_referrer_key ] );
+		} else {
+			$this->referrer_type = jet_smart_filters()->settings->get( 'ajax_request_types' );
+		}
 
 		if ( 'default' === $this->referrer_type || ! $this->referrer_type ) {
 
@@ -47,8 +65,27 @@ class Jet_Smart_Filters_Referrer_Manager {
 			add_action( 'jet-smart-filters/render/ajax/before', array( $this, 'setup_ajax_referrer' ) );
 		}
 
-		if ( 'self' === $this->referrer_type && ! empty( $_GET[ $this->front_query_key ] ) ) {
-			add_action( 'parse_request', array( $this, 'setup_front_referrer' ) );
+		if ( 'self' === $this->referrer_type && ! empty( $_GET[ self::$front_query_key ] ) ) {
+
+			$sequence = ! empty( $_GET[ self::$sequence_referrer_key ] ) ? sanitize_key( $_GET[ self::$sequence_referrer_key ] ) : 'early';
+
+			if ( ! in_array( $sequence, array( 'early', 'late' ) ) ) {
+				$sequence = 'early';
+			}
+
+			$hook = 'parse_request';
+			$priority = 10;
+
+			if ( 'late' === $sequence ) {
+				$hook = 'wp';
+				$priority = 99999;
+			}
+
+			/**
+			 * Only 'parse_request' and 'wp' hooks are available for the front referrer
+			 * because both og them accepts the WP object as a parameter
+			 */
+			add_action( $hook, array( $this, 'setup_front_referrer' ), $priority );
 		}
 
 	}
@@ -64,7 +101,7 @@ class Jet_Smart_Filters_Referrer_Manager {
 		}
 
 		if ( 'self' === $this->referrer_type ) {
-			$data['referrer_url'] = $this->get_referrer_url();
+			$data['referrer_url'] = self::get_referrer_url();
 		}
 
 		return $data;
@@ -77,13 +114,15 @@ class Jet_Smart_Filters_Referrer_Manager {
 
 		$this->define_filters_request_constant();
 
+		do_action( 'jet-smart-filters/referrer/self/before' );
+
 		$wp->query_posts();
 		$wp->register_globals();
 
 		if ( apply_filters( 'jet-smart-filters/referrer/front/define-ajax', false ) ) {
 			define( 'DOING_AJAX', true );
 		}
-		
+
 		jet_smart_filters()->query->set_is_ajax_filter();
 
 		do_action( 'jet-smart-filters/referrer/request' );
@@ -144,6 +183,8 @@ class Jet_Smart_Filters_Referrer_Manager {
 
 		$current_screen = WP_Screen::get( 'front' );
 
+		do_action( 'jet-smart-filters/referrer/ajax/before' );
+
 		$wp->parse_request();
 		$wp->query_posts();
 		$wp->register_globals();
@@ -170,8 +211,7 @@ class Jet_Smart_Filters_Referrer_Manager {
 	/**
 	 * Returns referrer URL
 	 */
-	public function get_referrer_url() {
-
-		return add_query_arg( array( $this->front_query_key => 1 ) );
+	public static function get_referrer_url() {
+		return add_query_arg( array( self::$front_query_key => 1 ) );
 	}
 }
