@@ -119,42 +119,29 @@ class Thrive_Dash_Api_MailRelayV1 {
 	 */
 	public function add_subscriber( $list_id, $args ) {
 
-		$list_id = (int) $list_id;
-
-		if ( ! $list_id ) {
+		// Validate essential parameters to prevent fatal errors
+		if ( empty( $list_id ) || ! is_numeric( $list_id ) ) {
 			throw new Thrive_Dash_Api_MailRelay_Exception( 'Invalid list id', 400 );
 		}
 
-		if ( false === is_array( $args ) || false === isset( $args['email'] ) ) {
-			throw new  Thrive_Dash_Api_MailRelay_Exception( 'Invalid email', 400 );
+		if ( empty( $args ) || ! is_array( $args ) ) {
+			throw new Thrive_Dash_Api_MailRelay_Exception( 'Invalid arguments provided', 400 );
 		}
 
-		/**
-		 * if subscriber has phone custom field set then send it along with it
-		 */
-		if ( isset( $args['customFields'] ) && is_array( $args['customFields'] ) && isset( $args['customFields']['f_phone'] ) ) {
+		if ( empty( $args['email'] ) || ! is_email( $args['email'] ) ) {
+			throw new Thrive_Dash_Api_MailRelay_Exception( 'Valid email address required', 400 );
+		}
 
-			$phone = $args['customFields']['f_phone'];
+		$list_id = (int) $list_id;
+
+		// Remove custom fields from main subscriber creation - they'll be handled separately like tags
+		if ( isset( $args['customFields'] ) ) {
 			unset( $args['customFields'] );
+		}
 
-			try {
-				$phone_field = $this->get_custom_field( 'thrive_phone' );
-
-				if ( empty( $phone_field ) ) {//if the phone custom field does not exists then create it
-					$phone_field = $this->create_custom_field(
-						array(
-							'label'      => 'Phone',
-							'tag_name'   => 'thrive_phone',
-							'field_type' => 'text',
-						)
-					);
-				}
-
-				if ( is_array( $phone_field ) && ! empty( $phone_field['id'] ) ) {
-					$args['custom_fields'][ $phone_field['id'] ] = $phone;
-				}
-			} catch ( Exception $e ) {
-			}
+		// Validate final args before API call
+		if ( empty( $args['email'] ) ) {
+			throw new Thrive_Dash_Api_MailRelay_Exception( 'Email missing from final args', 400 );
 		}
 
 		$args = array_merge(
@@ -179,15 +166,35 @@ class Thrive_Dash_Api_MailRelayV1 {
 	 */
 	public function get_custom_field( $tag_name ) {
 
+		// Validate tag_name to prevent fatal errors
+		if ( empty( $tag_name ) || ! is_string( $tag_name ) ) {
+			return null;
+		}
+
 		$tag_name     = (string) $tag_name;
 		$custom_field = null;
-		$fields       = $this->_request( '/custom_fields' );
-
-		foreach ( $fields as $field ) {
-			if ( $field['tag_name'] === $tag_name ) {
-				$custom_field = $field;
-				break;
+		
+		try {
+			$fields = $this->_request( '/custom_fields' );
+			
+			// Validate API response
+			if ( empty( $fields ) || ! is_array( $fields ) ) {
+				return null;
 			}
+
+			foreach ( $fields as $field ) {
+				// Validate field structure
+				if ( ! is_array( $field ) || empty( $field['tag_name'] ) ) {
+					continue;
+				}
+				
+				if ( $field['tag_name'] === $tag_name ) {
+					$custom_field = $field;
+					break;
+				}
+			}
+		} catch ( Exception $e ) {
+			return null;
 		}
 
 		return $custom_field;
@@ -203,17 +210,156 @@ class Thrive_Dash_Api_MailRelayV1 {
 	 */
 	public function create_custom_field( $field ) {
 
-		if ( false === is_array( $field ) ) {
-			$field = array();
+		// Validate field data to prevent fatal errors
+		if ( empty( $field ) || ! is_array( $field ) ) {
+			return null;
+		}
+
+		if ( empty( $field['tag_name'] ) || ! is_string( $field['tag_name'] ) ) {
+			return null;
 		}
 
 		$field = array_merge( array(
 			'required' => false,
 		), $field );
 
-		$field = $this->_request( '/custom_fields', 'post', $field );
+		try {
+			$result = $this->_request( '/custom_fields', 'post', $field );
+			
+			// Validate API response
+			if ( empty( $result ) || ! is_array( $result ) ) {
+				return null;
+			}
+			
+			return $result;
+		} catch ( Exception $e ) {
+			return null;
+		}
+	}
 
-		return $field;
+	/**
+	 * Get all custom fields from MailRelay V1 API
+	 *
+	 * @return array
+	 * @throws Thrive_Dash_Api_MailRelay_Exception
+	 */
+	public function get_all_custom_fields() {
+		return $this->_request( '/custom_fields' );
+	}
+
+	/**
+	 * Update subscriber custom fields
+	 *
+	 * @param string $email
+	 * @param array $custom_fields
+	 *
+	 * @return array
+	 * @throws Thrive_Dash_Api_MailRelay_Exception
+	 */
+	public function update_subscriber_custom_fields( $email, $custom_fields ) {
+		// Validate parameters to prevent fatal errors
+		if ( empty( $email ) || ! is_email( $email ) ) {
+			throw new Thrive_Dash_Api_MailRelay_Exception( 'Valid email address required', 400 );
+		}
+
+		if ( empty( $custom_fields ) || ! is_array( $custom_fields ) ) {
+			throw new Thrive_Dash_Api_MailRelay_Exception( 'Valid custom fields array required', 400 );
+		}
+
+		$args = array(
+			'email' => $email,
+			'custom_fields' => $custom_fields,
+		);
+		
+		return $this->_request( '/subscribers/sync', 'post', $args );
+	}
+
+	/**
+	 * Apply custom field to subscriber (EXACT COPY of apply_tag logic)
+	 *
+	 * @param string $email
+	 * @param string $field_tag_name
+	 * @param string $field_label
+	 * @param string $field_value
+	 *
+	 * @return bool
+	 * @throws Thrive_Dash_Api_MailRelay_Exception
+	 */
+	public function apply_custom_field( $email, $field_tag_name, $field_label, $field_value ) {
+		// Validate parameters to prevent fatal errors
+		if ( empty( $email ) || ! is_email( $email ) ) {
+			return false;
+		}
+
+		if ( empty( $field_tag_name ) || ! is_string( $field_tag_name ) ) {
+			return false;
+		}
+
+		if ( $field_value === '' || $field_value === null ) {
+			return false;
+		}
+
+		try {
+			// Create/get custom field (EXACT same logic as tags)
+			$custom_field = $this->get_custom_field( $field_tag_name );
+			if ( empty( $custom_field ) ) {
+				$custom_field = $this->create_custom_field( array(
+					'label'      => $field_label,
+					'tag_name'   => $field_tag_name,
+					'field_type' => 'text',
+				) );
+			}
+			
+			if ( is_array( $custom_field ) && ! empty( $custom_field['id'] ) && is_numeric( $custom_field['id'] ) ) {
+				$custom_fields = array( $custom_field['id'] => sanitize_text_field( $field_value ) );
+				$this->update_subscriber_custom_fields( $email, $custom_fields );
+			}
+			
+			return true;
+		} catch ( Exception $e ) {
+			return false;
+		}
+	}
+
+	/**
+	 * Apply tag to subscriber 
+	 *
+	 * @param string $email
+	 * @param string $tag
+	 *
+	 * @return bool
+	 * @throws Thrive_Dash_Api_MailRelay_Exception
+	 */
+	public function apply_tag( $email, $tag ) {
+		// Validate parameters to prevent fatal errors
+		if ( empty( $email ) || ! is_email( $email ) ) {
+			return false;
+		}
+
+		if ( empty( $tag ) || ! is_string( $tag ) ) {
+			return false;
+		}
+
+		try {
+			// Create/get tags custom field
+			$tags_field = $this->get_custom_field( 'mailrelay_tags' );
+			if ( empty( $tags_field ) ) {
+				$tags_field = $this->create_custom_field( array(
+					'label'      => 'Tags',
+					'tag_name'   => 'mailrelay_tags',
+					'field_type' => 'text',
+				) );
+			}
+			
+			if ( is_array( $tags_field ) && ! empty( $tags_field['id'] ) && is_numeric( $tags_field['id'] ) ) {
+				$custom_fields = array( $tags_field['id'] => sanitize_text_field( $tag ) );
+				$this->update_subscriber_custom_fields( $email, $custom_fields );
+			}
+			
+			return true;
+		} catch ( Exception $e ) {
+			return false;
+		}
 	}
 
 	/**
@@ -294,5 +440,15 @@ class Thrive_Dash_Api_MailRelayV1 {
 	public function get_senders() {
 
 		return $this->_request( '/senders' );
+	}
+}
+
+/**
+ * Class Thrive_Dash_Api_MailRelay_Exception
+ * Exception class for MailRelay API errors (V1)
+ */
+if ( ! class_exists( 'Thrive_Dash_Api_MailRelay_Exception' ) ) {
+	class Thrive_Dash_Api_MailRelay_Exception extends Exception {
+		
 	}
 }

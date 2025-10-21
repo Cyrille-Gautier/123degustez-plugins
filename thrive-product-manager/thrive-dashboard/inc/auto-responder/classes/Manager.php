@@ -251,6 +251,15 @@ class Thrive_Dash_List_Manager {
 	}
 
 	/**
+	 * Snake_case alias for getAvailableCustomFields() for TAR compatibility
+	 *
+	 * @return array
+	 */
+	public static function get_available_custom_fields() {
+		return static::getAvailableCustomFields();
+	}
+
+	/**
 	 * Get the hardcoded mapper from the first connected API
 	 * Can be renamed to get_custom_fields_mapper in 2-3 releases
 	 *

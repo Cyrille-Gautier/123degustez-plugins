@@ -29,7 +29,6 @@ class Thrive_Dash_Api_Sendfox {
 	 * @throws Exception
 	 */
 	public function __construct( $api_key ) {
-
 		if ( empty( $api_key ) ) {
 			throw new Exception( 'Api key is required!' );
 		}
@@ -48,7 +47,6 @@ class Thrive_Dash_Api_Sendfox {
 	 * @throws Exception
 	 */
 	protected function _request( $route, $method = 'get', $data = array() ) {
-
 		$method = strtoupper( $method );
 		$body   = $data;
 		$route  = '/' . trim( $route, '/' );
@@ -89,7 +87,6 @@ class Thrive_Dash_Api_Sendfox {
 	 * @throws Exception
 	 */
 	protected function handle_response( $response ) {
-
 		if ( $response instanceof WP_Error ) {
 			throw new Exception( 'Failed connecting: ' . $response->get_error_message() );
 		}
@@ -97,9 +94,7 @@ class Thrive_Dash_Api_Sendfox {
 		if ( isset( $response['response']['code'] ) ) {
 			switch ( $response['response']['code'] ) {
 				case 200:
-					$result = json_decode( $response['body'], true );
-
-					return $result;
+					return json_decode( $response['body'], true );
 					break;
 				case 400:
 					throw new Exception( 'Missing a required parameter or calling invalid method' );
@@ -123,7 +118,6 @@ class Thrive_Dash_Api_Sendfox {
 	 * @throws Exception
 	 */
 	public function getLists() {
-
 		return $this->_request( '/lists' );
 	}
 	/**
@@ -133,7 +127,6 @@ class Thrive_Dash_Api_Sendfox {
 	 * @throws Exception
 	 */
 	public function getListsOnPage( $page ) {
-
 		return $this->_request( '/lists?page=' . $page );
 	}
 
@@ -145,7 +138,18 @@ class Thrive_Dash_Api_Sendfox {
 	 * @throws Exception
 	 */
 	public function add_subscriber( $list_id, $args ) {
+		$request_data = array_merge( array( 'lists' => array( $list_id ) ), $args );
 
-		return $this->_request( '/contacts', 'post', array_merge( array( 'lists' => array( $list_id ) ), $args ) );
+		return $this->_request( '/contacts', 'post', $request_data );
+	}
+
+	/**
+	 * Get contact fields
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	public function getContactFields() {
+		return $this->_request( '/contact-fields' );
 	}
 }

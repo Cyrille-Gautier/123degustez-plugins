@@ -814,7 +814,7 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 			foreach ( $custom_fields as $field ) {
 				$field = (object) $field; // just making sure we work with objects [APIs can change the structure]
 
-				if ( ! empty( $field->type ) && 1 === (int) $field->public && in_array( $field->type, $allowed_types, true ) ) {
+				if ( ! empty( $field->type ) && in_array( $field->type, $allowed_types, true ) ) {
 					$extract[] = $this->normalize_custom_field( $field );
 				}
 			}

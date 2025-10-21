@@ -433,7 +433,7 @@ function tve_dash_enqueue_vue() {
 		'dash_url'   => esc_url( admin_url( 'admin.php?page=tve_dash_section' ) ),
 	] );
 
-	wp_enqueue_style( 'td-font', '//fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700,800' );
+	wp_enqueue_style( 'td-font', 'https://fonts.bunny.net/css?family=Roboto:200,300,400,500,600,700,800' );
 
 	/**
 	 * SUPP-15199 remove active campaign calendar that overwrites setfullyear and breaks other things

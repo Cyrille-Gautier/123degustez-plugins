@@ -45,6 +45,21 @@ class User_Id extends Event_Field {
 	public function get_image(): string {
 		return get_avatar_url( $this->value );
 	}
+	
+	/**
+	 * Get the user's email address
+	 * 
+	 * @return string
+	 */
+	public function get_email(): string {
+		if ( empty( $this->value ) ) {
+			return '';
+		}
+
+		$user = get_user_by( 'ID', $this->value );
+		
+		return $user instanceof \WP_User ? $user->user_email : '';
+	}
 
 	public static function get_filter_options(): array {
 		return array_map( static function ( $user ) {

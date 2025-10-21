@@ -67,7 +67,9 @@ class Thrive_Dash_Api_Zoho {
 		$route  = '/' . trim( $route, '/' );
 		$tokens = $this->getOauth()->getTokens();
 
-		if ( ! empty( $data['resfmt'] ) ) {
+		// Handle resfmt parameter - for tag endpoints, keep as query parameter
+		$add_resfmt_to_url = ! empty( $data['resfmt'] ) && ! preg_match( '/\/tag\//', $route );
+		if ( $add_resfmt_to_url ) {
 			$url .= '/' . $data['resfmt'];
 			unset( $data['resfmt'] );
 		}
@@ -132,19 +134,13 @@ class Thrive_Dash_Api_Zoho {
 		if ( isset( $response['response']['code'] ) ) {
 			switch ( $response['response']['code'] ) {
 				case 200:
-					$result = json_decode( $response['body'], true );
-
-					return $result;
-					break;
+					return json_decode( $response['body'], true );
 				case 400:
 					throw new Exception( __( 'Missing a required parameter or calling invalid method', 'thrive-dash' ) );
-					break;
 				case 401:
 					throw new Exception( __( 'Invalid API key provided!', 'thrive-dash' ) );
-					break;
 				case 404:
 					throw new Exception( __( "Can't find requested items", 'thrive-dash' ) );
-					break;
 			}
 		}
 
@@ -172,7 +168,9 @@ class Thrive_Dash_Api_Zoho {
 
 		$args['resfmt'] = 'json';
 
-		return $this->_request( '/listsubscribe', 'post', $args );
+		$response = $this->_request( '/listsubscribe', 'post', $args );
+
+		return $response;
 	}
 
 	/**
@@ -182,5 +180,56 @@ class Thrive_Dash_Api_Zoho {
 	public function getCustomFields() {
 
 		return $this->_request( '/contact/allfields', 'get', array( 'type' => 'json' ) );
+	}
+
+	/**
+	 * Get all tags
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	public function getAllTags() {
+		return $this->_request( '/tag/getalltags', 'get', array( 'resfmt' => 'json' ) );
+	}
+
+	/**
+	 * Create a new tag
+	 *
+	 * @param array $tag_data
+	 * @return array
+	 * @throws Exception
+	 */
+	public function createTag( $tag_data ) {
+		$args = array(
+			'resfmt'  => 'json',
+			'tagName' => $tag_data['name'],
+		);
+
+		// Add optional parameters if provided
+		if ( ! empty( $tag_data['description'] ) ) {
+			$args['tagDesc'] = $tag_data['description'];
+		}
+		if ( ! empty( $tag_data['color'] ) ) {
+			$args['color'] = $tag_data['color'];
+		}
+
+		return $this->_request( '/tag/add', 'get', $args );
+	}
+
+	/**
+	 * Associate tag to contact
+	 *
+	 * @param array $args
+	 * @return array
+	 * @throws Exception
+	 */
+	public function associateTag( $args ) {
+		$params = array(
+			'resfmt'     => 'json',
+			'tagName'    => $args['tagName'],
+			'lead_email' => $args['lead_email'],
+		);
+
+		return $this->_request( '/tag/associate', 'get', $params );
 	}
 }

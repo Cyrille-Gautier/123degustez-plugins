@@ -85,11 +85,6 @@ class Endpoint {
      */
     public function get_fonts() {
         $fonts = $this->strategy->get_fonts();
-
-        // Filter fonts not installed on the server.
-        $fonts  = $this->filter_uninstalled_fonts( $fonts );
-        $fonts  = $this->filter_empty_fonts( $fonts );
-
         return new WP_REST_Response( array_values( $fonts ), 200 );
     }
 
@@ -106,13 +101,16 @@ class Endpoint {
             return new WP_REST_Response( 'Invalid request', 400 );
         }
         
-        // Merge the existing fonts with the new fonts. Make sure they're unique by the slug key and the current fonts will override the existing ones.
+        // Merge the existing fonts with the new fonts. 
+        // Make sure they're unique by the slug key and 
+        // the current fonts will override the existing ones.
         $existing_fonts = $this->strategy->get_fonts();
         $fonts          = array_merge( $existing_fonts, $fonts );
 
-        // Make the fonts unique by slug and remove empty fontFaces.
+        // Remove duplicate fonts, empty fonts and uninstalled fonts.
         $fonts  = $this->filter_duplicate_fonts( $fonts );
         $fonts  = $this->filter_empty_fonts( $fonts );
+        $fonts  = $this->filter_uninstalled_fonts( $fonts );
 
         $result = $this->strategy->set_fonts( $fonts );
         return new WP_REST_Response( $result, 200 );
@@ -166,7 +164,6 @@ class Endpoint {
 
         return $slugs;
     }
-
 
     /**
      * Filters out fonts with empty fontFaces.

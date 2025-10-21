@@ -10,6 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Exception class for iContact API errors
+ */
+class Thrive_Dash_Api_iContact_Exception extends Exception {
+	// Inherits all functionality from Exception
+}
+
+/**
  * @name Thrive_Dash_Api_iContact
  * @package iContact
  * @author iContact <www.icontact.com>
@@ -146,10 +153,11 @@ class Thrive_Dash_Api_iContact {
 	 * @param string [$sPhone]
 	 * @param string [$sFax]
 	 * @param string [$sBusiness]
+	 * @param array [$aCustomFields]
 	 *
 	 * @return object
 	 **/
-	public function addContact( $sEmail, $sStatus = 'normal', $sPrefix = null, $sFirstName = null, $sLastName = null, $sSuffix = null, $sStreet = null, $sStreet2 = null, $sCity = null, $sState = null, $sPostalCode = null, $sPhone = null, $sFax = null, $sBusiness = null ) {
+	public function addContact( $sEmail, $sStatus = 'normal', $sPrefix = null, $sFirstName = null, $sLastName = null, $sSuffix = null, $sStreet = null, $sStreet2 = null, $sCity = null, $sState = null, $sPostalCode = null, $sPhone = null, $sFax = null, $sBusiness = null, $aCustomFields = array() ) {
 		// Valid statuses
 		$aValidStatuses = array( 'normal', 'bounced', 'donotcontact', 'pending', 'invitable', 'deleted' );
 		// Contact placeholder
@@ -222,6 +230,13 @@ class Thrive_Dash_Api_iContact {
 			$aContact['status'] = $sStatus;
 		} else {
 			$aContact['status'] = 'normal';
+		}
+
+		// Add custom fields if provided
+		if ( ! empty( $aCustomFields ) && is_array( $aCustomFields ) ) {
+			foreach ( $aCustomFields as $sFieldName => $sFieldValue ) {
+				$aContact[ $sFieldName ] = (string) $sFieldValue;
+			}
 		}
 
 		// Make the call
@@ -567,10 +582,11 @@ class Thrive_Dash_Api_iContact {
 	 * @param string $sFax
 	 * @param string $sBusiness
 	 * @param string $sStatus
+	 * @param array $aCustomFields
 	 *
 	 * @return bool|object
 	 **/
-	public function updateContact( $iContactId, $sEmail = null, $sPrefix = null, $sFirstName = null, $sLastName = null, $sSuffix = null, $sStreet = null, $sStreet2 = null, $sCity = null, $sState = null, $sPostalCode = null, $sPhone = null, $sFax = null, $sBusiness = null, $sStatus = null ) {
+	public function updateContact( $iContactId, $sEmail = null, $sPrefix = null, $sFirstName = null, $sLastName = null, $sSuffix = null, $sStreet = null, $sStreet2 = null, $sCity = null, $sState = null, $sPostalCode = null, $sPhone = null, $sFax = null, $sBusiness = null, $sStatus = null, $aCustomFields = array() ) {
 		// Valid statuses
 		$aValidStatuses = array( 'normal', 'bounced', 'donotcontact', 'pending', 'invitable', 'deleted' );
 		// Contact placeholder
@@ -645,6 +661,14 @@ class Thrive_Dash_Api_iContact {
 			// Add the new status
 			$aContact['status'] = $sStatus;
 		}
+
+		// Add custom fields if provided
+		if ( ! empty( $aCustomFields ) && is_array( $aCustomFields ) ) {
+			foreach ( $aCustomFields as $sFieldName => $sFieldValue ) {
+				$aContact[ $sFieldName ] = (string) $sFieldValue;
+			}
+		}
+
 		// Make sure the contact isn't empty
 		if ( ! empty( $aContact ) ) {
 			// Make the call
@@ -656,6 +680,17 @@ class Thrive_Dash_Api_iContact {
 
 		// Inevitably return failure
 		return false;
+	}
+
+	/**
+	 * This method gets custom fields from the iContact API
+	 * @access public
+	 *
+	 * @return array
+	 **/
+	public function getCustomFields() {
+		// Make the call and return the custom fields
+		return $this->makeCall( "/a/{$this->setAccountId()}/c/{$this->setClientFolderId()}/customfields", 'GET', null, 'customfields' );
 	}
 
 	/**

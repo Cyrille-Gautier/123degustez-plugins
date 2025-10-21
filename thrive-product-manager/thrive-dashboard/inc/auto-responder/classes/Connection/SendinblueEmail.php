@@ -185,12 +185,12 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 		$to           = array();
 		$extra_emails = array();
 
-		if ( isset( $data['cc'] ) ) {
-			$extra_emails = $data['cc'];
+		if ( ! empty( $data['cc'] ) ) {
+			$extra_emails[] = $data['cc'];
 		}
 
-		if ( isset( $data['bcc'] ) ) {
-			$extra_emails = array_merge( $extra_emails, $data['bcc'] );
+		if ( ! empty( $data['bcc'] ) ) {
+			$extra_emails[] = $data['bcc'];
 		}
 
 		foreach ( array_merge( $data['emails'], $extra_emails ) as $email ) {

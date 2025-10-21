@@ -21,7 +21,7 @@ class Thrive_Dash_Api_KlickTipp {
 	/**
 	 * Thrive_Dash_Api_KlickTipp constructor.
 	 */
-	public function __construct( $username, $password, $service = 'https://api.klick-tipp.com' ) {
+	public function __construct( $username, $password, $service = 'https://api.klicktipp.com' ) {
 		$this->user     = $username;
 		$this->password = $password;
 		$this->url      = $service;
@@ -145,7 +145,7 @@ class Thrive_Dash_Api_KlickTipp {
 	 * @throws Thrive_Dash_Api_KlickTipp_Exception Exception
 	 *
 	 */
-	public function subscribe( $email, $listid = 0, $tagid = 0, $fields = array() ) {
+	public function subscribe( $email, $listid = 0, $tagids = array(), $fields = array() ) {
 		if ( empty( $email ) ) {
 			throw new Thrive_Dash_Api_KlickTipp_Exception( 'Illegal Arguments' );
 		}
@@ -157,8 +157,8 @@ class Thrive_Dash_Api_KlickTipp {
 		if ( ! empty( $listid ) ) {
 			$data['listid'] = $listid;
 		}
-		if ( ! empty( $tagid ) ) {
-			$data['tagid'] = $tagid;
+		if ( ! empty( $tagids ) ) {
+			$data['tagids'] = $tagids;
 		}
 		if ( ! empty( $fields ) ) {
 			$data['fields'] = $fields;
@@ -335,5 +335,45 @@ class Thrive_Dash_Api_KlickTipp {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get custom fields from KlickTipp API
+	 *
+	 * @return array
+	 * @throws Thrive_Dash_Api_KlickTipp_Exception
+	 */
+	public function getCustomFields() {
+		try {
+			$this->login();
+		} catch ( Thrive_Dash_Api_KlickTipp_Exception $e ) {
+			throw new Thrive_Dash_Api_KlickTipp_Exception( 'Could not connect to KlickTipp: ' . $e->getMessage() );
+		}
+
+		$response = $this->_http_request( '/field' );
+
+		if ( ! empty( $response->error ) ) {
+			throw new Thrive_Dash_Api_KlickTipp_Exception( 'Failed to fetch custom fields: ' . $response->error );
+		}
+
+		if ( empty( $response->data ) ) {
+			throw new Thrive_Dash_Api_KlickTipp_Exception( 'API error: [empty response data for fields]' );
+		}
+
+		$fields = array();
+
+		// Process the response data - assuming it returns an array of field objects
+		if ( is_array( $response->data ) ) {
+			foreach ( $response->data as $field_id => $field_name ) {
+				$fields[] = array(
+					'id' => $field_id,
+					'name' => $field_name,
+					'type' => 'text',
+					'label' => $field_name
+				);
+			}
+		}
+
+		return $fields;
 	}
 }

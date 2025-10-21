@@ -19,6 +19,10 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 		return 'Constant Contact';
 	}
 
+	public function has_tags() {
+		return true;
+	}
+
 	/**
 	 * Builds an authorization URI - the user will be redirected to that URI and asked to give app access
 	 *
@@ -150,11 +154,15 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 	public function add_subscriber( $list_identifier, $arguments ) {
 		// add logic here.
 		$params = array(
+			'create_source'    => 'Contact',
 			'list_memberships' => array( $list_identifier ),
 		);
 
 		if ( $arguments['email'] ) {
-			$params['email_address'] = $arguments['email'];
+			$params['email_address'] = array(
+				'address'            => $arguments['email'],
+				'permission_to_send' => 'implicit',
+			);
 		}
 
 		if ( $arguments['name'] ) {
@@ -175,9 +183,95 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 			$params['phone_number'] = $arguments['phone'];
 		}
 
+		// Handle tags - get or create tag IDs BEFORE contact creation.
+		if ( ! empty( $arguments['constantcontact_v3_tags'] ) ) {
+			$tag_names = explode( ',', trim( $arguments['constantcontact_v3_tags'], ' ,' ) );
+			$tag_names = array_map( 'trim', $tag_names );
+			$tag_names = array_filter( $tag_names ); // Remove empty tags.
+
+			// Get or create tag IDs.
+			$tag_ids = $this->get_or_create_tag_ids( $tag_names );
+
+			if ( ! empty( $tag_ids ) ) {
+				$params['taggings'] = $tag_ids; // Pass tag IDs to API wrapper.
+			}
+		}
+
 		$params = array_merge( $params, $this->_generateMappingFields( $arguments ) );
 
 		return $this->get_api()->addSubscriber( $params );
+	}
+
+
+	/**
+	 * Get or create tag IDs.
+	 *
+	 * @param [type] $tag_names Tag names.
+	 * @return array
+	 */
+	private function get_or_create_tag_ids( $tag_names ) {
+		$tag_ids = array();
+
+		try {
+			// Get all existing tags first - GET /contact_tags.
+			$existing_tags = $this->get_api()->getAllTags();
+			$tag_map = array();
+
+			// Create a map of tag name => tag_id (case-insensitive).
+			if ( is_array( $existing_tags ) && isset( $existing_tags['tags'] ) ) {
+				foreach ( $existing_tags['tags'] as $tag ) {
+					if ( isset( $tag['name'] ) && isset( $tag['tag_id'] ) ) {
+						$tag_map[ strtolower( trim( $tag['name'] ) ) ] = $tag['tag_id'];
+					}
+				}
+			}
+
+			// Process each tag name.
+			foreach ( $tag_names as $tag_name ) {
+				$tag_key = strtolower( trim( $tag_name ) );
+
+				// Check if tag already exists.
+				if ( isset( $tag_map[ $tag_key ] ) ) {
+					$tag_ids[] = $tag_map[ $tag_key ];
+				} else {
+					// Create new tag and get its ID.
+					$new_tag_id = $this->create_new_tag( $tag_name );
+					if ( $new_tag_id ) {
+						$tag_ids[] = $new_tag_id;
+					}
+				}
+			}
+		} catch ( Exception $e ) {
+			error_log( 'ConstantContactV3: Failed to get or create tag IDs - ' . $e->getMessage() );
+		}
+
+		return $tag_ids;
+	}
+
+
+	/**
+	 * Create a new tag using POST /contact_tags.
+	 *
+	 * @param string $tag_name Tag name.
+	 * @return int|null Tag ID.
+	 */
+	private function create_new_tag( $tag_name ) {
+		try {
+			$tag_data = array(
+				'name'       => trim( $tag_name ),
+				'tag_source' => 'API',  // Indicates this tag was created via API.
+			);
+
+			$result = $this->get_api()->createTag( $tag_data );
+
+			if ( is_array( $result ) && isset( $result['tag_id'] ) ) {
+				return $result['tag_id'];
+			}
+		} catch ( Exception $e ) {
+			error_log( 'ConstantContactV3: Failed to create tag "' . $tag_name . '" - ' . $e->getMessage() );
+		}
+
+		return false;
 	}
 
 
@@ -342,6 +436,6 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 	}
 
 	public function get_automator_add_autoresponder_mapping_fields() {
-		return array( 'autoresponder' => array( 'mailing_list', 'api_fields' ) );
+		return array( 'autoresponder' => array( 'mailing_list', 'api_fields', 'tag_input' ) );
 	}
 }

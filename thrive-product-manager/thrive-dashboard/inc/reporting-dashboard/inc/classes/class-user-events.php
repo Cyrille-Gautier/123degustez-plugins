@@ -119,6 +119,7 @@ class User_Events {
 				$users[ $user_id ] = [
 					'name'    => $user->get_title(),
 					'picture' => $user->get_image(),
+					'email'   => $user->get_email(),
 				];
 			}
 		}

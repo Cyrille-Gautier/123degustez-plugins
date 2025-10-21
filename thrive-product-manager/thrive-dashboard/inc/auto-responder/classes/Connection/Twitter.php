@@ -15,7 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Thrive_Dash_List_Connection_Twitter extends Thrive_Dash_List_Connection_Abstract {
 
 	protected $_key = 'twitter';
-	private   $url  = 'https://api.twitter.com/1.1/';
+	protected $_logo_filename = 'x';
+
+	private   $url  = 'https://api.x.com/1.1/';
 
 	/**
 	 * Thrive_Dash_List_Connection_Twitter constructor.
@@ -37,7 +39,7 @@ class Thrive_Dash_List_Connection_Twitter extends Thrive_Dash_List_Connection_Ab
 	 * @return string the API connection title
 	 */
 	public function get_title() {
-		return 'Twitter';
+		return 'X';
 	}
 
 	/**
@@ -84,7 +86,7 @@ class Thrive_Dash_List_Connection_Twitter extends Thrive_Dash_List_Connection_Ab
 		 */
 		$this->save();
 
-		return $this->success( __( 'Twitter connected successfully!', 'thrive-dash' ) );
+		return $this->success( __( 'X connected successfully!', 'thrive-dash' ) );
 	}
 
 	/**
@@ -121,7 +123,7 @@ class Thrive_Dash_List_Connection_Twitter extends Thrive_Dash_List_Connection_Ab
 
 		if ( ! empty( $response ) && is_array( $response ) ) {
 			/* build the user picture so we can get the original one, not the small one */
-			$user_picture = 'https://twitter.com/' . $response['user']['screen_name'] . '/profile_image?size=original';
+			$user_picture = 'https://x.com/' . $response['user']['screen_name'] . '/profile_image?size=original';
 
 			$comment = array(
 				'screen_name' => $response['user']['screen_name'],

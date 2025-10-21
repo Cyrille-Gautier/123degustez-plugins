@@ -298,7 +298,6 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 			$user_id               = null;
 			$arguments['username'] = $username;
 		}
-
 		if ( ! empty( $arguments['name'] ) ) {
 			list( $arguments['first_name'], $arguments['last_name'] ) = $this->get_name_parts( $arguments['name'] );
 		}
@@ -323,11 +322,6 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 						$user_data[ $profile_field ] = $arguments[ $profile_field ];
 					}
 				}
-				
-				$user_data['role'] = 'subscriber';
-				if ( array_key_exists( $list_identifier, $this->_getRoles() ) ) {
-					$user_data['role'] = $list_identifier;
-				} 
 
 				/**
 				 * Filter user data before creating a new user
@@ -359,6 +353,11 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 		}
 
 		$userdata = array( 'ID' => $user_id );
+
+		if ( array_key_exists( $list_identifier, $this->_getRoles() ) ) {
+			$userdata['role'] = $list_identifier;
+		} 
+
 		foreach ( $profile_fields as $profile_field ) {
 			if ( ! empty( $arguments[ $profile_field ] ) ) {
 				$userdata[ $profile_field ] = $arguments[ $profile_field ];

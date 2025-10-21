@@ -5,14 +5,31 @@
  *
  * @package thrive-dashboard
  */
-
-use MailPoet\API\API;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
 
+/**
+ * MailPoet autoresponder integration for Thrive Architect Lead Generation
+ */
 class Thrive_Dash_List_Connection_MailPoet extends Thrive_Dash_List_Connection_Abstract {
+	/**
+	 * Key used for mapping custom fields
+	 *
+	 * @var string
+	 */
+	protected $_key = '_field';
+
+	/**
+	 * Constructor - initialize custom fields mapping
+	 *
+	 * @param string $key API connection key
+	 */
+	public function __construct( $key ) {
+		parent::__construct( $key );
+		$this->set_custom_fields_mapping();
+	}
+
 	/**
 	 * Return the connection type
 	 *
@@ -23,22 +40,6 @@ class Thrive_Dash_List_Connection_MailPoet extends Thrive_Dash_List_Connection_A
 	}
 
 	/**
-	 * Return the connection email merge tag
-	 *
-	 * @return String
-	 */
-	public static function get_email_merge_tag() {
-		/**
-		 * Mailpoet 3 changed the shortcodes from user:email to subscriber:email
-		 */
-		if ( defined( 'MAILPOET_VERSION' ) && version_compare( MAILPOET_VERSION, '3', '>' ) ) {
-			return '[subscriber:email]';
-		}
-
-		return '[user:email]';
-	}
-
-	/**
 	 * @return string
 	 */
 	public function get_title() {
@@ -46,23 +47,37 @@ class Thrive_Dash_List_Connection_MailPoet extends Thrive_Dash_List_Connection_A
 	}
 
 	/**
-	 * check whether or not the MailPoet plugin is installed
+	 * @return bool
 	 */
-	public function pluginInstalled() {
-		$installed = array();
-		if ( class_exists( 'MailPoet\Config\Initializer', false ) ) {
-			$installed[] = 3;
-		}
-
-		if ( class_exists( 'WYSIJA' ) ) {
-			$installed[] = 2;
-		}
-
-		return $installed;
+	public function has_tags() {
+		return false; // MailPoet uses segments/lists instead of tags
 	}
 
 	/**
-	 * output the setup form html
+	 * @return bool
+	 */
+	public function has_optin() {
+		return true;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function has_custom_fields() {
+		return true;
+	}
+
+	/**
+	 * Check whether or not the MailPoet plugin is installed
+	 *
+	 * @return bool
+	 */
+	public function pluginInstalled() {
+		return class_exists( '\MailPoet\API\API' );
+	}
+
+	/**
+	 * Output the setup form html
 	 *
 	 * @return void
 	 */
@@ -71,7 +86,7 @@ class Thrive_Dash_List_Connection_MailPoet extends Thrive_Dash_List_Connection_A
 	}
 
 	/**
-	 * just save the key in the database
+	 * Just save the key in the database
 	 *
 	 * @return mixed|void
 	 */
@@ -80,15 +95,18 @@ class Thrive_Dash_List_Connection_MailPoet extends Thrive_Dash_List_Connection_A
 			return $this->error( __( 'MailPoet plugin must be installed and activated.', 'thrive-dash' ) );
 		}
 
-		$this->set_credentials( $this->post( 'connection' ) );
+		$connection_data = $this->post( 'connection', array() );
+		$connection_data['connected'] = true;
+		$this->set_credentials( $connection_data );
 
 		$result = $this->test_connection();
 
 		if ( $result !== true ) {
-			return $this->error( '<strong>' . $result . '</strong>)' );
+			return $this->error( '<strong>' . $result . '</strong>' );
 		}
+
 		/**
-		 * finally, save the connection details
+		 * Finally, save the connection details.
 		 */
 		$this->save();
 
@@ -96,20 +114,28 @@ class Thrive_Dash_List_Connection_MailPoet extends Thrive_Dash_List_Connection_A
 	}
 
 	/**
-	 * test if a connection can be made to the service using the stored credentials
+	 * Test if a connection can be made to the service using the stored credentials
 	 *
 	 * @return bool|string true for success or error message for failure
 	 */
 	public function test_connection() {
 		if ( ! $this->pluginInstalled() ) {
-			return __( 'At least one MailPoet plugin must be installed and activated.', 'thrive-dash' );
+			return __( 'MailPoet plugin must be installed and activated.', 'thrive-dash' );
+		}
+
+		try {
+			$api = \MailPoet\API\API::MP( 'v1' );
+			// Test by getting subscriber fields - this will fail if API is not working
+			$api->getSubscriberFields();
+		} catch ( Exception $exception ) {
+			return $exception->getMessage();
 		}
 
 		return true;
 	}
 
 	/**
-	 * add a contact to a list
+	 * Add a contact to a list
 	 *
 	 * @param mixed $list_identifier
 	 * @param array $arguments
@@ -121,176 +147,344 @@ class Thrive_Dash_List_Connection_MailPoet extends Thrive_Dash_List_Connection_A
 			return __( 'MailPoet plugin is not installed / activated', 'thrive-dash' );
 		}
 
-		list( $firstname, $lastname ) = $this->get_name_parts( $arguments['name'] );
+		if ( empty( $arguments['email'] ) ) {
+			return __( 'Email address is required', 'thrive-dash' );
+		}
 
-		$credentials = $this->get_credentials();
+		$prepared_args = array();
 
-		if ( ! isset( $credentials['version'] ) || $credentials['version'] == 2 ) {
-			$user_data = array(
-				'email'     => $arguments['email'],
-				'firstname' => $firstname,
-				'lastname'  => $lastname,
-			);
+		// Handle name
+		if ( ! empty( $arguments['name'] ) ) {
+			list( $first_name, $last_name ) = $this->get_name_parts( $arguments['name'] );
+			$prepared_args['first_name'] = sanitize_text_field( $first_name );
+			$prepared_args['last_name'] = sanitize_text_field( $last_name );
+		}
 
-			$data_subscriber = array(
-				'user'      => $user_data,
-				'user_list' => array( 'list_ids' => array( $list_identifier ) ),
-			);
+		// Handle mapped fields from TAR
+		if ( ! empty( $arguments['tve_mapping'] ) ) {
+			$mapped_defaults = $this->buildMappedDefaultFields( $arguments );
+			$custom_fields = $this->buildMappedCustomFields( $arguments );
 
-			/** @var WYSIJA_help_user $user_helper */
-			$user_helper = WYSIJA::get( 'user', 'helper' );
-			$result      = $user_helper->addSubscriber( $data_subscriber );
-			if ( $result === false ) {
-				$messages = $user_helper->getMsgs();
-				if ( isset( $messages['xdetailed-errors'] ) ) {
-					return implode( '<br><br>', $messages['xdetailed-errors'] );
-				} elseif ( isset( $messages['error'] ) ) {
-					return implode( '<br><br>', $messages['error'] );
-				}
-
-				return __( 'Subscriber could not be saved', 'thrive-dash' );
-			}
-		} else {
-			$user_data = array(
-				'email'      => $arguments['email'],
-				'first_name' => $firstname,
-				'last_name'  => $lastname,
-			);
-
-			// Compatibility with latest version 3.21.0+
-			if ( class_exists( 'MailPoet\API\API' ) ) {
-				$mailpoet   = new API();
-				$errors     = array();
-				$subscriber = array();
-
-				// Get subscriber
-				try {
-					$subscriber = $mailpoet::MP( 'v1' )->getSubscriber( $arguments['email'] );
-				} catch ( Exception $exception ) {
-					$errors[] = $exception->getMessage();
-				}
-
-				// Create subscriber if not exists
-				if ( is_array( $subscriber ) && empty( $subscriber['id'] ) ) {
-					try {
-						$subscriber = $mailpoet::MP( 'v1' )->addSubscriber( $user_data, array(), array() );
-					} catch ( Exception $exception ) {
-						$errors[] = $exception->getMessage();
-					}
-				}
-
-				// Add subscriber to list
-				if ( is_array( $subscriber ) && ! empty( $subscriber['email'] ) ) {
-					try {
-						$mailpoet::MP( 'v1' )->subscribeToList( $subscriber['email'], $list_identifier, $user_data );
-
-						return true;
-					} catch ( Exception $exception ) {
-						return $exception->getMessage();
-					}
-				}
-
-				if ( $errors ) {
-					return implode( '<br/>', $errors );
-				}
-
-				return false;
+			if ( ! empty( $mapped_defaults ) ) {
+				$prepared_args = array_merge( $prepared_args, $mapped_defaults );
 			}
 
-			if ( ! class_exists( 'MailPoet\Models\Subscriber' ) ) {
-				$this->_error = __( 'No MailPoet plugin could be found.', 'thrive-dash' );
-
-				return false;
-			}
-
-			$result = call_user_func( array(
-				'MailPoet\Models\Subscriber',
-				'subscribe'
-			), $user_data, array( $list_identifier ) );
-
-			if ( $result->getErrors() ) {
-				return implode( '<br><br>', $result->getErrors() );
+			if ( ! empty( $custom_fields ) ) {
+				$prepared_args = array_merge( $prepared_args, $custom_fields );
 			}
 		}
 
-		return true;
+		// Set subscriber status based on optin choice
+		$status = 'subscribed'; // Default to single optin
+		if ( isset( $arguments['mailpoet_optin'] ) && 'd' === $arguments['mailpoet_optin'] ) {
+			$status = 'unconfirmed'; // This will trigger double optin
+		}
 
+		$data = array_merge(
+			array(
+				'email'  => sanitize_email( $arguments['email'] ),
+				'status' => $status,
+			),
+			$prepared_args
+		);
+
+		try {
+			$api = \MailPoet\API\API::MP( 'v1' );
+			
+			// Add or update subscriber
+			$subscriber = $api->addSubscriber( $data, array( $list_identifier ) );
+
+			// Send confirmation email if double optin is enabled
+			if ( 'unconfirmed' === $status ) {
+				$api->sendConfirmationEmail( $subscriber['id'] );
+			}
+		} catch ( Exception $exception ) {
+			return $exception->getMessage();
+		}
+
+		return true;
 	}
 
 	/**
-	 * instantiate the API code required for this connection
+	 * Build mapped custom fields array (only actual custom fields)
 	 *
-	 * @return mixed
+	 * @param array $args Form arguments
+	 *
+	 * @return array Mapped custom fields data
+	 */
+	public function buildMappedCustomFields( $args ) {
+		if ( empty( $args['tve_mapping'] ) || ! is_array( $args['tve_mapping'] ) ) {
+			return array();
+		}
+
+		$custom_fields = array();
+		$available_fields = $this->get_all_custom_fields( false );
+
+		if ( empty( $available_fields ) ) {
+			return array();
+		}
+
+		// Create lookup array for available custom fields
+		$custom_field_ids = array();
+		$default_field_ids = $this->get_default_field_ids();
+		foreach ( $available_fields as $field ) {
+			if ( ! empty( $field['id'] ) && ! in_array( $field['id'], $default_field_ids, true ) ) {
+				$custom_field_ids[] = $field['id'];
+			}
+		}
+
+		foreach ( $args['tve_mapping'] as $form_field => $api_field ) {
+			if ( empty( $api_field ) || empty( $args[ $form_field ] ) ) {
+				continue;
+			}
+
+			// Only process actual custom fields (not default subscriber fields)
+			if ( in_array( $api_field, $custom_field_ids, true ) ) {
+				$custom_fields[ $api_field ] = sanitize_text_field( $args[ $form_field ] );
+			}
+		}
+
+		return $custom_fields;
+	}
+
+	/**
+	 * Build mapped default fields array (first_name, last_name, etc.)
+	 *
+	 * @param array $args Form arguments
+	 *
+	 * @return array Mapped default fields data
+	 */
+	public function buildMappedDefaultFields( $args ) {
+		if ( empty( $args['tve_mapping'] ) || ! is_array( $args['tve_mapping'] ) ) {
+			return array();
+		}
+
+		$default_fields = array();
+		$allowed_defaults = $this->get_default_field_ids();
+
+		foreach ( $args['tve_mapping'] as $form_field => $api_field ) {
+			if ( empty( $api_field ) || empty( $args[ $form_field ] ) ) {
+				continue;
+			}
+
+			// Only process default subscriber fields
+			if ( in_array( $api_field, $allowed_defaults, true ) ) {
+				$default_fields[ $api_field ] = sanitize_text_field( $args[ $form_field ] );
+			}
+		}
+
+		return $default_fields;
+	}
+
+	/**
+	 * Get default MailPoet subscriber field IDs
+	 *
+	 * @return array
+	 */
+	protected function get_default_field_ids() {
+		return array( 'first_name', 'last_name' );
+	}
+
+	/**
+	 * Get all available fields (default + custom)
+	 *
+	 * @param bool $force Force refresh from API
+	 *
+	 * @return array
+	 */
+	public function get_all_custom_fields( $force ) {
+		$cached_data = $this->get_cached_custom_fields();
+		if ( false === $force && ! empty( $cached_data ) ) {
+			return $cached_data;
+		}
+
+		if ( ! $this->pluginInstalled() ) {
+			return array();
+		}
+
+		// Default MailPoet subscriber fields
+		$fields = array(
+			array( 'id' => 'first_name', 'name' => 'First Name', 'type' => 'text', 'label' => 'First Name' ),
+			array( 'id' => 'last_name', 'name' => 'Last Name', 'type' => 'text', 'label' => 'Last Name' ),
+		);
+
+		try {
+			$api = \MailPoet\API\API::MP( 'v1' );
+			$subscriber_fields = $api->getSubscriberFields();
+
+			if ( is_array( $subscriber_fields ) ) {
+				foreach ( $subscriber_fields as $field ) {
+					// Skip default fields (email, first_name, last_name)
+					if ( ! empty( $field['id'] ) && ! in_array( $field['id'], array( 'email', 'first_name', 'last_name' ), true ) ) {
+						$fields[] = array(
+							'id'    => sanitize_text_field( $field['id'] ),
+							'name'  => ! empty( $field['name'] ) ? sanitize_text_field( $field['name'] ) : $field['id'],
+							'type'  => ! empty( $field['type'] ) ? sanitize_text_field( $field['type'] ) : 'text',
+							'label' => ! empty( $field['name'] ) ? sanitize_text_field( $field['name'] ) : $field['id'],
+						);
+					}
+				}
+			}
+		} catch ( Exception $e ) {
+			// Log error but continue with default fields
+			error_log( 'MailPoet API error: ' . $e->getMessage() );
+		}
+
+		$this->_save_custom_fields( $fields );
+		return $fields;
+	}
+
+	/**
+	 * Get MailPoet lists/segments for TAR dropdown
+	 *
+	 * @param bool $use_cache Whether to use cached results
+	 *
+	 * @return array
+	 */
+	public function get_lists( $use_cache = true ) {
+		if ( ! $this->pluginInstalled() ) {
+			return array();
+		}
+
+		// Check cache first if requested
+		if ( $use_cache ) {
+			$cached_lists = get_transient( 'tve_mailpoet_lists_' . md5( $this->_key ) );
+			if ( false !== $cached_lists ) {
+				return $cached_lists;
+			}
+		}
+
+		try {
+			$api = \MailPoet\API\API::MP( 'v1' );
+			$segments = $api->getLists();
+
+			$lists = array();
+			if ( is_array( $segments ) ) {
+				foreach ( $segments as $segment ) {
+					if ( ! empty( $segment['id'] ) && ! empty( $segment['name'] ) ) {
+						$lists[] = array(
+							'id'   => sanitize_text_field( $segment['id'] ),
+							'name' => sanitize_text_field( $segment['name'] ),
+						);
+					}
+				}
+			}
+
+			// Cache the results for 30 minutes
+			if ( ! empty( $lists ) ) {
+				set_transient( 'tve_mailpoet_lists_' . md5( $this->_key ), $lists, 30 * MINUTE_IN_SECONDS );
+			}
+
+			return $lists;
+		} catch ( Exception $exception ) {
+			error_log( 'MailPoet get lists error: ' . $exception->getMessage() );
+			return array();
+		}
+	}
+
+	/**
+	 * Normalize custom field data
+	 *
+	 * @param array $field
+	 *
+	 * @return array
+	 */
+	protected function normalize_custom_field( $field ) {
+		$field = (array) $field;
+
+		return array(
+			'id'    => ! empty( $field['id'] ) ? sanitize_text_field( $field['id'] ) : '',
+			'name'  => ! empty( $field['name'] ) ? sanitize_text_field( $field['name'] ) : '',
+			'type'  => ! empty( $field['type'] ) ? sanitize_text_field( $field['type'] ) : 'text',
+			'label' => ! empty( $field['name'] ) ? sanitize_text_field( $field['name'] ) : '',
+		);
+	}
+
+	/**
+	 * Get available custom fields for this api connection
+	 *
+	 * @param null $list_id
+	 *
+	 * @return array
+	 */
+	public function get_available_custom_fields( $list_id = null ) {
+		return $this->get_all_custom_fields( true );
+	}
+
+	/**
+	 * Get custom fields for TAR form builder (merges default + mapped fields)
+	 *
+	 * @param array $params
+	 *
+	 * @return array
+	 */
+	public function get_custom_fields( $params = array() ) {
+		return array_merge( parent::get_custom_fields(), $this->_mapped_custom_fields );
+	}
+
+	/**
+	 * Get API custom fields for TAR (returns all available MailPoet fields)
+	 *
+	 * @param array $params
+	 * @param bool  $force
+	 * @param bool  $get_all
+	 *
+	 * @return array
+	 */
+	public function get_api_custom_fields( $params, $force = false, $get_all = false ) {
+		return $this->get_all_custom_fields( $force );
+	}
+
+	/**
+	 * Get API instance (not needed for MailPoet since we use their API directly)
+	 *
+	 * @return null
 	 */
 	protected function get_api_instance() {
-		// no API instance needed here
+		// No API instance needed here - we use MailPoet\API\API directly
 		return null;
 	}
 
 	/**
-	 * get all Subscriber Lists from this API service
+	 * Get all subscriber lists from MailPoet API service
 	 *
 	 * @return array|bool
 	 */
 	protected function _get_lists() {
 		if ( ! $this->pluginInstalled() ) {
-			$this->_error = __( 'No MailPoet plugin could be found.', 'thrive-dash' );
-
+			$this->_error = __( 'MailPoet plugin must be installed and activated.', 'thrive-dash' );
 			return false;
 		}
 
+		try {
+			$api = \MailPoet\API\API::MP( 'v1' );
+			$segments = $api->getLists();
+
 		$lists = array();
-
-		$credentials = $this->get_credentials();
-
-		// Version 2 check [DB option] that uses different classes
-		if ( ! isset( $credentials['version'] ) || 2 === (int) $credentials['version'] ) {
-			$model_list = WYSIJA::get( 'list', 'model' );
-			$lists      = $model_list->get( array( 'name', 'list_id' ), array( 'is_enabled' => 1 ) );
-			foreach ( $lists as $i => $list ) {
-				$lists[ $i ]['id'] = $list['list_id'];
-			}
-		} else {
-
-			// Compatibility with latest version 3.21.0+
-			if ( class_exists( 'MailPoet\API\API' ) ) {
-
-				$mailpoet           = new API();
-				$subscription_lists = $mailpoet::MP( 'v1' )->getLists();
-
-				if ( is_array( $subscription_lists ) && ! empty( $subscription_lists ) ) {
-					foreach ( $subscription_lists as $list ) {
-						$lists [] = array(
-							'id'   => $list['id'],
-							'name' => $list['name'],
+			if ( is_array( $segments ) ) {
+				foreach ( $segments as $segment ) {
+					if ( ! empty( $segment['id'] ) && ! empty( $segment['name'] ) ) {
+						$lists[] = array(
+							'id'   => sanitize_text_field( $segment['id'] ),
+							'name' => sanitize_text_field( $segment['name'] ),
 						);
 					}
 				}
-
-				return $lists;
 			}
 
-			if ( ! class_exists( 'MailPoet\Models\Segment' ) ) {
-				$this->_error = __( 'No MailPoet plugin could be found.', 'thrive-dash' );
-
-				return false;
+			return $lists;
+		} catch ( Exception $exception ) {
+			$this->_error = sprintf( __( 'MailPoet API Error: %s', 'thrive-dash' ), $exception->getMessage() );
+			return false;
 			}
+	}
 
-			$segments = call_user_func( array(
-				'MailPoet\Models\Segment',
-				'getSegmentsWithSubscriberCount'
-			), 'default' );
-
-			if ( ! empty( $segments ) ) {
-				foreach ( $segments as $segment ) {
-					$lists [] = array(
-						'id'   => $segment['id'],
-						'name' => $segment['name'],
-					);
-				}
-			}
-		}
-
-		return $lists;
+	/**
+	 * Return the connection email merge tag
+	 *
+	 * @return String
+	 */
+	public static function get_email_merge_tag() {
+		return '[subscriber:email]';
 	}
 }

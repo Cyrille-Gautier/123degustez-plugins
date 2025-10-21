@@ -240,7 +240,7 @@ class Thrive_Dash_Api_ConstantContactV3_Service {
 		$params = wp_json_encode( $params );
 
 		$result = $this->post(
-			static::BASE_URI. 'contacts/sign_up_form',
+			static::BASE_URI. 'contacts',
 			$params,
 			array(
 				'Content-type' => 'application/json',
@@ -375,4 +375,35 @@ class Thrive_Dash_Api_ConstantContactV3_Service {
 		}
 	}
 
+
+	// Get all existing tags - GET /contact_tags
+	public function getAllTags() {
+		$params = array();
+
+		$result = $this->get(
+			static::BASE_URI. 'contact_tags',
+			$params,
+			array(
+				'Content-type' => 'application/json',
+			)
+		);
+
+		return $result;
+	}
+
+	// Create new tag - POST /contact_tags
+	public function createTag( $tag_data ) {
+		// convert $params to json
+		$params = wp_json_encode( $tag_data );
+
+		$result = $this->post(
+			static::BASE_URI. 'contact_tags',
+			$params,
+			array(
+				'Content-type' => 'application/json',
+			)
+		);
+
+		return $result;
+	}
 }

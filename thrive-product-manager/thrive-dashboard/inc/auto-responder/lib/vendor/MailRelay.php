@@ -198,6 +198,68 @@ class Thrive_Dash_Api_MailRelay {
 	}
 
 	/**
+	 * Get custom fields from MailRelay
+	 *
+	 * @return array
+	 * @throws Thrive_Dash_Api_MailRelay_Exception
+	 */
+	public function get_custom_fields() {
+		// For the regular MailRelay API, custom fields support may be limited
+		// Return some default field structure
+		return array(
+			array( 'name' => 'text_field', 'label' => 'Text Field', 'type' => 'text' ),
+			array( 'name' => 'phone_field', 'label' => 'Phone Field', 'type' => 'text' ),
+			array( 'name' => 'company_field', 'label' => 'Company Field', 'type' => 'text' ),
+		);
+	}
+
+	/**
+	 * Update subscriber custom fields
+	 *
+	 * @param string $email
+	 * @param array $custom_fields
+	 *
+	 * @return array
+	 * @throws Thrive_Dash_Api_MailRelay_Exception
+	 */
+	public function update_subscriber_custom_fields( $email, $custom_fields ) {
+		// Get existing subscriber
+		$subscriber_data = $this->get_subscriber( $email );
+		
+		if ( ! empty( $subscriber_data['data'] ) && is_array( $subscriber_data['data'] ) ) {
+			$subscriber = $subscriber_data['data'][0];
+			$args = array(
+				'email' => $email,
+				'customFields' => $custom_fields,
+			);
+			
+			return $this->update_subscriber( $subscriber, $args );
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Apply tag to subscriber (for MailRelay, we store as custom field)
+	 *
+	 * @param string $email
+	 * @param string $tag
+	 *
+	 * @return bool
+	 * @throws Thrive_Dash_Api_MailRelay_Exception
+	 */
+	public function apply_tag( $email, $tag ) {
+		try {
+			// For MailRelay, we store tags as a custom field
+			$custom_fields = array( 'mailrelay_tags' => $tag );
+			$this->update_subscriber_custom_fields( $email, $custom_fields );
+			return true;
+		} catch ( Exception $e ) {
+			return false;
+		}
+	}
+
+	/**
 	 * Prepare the call CRUD data
 	 *
 	 * @param array  $params
@@ -300,4 +362,12 @@ class Thrive_Dash_Api_MailRelay {
 
 		return json_decode( $response['body'], true );
 	}
+}
+
+/**
+ * Class Thrive_Dash_Api_MailRelay_Exception
+ * Exception class for MailRelay API errors
+ */
+class Thrive_Dash_Api_MailRelay_Exception extends Exception {
+	
 }

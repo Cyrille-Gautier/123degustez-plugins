@@ -4,7 +4,7 @@
  *
  * @package thrive-dashboard
  *
- * Requires PHP: 7.4
+ * Requires PHP: 8.1
  *
  */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -76,6 +76,7 @@ require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-am-admin-bar-visibil
 require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-am-login-redirect.php';
 require_once TVE_DASH_PATH . '/inc/pdf/class-pdf-from-url.php';
 require_once TVE_DASH_PATH . '/inc/metrics/class-main.php';
+require_once TVE_DASH_PATH . '/inc/webhooks/class-main.php';
 
 require_once TVE_DASH_PATH . '/inc/reporting-dashboard/functions.php';
 
@@ -134,7 +135,8 @@ add_action( 'init',
 		TVD\Dashboard\Access_Manager\Login_Redirect::init();
 		TVE\Dashboard\Design_Packs\Main::init();
 		TVE\Dashboard\Metrics\Main::init();
-        Tve_Dash_Growth_Tools::init();
+		TVE\Dashboard\Webhooks\Main::init();
+		Tve_Dash_Growth_Tools::init();
 		App_Notification::instance();
 	}, - 1 );
 if ( defined( 'WPSEO_FILE' ) ) {
