@@ -2412,12 +2412,11 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 
 			return empty( $article_url ) ? '' : tve_dash_api_remote_get( $article_url, [
 				'headers' => [
-					'Authorization' => '',
+					'Authorization' => getenv(THRIVE_KEY),
 					'Accept'        => 'application/json',
 					'Content-Type'  => 'application/json',
 				],
 			] );
-            //
 		}
 
 		/**
