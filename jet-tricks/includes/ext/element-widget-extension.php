@@ -61,6 +61,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 			'jet_tricks_widget_tooltip_z_index'         => 999,
 			'jet_tricks_widget_tooltip_custom_selector' => '',
 			'jet_tricks_widget_tooltip_delay'           => 0,
+			'jet_tricks_widget_tooltip_follow_cursor'   => 'false',
 		);
 
 		/**
@@ -853,6 +854,26 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 			);
 
 			$obj->add_control(
+				'jet_tricks_widget_tooltip_follow_cursor',
+				array(
+					'label'        => esc_html__( 'Follow Cursor', 'jet-tricks' ),
+					'type'         => Elementor\Controls_Manager::SELECT,
+					'options' => array(
+						'false' => esc_html__( 'Disabled', 'jet-tricks' ),
+						'true' => esc_html__( 'Default', 'jet-tricks' ),
+						'initial' => esc_html__( 'Initial', 'jet-tricks' ),
+						'horizontal' => esc_html__( 'Horizontal', 'jet-tricks' ),
+						'vertical' => esc_html__( 'Vertical', 'jet-tricks' ),						
+					),
+					'default'      => 'false',
+					'render_type'  => 'template',
+					'condition' => array(
+						'jet_tricks_widget_tooltip' => 'true',
+					),
+				)
+			);
+
+			$obj->add_control(
 				'jet_tricks_widget_tooltip_delay',
 				array(
 					'label'      => esc_html__( 'Delay', 'jet-tricks' ),
@@ -1173,6 +1194,7 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Widget_Extension' ) ) {
 				$widget_settings[ 'zIndex' ]             = $settings[ 'jet_tricks_widget_tooltip_z_index' ];
 				$widget_settings[ 'customSelector' ]     = $settings[ 'jet_tricks_widget_tooltip_custom_selector' ];
 				$widget_settings[ 'delay' ]              = $settings['jet_tricks_widget_tooltip_delay'];
+				$widget_settings[ 'followCursor' ] 		 = $settings[ 'jet_tricks_widget_tooltip_follow_cursor' ];
 
 				$widget->add_render_attribute( '_wrapper', array (
 					'class' => 'jet-tooltip-widget',

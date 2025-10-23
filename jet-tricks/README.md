@@ -4,6 +4,11 @@ Enjoy adding animation on the fly without coding skills
 
 # ChangeLog
 
+## 1.5.8
+* Added: `Follow Cursor` control for Tooltip [Crocoblock/suggestions#2276](https://github.com/Crocoblock/suggestions/issues/2276);
+* Fixed: Particles not initializing with Elementor Element Cache enabled;
+* Updated: Popper.js to v2.11.8 [Crocoblock/suggestions#8261](https://github.com/Crocoblock/suggestions/issues/8261).
+
 ## 1.5.7
 * Added: JetEngine Query Gateway support for Hotspots widget;
 * Fixed: prevent MutationObserver recursion in sticky columns [Crocoblock/suggestions#6203](https://github.com/Crocoblock/suggestions/issues/6203);

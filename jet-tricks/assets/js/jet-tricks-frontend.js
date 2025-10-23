@@ -956,7 +956,8 @@
 				'tooltipTrigger': widgetData['jet_tricks_widget_tooltip_trigger'] || 'mouseenter',
 				'customSelector': widgetData['jet_tricks_widget_tooltip_custom_selector'] || '',
 				'zIndex': widgetData['jet_tricks_widget_tooltip_z_index'] || '999',
-				'delay': widgetData['jet_tricks_widget_tooltip_delay'] || '0'
+				'delay': widgetData['jet_tricks_widget_tooltip_delay'] || '0',
+				'followCursor': widgetData['jet_tricks_widget_tooltip_follow_cursor'] || 'false'
 			}
 		}
 	}
@@ -1393,10 +1394,11 @@
 					offset: [ settings['xOffset'], settings['yOffset'] ],
 					animation: settings['tooltipAnimation'],
 					trigger: settings['tooltipTrigger'],
-					interactive: true,
+					interactive: settings['followCursor'] === 'false' || settings['followCursor'] === 'initial',
 					zIndex: settings['zIndex'],
 					maxWidth: 'none',
 					delay: settings['delay']['size'] ? settings['delay']['size'] : 0,
+					followCursor: settings['followCursor'] === 'false' ? false : (settings['followCursor'] === 'true' ? true : settings['followCursor']),
 					onCreate: function (instance) {
 						if ( editMode ) {
 							var dataId = tooltipSelector.getAttribute('data-id');

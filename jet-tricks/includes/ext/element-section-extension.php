@@ -251,18 +251,76 @@ if ( ! class_exists( 'Jet_Tricks_Elementor_Section_Extension' ) ) {
 		 *
 		 * @return void
 		 */
-		public function enqueue_scripts() {
-
-			if ( ! empty( $this->particle_sections ) ) {
+		public function enqueue_scripts() {			
+			
+			$is_element_cache_active = get_option( 'elementor_element_cache_ttl' );
+			
+			if ( $is_element_cache_active !== 'disable' || ! empty( $this->particle_sections ) ) {
 				wp_enqueue_script( 'jet-tricks-ts-particles' );
 			}
-
+		
+			if ( $is_element_cache_active !== 'disable' ) {
+				$this->sections_data = $this->getAllParticleSections();
+			}
+			
 			jet_tricks_assets()->elements_data['sections'] = $this->sections_data;
 		}
 
 		public function enqueue_preview_scripts() {
 			wp_enqueue_script( 'jet-tricks-ts-particles' );
 		}
+
+		/**
+		 * Get all particle sections from the current page
+		 *
+		 * @return array
+		 */
+		public function getAllParticleSections() {
+			$particle_sections = array();
+			
+			$post_id = get_the_ID();
+			if ( ! $post_id ) {
+				return $particle_sections;
+			}
+			
+			$elementor_data = get_post_meta( $post_id, '_elementor_data', true );
+			if ( empty( $elementor_data ) ) {
+				return $particle_sections;
+			}
+			
+			$elementor_data = json_decode( $elementor_data, true );
+			if ( ! is_array( $elementor_data ) ) {
+				return $particle_sections;
+			}
+			
+			$this->findParticleSections( $elementor_data, $particle_sections );
+			
+			return $particle_sections;
+		}
+
+		/**
+		 * Recursively find particle sections
+		 *
+		 * @param array $elements
+		 * @param array $particle_sections
+		 */
+		private function findParticleSections( $elements, &$particle_sections ) {
+			foreach ( $elements as $element ) {
+				if ( in_array( $element['elType'] ?? '', [ 'section', 'container' ], true )
+					&& filter_var( $element['settings']['section_jet_tricks_particles'] ?? false, FILTER_VALIDATE_BOOLEAN )
+					&& ! empty( $element['id'] ) ) {
+					
+					$particle_sections[ $element['id'] ] = [
+						'particles'      => 'true',
+						'particles_json' => $element['settings']['section_jet_tricks_particles_json'] ?? '',
+					];
+				}
+				
+				if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
+					$this->findParticleSections( $element['elements'], $particle_sections );
+				}
+			}
+		}	
 
 		/**
 		 * Returns the instance.

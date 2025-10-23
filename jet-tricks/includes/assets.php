@@ -60,7 +60,7 @@ if ( ! class_exists( 'Jet_Tricks_Assets' ) ) {
 				'jet-tricks-popperjs',
 				jet_tricks()->plugin_url( 'assets/js/lib/tippy/popperjs.js' ),
 				array(),
-				'2.5.2',
+				'2.11.8',
 				true
 			);
 
@@ -68,7 +68,7 @@ if ( ! class_exists( 'Jet_Tricks_Assets' ) ) {
 				'jet-tricks-tippy-bundle',
 				jet_tricks()->plugin_url( 'assets/js/lib/tippy/tippy-bundle.js' ),
 				array( 'jet-tricks-popperjs' ),
-				'6.3.1',
+				'6.3.7',
 				true
 			);
 
