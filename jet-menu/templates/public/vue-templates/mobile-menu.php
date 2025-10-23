@@ -76,6 +76,7 @@
 
 				<div
 					class="jet-mobile-menu__controls"
+                    v-if="isBreadcrumbs || isBack || isClose"
 				>
 					<div
 						class="jet-mobile-menu__breadcrumbs"

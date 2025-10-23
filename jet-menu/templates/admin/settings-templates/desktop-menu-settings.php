@@ -1,4 +1,4 @@
-<?php // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+<?php // phpcs:disable ?>
 <div
 	class="jet-menu-settings-page jet-menu-settings-page__desktop-menu"
 >
@@ -1371,4 +1371,4 @@
     </cx-vui-collapse>
 
 </div>
-<?php // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+<?php // phpcs:enable ?>

@@ -68,6 +68,10 @@ class Mega_Menu extends Base {
 				'type'    => 'string',
 				'default' => 'hover',
 			],
+			'subCloseBehavior' => [
+				'type'    => 'string',
+				'default' => 'mouseleave',
+			],
 			'mouseLeaveDelay'      => [
 				'type'    => 'number',
 				'default' => 500,
@@ -154,6 +158,7 @@ class Mega_Menu extends Base {
 			'sub-animation'         => $settings['subAnimation'],
 			'sub-position'          => $settings['subPosition'],
 			'sub-event'             => $settings['subEvent'],
+			'sub-close-behavior'    => $settings['subCloseBehavior'],
 			'sub-mouse-leave-delay' => $settings['mouseLeaveDelay'],
 			'sub-trigger'           => $settings['subTrigger'],
 			'mega-width-type'       => $settings['megaWidthType'],

@@ -1,8 +1,18 @@
-<?php // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+<?php // phpcs:disable ?>
 <div
 	id="jet-menu-settings-fields"
 	class="jet-menu-settings-fields"
 >
+    <div class="cx-vui-notice__content">
+        <?php _e( 'We recommend using JetMenu widgets instead of theme locations when building your header or footer, as this keeps styles consistent and avoids conflicts with the theme’s default menu.',
+            'jet-menu'
+        ); ?>
+        <a href="https://crocoblock.com/knowledge-base/features/mega-menu-widget-overview/" target="_blank" rel="noopener">
+            <?php _e( 'Learn how to add a JetMenu widget →', 'jet-menu' ); ?>
+        </a>
+    </div>
+    <br><br>
+
 	<div
 		class="jet-menu-settings-fields__list"
 		:class="{ 'loading-state': savingState }"
@@ -59,4 +69,4 @@
 		</div>
 	</div>
 </div>
-<?php // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+<?php // phpcs:enable ?>

@@ -201,20 +201,6 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 			);
 
 			$this->add_control(
-				'sub-menu-mouse-leave-delay',
-				array(
-					'label'   => esc_html__( 'Mouse Leave Delay', 'jet-menu' ),
-					'type'    => Controls_Manager::NUMBER,
-					'min'     => 0,
-					'max'     => 10000,
-					'default' => 500,
-					'condition' => array (
-						'sub-menu-event' => array( 'hover' ),
-					),
-				)
-			);
-
-			$this->add_control(
 				'sub-menu-trigger',
 				array(
 					'label'   => esc_html__( 'Sub Menu Target', 'jet-menu' ),
@@ -226,6 +212,37 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 					),
 					'condition' => array (
 						'sub-menu-event' => array( 'click' ),
+					),
+				)
+			);
+
+			$this->add_control(
+				'sub-menu-close-behavior',
+				array(
+					'label'       => esc_html__( 'Sub Menu Close Behavior', 'jet-menu' ),
+					'type'        => Controls_Manager::SELECT,
+					'default'     => 'mouseleave',
+					'options'     => array(
+						'mouseleave' => esc_html__( 'On Mouse Leave', 'jet-menu' ),
+						'outside'    => esc_html__( 'On Click Outside', 'jet-menu' ),
+					),
+					'condition'   => array(
+						'sub-menu-event' => array( 'click' ),
+					),
+					'description' => esc_html__( 'Defines how the submenu closes in Click mode.', 'jet-menu' ),
+				)
+			);
+
+			$this->add_control(
+				'sub-menu-mouse-leave-delay',
+				array(
+					'label'   => esc_html__( 'Mouse Leave Delay', 'jet-menu' ),
+					'type'    => Controls_Manager::NUMBER,
+					'min'     => 0,
+					'max'     => 10000,
+					'default' => 500,
+					'condition' => array (
+						'sub-menu-close-behavior!' => 'outside',
 					),
 				)
 			);
@@ -3016,6 +3033,7 @@ class Jet_Widget_Mega_Menu extends Widget_Base {
 				'sub-animation'         => $settings['sub-animation'],
 				'sub-position'          => $settings['sub-menu-position'],
 				'sub-event'             => $settings['sub-menu-event'],
+				'sub-close-behavior'    => $settings['sub-menu-close-behavior'],
 				'sub-mouse-leave-delay' => $settings['sub-menu-mouse-leave-delay'],
 				'sub-trigger'           => $settings['sub-menu-trigger'],
 				'mega-width-type'       => $settings['mega-width-type'],

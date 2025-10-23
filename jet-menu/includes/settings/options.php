@@ -175,7 +175,7 @@ class Options_Manager {
 			return;
 		}
 
-		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'jet-menu-reset-options' ) ) {
+		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'jet-menu-reset-options' ) ) { // phpcs:ignore
 			wp_die( esc_html__( 'Nonce validation failed', 'jet-menu' ) );
 		}
 
@@ -193,11 +193,11 @@ class Options_Manager {
 
 		$this->save_options( $this->options_slug, $new_options );
 
-		wp_redirect(
-			add_query_arg( array( 'page' => 'jet-dashboard-settings-page', 'subpage' => 'jet-menu-general-settings' ), esc_url( admin_url( 'admin.php' ) ) )
+		wp_safe_redirect(
+			add_query_arg( array( 'page' => 'jet-dashboard-settings-page', 'subpage' => 'jet-menu-general-settings' ), admin_url( 'admin.php' ) )
 		);
 
-		die();
+		exit;
 	}
 
 	/**
@@ -256,7 +256,7 @@ class Options_Manager {
 			return;
 		}
 
-		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'jet-menu-export-options' ) ) {
+		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'jet-menu-export-options' ) ) { // phpcs:ignore
 			wp_die( esc_html__( 'Nonce verification failed', 'jet-menu' ) );
 		}
 
@@ -314,7 +314,7 @@ class Options_Manager {
 		}
 
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$options = isset( $_POST['data'] ) ? $_POST['data'] : array();
+		$options = isset( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : array();
 
 		if ( empty( $options['jet_menu'] ) || empty( $options['options'] ) ) {
 			wp_send_json_error( array(
@@ -1044,7 +1044,7 @@ class Options_Manager {
 			) );
 		}
 
-		$name     = isset( $_POST[ 'name' ] ) ? esc_attr( wp_unslash( $_POST[ 'name' ] ) ) : false;
+		$name     = isset( $_POST[ 'name' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'name' ] ) ) : false;
 		$settings = isset( $_POST[ 'settings' ] ) ? wp_unslash( $_POST[ 'settings' ] ) : false; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		if ( ! $settings ) {

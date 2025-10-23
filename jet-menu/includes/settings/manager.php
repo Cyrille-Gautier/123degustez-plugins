@@ -745,7 +745,7 @@ class Settings_Manager {
 		}
 
 		// Get the data from the POST request.
-		$data = isset( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$data = isset( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : false; // phpcs:ignore
 
 		// Ensure the data is valid and is an array.
 		if ( ! $this->is_valid_data( $data ) ) {

@@ -220,7 +220,7 @@ class Menu_Post_Type {
 	 */
 	public function process_content() {
 
-		if ( ! isset( $_REQUEST['_nonce'] ) || ! wp_verify_nonce( $_REQUEST['_nonce'], $this->nonce_key ) ) {
+		if ( ! isset( $_REQUEST['_nonce'] ) || ! wp_verify_nonce( $_REQUEST['_nonce'], $this->nonce_key ) ) { // phpcs:ignore
 			wp_die( esc_html__( 'Security check failed', 'jet-menu' ) );
 		}
 
@@ -280,7 +280,7 @@ class Menu_Post_Type {
 	 * @return string The edit link URL.
 	 */
 	private function generate_edit_link( $menu_item_id, $content_type ) {
-		if ( ! isset( $_REQUEST['_nonce'] ) || ! wp_verify_nonce( $_REQUEST['_nonce'], $this->nonce_key ) ) {
+		if ( ! isset( $_REQUEST['_nonce'] ) || ! wp_verify_nonce( $_REQUEST['_nonce'], $this->nonce_key ) ) { // phpcs:ignore
 			return false;
 		}
 

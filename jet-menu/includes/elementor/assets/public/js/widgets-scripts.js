@@ -37,6 +37,7 @@
 					rollUp: settings.rollUp,
 					layout: settings.layout,
 					subEvent: settings.subEvent,
+					subCloseBehavior: settings.subCloseBehavior,
 					mouseLeaveDelay: settings.mouseLeaveDelay,
 					subTrigger: settings.subTrigger,
 					breakpoint: settings.breakpoint,

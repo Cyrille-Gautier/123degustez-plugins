@@ -1,5 +1,23 @@
-<?php // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+<?php // phpcs:disable ?>
 <div class="jet-menu-settings-page jet-menu-settings-page__main-menu">
+
+    <div class="cx-vui-notice cx-vui-notice--info" style="max-width: 100%;">
+        <div class="cx-vui-notice__content">
+            <strong style="font-weight: bolder;"><?php _e( 'Main Menu ( Theme Locations )', 'jet-menu' ); ?></strong><br>
+	        <?php _e(
+		        'These settings apply only to theme menu locations. When a menu is assigned to a location (',
+		        'jet-menu'
+	        ); ?>
+            <a href="<?php echo admin_url( 'nav-menus.php?action=locations' ); ?>" target="_blank" rel="noopener">
+		        <?php _e( 'Appearance → Menus → Manage Locations', 'jet-menu' ); ?>
+            </a>
+	        <?php _e(
+		        ') and JetMenu is enabled, JetMenu takes over and applies its own styles instead of the theme’s default menu. JetMenu widgets have their own style settings and are not affected here.',
+		        'jet-menu'
+	        ); ?>
+        </div>
+    </div>
+
     <cx-vui-collapse
         :collapsed="false"
     >
@@ -760,4 +778,4 @@
         </div>
     </cx-vui-collapse>
 </div>
-<?php // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+<?php // phpcs:enable ?>

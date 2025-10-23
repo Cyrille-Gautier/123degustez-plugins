@@ -17,6 +17,8 @@
 				layout: 'horizontal',
 				subTrigger: 'item', // item, submarker
 				subEvent: 'click', // hover, click
+				subCloseBehavior: 'mouseleave', // mouseleave, outside
+				bottomGap: 12,
 				rollUp: true,
 				breakpoint: 768, // Minimal menu width, when this plugin activates
 				mouseLeaveDelay: 500,
@@ -44,6 +46,9 @@
 			this.isDropdownState = false;
 
 			this._prevViewportWidth = window.innerWidth || document.documentElement.clientWidth;
+
+			this.isContentLoading   = false;
+			this._pendingMouseleave = false;
 
 			this.createInstance();
 		}
@@ -81,6 +86,23 @@
 				eventHandler = 'JetMegaMenu',
 				$itemTargetSelector = 'item' === this.settings.subTrigger ? `.${ this.settings.classes.menuItem } > .${ this.settings.classes.menuItem }__inner` : `.${ this.settings.classes.menuItem } > .${ this.settings.classes.menuItem }__inner .${ this.settings.classes.menuItem }__dropdown`;
 
+			const subCloseBehavior   = this.settings.subCloseBehavior || 'mouseleave';
+			const isHoverMode        = this.settings.subEvent === 'hover';
+			const isClickMode        = this.settings.subEvent === 'click';
+			const shouldCloseOnLeave = isHoverMode || ( isClickMode && subCloseBehavior === 'mouseleave' );
+			const shouldCloseOnOutside = isClickMode && subCloseBehavior === 'outside';
+
+			const clearInlineScroll = ( $root ) => {
+				$root
+					.find( `.${ this.settings.classes.subMenuContainer }, .${ this.settings.classes.megaContainer }` )
+					.each( (_, wrap) => {
+						const $wrap  = $( wrap );
+						const $list  = $wrap.children( `.${ this.settings.classes.subMenuList }:first` );
+						const $inner = $wrap.children( `.${ this.settings.classes.megaContainer }__inner:first` );
+						$wrap.add( $list ).add( $inner ).css( { 'max-height':'', 'overflow-y':'', 'overflow-x':'' } );
+					});
+			};
+
 			switch ( this.settings.subEvent ) {
 				case 'hover':
 					this.$instance.on( `mouseenter.${ eventHandler }`, `.${ this.settings.classes.menuItem } > .${ this.settings.classes.menuItem }__inner`, { instance: this }, ( event ) => {
@@ -94,6 +116,10 @@
 
 						if ( $menuItem.hasClass( `${ this.settings.classes.menuItem }-has-children` ) ) {
 							$menuItem.addClass( `${ this.settings.classes.menuItem }--hover` );
+
+							if ( $menuItem.hasClass( `${ this.settings.classes.menuItem }--top-level` ) ) {
+								this.applySmartScroll( $menuItem );
+							}
 
 							$menuItem
 								.find( '[role="button"][aria-haspopup="true"]' )
@@ -146,6 +172,12 @@
 							if ( templateId ) {
 								this.maybeTemplateLoad( templateId, templateContent, $subContainer );
 							}
+
+							if ( $menuItem.hasClass( `${ this.settings.classes.menuItem }--top-level` )
+								&& $menuItem.hasClass( `${ this.settings.classes.menuItem }--hover`) ) {
+								this.applySmartScroll( $menuItem );
+							}
+
 						} else {
 							let itemLink = $menuItemLink.attr( 'href' ) || '#',
 							    target   = $menuItemLink.attr( 'target' ) || '_self';
@@ -167,6 +199,18 @@
 			} );
 
 			this.$instance.on( `mouseleave.${ eventHandler }`, ( event ) => {
+
+				if ( ! shouldCloseOnLeave ) {
+					return;
+				}
+
+				if ( this.isContentLoading ) {
+					clearTimeout( debounceTimer );
+					this._pendingMouseleave = true;
+
+					return;
+				}
+
 				debounceTimer = setTimeout( () => {
 					$( `.${ this.settings.classes.menuItem }--hover`, this.$instance ).removeClass( `${ this.settings.classes.menuItem }--hover` );
 
@@ -174,7 +218,18 @@
 						.find( '[role="button"][aria-haspopup="true"]' )
 						.attr( 'aria-expanded', 'false' );
 
+					clearInlineScroll( this.$instance );
 				}, this.settings.mouseLeaveDelay );
+			} );
+
+			this.$document.on( `click.${ eventHandler }`, ( event ) => {
+
+				if ( ! shouldCloseOnOutside ) {
+					return;
+				}
+
+				this.closeOnOutside( event );
+				clearInlineScroll( this.$instance );
 			} );
 
 			this.$window.on( `orientationchange.${ eventHandler } resize.${ eventHandler }`, ( event ) => {
@@ -188,15 +243,13 @@
 
 				$( `.${ this.settings.classes.menuItem }`, this.$instance ).removeClass( `${ this.settings.classes.menuItem }--hover` );
 				this.$instance.removeClass( `${ this.settings.classes.instance }--dropdown-open` );
+
+				clearInlineScroll( this.$instance );
 			} );
 
 			this.$document.on( `touchend.${ eventHandler }`, ( event ) => {
-
-				if ( $( event.target ).closest( `.${ this.settings.classes.menuItem }, .${ this.settings.classes.subMenuContainer }, .${ this.settings.classes.megaContainer }` ).length ) {
-					return;
-				}
-
-				$( `.${ this.settings.classes.menuItem }`, this.$instance ).removeClass( `${ this.settings.classes.menuItem }--hover` );
+				this.closeOnOutside( event );
+				clearInlineScroll(this.$instance);
 			} );
 
 			this.$instance.on( 'watchTickEventResetRegularState', ( event ) => {
@@ -216,6 +269,10 @@
 				this.resetDropdownState();
 				this.$instance.removeClass( `${ this.settings.classes.instance }--dropdown-open` );
 			} );
+
+			this.$instance.on('watchTickEventDropdown watchTickEventResetDropdownState', () => {
+				clearInlineScroll(this.$instance);
+			});
 
 			this.$instance.on( `click.${ eventHandler }`, `.${ this.settings.classes.instance }-toggle`,   ( event ) => {
 
@@ -253,6 +310,22 @@
 		initWatcher( delay = 10 ) {
 			$( window ).off( `resize.JetMegaMenu${ this.settings['menuUniqId'] }` ).on( `resize.JetMegaMenu${ this.settings['menuUniqId'] } orientationchange.JetMegaMenu${ this.settings['menuUniqId'] }`, this.debounce( delay, this.watchTick.bind( this ) ) );
 			this.$instance.trigger( 'containerResize' );
+		}
+
+		/**
+		 * Close submenu when a pointer event happens outside of the menu.
+		 *
+		 * @param  {Event} event ( click/touchend )
+		 * @return {void}
+		 */
+		closeOnOutside( event ) {
+
+			if ( $( event.target ).closest( `.${ this.settings.classes.menuItem }, .${ this.settings.classes.subMenuContainer }, .${ this.settings.classes.megaContainer }` ).length ) {
+				return;
+			}
+
+			$( `.${ this.settings.classes.menuItem }`, this.$instance ).removeClass( `${ this.settings.classes.menuItem }--hover` );
+			this.$instance.find( '[role="button"][aria-haspopup="true"]' ).attr( 'aria-expanded', 'false' );
 		}
 
 		/**
@@ -302,16 +375,19 @@
 				}
 
 				let mainMenuWidth     = this.$instance.width(),
+					rollUpWidth = this.$rollUpItem.outerWidth( true ),
 				    visibleItemsArray = [],
 				    hiddenItemsArray  = [];
+
+				const minOffset = Math.min(...this.menuItemsData.map( d => d.offsetLeft ) );
 
 				for ( let index = 0; index < this.menuItemsData.length; index++ ) {
 					let itemData     = this.menuItemsData[ index ],
 					    nextItemData = this.menuItemsData[ index + 1 ] || false,
-					    offsetLeft   = nextItemData ? nextItemData.offsetLeft : itemData.offsetLeft + itemData.outerWidth,
+						rightEdge    = ( nextItemData ? nextItemData.offsetLeft : itemData.offsetLeft + itemData.outerWidth ) - minOffset,
 					    item         = itemData.element;
 
-					if ( offsetLeft + this.$rollUpItem.outerWidth( true ) > mainMenuWidth ) {
+					if ( rightEdge + rollUpWidth > mainMenuWidth ) {
 						item.hidden = true;
 						hiddenItemsArray.push( item );
 					} else {
@@ -561,6 +637,10 @@
 				signature = signatures[`template_${templateId}`].signature;
 			}
 
+			this.isContentLoading = true;
+
+			const self = this;
+
 			$.ajax( {
 				type: 'GET',
 				url: getMegaContentUrl,
@@ -584,9 +664,80 @@
 					$templateContainer.addClass( 'template-loaded' );
 
 					jetMenu.megaContentRender( $( '.jet-mega-menu-mega-container__inner', $templateContainer ), templateData );
+				},
+				complete: function() {
+					self.isContentLoading = false;
+
+					if ( self._pendingMouseleave ) {
+						self._pendingMouseleave = false;
+						self.$instance.triggerHandler( 'mouseleave' );
+					}
+
 				}
 			} );
 		}
+
+		getNum( val ) {
+			val = parseFloat( val );
+			return isNaN( val ) ? 0 : val;
+		}
+
+		applySmartScroll( $menuItem ) {
+			if ( this.settings.layout !== 'horizontal' || this.isDropdown() ) return;
+
+			const $subContainer = $menuItem.children(
+				`.${ this.settings.classes.subMenuContainer }, .${ this.settings.classes.megaContainer }`
+			);
+
+			if ( ! $subContainer[0] ) return;
+
+			let $targetContainer = $subContainer.children( `.${ this.settings.classes.subMenuList }:first` );
+
+			if ( ! $targetContainer[0] ) {
+				$targetContainer = $subContainer.children( `.${ this.settings.classes.megaContainer }__inner:first` );
+			}
+
+			const element = $targetContainer[0] || $subContainer[0];
+
+			$subContainer.add( $targetContainer ).css( {
+				'max-height' : '',
+				'overflow-y' : '',
+				'overflow-x' : ''
+			} );
+
+			const elementRect = element.getBoundingClientRect();
+
+			const elementMarginTop = this.getNum( getComputedStyle( element ).marginTop );
+
+			const adminBarHeight = document.body.classList.contains( 'admin-bar' )
+				? ( window.innerWidth < 783 ? 46 : 32 )
+				: 0;
+
+			const htmlMarginTop = parseFloat( getComputedStyle( document.documentElement ).marginTop ) || 0;
+			const bodyMarginTop = parseFloat( getComputedStyle( document.body ).marginTop ) || 0;
+
+			const adminBarCompensation = ( htmlMarginTop >= adminBarHeight - 1 || bodyMarginTop >= adminBarHeight - 1 )
+				? 0
+				: adminBarHeight;
+
+			const bottomGap = this.settings.bottomGap ?? 12;
+
+			const availableHeight = Math.max(
+				0,
+				window.innerHeight - elementRect.top - ( elementMarginTop + adminBarCompensation + bottomGap )
+			);
+
+			if ( element.scrollHeight > availableHeight ) {
+				$targetContainer.css( {
+					'max-height' : availableHeight + 'px',
+					'overflow-y' : 'auto',
+					'overflow-x' : 'hidden',
+					'-webkit-overflow-scrolling' : 'touch',
+					'overscroll-behavior' : 'contain',
+				} );
+			}
+		}
+
 	}
 
 	// jQuery plugin
@@ -712,6 +863,7 @@
 					layout: settings.layout,
 					subTrigger: settings.subTrigger,
 					subEvent: settings.subEvent,
+					subCloseBehavior: settings.subCloseBehavior,
 					mouseLeaveDelay: settings.mouseLeaveDelay,
 					breakpoint: settings.breakpoint,
 					megaWidthType: settings.megaWidthType,

@@ -151,6 +151,7 @@ class Mega_Menu_Render extends Base_Render {
 			'megaAjaxLoad'      => $ajax_loading,
 			'layout'            => $this->get( 'layout', 'horizontal' ),
 			'subEvent'          => $this->get( 'sub-event', 'hover' ),
+			'subCloseBehavior'  => $this->get( 'sub-close-behavior', 'mouseleave' ),
 			'mouseLeaveDelay'   => $this->get( 'sub-mouse-leave-delay', 500 ),
 			'subTrigger'        => $this->get( 'sub-trigger', 'item' ),
 			'subPosition'       => $this->get( 'sub-position', 'right' ),

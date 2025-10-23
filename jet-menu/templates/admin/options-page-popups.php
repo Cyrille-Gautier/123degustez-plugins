@@ -1,4 +1,4 @@
-<?php // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+<?php // phpcs:disable ?>
 <cx-vui-popup
 	class="preset-manager"
 	v-model="presetManagerVisible"
@@ -177,4 +177,4 @@
 		</cx-vui-button>
 	</div>
 </cx-vui-popup>
-<?php // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+<?php // phpcs:enable ?>

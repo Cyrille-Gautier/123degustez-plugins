@@ -118,7 +118,7 @@ if ( ! class_exists( 'Jet_Menu_Tools' ) ) {
 			$ext  = pathinfo( $url, PATHINFO_EXTENSION );
 			$attr = array_merge( array ( 'alt' => '' ), $attr );
 
-			if ( 'svg' !== $ext ) {
+			if ( 'svg' !== strtolower( $ext ) ) {
 				return sprintf( '<img src="%1$s"%2$s>', $url, $this->get_attr_string( $attr ) );
 			}
 
@@ -128,14 +128,50 @@ if ( ! class_exists( 'Jet_Menu_Tools' ) ) {
 			$svg      = get_transient( $key );
 
 			if ( ! $svg ) {
-				$svg = file_get_contents( $svg_path );
+				$svg = '';
+
+				if ( $svg_path && @is_file( $svg_path ) && @is_readable( $svg_path ) ) {
+					$svg = @file_get_contents( $svg_path );
+				}
+
+				if ( ! $svg ) {
+					$resp = wp_remote_get( $url, array( 'timeout' => 3 ) );
+
+					if ( ! is_wp_error( $resp ) ) {
+						$body = wp_remote_retrieve_body( $resp );
+						$ct   = wp_remote_retrieve_header( $resp, 'content-type' );
+
+						if ( $body && ( empty( $ct ) || false !== stripos( $ct, 'image/svg+xml' ) ) ) {
+							$svg = $body;
+						}
+
+					}
+
+				}
+
+				if ( $svg ) {
+					set_transient( $key, $svg, DAY_IN_SECONDS );
+				}
 			}
 
 			if ( ! $svg ) {
 				return sprintf( '<img src="%1$s"%2$s>', $url, $this->get_attr_string( $attr ) );
 			}
 
-			set_transient( $key, $svg, DAY_IN_SECONDS );
+			$lower = strtolower( $svg );
+
+			$has_unsafe_tags =
+				( false !== strpos( $lower, '<image' ) ) ||
+				( false !== strpos( $lower, '<pattern' ) ) ||
+				( false !== strpos( $lower, '<use' ) ) ||
+				( false !== strpos( $lower, '<script' ) ) ||
+				( false !== strpos( $lower, '<foreignobject' ) );
+
+			$too_large = strlen( $svg ) > 100 * 1024;
+
+			if ( $has_unsafe_tags || $too_large ) {
+				return sprintf( '<img src="%1$s"%2$s>', $url, $this->get_attr_string( $attr ) );
+			}
 
 			if ( ! $wrapper ) {
 				return $svg;
