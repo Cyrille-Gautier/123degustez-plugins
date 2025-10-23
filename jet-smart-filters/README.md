@@ -2,6 +2,15 @@
 
 # ChangeLog
 
+## 3.6.10
+- UPD: indexer item_id change to BIGINT
+- FIX: for warning after activating the plugin
+- FIX: Date Period with Apply type -> Page reload
+- FIX: Filter Label with HTML
+- FIX: Editor block Search with apply type Mixed
+- FIX: auto re-indexing
+- FIX: add missing styles to enable Hierarchical Select customization for Bricks.
+
 ## 3.6.9
 - FIX: Pagination for Products Loop is incorrect in some cases;
 - FIX: Fatal error when submitting form on the page built with Bricks;

@@ -81,7 +81,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Base' ) ) {
 				$label = get_the_title( $filter_id );
 			}
 
-			return $label;
+			return esc_attr( wp_strip_all_tags( $label ) );
 		}
 
 		/**

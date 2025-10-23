@@ -217,7 +217,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			$filters_data = $this->filters_data();
 
 			if ( ! empty( $filters_data['tax_query'] ) && $type === 'post' ) {
-				foreach ( wp_get_post_terms( $id, $filters_data['tax_query'] ) as $term ) {
+				// keep only existing taxonomies
+				$taxonomies = array_filter( (array) $filters_data['tax_query'], 'taxonomy_exists' );
+
+				foreach ( wp_get_post_terms( $id, $taxonomies ) as $term ) {
 					if ( is_object( $term ) && ! is_wp_error( $term ) ) {
 
 						array_push( $new_rows, array(

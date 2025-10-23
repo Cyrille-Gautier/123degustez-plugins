@@ -29,7 +29,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_DB' ) ) {
 					'query' => "
 						id INT UNSIGNED NOT NULL auto_increment,
 						type VARCHAR(50),
-						item_id INT UNSIGNED,
+						item_id BIGINT UNSIGNED,
 						item_query VARCHAR(50),
 						item_key VARCHAR(50),
 						item_value VARCHAR(50),
@@ -95,7 +95,15 @@ if ( ! class_exists( 'Jet_Smart_Filters_DB' ) ) {
 				return false;
 			}
 
-			return ( strtolower( $table_full_name ) === strtolower( $wpdb->get_var( "SHOW TABLES LIKE '$table_full_name'" ) ) );
+			$found = $wpdb->get_var( $wpdb->prepare(
+				"SHOW TABLES LIKE %s", $table_full_name
+			) );
+
+			if ( ! $found ) {
+				return false;
+			}
+
+			return strtolower( $table_full_name ) === strtolower( $found );
 		}
 
 		/**

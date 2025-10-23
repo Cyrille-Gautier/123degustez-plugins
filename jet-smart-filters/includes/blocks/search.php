@@ -515,14 +515,9 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Search' ) ) {
 			$base_class           = 'jet-smart-filters-' . $this->get_name();
 			$provider             = $settings['content_provider'];
 			$query_id             = ! empty( $settings['query_id'] ) ? $settings['query_id'] : 'default';
+			$apply_type           = ! empty( $settings['apply_type'] ) ? $settings['apply_type'] : 'ajax';
 			$show_label           = $settings['show_label'];
 			$additional_providers = jet_smart_filters()->utils->get_additional_providers( $settings );
-
-			if ( in_array( $settings['apply_type'], ['ajax', 'mixed'] ) ) {
-				$apply_type = $settings['apply_type'] . '-reload';
-			} else {
-				$apply_type = $settings['apply_type'];
-			}
 
 			jet_smart_filters()->admin_bar_register_item( $filter_id );
 
