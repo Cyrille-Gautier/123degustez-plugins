@@ -4,9 +4,13 @@ $allowed_tags            = $this->get_allowed_html_tags();
 $form_title              = isset( $settings['form_title'] ) ? wp_kses_post( $settings['form_title'] ) : '';
 $new_password_label      = isset( $settings['new_password_label'] ) ? wp_kses_post( $settings['new_password_label'] ) : '';
 $re_enter_password_label = isset( $settings['re_enter_password_label'] ) ? wp_kses_post( $settings['re_enter_password_label'] ) : '';
-$reset_form_text         = isset( $settings['reset_form_text'] ) ? wp_kses_post( $settings['reset_form_text'] ) : '';
-$reset_form_text_output  = wpautop( wp_kses( $reset_form_text, $allowed_tags ) );
-$minimum_password_length = ( isset( $settings['minimum_password_length'] ) ) ? $settings['minimum_password_length'] : 8;
+
+$raw_reset_form_text     = isset( $settings['reset_form_text'] ) ? $settings['reset_form_text'] : '';
+$minimum_password_length = isset( $settings['minimum_password_length'] ) ? (int) $settings['minimum_password_length'] : 8;
+// The UI suggests using "%x"; normalize to "%d" so it prints a decimal.
+$raw_reset_form_text     = str_replace( '%x', '%d', $raw_reset_form_text );
+$reset_form_text_output  = wpautop( wp_kses( sprintf( $raw_reset_form_text, absint( $minimum_password_length ) ), $allowed_tags ) );
+
 $reset_form_button_text  = isset( $settings['form_button_text'] ) ? wp_kses_post( $settings['form_button_text'] ) : '';
 $redirect_page_url       = esc_url( $this->get_success_redirect_url( $settings ) );
 $complete_template       = '';
@@ -54,7 +58,7 @@ if ( get_permalink( 0 ) === $redirect_page_url ) {
 
 			<div class="jet-reset__form-text">
 
-				<?php printf( $reset_form_text_output, $minimum_password_length )?>
+                <?php echo $reset_form_text_output; // phpcs:ignore ?>
 
 			</div>
 
@@ -67,10 +71,10 @@ if ( get_permalink( 0 ) === $redirect_page_url ) {
 				<label for="jet_reset_new_user_pass"><?php echo wp_kses_post( $new_password_label ); ?></label>
 				<p class="jet-reset__field-wrapper">
 					<?php if ( ! empty( $minimum_password_length ) && 'yes' != $settings['use_password_requirements'] ) { ?>
-						<input name="jet_reset_new_user_pass" id="jet_reset_new_user_pass" class="input <?php echo $pw_strong_validation; ?>" type="password" pattern=".{<?php echo absint( $minimum_password_length ); ?>,}" required>
-					<?php } else { ?>
-						<input name="jet_reset_new_user_pass" id="jet_reset_new_user_pass" class="input <?php echo $pw_strong_validation; ?>" type="password" required>
-					<?php } ?>
+                        <input name="jet_reset_new_user_pass" id="jet_reset_new_user_pass" class="input <?php echo esc_attr( $pw_strong_validation ); ?>" type="password" pattern=".{<?php echo absint( $minimum_password_length ); ?>,}" required>
+                    <?php } else { ?>
+                        <input name="jet_reset_new_user_pass" id="jet_reset_new_user_pass" class="input <?php echo esc_attr( $pw_strong_validation ); ?>" type="password" required>
+                    <?php } ?>
 
 					<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="e-font-icon-svg e-far-eye password-visibility__icon password-visibility__icon--show show" viewBox="0 0 576 512">
 						<path d="M288 144a110.94 110.94 0 0 0-31.24 5 55.4 55.4 0 0 1 7.24 27 56 56 0 0 1-56 56 55.4 55.4 0 0 1-27-7.24A111.71 111.71 0 1 0 288 144zm284.52 97.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400c-98.65 0-189.09-55-237.93-144C98.91 167 189.34 112 288 112s189.09 55 237.93 144C477.1 345 386.66 400 288 400z"></path>

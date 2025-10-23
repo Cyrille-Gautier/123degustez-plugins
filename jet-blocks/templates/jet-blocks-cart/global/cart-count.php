@@ -14,5 +14,5 @@ if ( ( $is_edit_mode && ! wp_doing_ajax() ) || null === WC()->cart ) {
 
 ?>
 <span class="jet-blocks-cart__count-val"><?php
-	echo $count;
+	echo esc_html( absint( $count ) );
 ?></span>

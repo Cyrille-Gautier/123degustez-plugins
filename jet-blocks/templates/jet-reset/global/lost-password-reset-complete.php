@@ -16,12 +16,18 @@
 	<div class="jet-reset__success-message">
 		<?php if ( ! empty( $form_title ) ):?>
 
-			<legend class="jet-reset__form-title"><?php echo $form_title; ?></legend>
+			<legend class="jet-reset__form-title"><?php echo wp_kses_post( $form_title ); ?></legend>
 
 		<?php endif;?>
 
 		<p>
-			<?php printf( __( 'Your password has been reset. %s', 'jet-blocks' ), $login_link ); ?>
+            <?php
+            printf(
+                '%s %s',
+                esc_html__( 'Your password has been reset.', 'jet-blocks' ),
+                wp_kses_post( $login_link )
+            );
+            ?>
 		</p>
 	</div>
 

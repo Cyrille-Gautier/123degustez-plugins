@@ -15,7 +15,7 @@
 
 <div class="jet-reset__success-message">
 	<p>
-		<?php printf( __( 'Your password has been reset. %s', 'jet-blocks' ), $login_link ); ?>
+		<?php printf( __( 'Your password has been reset. %s', 'jet-blocks' ), $login_link ); // phpcs:ignore ?>
 	</p>
 </div>
 

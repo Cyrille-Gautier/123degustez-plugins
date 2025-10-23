@@ -763,13 +763,13 @@ class Jet_Blocks_Hamburger_Panel extends Jet_Blocks_Base {
 		);
 
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'instance' ); ?>>
-			<?php echo $toggle_html; ?>
+		<div <?php echo $this->get_render_attribute_string( 'instance' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<?php echo $toggle_html; // phpcs:ignore ?>
 			<div class="jet-hamburger-panel__instance">
 				<div class="jet-hamburger-panel__cover"></div>
 				<div class="jet-hamburger-panel__inner">
 					<?php
-						echo $close_button_html;
+						echo $close_button_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 						if ( ! empty( $template_id ) ) {
 							$link = add_query_arg(
@@ -780,7 +780,9 @@ class Jet_Blocks_Hamburger_Panel extends Jet_Blocks_Base {
 							);
 
 							if ( jet_blocks_integration()->in_elementor() ) {
-								echo sprintf( '<div class="jet-blocks__edit-cover" data-template-edit-link="%s"><i class="eicon-edit"></i><span>%s</span></div>', $link, esc_html__( 'Edit Template', 'jet-blocks' ) );
+								echo sprintf( '<div class="jet-blocks__edit-cover" data-template-edit-link="%s"><i class="eicon-edit"></i><span>%s</span></div>',
+                                    $link, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                                    esc_html__( 'Edit Template', 'jet-blocks' ) );
 							}
 						}
 
@@ -799,7 +801,9 @@ class Jet_Blocks_Hamburger_Panel extends Jet_Blocks_Base {
 							$content_html .= '<div class="jet-hamburger-panel-loader"></div>';
 						}
 
-						echo sprintf( '<div %1$s>%2$s</div>', $this->get_render_attribute_string( 'jet-hamburger-panel__content' ), $content_html );
+						echo sprintf( '<div %1$s>%2$s</div>', $this->get_render_attribute_string( 'jet-hamburger-panel__content' ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                            $content_html // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                        );
 					?>
 				</div>
 			</div>

@@ -74,11 +74,11 @@ if ( ! class_exists( 'Jet_Blocks_Handlers' ) ) {
 		 */
 		public function login_handler() {
 
-			if ( ! isset( $_POST['jet_login'] ) ) {
+			if ( ! isset( $_POST['jet_login'] ) ) { // phpcs:ignore
 				return;
 			}
 
-			$recaptcha_token    = isset( $_POST['token'] ) ? $_POST['token'] : '';
+			$recaptcha_token    = isset( $_POST['token'] ) ? $_POST['token'] : ''; // phpcs:ignore
 			$recaptcha_settings = jet_blocks_settings()->get( 'captcha' );
 
 			if ( $recaptcha_settings ) {
@@ -99,7 +99,7 @@ if ( ! class_exists( 'Jet_Blocks_Handlers' ) ) {
 
 			try {
 
-				if ( empty( $_POST['log'] ) ) {
+				if ( empty( $_POST['log'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 					$error = sprintf(
 						'<strong>%1$s</strong>: %2$s',
@@ -117,17 +117,13 @@ if ( ! class_exists( 'Jet_Blocks_Handlers' ) ) {
 					throw new Exception( $signon->get_error_message() );
 				}
 
-				$redirect = isset( $_POST['redirect_to'] )
-								? esc_url( $_POST['redirect_to'] )
-								: esc_url( home_url( '/' ) );
+				$raw_redirect = isset( $_POST['redirect_to'] ) // phpcs:ignore
+					? wp_unslash( $_POST['redirect_to'] ) // phpcs:ignore
+					: home_url( '/' );
 
-				if ( $redirect ) {
-
-					// Fixed '&' encoding
-					$redirect = str_replace( '&#038;', '&', $redirect );
-					wp_redirect( $redirect );
-					exit;
-				}
+				$redirect = wp_validate_redirect( $raw_redirect, home_url( '/' ) );
+				wp_safe_redirect( $redirect );
+				exit;
 
 			} catch ( Exception $e ) {
 				wp_cache_set( 'jet-login-messages', $e->getMessage() );
@@ -146,11 +142,11 @@ if ( ! class_exists( 'Jet_Blocks_Handlers' ) ) {
 				return;
 			}
 
-			if ( ! wp_verify_nonce( $_POST['jet-register-nonce'], 'jet-register' ) ) {
+			if ( ! wp_verify_nonce( $_POST['jet-register-nonce'], 'jet-register' ) ) { // phpcs:ignore
 				return;
 			}
 
-			$recaptcha_token    = isset( $_POST['token'] ) ? $_POST['token'] : '';
+			$recaptcha_token    = isset( $_POST['token'] ) ? $_POST['token'] : ''; // phpcs:ignore
 			$recaptcha_settings = jet_blocks_settings()->get( 'captcha' );
 
 			if ( $recaptcha_settings ) {
@@ -172,12 +168,11 @@ if ( ! class_exists( 'Jet_Blocks_Handlers' ) ) {
 			
 			try {
 
-				$username           = isset( $_POST['username'] ) ? $_POST['username'] : '';
-				$password           = isset( $_POST['password'] ) ? $_POST['password'] : '';
-				$email              = isset( $_POST['email'] ) ? $_POST['email'] : '';
-				$confirm_password   = isset( $_POST['jet_confirm_password'] ) ? $_POST['jet_confirm_password'] : '';
-				$confirmed_password = isset( $_POST['password-confirm'] ) ? $_POST['password-confirm'] : '';
-				$confirm_password   = filter_var( $confirm_password, FILTER_VALIDATE_BOOLEAN );
+				$username           = isset( $_POST['username'] ) ? sanitize_user( wp_unslash( $_POST['username'] ) ) : '';
+				$password           = isset( $_POST['password'] ) ? (string) wp_unslash( $_POST['password'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				$email              = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+				$confirm_password   = isset( $_POST['jet_confirm_password'] ) ? filter_var( wp_unslash( $_POST['jet_confirm_password'] ), FILTER_VALIDATE_BOOLEAN ) : false;
+				$confirmed_password = isset( $_POST['password-confirm'] ) ? (string) wp_unslash( $_POST['password-confirm'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 				if ( $confirm_password && $password !== $confirmed_password ) {
 					throw new Exception( esc_html__( 'Entered passwords don\'t match', 'jet-blocks' ) );
@@ -195,14 +190,13 @@ if ( ! class_exists( 'Jet_Blocks_Handlers' ) ) {
 				$current_user = get_user_by( 'id', $user );
 				wp_set_auth_cookie( $user, true );
 
-				if ( ! empty( $_POST['jet_redirect'] ) ) {
-					$redirect = wp_sanitize_redirect( $_POST['jet_redirect'] );
-				} else {
-					$redirect = $_POST['_wp_http_referer'];
-				}
-
-				wp_redirect( $redirect );
-				exit;
+				if ( ! empty( $_POST['jet_redirect'] ) ) { // phpcs:ignore
+					$redirect = wp_sanitize_redirect( $_POST['jet_redirect'] ); // phpcs:ignore
+				} else { // phpcs:ignore
+					$redirect = $_POST['_wp_http_referer']; // phpcs:ignore
+				} // phpcs:ignore
+				wp_redirect( $redirect ); // phpcs:ignore
+				exit; // phpcs:ignore
 
 			} catch ( Exception $e ) {
 				wp_cache_set( 'jet-register-messages', $e->getMessage() );
@@ -216,21 +210,22 @@ if ( ! class_exists( 'Jet_Blocks_Handlers' ) ) {
 		 * @return void
 		 */
 		public function reset_handler() {
-			$action = isset( $_REQUEST['jet_reset_action'] ) ? $_REQUEST['jet_reset_action'] : '';
+			$action = isset( $_REQUEST['jet_reset_action'] ) ? $_REQUEST['jet_reset_action'] : ''; // phpcs:ignore
 
 			if ( 'jet_reset_pass_reset' !== $action ) {
 				return;
 			}
 
-			if ( ! wp_verify_nonce( $_REQUEST['jet_reset_nonce'], 'jet_reset_pass_reset' ) ) {
+			if ( ! ( isset( $_REQUEST['jet_reset_nonce'] )
+				&& wp_verify_nonce( wp_unslash( $_REQUEST['jet_reset_nonce'] ), 'jet_reset_pass_reset' ) ) ) { // phpcs:ignore
 				$args       = array();
 				$error      = new \WP_Error( 'jet_reset_error', '<strong>ERROR</strong>: ' . esc_html__( 'something went wrong with that!', 'jet-blocks' ) );
-				$site_title = get_bloginfo( 'name' );
-				wp_die( $error, $site_title . ' - Error', $args );
+				$site_title = get_bloginfo( 'name', 'display' );
+				wp_die( $error, $site_title . ' - ' . esc_html__( 'Error', 'jet-blocks' ), $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 
-			$recaptcha_token    = isset( $_POST['token'] ) ? $_POST['token'] : '';
-			$recaptcha_settings = jet_blocks_settings()->get( 'captcha' );
+			$recaptcha_token    = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
+			$recaptcha_settings = jet_blocks_settings()->get( 'captcha' ); // phpcs:ignore
 
 			if ( $recaptcha_settings ) {
 
@@ -250,8 +245,13 @@ if ( ! class_exists( 'Jet_Blocks_Handlers' ) ) {
 			}
 
 			$errors           = array();
-			$user_pass        = trim( $_POST['jet_reset_new_user_pass'] );
-			$user_pass_repeat = trim( $_POST['jet_reset_new_user_pass_again'] );
+			$user_pass        = isset( $_POST['jet_reset_new_user_pass'] )
+				? trim( (string) wp_unslash( $_POST['jet_reset_new_user_pass'] ) ) // phpcs:ignore
+				: ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+			$user_pass_repeat = isset( $_POST['jet_reset_new_user_pass_again'] )
+				? trim( (string) wp_unslash( $_POST['jet_reset_new_user_pass_again'] ) ) // phpcs:ignore
+				: ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 			if ( empty( $user_pass ) || empty( $user_pass_repeat ) ) {
 				$errors['no_password'] = esc_html__( 'Please enter a new password.', 'jet-blocks' );
@@ -263,16 +263,14 @@ if ( ! class_exists( 'Jet_Blocks_Handlers' ) ) {
 				return;
 			}
 
-			$key     = sanitize_text_field( $_GET['key'] );
-			$user_id = sanitize_text_field( $_GET['uid'] );
+			$key     = isset( $_GET['key'] ) ? sanitize_text_field( wp_unslash( $_GET['key'] ) ) : '';
+			$user_id = isset( $_GET['uid'] ) ? sanitize_text_field( wp_unslash( $_GET['uid'] ) ) : '';
 
 			if ( empty( $key ) || empty( $user_id ) ) {
 				$errors['key_login'] = esc_html__( 'The reset link is not valid.', 'jet-blocks' );
 				$_REQUEST['errors']  = $errors;
-				wp_redirect( get_permalink() );
+				wp_safe_redirect( get_permalink() );
 				exit;
-				// For good measure
-				return;
 			}
 
 			$userdata = get_userdata( absint( $user_id ) );
@@ -303,9 +301,12 @@ if ( ! class_exists( 'Jet_Blocks_Handlers' ) ) {
 
 			reset_password( $user, $user_pass );
 
-			$redirect_page_url = isset( $_POST['jet-reset-success-redirect'] ) ? esc_url( $_POST['jet-reset-success-redirect'] ) : get_permalink( 0 );
+			$raw_success = isset( $_POST['jet-reset-success-redirect'] )
+				? wp_unslash( $_POST['jet-reset-success-redirect'] ) // phpcs:ignore
+				: '';
 
-			wp_redirect( $redirect_page_url );
+			$redirect_page_url = wp_validate_redirect( $raw_success, get_permalink( 0 ) );
+			wp_safe_redirect( $redirect_page_url );
 			exit;
 
 		}

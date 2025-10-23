@@ -3,8 +3,8 @@
 >
 	<cx-vui-switcher
 		name="captcha-enable"
-		label="<?php _e( 'Enable reCAPTCHA v3', 'jet-blocks' ); ?>"
-		description="<?php _e( 'Use reCAPTCHA v3 form verification', 'jet-blocks' ); ?>"
+		label="<?php _e( 'Enable reCAPTCHA v3', 'jet-blocks' ); // phpcs:ignore ?>"
+		description="<?php _e( 'Use reCAPTCHA v3 form verification', 'jet-blocks' ); // phpcs:ignore ?>"
 		:wrapper-css="[ 'equalwidth' ]"
 		:return-true="'true'"
 		:return-false="'false'"
@@ -24,13 +24,16 @@
 	>
 		<cx-vui-input
 			name="captcha-site-key"
-			label="<?php _e( 'Site Key:', 'jet-blocks' ); ?>"
-			description="<?php _e( 'Register reCAPTCHA v3 keys here.', 'jet-blocks' ); ?>"
-			description="<?php
-				echo sprintf( esc_html__( 'Register reCAPTCHA v3 keys %1$s.', 'jet-blocks' ),
-					htmlspecialchars( '<a href="https://www.google.com/recaptcha/admin/create" target="_blank">here</a>', ENT_QUOTES )
-				);
-			?>"
+			label="<?php _e( 'Site Key:', 'jet-blocks' ); // phpcs:ignore ?>"
+            :description="'<?php echo esc_js(
+				sprintf(
+				/* translators: %s: link to Google reCAPTCHA keys page */
+					__( 'Register reCAPTCHA v3 keys %s.', 'jet-blocks' ),
+					'<a href=\'https://www.google.com/recaptcha/admin/create\' target=\'_blank\' rel=\'noopener noreferrer\'>' .
+					esc_html__( 'here', 'jet-blocks' ) .
+					'</a>'
+				)
+			); ?>'"
 			:wrapper-css="[ 'equalwidth' ]"
 			size="fullwidth"
 			v-model="pageOptions.captcha.value.site_key"
@@ -39,12 +42,15 @@
 
 		<cx-vui-input
 			name="captcha-secret-key"
-			label="<?php _e( 'Secret Key:', 'jet-blocks' ); ?>"
-			description="<?php
-				echo sprintf( esc_html__( 'Register reCAPTCHA v3 keys %1$s.', 'jet-blocks' ),
-					htmlspecialchars( '<a href="https://www.google.com/recaptcha/admin/create" target="_blank">here</a>', ENT_QUOTES )
-				);
-			?>"
+			label="<?php _e( 'Secret Key:', 'jet-blocks' ); // phpcs:ignore ?>"
+            :description="'<?php echo esc_js(
+				sprintf(
+					__( 'Register reCAPTCHA v3 keys %s.', 'jet-blocks' ),
+					'<a href=\'https://www.google.com/recaptcha/admin/create\' target=\'_blank\' rel=\'noopener noreferrer\'>' .
+					esc_html__( 'here', 'jet-blocks' ) .
+					'</a>'
+				)
+			); ?>'"
 			:wrapper-css="[ 'equalwidth' ]"
 			size="fullwidth"
 			v-model="pageOptions.captcha.value.secret_key"

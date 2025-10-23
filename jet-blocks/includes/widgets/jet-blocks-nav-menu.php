@@ -1664,12 +1664,13 @@ class Jet_Blocks_Nav_Menu extends Jet_Blocks_Base {
 			),
 		);
 
+        // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '<nav ' . $this->get_render_attribute_string( 'nav-wrapper' ) . '>';
 			if ( $trigger_visible ) {
 				include $this->__get_global_template( 'mobile-trigger' );
 			}
 			wp_nav_menu( $args );
 		echo '</nav>';
-
+        // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }

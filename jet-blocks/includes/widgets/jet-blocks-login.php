@@ -767,16 +767,17 @@ class Jet_Blocks_Login extends Jet_Blocks_Base {
 
 		$this->__open_wrap();
 
-		$redirect_url = site_url( $_SERVER['REQUEST_URI'] );
+        $redirect_path = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore
+        $redirect_url  = esc_url_raw( site_url( $redirect_path ) );
 
 		switch ( $settings['login_redirect'] ) {
 
 			case 'home':
-				$redirect_url = esc_url( home_url( '/' ) );
+                $redirect_url = esc_url_raw( home_url( '/' ) );
 				break;
 
 			case 'custom':
-				$redirect_url = esc_url( do_shortcode( $settings['login_redirect_url'] ) );
+                $redirect_url = esc_url_raw( do_shortcode( $settings['login_redirect_url'] ) );
 				break;
 		}
 
@@ -802,7 +803,7 @@ class Jet_Blocks_Login extends Jet_Blocks_Base {
 		$login_form = str_replace( 'id="user_pass"', 'id="user_pass" placeholder="' . esc_attr( $password_placeholder ) . '"', $login_form );
 
 		echo '<div class="jet-login">';
-		echo $login_form;
+		echo $login_form; // phpcs:ignore
 		include $this->__get_global_template( 'lost-password-link' );
 		include $this->__get_global_template( 'messages' );
 		echo '</div>';

@@ -40,7 +40,11 @@ switch( $username_format ) {
 
 ?>
 <div class="jet-auth-links__section jet-auth-links__logout">
-	<?php printf( $prefix, $display_username ); ?>
+    <?php
+    $prefix_fmt = is_string( $prefix ) ? $prefix : '%s';
+    $formatted  = sprintf( $prefix_fmt, esc_html( $display_username ) );
+    echo wp_kses_post( $formatted );
+    ?>
 	<a class="jet-auth-links__item" href="<?php echo esc_url( $this->__logout_url() ); ?>"><?php
 		$this->__icon( 'logout_link_icon', '<span class="jet-auth-links__item-icon jet-blocks-icon">%s</span>' );
 		$this->__html( 'logout_link_text', '<span class="jet-auth-links__item-text">%s</span>' );

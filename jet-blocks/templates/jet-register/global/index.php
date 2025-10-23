@@ -2,8 +2,8 @@
 /**
  * Register form template
  */
-$username             = ! empty( $_POST['username'] ) ? esc_attr( wp_unslash( $_POST['username'] ) ) : '';
-$email                = ! empty( $_POST['email'] ) ? esc_attr( wp_unslash( $_POST['email'] ) ) : '';
+$username             = ! empty( $_POST['username'] ) ? esc_attr( wp_unslash( $_POST['username'] ) ) : '' ; // phpcs:ignore
+$email                = ! empty( $_POST['email'] ) ? esc_attr( wp_unslash( $_POST['email'] ) ) : ''; // phpcs:ignore
 $pw_strong_validation = isset( $settings['use_password_requirements'] ) && 'yes' === $settings['use_password_requirements'] ? 'pw-validation' : '';
 ?>
 <form method="post" class="jet-register">

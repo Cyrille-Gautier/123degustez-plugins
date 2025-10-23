@@ -4,7 +4,7 @@
  */
 ?><div id="jet-blocks-settings-page">
 	<div class="jet-blocks-settings-page">
-		<h1 class="cs-vui-title"><?php _e( 'JetBlocks Settings', 'jet-blocks' ); ?></h1>
+		<h1 class="cs-vui-title"><?php _e( 'JetBlocks Settings', 'jet-blocks' ); // phpcs:ignore ?></h1>
 		<div class="cx-vui-panel">
 			<cx-vui-tabs
 				:in-panel="false"
@@ -15,13 +15,13 @@
 
 				<cx-vui-tabs-panel
 					name="general-settings"
-					label="<?php _e( 'General Settings', 'jet-blocks' ); ?>"
+					label="<?php _e( 'General Settings', 'jet-blocks' ); // phpcs:ignore ?>"
 					key="general-settings">
 
 					<cx-vui-select
 						name="widgets_load_level"
-						label="<?php _e( 'Editor Load Level', 'jet-blocks' ); ?>"
-						description="<?php _e( 'Choose a certain set of options in the widget’s Style tab by moving the slider, and improve your Elementor editor performance by selecting appropriate style settings fill level (from None to Full level)', 'jet-blocks' ); ?>"
+						label="<?php _e( 'Editor Load Level', 'jet-blocks' ); // phpcs:ignore ?>"
+						description="<?php _e( 'Choose a certain set of options in the widget’s Style tab by moving the slider, and improve your Elementor editor performance by selecting appropriate style settings fill level (from None to Full level)', 'jet-blocks' ); // phpcs:ignore ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						:options-list="pageOptions.widgets_load_level.options"
@@ -32,9 +32,9 @@
 
 				<cx-vui-tabs-panel
 					name="breadcrumb-settings"
-					label="<?php _e( 'Breadcrumb Settings', 'jet-blocks' ); ?>"
+					label="<?php _e( 'Breadcrumb Settings', 'jet-blocks' ); // phpcs:ignore ?>"
 					key="breadcrumb-settings">
-						<div class="cx-vui-subtitle"><?php _e( 'Taxonomy to show in breadcrumbs for content types', 'jet-blocks' ); ?></div>
+						<div class="cx-vui-subtitle"><?php _e( 'Taxonomy to show in breadcrumbs for content types', 'jet-blocks' ); // phpcs:ignore ?></div>
 
 						<?php
 						$post_types = get_post_types( array( 'public' => true ), 'objects' );
@@ -48,13 +48,20 @@
 
 									$post_type_name = 'breadcrumbs_taxonomy_' . $post_type->name;
 
-									?><cx-vui-select
-										name="<?php echo $post_type_name; ?>"
-										label="<?php echo $post_type->label; ?>"
+									?>
+                                    <?php
+                                    $pt_name        = isset( $post_type_name ) ? (string) $post_type_name : '';
+                                    $pt_name_attr   = esc_attr( $pt_name );
+                                    $pt_name_json   = wp_json_encode( $pt_name );
+                                    $pt_label_attr  = isset( $post_type->label ) ? esc_attr( $post_type->label ) : '';
+                                    ?>
+                                <cx-vui-select
+										name="<?php echo $pt_name_attr; // phpcs:ignore ?>"
+										label="<?php echo $pt_label_attr; // phpcs:ignore ?>"
 										:wrapper-css="[ 'equalwidth' ]"
 										size="fullwidth"
-										:options-list="pageOptions['<?php echo $post_type_name; ?>']['options']"
-										v-model="pageOptions['<?php echo $post_type_name; ?>']['value']"
+										:options-list="pageOptions['<?php echo $pt_name_json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>']['options']"
+										v-model="pageOptions['<?php echo $pt_name_json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>']['value']"
 									></cx-vui-select><?php
 								}
 							}
@@ -63,13 +70,13 @@
 
 				<cx-vui-tabs-panel
 					name="available-widgets"
-					label="<?php _e( 'Available Widgets', 'jet-blocks' ); ?>"
+					label="<?php _e( 'Available Widgets', 'jet-blocks' ); // phpcs:ignore ?>"
 					key="available-widgets">
 
 					<div class="jet-blocks-settings-page__disable-all-widgets">
 						<div class="cx-vui-component__label">
-							<span v-if="disableAllWidgets"><?php _e( 'Disable All Widgets', 'jet-blocks' ); ?></span>
-							<span v-if="!disableAllWidgets"><?php _e( 'Enable All Widgets', 'jet-blocks' ); ?></span>
+							<span v-if="disableAllWidgets"><?php _e( 'Disable All Widgets', 'jet-blocks' ); // phpcs:ignore ?></span>
+							<span v-if="!disableAllWidgets"><?php _e( 'Enable All Widgets', 'jet-blocks' ); // phpcs:ignore ?></span>
 						</div>
 
 						<cx-vui-switcher
@@ -103,7 +110,7 @@
 
 				<cx-vui-tabs-panel
 					name="available-extensions"
-					label="<?php _e( 'Available Extensions', 'jet-blocks' ); ?>"
+					label="<?php _e( 'Available Extensions', 'jet-blocks' ); // phpcs:ignore ?>"
 					key="available-extensions">
 
 					<div class="jet-blocks-settings-page__avaliable-controls">

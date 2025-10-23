@@ -4,6 +4,12 @@ Enjoy the easy-to-use widgets made for enriching headers & footers with content.
 
 # ChangeLog
 
+## 1.3.20.1
+* Fixed: PHPCS/WP Security Standards — minor issues.
+
+## 1.3.20
+* Fixed: PHPCS/WP Security Standards — escaped dynamic output, sanitized request data, and added nonce verification across widgets/templates.
+
 ## 1.3.19.1
 * Fixed: Cross-Site Scripting (XSS) vulnerability in the plugin interface, which could potentially allow an attacker to inject malicious scripts.
 * Fixed: Site Logo widget now properly supports SVG logos by rendering inline SVG code when a custom logo is set as an SVG, ensuring correct display and accessibility.

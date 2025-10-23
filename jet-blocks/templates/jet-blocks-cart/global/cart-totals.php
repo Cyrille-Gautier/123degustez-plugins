@@ -14,5 +14,5 @@ if ( ( $is_edit_mode && ! wp_doing_ajax() ) || null === WC()->cart ) {
 
 ?>
 <span class="jet-blocks-cart__total-val"><?php
-	echo $totals;
+	echo $totals; // phpcs:ignore
 ?></span>

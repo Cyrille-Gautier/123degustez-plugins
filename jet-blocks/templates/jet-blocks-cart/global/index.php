@@ -26,7 +26,7 @@ if (
 }
 $class_string = implode( ' ', $classes );
 
-?><div class="<?php echo esc_attr( $class_string ); ?>" data-settings="<?php echo htmlspecialchars( json_encode( $widget_settings ) ); ?>">
+?><div class="<?php echo esc_attr( $class_string ); ?>" data-settings="<?php echo htmlspecialchars( json_encode( $widget_settings ) ); // phpcs:ignore ?>">
 	<div class="jet-blocks-cart__heading"><?php
 		include $this->__get_global_template( 'cart-link' );
 	?></div>

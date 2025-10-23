@@ -11,8 +11,8 @@ $search_submit_label = ! empty( $settings['search_submit_label'] ) ? $settings['
 ?>
 <form role="search" method="get" class="jet-search__form" action="<?php echo esc_url( home_url( '/' ) ); ?>">
 	<label class="jet-search__label">
-		<span class="screen-reader-text"><?php echo $aria_label; ?></span>
-		<input type="search" class="jet-search__field" placeholder="<?php echo esc_attr( $settings['search_placeholder'] ); ?>" value="<?php echo get_search_query(); ?>" name="s" aria-label="<?php echo $aria_label; ?>" />
+		<span class="screen-reader-text"><?php echo esc_html( $aria_label ); ?></span>
+		<input type="search" class="jet-search__field"  placeholder="<?php echo esc_attr( $settings['search_placeholder'] ); ?>" value="<?php echo get_search_query(); ?>" name="s" aria-label="<?php echo esc_attr( $aria_label ); ?>" />
 	</label>
 	<?php if ( 'true' ===  $settings['show_search_submit'] ) : ?>
 	<button type="submit" class="jet-search__submit" aria-label="<?php echo esc_attr( $search_submit_label ); ?>"><?php

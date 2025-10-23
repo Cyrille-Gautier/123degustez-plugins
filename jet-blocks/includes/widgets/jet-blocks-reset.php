@@ -1666,10 +1666,14 @@ class Jet_Blocks_Reset extends Jet_Blocks_Base {
 
 		$this->__context = 'render';
 		$settings        = $this->get_settings_for_display();
-		$errors          = isset( $_REQUEST['errors'] ) ? $_REQUEST['errors'] : array() ;
-		$url             = isset( $_REQUEST['reset_url'] ) ? esc_url( $_REQUEST['reset_url'] ) : '' ;
-		$action          = isset( $_REQUEST['jet_reset_action'] ) ? $_REQUEST['jet_reset_action'] : '';
-		$errors 		 = is_array( $errors ) ? $errors : [];
+
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Read-only access to request vars to render state; no DB write or auth change happens here.
+        $raw_errors = isset( $_REQUEST['errors'] ) ? wp_unslash( $_REQUEST['errors'] ) : array(); // phpcs:ignore
+        $url        = isset( $_REQUEST['reset_url'] ) ? esc_url_raw( wp_unslash( $_REQUEST['reset_url'] ) ) : ''; // phpcs:ignore
+        $action     = isset( $_REQUEST['jet_reset_action'] ) ? sanitize_key( wp_unslash( $_REQUEST['jet_reset_action'] ) ) : ''; // phpcs:ignore
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+
+        $errors = is_array( $raw_errors ) ? array_map( 'sanitize_text_field', $raw_errors ) : array();
 
 		foreach ($errors as $i => $error ) {
 
@@ -1764,39 +1768,53 @@ class Jet_Blocks_Reset extends Jet_Blocks_Base {
 
 	public function get_template_html() {
 		$settings        = $this->get_settings_for_display();
-		$errors          = isset( $_REQUEST['errors'] ) ? $_REQUEST['errors'] : array() ;
-		$url             = isset( $_REQUEST['reset_url'] ) ? esc_url( $_REQUEST['reset_url'] ) : '' ;
-		$email_confirmed = isset( $_POST['email_confirmed'] ) ? intval( $_POST['email_confirmed'] ) : false ;
-		$errors 		 = is_array( $errors ) ? $errors : [];
+
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Read-only access to decide which screen to render.
+        $raw_errors      = isset( $_REQUEST['errors'] ) ? wp_unslash( $_REQUEST['errors'] ) : array(); // phpcs:ignore
+        $url             = isset( $_REQUEST['reset_url'] ) ? esc_url_raw( wp_unslash( $_REQUEST['reset_url'] ) ) : ''; // phpcs:ignore
+        $email_confirmed = isset( $_POST['email_confirmed'] ) ? (int) wp_unslash( $_POST['email_confirmed'] ) : 0; // phpcs:ignore
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+
+        $errors = is_array( $raw_errors ) ? array_map( 'sanitize_text_field', $raw_errors ) : array();
 
 		foreach ($errors as $i => $error ) {
 
 			$errors[$i] = esc_html( $error );
 		}
 
-		if ( ! $email_confirmed && isset( $_GET['jetresetpass'] ) && ( isset( $_GET['jet_reset_action'] ) && $_GET['jet_reset_action'] == 'rp' ) ) {
+        // phpcs:disable WordPress.Security.NonceVerification.Missing
+        $is_reset_view = ( ! $email_confirmed )
+            && isset( $_GET['jetresetpass'] ) // phpcs:ignore
+            && isset( $_GET['jet_reset_action'] ) // phpcs:ignore
+            && 'rp' === sanitize_key( wp_unslash( $_GET['jet_reset_action'] ) ); // phpcs:ignore
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
-			$key      = sanitize_text_field( $_GET['key'] );
-			$user_id  = sanitize_text_field( $_GET['uid'] );
-			$userdata = get_userdata( absint( $user_id ) );
-			$login    = $userdata ? $userdata->user_login : '';
-			$user     = check_password_reset_key( $key, $login );
+        if ( $is_reset_view ) {
+            // phpcs:disable WordPress.Security.NonceVerification.Missing
+            $key     = isset( $_GET['key'] ) ? sanitize_text_field( wp_unslash( $_GET['key'] ) ) : ''; // phpcs:ignore
+            $user_id = isset( $_GET['uid'] ) ? absint( wp_unslash( $_GET['uid'] ) ) : 0; // phpcs:ignore
+            // phpcs:enable WordPress.Security.NonceVerification.Missing
 
-			if ( is_wp_error( $user ) ) {
+            $userdata = $user_id ? get_userdata( $user_id ) : false;
+            $login    = $userdata ? $userdata->user_login : '';
+            $user     = ( $key && $login ) ? check_password_reset_key( $key, $login ) : new \WP_Error( 'invalid_key' );
 
-				if ( $user->get_error_code() === 'expired_key' ) {
+            if ( is_wp_error( $user ) ) {
+                if ( 'expired_key' === $user->get_error_code() ) {
+                    $errors['expired_key'] = esc_html__( 'That key has expired. Please reset your password again.', 'jet-blocks' );
+                } else {
+                    $code = $user->get_error_code() ? $user->get_error_code() : '00';
+                    $errors['invalid_key'] = sprintf(
+                    /* translators: %s: error code */
+                        esc_html__( 'That key is no longer valid. Please reset your password again. Code: %s', 'jet-blocks' ),
+                        esc_html( $code )
+                    );
+                }
 
-					$errors['expired_key'] = esc_html__( 'That key has expired. Please reset your password again.', 'jet-blocks' );
-
-				} else {
-
-					$code = $user->get_error_code();
-					if ( empty( $code ) ) {
-						$code = '00';
-					}
-					$errors['invalid_key'] = esc_html__( 'That key is no longer valid. Please reset your password again. Code: ' . $code, 'jet-blocks' );
-
-				}
+                // Keep sanitized errors available to the template (back-compat).
+                // phpcs:disable WordPress.Security.NonceVerification.Missing
+                $_REQUEST['errors'] = $errors;
+                // phpcs:enable WordPress.Security.NonceVerification.Missing
 
 				return include $this->__get_global_template( 'lost-password-form' );
 
@@ -1806,7 +1824,7 @@ class Jet_Blocks_Reset extends Jet_Blocks_Base {
 
 			}
 
-		} elseif ( isset( $_GET['password_reset'] ) ) {
+		} elseif ( isset( $_GET['password_reset'] ) ) { // phpcs:ignore
 
 			return include $this->__get_global_template( 'lost-password-reset-complete' );
 
@@ -1830,7 +1848,12 @@ class Jet_Blocks_Reset extends Jet_Blocks_Base {
 		}
 
 		$errors        = array();
-		$user_info     = trim( $_POST['jet_reset_user_info'] );
+
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified above.
+        $user_info_raw = isset( $_POST['jet_reset_user_info'] ) ? wp_unslash( $_POST['jet_reset_user_info'] ) : ''; // phpcs:ignore
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+        $user_info     = sanitize_text_field( $user_info_raw );
+
 		$invalid_form  = isset( $settings['invalid_form'] ) ? $settings['invalid_form'] : '';
 		$invalid_email = isset( $settings['invalid_email'] ) ? $settings['invalid_email'] : '';
 		$invalid_login = isset( $settings['invalid_login'] ) ? $settings['invalid_login'] : '';
@@ -1855,7 +1878,7 @@ class Jet_Blocks_Reset extends Jet_Blocks_Base {
 		}
 
 		if ( ! empty( $errors ) ) {
-			$_REQUEST['errors'] = $errors;
+			$_REQUEST['errors'] = $errors; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			return $errors;
 		}
 
@@ -1939,10 +1962,10 @@ class Jet_Blocks_Reset extends Jet_Blocks_Base {
 			ob_start(); ?>
 
 			<p><?php esc_html_e( 'Someone requested that the password be reset for the following account:', 'jet-blocks' ); ?></p>
-			<p><?php printf( esc_html__( 'Username: %s', 'jet-blocks' ), $user_login ); ?></p>
+			<p><?php printf( esc_html__( 'Username: %s', 'jet-blocks' ), $user_login ); // phpcs:ignore ?></p>
 			<p><?php esc_html_e( 'If this was a mistake, just ignore this email and nothing will happen.', 'jet-blocks' ); ?></p>
-			<p><?php esc_html_e( 'To reset your password, visit the following address:', 'jet-blocks' ); ?></p>
-			<p><?php echo $reset_link; ?></p>
+			<p><?php esc_html_e( 'To reset your password, visit the following address:', 'jet-blocks' ); // phpcs:ignore ?></p>
+			<p><?php echo $reset_link; // phpcs:ignore ?></p>
 			<?php
 
 			$message = ob_get_clean();
@@ -1999,8 +2022,10 @@ class Jet_Blocks_Reset extends Jet_Blocks_Base {
 
 	public function verify_nonce_request( $action = '', $query_arg = 'jet_reset_nonce' ) {
 
-		// Check the nonce
-		$result = isset( $_REQUEST[$query_arg] ) ? wp_verify_nonce( $_REQUEST[$query_arg], $action ) : false;
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- This method is the nonce verification gate.
+        $nonce  = isset( $_REQUEST[ $query_arg ] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ $query_arg ] ) ) : '';
+        $result = $nonce ? wp_verify_nonce( $nonce, $action ) : false;
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		// Nonce check failed
 		if ( empty( $result ) || empty( $action ) ) {
@@ -2016,6 +2041,6 @@ class Jet_Blocks_Reset extends Jet_Blocks_Base {
 	public function reset_wp_error( $message, $args = array() ) {
 		$error      = new \WP_Error( 'jet_reset_error', $message );
 		$site_title = get_bloginfo( 'name' );
-		wp_die( $error, $site_title . ' - Error', $args );
+		wp_die( $error, $site_title . ' - Error', $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }

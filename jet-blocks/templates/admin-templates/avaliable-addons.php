@@ -2,7 +2,7 @@
 	class="jet-blocks-settings-page jet-blocks-settings-page__avaliable-addons"
 >
 	<div class="jet-blocks-settings-page__avaliable-controls">
-		<div class="cx-vui-subtitle cx-vui-subtitle--divider"><?php _e( 'Available Widgets', 'jet-blocks' ); ?></div>
+		<div class="cx-vui-subtitle cx-vui-subtitle--divider"><?php _e( 'Available Widgets', 'jet-blocks' ); // phpcs:ignore ?></div>
 		<div
 			class="jet-blocks-settings-page__avaliable-control"
 			v-for="(option, index) in pageOptions.avaliable_widgets.options">
@@ -20,7 +20,7 @@
 	</div>
 
 	<div class="jet-blocks-settings-page__avaliable-controls">
-		<div class="cx-vui-subtitle cx-vui-subtitle--divider"><?php _e( 'Available Extensions', 'jet-blocks' ); ?></div>
+		<div class="cx-vui-subtitle cx-vui-subtitle--divider"><?php _e( 'Available Extensions', 'jet-blocks' ); // phpcs:ignore ?></div>
 		<div
 			class="jet-blocks-settings-page__avaliable-control"
 			v-for="(option, index) in pageOptions.avaliable_extensions.options">

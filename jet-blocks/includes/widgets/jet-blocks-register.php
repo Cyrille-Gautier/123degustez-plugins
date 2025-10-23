@@ -981,7 +981,8 @@ class Jet_Blocks_Register extends Jet_Blocks_Base {
 
 		$this->__open_wrap();
 
-		$redirect_url = site_url( $_SERVER['REQUEST_URI'] );
+        $request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '/';
+        $redirect_url = esc_url_raw( site_url( $request_uri ) );
 
 		switch ( $settings['register_redirect'] ) {
 
@@ -989,13 +990,26 @@ class Jet_Blocks_Register extends Jet_Blocks_Base {
 				$redirect_url = esc_url( home_url( '/' ) );
 				break;
 
-			case 'left':
-				$redirect_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? "https" : "http" ) . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-						break;
+            case 'left':
+                // Stay on the current page (full URL) safely.
+                $scheme       = is_ssl() ? 'https' : 'http';
+                $host_raw     = isset( $_SERVER['HTTP_HOST'] ) ? wp_unslash( $_SERVER['HTTP_HOST'] ) : ''; // phpcs:ignore
+                $request_raw  = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '/'; // phpcs:ignore
 
-			case 'custom':
-				$redirect_url = $settings['register_redirect_url'];
-				break;
+                // Sanitize parts
+                $host         = sanitize_text_field( $host_raw );
+                $request_uri  = esc_url_raw( $request_raw );
+
+                // If host missing (CLI/edge), fall back to home_url()
+                $redirect_url = $host
+                    ? esc_url_raw( $scheme . '://' . $host . $request_uri )
+                    : esc_url_raw( home_url( $request_uri ) );
+                break;
+
+            case 'custom':
+                // Comes from widget settings; sanitize as URL.
+                $redirect_url = esc_url_raw( $settings['register_redirect_url'] );
+                break;
 		}
 
 		if ( ! $registration_enabled ) {

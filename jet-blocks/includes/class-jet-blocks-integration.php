@@ -96,7 +96,7 @@ if ( ! class_exists( 'Jet_Blocks_Integration' ) ) {
 			$result = false;
 
 			if ( wp_doing_ajax() ) {
-				$result = ( isset( $_REQUEST['action'] ) && 'elementor_ajax' === $_REQUEST['action'] );
+				$result = ( isset( $_REQUEST['action'] ) && 'elementor_ajax' === $_REQUEST['action'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			} elseif ( Elementor\Plugin::instance()->editor->is_edit_mode()
 				&& 'wp_enqueue_scripts' === current_filter() ) {
 				$result = true;
