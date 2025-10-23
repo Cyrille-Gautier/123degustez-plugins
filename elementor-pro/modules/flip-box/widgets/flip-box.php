@@ -6,6 +6,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Stroke;
@@ -62,10 +63,6 @@ class Flip_Box extends Base_Widget {
 				'label' => esc_html__( 'Front', 'elementor-pro' ),
 			]
 		);
-
-		$this->start_controls_tabs( 'side_a_content_tabs' );
-
-		$this->start_controls_tab( 'side_a_content_tab', [ 'label' => esc_html__( 'Content', 'elementor-pro' ) ] );
 
 		$this->add_control(
 			'graphic_element',
@@ -163,79 +160,6 @@ class Flip_Box extends Base_Widget {
 			]
 		);
 
-		$this->end_controls_tab();
-
-		$this->start_controls_tab( 'side_a_background_tab', [ 'label' => esc_html__( 'Background', 'elementor-pro' ) ] );
-
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
-			[
-				'name' => 'background_a',
-				'types' => [ 'classic', 'gradient' ],
-				'selector' => '{{WRAPPER}} .elementor-flip-box__front',
-			]
-		);
-
-		$this->add_control(
-			'background_overlay_a',
-			[
-				'label' => esc_html__( 'Background Overlay', 'elementor-pro' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-flip-box__front .elementor-flip-box__layer__overlay' => 'background-color: {{VALUE}};',
-				],
-				'separator' => 'before',
-				'condition' => [
-					'background_a_image[id]!' => '',
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
-			[
-				'name' => 'background_overlay_a_filters',
-				'selector' => '{{WRAPPER}} .elementor-flip-box__front .elementor-flip-box__layer__overlay',
-				'condition' => [
-					'background_overlay_a!' => '',
-				],
-			]
-		);
-
-		$this->add_control(
-			'background_overlay_a_blend_mode',
-			[
-				'label' => esc_html__( 'Blend Mode', 'elementor-pro' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'' => esc_html__( 'Normal', 'elementor-pro' ),
-					'multiply' => 'Multiply',
-					'screen' => 'Screen',
-					'overlay' => 'Overlay',
-					'darken' => 'Darken',
-					'lighten' => 'Lighten',
-					'color-dodge' => 'Color Dodge',
-					'color-burn' => 'Color Burn',
-					'hue' => 'Hue',
-					'saturation' => 'Saturation',
-					'color' => 'Color',
-					'exclusion' => 'Exclusion',
-					'luminosity' => 'Luminosity',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-flip-box__front .elementor-flip-box__layer__overlay' => 'mix-blend-mode: {{VALUE}}',
-				],
-				'condition' => [
-					'background_overlay_a!' => '',
-				],
-			]
-		);
-
-		$this->end_controls_tab();
-
-		$this->end_controls_tabs();
-
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -244,10 +168,6 @@ class Flip_Box extends Base_Widget {
 				'label' => esc_html__( 'Back', 'elementor-pro' ),
 			]
 		);
-
-		$this->start_controls_tabs( 'side_b_content_tabs' );
-
-		$this->start_controls_tab( 'side_b_content_tab', [ 'label' => esc_html__( 'Content', 'elementor-pro' ) ] );
 
 		$this->add_control(
 			'title_text_b',
@@ -286,7 +206,6 @@ class Flip_Box extends Base_Widget {
 				'dynamic' => [
 					'active' => true,
 				],
-				'separator' => 'before',
 			]
 		);
 
@@ -316,79 +235,6 @@ class Flip_Box extends Base_Widget {
 				],
 			]
 		);
-
-		$this->end_controls_tab();
-
-		$this->start_controls_tab( 'side_b_background_tab', [ 'label' => esc_html__( 'Background', 'elementor-pro' ) ] );
-
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
-			[
-				'name' => 'background_b',
-				'types' => [ 'classic', 'gradient' ],
-				'selector' => '{{WRAPPER}} .elementor-flip-box__back',
-			]
-		);
-
-		$this->add_control(
-			'background_overlay_b',
-			[
-				'label' => esc_html__( 'Background Overlay', 'elementor-pro' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-flip-box__back .elementor-flip-box__layer__overlay' => 'background-color: {{VALUE}};',
-				],
-				'separator' => 'before',
-				'condition' => [
-					'background_b_image[id]!' => '',
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
-			[
-				'name' => 'background_overlay_b_filters',
-				'selector' => '{{WRAPPER}} .elementor-flip-box__back .elementor-flip-box__layer__overlay',
-				'condition' => [
-					'background_overlay_b!' => '',
-				],
-			]
-		);
-
-		$this->add_control(
-			'background_overlay_b_blend_mode',
-			[
-				'label' => esc_html__( 'Blend Mode', 'elementor-pro' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'' => esc_html__( 'Normal', 'elementor-pro' ),
-					'multiply' => 'Multiply',
-					'screen' => 'Screen',
-					'overlay' => 'Overlay',
-					'darken' => 'Darken',
-					'lighten' => 'Lighten',
-					'color-dodge' => 'Color Dodge',
-					'color-burn' => 'Color Burn',
-					'hue' => 'Hue',
-					'saturation' => 'Saturation',
-					'color' => 'Color',
-					'exclusion' => 'Exclusion',
-					'luminosity' => 'Luminosity',
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-flip-box__back .elementor-flip-box__layer__overlay' => 'mix-blend-mode: {{VALUE}}',
-				],
-				'condition' => [
-					'background_overlay_b!' => '',
-				],
-			]
-		);
-
-		$this->end_controls_tab();
-
-		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 
@@ -574,12 +420,78 @@ class Flip_Box extends Base_Widget {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_a',
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .elementor-flip-box__front',
+			]
+		);
+
+		$this->add_control(
+			'background_overlay_a',
+			[
+				'label' => esc_html__( 'Background Overlay', 'elementor-pro' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-flip-box__front .elementor-flip-box__layer__overlay' => 'background-color: {{VALUE}};',
+				],
+				'separator' => 'before',
+				'condition' => [
+					'background_a_image[id]!' => '',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'background_overlay_a_filters',
+				'selector' => '{{WRAPPER}} .elementor-flip-box__front .elementor-flip-box__layer__overlay',
+				'condition' => [
+					'background_overlay_a!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'background_overlay_a_blend_mode',
+			[
+				'label' => esc_html__( 'Blend Mode', 'elementor-pro' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => esc_html__( 'Normal', 'elementor-pro' ),
+					'multiply' => 'Multiply',
+					'screen' => 'Screen',
+					'overlay' => 'Overlay',
+					'darken' => 'Darken',
+					'lighten' => 'Lighten',
+					'color-dodge' => 'Color Dodge',
+					'color-burn' => 'Color Burn',
+					'hue' => 'Hue',
+					'saturation' => 'Saturation',
+					'color' => 'Color',
+					'exclusion' => 'Exclusion',
+					'luminosity' => 'Luminosity',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-flip-box__front .elementor-flip-box__layer__overlay' => 'mix-blend-mode: {{VALUE}}',
+				],
+				'condition' => [
+					'background_overlay_a!' => '',
+				],
+			]
+		);
+
 		$this->add_responsive_control(
 			'padding_a',
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'separator' => 'before',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-flip-box__front .elementor-flip-box__layer__overlay' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -639,7 +551,6 @@ class Flip_Box extends Base_Widget {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-flip-box__front .elementor-flip-box__layer__overlay' => 'justify-content: {{VALUE}}',
 				],
-				'separator' => 'after',
 			]
 		);
 
@@ -649,6 +560,14 @@ class Flip_Box extends Base_Widget {
 				'name' => 'border_a',
 				'selector' => '{{WRAPPER}} .elementor-flip-box__front',
 				'separator' => 'before',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'shadow_a',
+				'selector' => '{{WRAPPER}} .elementor-flip-box__front',
 			]
 		);
 
@@ -1126,12 +1045,78 @@ class Flip_Box extends Base_Widget {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'background_b',
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .elementor-flip-box__back',
+			]
+		);
+
+		$this->add_control(
+			'background_overlay_b',
+			[
+				'label' => esc_html__( 'Background Overlay', 'elementor-pro' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-flip-box__back .elementor-flip-box__layer__overlay' => 'background-color: {{VALUE}};',
+				],
+				'separator' => 'before',
+				'condition' => [
+					'background_b_image[id]!' => '',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'background_overlay_b_filters',
+				'selector' => '{{WRAPPER}} .elementor-flip-box__back .elementor-flip-box__layer__overlay',
+				'condition' => [
+					'background_overlay_b!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'background_overlay_b_blend_mode',
+			[
+				'label' => esc_html__( 'Blend Mode', 'elementor-pro' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => esc_html__( 'Normal', 'elementor-pro' ),
+					'multiply' => 'Multiply',
+					'screen' => 'Screen',
+					'overlay' => 'Overlay',
+					'darken' => 'Darken',
+					'lighten' => 'Lighten',
+					'color-dodge' => 'Color Dodge',
+					'color-burn' => 'Color Burn',
+					'hue' => 'Hue',
+					'saturation' => 'Saturation',
+					'color' => 'Color',
+					'exclusion' => 'Exclusion',
+					'luminosity' => 'Luminosity',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-flip-box__back .elementor-flip-box__layer__overlay' => 'mix-blend-mode: {{VALUE}}',
+				],
+				'condition' => [
+					'background_overlay_b!' => '',
+				],
+			]
+		);
+
 		$this->add_responsive_control(
 			'padding_b',
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'separator' => 'before',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-flip-box__back .elementor-flip-box__layer__overlay' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1192,7 +1177,6 @@ class Flip_Box extends Base_Widget {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-flip-box__back .elementor-flip-box__layer__overlay' => 'justify-content: {{VALUE}}',
 				],
-				'separator' => 'after',
 			]
 		);
 
@@ -1202,6 +1186,14 @@ class Flip_Box extends Base_Widget {
 				'name' => 'border_b',
 				'selector' => '{{WRAPPER}} .elementor-flip-box__back',
 				'separator' => 'before',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'shadow_b',
+				'selector' => '{{WRAPPER}} .elementor-flip-box__back',
 			]
 		);
 
@@ -1659,13 +1651,13 @@ class Flip_Box extends Base_Widget {
 
 						<?php if ( ! empty( $settings['title_text_a'] ) ) : ?>
 							<<?php Utils::print_validated_html_tag( $title_tag ); ?> class="elementor-flip-box__layer__title">
-								<?php $this->print_unescaped_setting( 'title_text_a' ); ?>
+								<?php echo wp_kses_post( $settings['title_text_a'] ); ?>
 							</<?php Utils::print_validated_html_tag( $title_tag ); ?>>
 						<?php endif; ?>
 
 						<?php if ( ! empty( $settings['description_text_a'] ) ) : ?>
 							<<?php Utils::print_validated_html_tag( $description_tag ); ?> class="elementor-flip-box__layer__description">
-								<?php $this->print_unescaped_setting( 'description_text_a' ); ?>
+								<?php echo wp_kses_post( $settings['description_text_a'] ); ?>
 							</<?php Utils::print_validated_html_tag( $description_tag ); ?>>
 						<?php endif; ?>
 					</div>
@@ -1676,19 +1668,19 @@ class Flip_Box extends Base_Widget {
 				<div class="elementor-flip-box__layer__inner">
 					<?php if ( ! empty( $settings['title_text_b'] ) ) : ?>
 						<<?php Utils::print_validated_html_tag( $title_tag ); ?> class="elementor-flip-box__layer__title">
-							<?php $this->print_unescaped_setting( 'title_text_b' ); ?>
+							<?php echo wp_kses_post( $settings['title_text_b'] ); ?>
 						</<?php Utils::print_validated_html_tag( $title_tag ); ?>>
 					<?php endif; ?>
 
 					<?php if ( ! empty( $settings['description_text_b'] ) ) : ?>
 						<<?php Utils::print_validated_html_tag( $description_tag ); ?> class="elementor-flip-box__layer__description">
-							<?php $this->print_unescaped_setting( 'description_text_b' ); ?>
+							<?php echo wp_kses_post( $settings['description_text_b'] ); ?>
 						</<?php Utils::print_validated_html_tag( $description_tag ); ?>>
 					<?php endif; ?>
 
 					<?php if ( ! empty( $settings['button_text'] ) ) : ?>
 						<<?php Utils::print_validated_html_tag( $button_tag ); ?> <?php $this->print_render_attribute_string( 'button' ); ?>>
-							<?php $this->print_unescaped_setting( 'button_text' ); ?>
+							<?php echo wp_kses_post( $settings['button_text'] ); ?>
 						</<?php Utils::print_validated_html_tag( $button_tag ); ?>>
 					<?php endif; ?>
 			</div>
@@ -1766,11 +1758,11 @@ class Flip_Box extends Base_Widget {
 						<# } #>
 
 						<# if ( settings.title_text_a ) { #>
-						<{{ titleTag }} class="elementor-flip-box__layer__title">{{{ settings.title_text_a }}}</{{ titleTag }}>
+						<{{ titleTag }} class="elementor-flip-box__layer__title">{{ settings.title_text_a }}</{{ titleTag }}>
 						<# } #>
 
 						<# if ( settings.description_text_a ) { #>
-						<{{ descriptionTag }} class="elementor-flip-box__layer__description">{{{ settings.description_text_a }}}</{{ descriptionTag }}>
+						<{{ descriptionTag }} class="elementor-flip-box__layer__description">{{ settings.description_text_a }}</{{ descriptionTag }}>
 						<# } #>
 					</div>
 				</div>
@@ -1779,15 +1771,15 @@ class Flip_Box extends Base_Widget {
 				<div class="elementor-flip-box__layer__overlay">
 					<div class="elementor-flip-box__layer__inner">
 						<# if ( settings.title_text_b ) { #>
-						<{{ titleTag }} class="elementor-flip-box__layer__title">{{{ settings.title_text_b }}}</{{ titleTag }}>
+						<{{ titleTag }} class="elementor-flip-box__layer__title">{{ settings.title_text_b }}</{{ titleTag }}>
 						<# } #>
 
 						<# if ( settings.description_text_b ) { #>
-						<{{ descriptionTag }} class="elementor-flip-box__layer__description">{{{ settings.description_text_b }}}</{{ descriptionTag }}>
+						<{{ descriptionTag }} class="elementor-flip-box__layer__description">{{ settings.description_text_b }}</{{ descriptionTag }}>
 						<# } #>
 
 						<# if ( settings.button_text ) { #>
-						<{{ buttonTag }} href="#" class="{{ btnClasses }}">{{{ settings.button_text }}}</{{ buttonTag }}>
+						<{{ buttonTag }} href="#" class="{{ btnClasses }}">{{ settings.button_text }}</{{ buttonTag }}>
 						<# } #>
 					</div>
 				</div>

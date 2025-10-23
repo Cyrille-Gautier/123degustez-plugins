@@ -2173,7 +2173,7 @@ class Mega_Menu extends Widget_Nested_Base {
 		ob_start();
 		?>
 			<li class="e-n-menu-item">
-				<div <?php echo wp_kses_post( $this->get_render_attribute_string( $key ) ); ?>>
+				<div <?php $this->print_render_attribute_string( $key ); ?>>
 					<?php echo $this->get_title_container_opening_tag( $item, $item['item_link']['url'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						<?php if ( $menu_item_icon ) { ?>
 							<span class="e-n-menu-icon">
@@ -2186,7 +2186,7 @@ class Mega_Menu extends Widget_Nested_Base {
 						</span>
 					<?php echo $this->get_title_container_closing_tag( $item['item_link']['url'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<?php if ( $has_dropdown_content ) { ?>
-						<button <?php echo wp_kses_post( $this->get_render_attribute_string( $key . '_link' ) ); ?> >
+						<button <?php $this->print_render_attribute_string( $key . '_link' ); ?> >
 							<span class="e-n-menu-dropdown-icon-opened">
 								<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								<span class="elementor-screen-only"><?php echo sprintf( esc_html__( 'Close %s', 'elementor-pro' ), $item['item_title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
@@ -2457,13 +2457,13 @@ class Mega_Menu extends Widget_Nested_Base {
 
 						const menuItemContainerClasses = [ 'e-n-menu-title-container' ];
 
-						if ( !! item.item_link.url ) {
+						if ( !! item.item_link?.url ) {
 							menuItemContainerClasses.push( 'e-link', 'e-focus' );
 						}
 
 						view.addRenderAttribute( menuItemTitleContainerLinkKey, {
 							'class': menuItemContainerClasses,
-							'href': elementor.helpers.sanitizeUrl( item.item_link.url ),
+							'href': elementor.helpers.sanitizeUrl( item.item_link?.url ),
 							'aria-current': 'page',
 						} );
 
@@ -2587,13 +2587,13 @@ class Mega_Menu extends Widget_Nested_Base {
 
 		const menuItemContainerClasses = [ 'e-n-menu-title-container' ];
 
-		if ( !! data.item_link.url ) {
+		if ( !! data.item_link?.url ) {
 			menuItemContainerClasses.push( 'e-link', 'e-focus' );
 		}
 
 		view.addRenderAttribute( menuItemTitleContainerLinkKey, {
 			'class': menuItemContainerClasses,
-			'href': elementor.helpers.sanitizeUrl( data.item_link.url ),
+			'href': elementor.helpers.sanitizeUrl( data.item_link?.url ),
 			'aria-current': 'page',
 		}, null, true );
 

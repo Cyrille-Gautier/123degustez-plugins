@@ -37,6 +37,7 @@ final class Modules_Manager {
 			'checklist',
 
 			// Modules with Widgets.
+			'attributes',
 			'theme-builder',
 			'loop-builder',
 			'off-canvas',
@@ -77,6 +78,7 @@ final class Modules_Manager {
 			'floating-buttons',
 			'search',
 			'cloud-library',
+			'variables',
 		];
 
 		foreach ( $modules as $module_name ) {

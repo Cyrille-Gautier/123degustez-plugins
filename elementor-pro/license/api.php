@@ -246,7 +246,7 @@ class API {
 		return $license_data;
 	}
 
-	public static function get_version( $force_update = true ) {
+	public static function get_version( $force_update = true, $additional_status = '' ) {
 		$cache_key = self::TRANSIENT_KEY_PREFIX . ELEMENTOR_PRO_VERSION;
 
 		$info_data = self::get_transient( $cache_key );
@@ -285,6 +285,10 @@ class API {
 				if ( ! empty( $site_key ) ) {
 					$body_args['site_key'] = $site_key;
 				}
+			}
+
+			if ( ! empty( $additional_status ) ) {
+				$body_args['status'] = $additional_status;
 			}
 
 			$info_data = self::remote_post( 'pro/info', $body_args );
@@ -628,5 +632,16 @@ class API {
 		}
 
 		return $tier;
+	}
+
+	public static function get_plan_type() {
+		if ( ! static::is_license_active() ) {
+			return 'free';
+		}
+
+		$license_data = static::get_license_data();
+		$plan_type = $license_data['tier'] ?? 'free';
+
+		return $plan_type;
 	}
 }

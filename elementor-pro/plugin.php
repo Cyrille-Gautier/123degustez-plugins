@@ -1,6 +1,7 @@
 <?php
 namespace ElementorPro;
 
+use ElementorPro\Core\Maintenance;
 use ElementorPro\Core\PHP_Api;
 use ElementorPro\Core\Admin\Admin;
 use ElementorPro\Core\App\App;
@@ -15,8 +16,6 @@ use ElementorPro\Core\Preview\Preview;
 use ElementorPro\Core\Upgrade\Manager as UpgradeManager;
 use ElementorPro\License\API;
 use ElementorPro\License\Updater;
-use ElementorPro\Core\Container\Container;
-use ElementorProDeps\DI\Container as DIContainer;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -95,14 +94,6 @@ class Plugin {
 	public $php_api;
 
 	/**
-	 * Container instance for managing dependencies.
-	 *
-	 * @since 3.25.0
-	 * @var DIContainer
-	 */
-	private static $container;
-
-	/**
 	 * Throw error on object clone
 	 *
 	 * The whole idea of the singleton design pattern is that there is a single
@@ -143,26 +134,13 @@ class Plugin {
 
 	/**
 	 * @return Plugin
-	 * @throws Exception
 	 */
 	public static function instance(): Plugin {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
-			self::$container = Container::get_instance();
 		}
 
 		return self::$_instance;
-	}
-
-	/**
-	 * Get the Elementor Pro container or resolve a dependency.
-	 */
-	public function get_elementor_pro_container( $abstract = null ): DIContainer {
-		if ( is_null( $abstract ) ) {
-			return self::$container;
-		}
-
-		return self::$container->make( $abstract );
 	}
 
 	public function autoload( $class ) {
@@ -422,6 +400,11 @@ class Plugin {
 			$settings['library_connect']['current_access_tier'] = API::get_access_tier();
 		}
 
+		// Core >= 3.32.0
+		if ( isset( $settings['library_connect']['plan_type'] ) ) {
+			$settings['library_connect']['plan_type'] = API::get_plan_type();
+		}
+
 		return $settings;
 	}
 
@@ -507,6 +490,8 @@ class Plugin {
 
 			$this->license_admin->register_actions();
 		}
+
+		Maintenance::init();
 
 		// The `Updater` class is responsible for adding some updates related filters, including auto updates, and since
 		// WP crons don't run on admin mode, it should not depend on it.

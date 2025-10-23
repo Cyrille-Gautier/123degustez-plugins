@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.29.0 - 19-05-2025 */
+/*! elementor-pro - v3.32.0 - 21-10-2025 */
 :root {
   --color-box-shadow-color: rgba(0, 0, 0, 0.05);
 }
@@ -232,15 +232,15 @@
   outline: none;
   background: transparent;
 }
-.e-site-editor-conditions__input-wrapper:after {
+.e-site-editor-conditions__input-wrapper::after {
   font-family: eicons;
   content: "\e8ad";
   font-size: 0.75rem;
   pointer-events: none;
   position: absolute;
-  top: 50%;
+  inset-block-start: 50%;
+  inset-inline-end: 0.625rem;
   transform: translateY(-50%);
-  right: 0.625rem;
 }
 .e-site-editor-conditions__input-wrapper .select2-container--default .select2-selection--single {
   border: none;
@@ -261,12 +261,12 @@
 .e-site-editor-conditions__input-wrapper--condition-type {
   position: relative;
 }
-.e-site-editor-conditions__input-wrapper--condition-type:before {
+.e-site-editor-conditions__input-wrapper--condition-type::before {
   font-family: eicons;
   position: absolute;
-  top: 50%;
   transform: translateY(-50%);
-  left: 0.75rem;
+  inset-block-start: 50%;
+  inset-inline-start: 0.75rem;
   font-size: 0.9375rem;
   pointer-events: none;
   z-index: 1000;
@@ -279,10 +279,10 @@
   border-inline-end: 1px solid;
   border-color: var(--e-site-editor-input-wrapper-border-color);
 }
-.e-site-editor-conditions__input-wrapper--condition-type[data-elementor-condition-type=include]:before {
+.e-site-editor-conditions__input-wrapper--condition-type[data-elementor-condition-type=include]::before {
   content: "\e8cc";
 }
-.e-site-editor-conditions__input-wrapper--condition-type[data-elementor-condition-type=exclude]:before {
+.e-site-editor-conditions__input-wrapper--condition-type[data-elementor-condition-type=exclude]::before {
   content: "\e8cd";
 }
 
@@ -296,7 +296,7 @@
   margin-block-end: 1.5rem;
 }
 .eps-back-button .eps-icon {
-  transform: rotate(0deg);
+  scale: calc(1 * var(--direction-multiplier, 1)) 1;
 }
 
 :root {
@@ -353,8 +353,7 @@
   margin: 0 auto;
   align-items: center;
   border-block-start: 1px solid var(--hr-color);
-  padding-block-start: 1rem;
-  padding-block-end: 1rem;
+  padding-block: 1rem;
   padding-inline: 1.875rem;
 }
 

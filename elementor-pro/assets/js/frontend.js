@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.29.0 - 19-05-2025 */
+/*! elementor-pro - v3.32.0 - 21-10-2025 */
 (self["webpackChunkelementor_pro"] = self["webpackChunkelementor_pro"] || []).push([["frontend"],{
 
 /***/ "../assets/dev/js/frontend/frontend.js":
@@ -504,6 +504,10 @@ class _default extends elementorModules.frontend.handlers.Base {
   }
   onInit() {
     super.onInit();
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (prefersReducedMotion && prefersReducedMotion.matches) {
+      return;
+    }
     this.initEffects();
     this.addCSSTransformEvents();
     this.toggle();
