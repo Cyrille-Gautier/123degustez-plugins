@@ -7,6 +7,7 @@ namespace Jet_Engine\Bricks_Views\Listing;
 
 use Bricks\Database;
 use Bricks\Elements;
+use Bricks\Helpers;
 use Bricks\Query;
 
 /**
@@ -34,6 +35,7 @@ class Manager {
 		add_action( 'save_post_' . jet_engine()->post_type->slug(), [ $this, 'reset_assets_cache' ] );
 
 		add_filter( 'jet-engine/listing/grid/masonry-options', [ $this, 'set_masonry_gap' ], 10, 3 );
+		add_filter( 'jet-engine/listing/grid/lazy-load/post-id', array( $this, 'resolve_lazy_load_post_id' ), 10, 2 );
 
 		add_action( 'jet-smart-filters/render/ajax/before', [ $this, 'register_bricks_dynamic_data_on_ajax' ] );
 		add_action( 'jet-engine/ajax-handlers/before-do-ajax', [ $this, 'register_bricks_dynamic_data_on_ajax' ] );
@@ -96,12 +98,6 @@ class Manager {
 	}
 
 	public function get_ajax_settings( $settings = [], $element_id = null, $post_id = 0 ) {
-		Database::set_active_templates();
-		$active_templates = Database::$active_templates;
-
-		if ( in_array( $active_templates['content_type'], [ 'content', 'archive' ] ) ) {
-			$post_id = $active_templates['content'];
-		}
 
 		if ( ! $element_id || ! $post_id ) {
 			return $settings;
@@ -135,6 +131,33 @@ class Manager {
 
 		return $data;
 
+	}
+
+	/**
+	 * Detects the correct template/post ID for JetEngine Listing lazy load inside Bricks.
+	 *
+	 * Handle Bricks Template elements (nested templates inside static pages or other templates)
+	 *
+	 * @param int   $post_id  The current post or template ID.
+	 * @param array $settings The listing settings (must contain _id).
+	 *
+	 * @return int Resolved post/template ID.
+	 */
+	public function resolve_lazy_load_post_id( $post_id, $settings ) {
+		$is_engine_template = jet_engine()->listings->post_type->slug() === get_post_type( $post_id );
+
+		if ( ! bricks_is_frontend() || $is_engine_template || empty( $settings['_id'] ) ) {
+			return $post_id;
+		}
+
+		// STEP: Set post ID to template preview ID if direct edit or single template preview
+		$element_data = Helpers::get_element_data( $post_id, $settings['_id'] );
+
+		if ( ! empty( $element_data ) && ! empty( $element_data['source_id'] ) ) {
+			$post_id = $element_data['source_id'];
+		}
+
+		return $post_id;
 	}
 
 	public function get_bricks_query( $args = [] ) {

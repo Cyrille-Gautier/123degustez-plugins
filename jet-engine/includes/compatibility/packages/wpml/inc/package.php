@@ -75,6 +75,9 @@ class Package {
 
 		require_once $this->package_path( 'data-stores.php' );
 		Data_Stores\Manager::instance( $this );
+
+		require_once $this->package_path( 'maps-listings.php' );
+		Maps_listings\Manager::instance( $this );
 	}
 
 	/**

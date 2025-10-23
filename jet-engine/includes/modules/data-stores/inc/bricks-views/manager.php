@@ -18,6 +18,10 @@ class Manager {
 	 * Constructor for the class
 	 */
 	function __construct() {
+		if ( ! $this->has_bricks() ) {
+			return;
+		}
+
 		add_action( 'jet-engine/bricks-views/register-elements', array( $this, 'register_elements' ), 11 );
 	}
 
@@ -27,5 +31,9 @@ class Manager {
 
 	public function module_path( $relative_path = '' ) {
 		return jet_engine()->plugin_path( 'includes/modules/data-stores/inc/bricks-views/' . $relative_path );
+	}
+
+	public function has_bricks() {
+		return ( defined( 'BRICKS_VERSION' ) && \Jet_Engine\Modules\Performance\Module::instance()->is_tweak_active( 'enable_bricks_views' ) );
 	}
 }

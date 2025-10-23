@@ -732,6 +732,108 @@ if ( -1 !== window.JetEngineListingData.activeModules.indexOf( 'maps-listings' )
 								}
 							</PanelBody>
 							<PanelBody
+								title={ __( 'User Location' ) }
+								initialOpen={ false }
+							>
+								<ToggleControl
+									label={ __( 'Enable User Location Marker' ) }
+									checked={ attributes.user_location_enabled }
+									onChange={ () => {
+										props.setAttributes( { user_location_enabled: ! attributes.user_location_enabled } );
+									} }
+								/>
+								{ attributes.user_location_enabled && <SelectControl
+									label={ __( 'Marker Type' ) }
+									value={ attributes.user_location_marker_type }
+									options={ markerTypes.filter( i => [ 'icon', 'text' ].includes( i.value ) ) }
+									onChange={ newValue => {
+										props.setAttributes( { user_location_marker_type: newValue } );
+									} }
+								/> }
+								{ attributes.user_location_enabled && 'icon' === attributes.user_location_marker_type &&
+								<div className="jet-media-control components-base-control">
+									<div className="components-base-control__label">{ __( 'Image/Icon' ) }</div>
+									{ attributes.user_location_enabled && attributes.user_location_marker_icon_url && <img src={ attributes.user_location_marker_icon_url } width="100%" height="auto"/> }
+									<MediaUpload
+										onSelect={ media => {
+											props.setAttributes( {
+												user_location_marker_icon:     media.id,
+												user_location_marker_icon_url: media.url,
+											} );
+										} }
+										type="image"
+										value={ attributes.user_location_marker_icon }
+										render={ ( { open } ) => (
+											<Button
+												isSecondary
+												icon="edit"
+												onClick={ open }
+											>{ __( 'Select Image/Icon' ) }</Button>
+										) }
+									/>
+									{ attributes.user_location_enabled && attributes.user_location_marker_icon_url &&
+									<Button
+										onClick={ () => {
+											props.setAttributes( {
+												user_location_marker_icon: 0,
+												user_location_marker_icon_url: '',
+											} )
+										} }
+										isLink
+										isDestructive
+									>
+										{ __( 'Remove Image/Icon' ) }
+									</Button>
+									}
+								</div>
+								}
+								{ attributes.user_location_enabled && 'text' === attributes.user_location_marker_type && <TextControl
+									type="text"
+									label={ __( 'Marker Label' ) }
+									value={ attributes.user_location_marker_label_text }
+									onChange={ newValue => {
+										props.setAttributes( { user_location_marker_label_text: newValue } );
+									} }
+								/> }
+								{ attributes.user_location_enabled && 'icon' === attributes.user_location_marker_type && <SelectControl
+									label={ __( 'Image Size' ) }
+									value={ attributes.user_location_marker_image_size }
+									options={ JetEngineListingData.imageSizes || [] }
+									onChange={ newValue => {
+										props.setAttributes( { user_location_marker_image_size: newValue } );
+									} }
+								/> }
+								{ attributes.user_location_enabled
+								  && 'icon' === attributes.user_location_marker_type
+								  && attributes.user_location_marker_icon_url
+								  && <SelectControl
+									label={ __( 'Icon color apply to' ) }
+									value={ attributes.user_location_marker_icon_color_apply_to }
+									help={ __( '' ) }
+									options={ [
+										{
+											value: 'apply-fill',
+											label: __( 'Fill' ),
+										},
+										{
+											value: 'apply-stroke_unset-fill',
+											label: __( 'Stroke' ),
+										},
+										{
+											value: 'apply-fill_apply-stroke',
+											label: __( 'Both' ),
+										},
+										{
+											value: 'keep',
+											label: __( 'Keep SVG colors' ),
+										},
+									] }
+									onChange={ newValue => {
+										props.setAttributes( { user_location_marker_icon_color_apply_to: newValue } );
+									} }
+								/> }
+							</PanelBody>
+							<PanelBody
 								title={ __( 'Popup' ) }
 								initialOpen={ false }
 							>

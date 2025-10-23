@@ -183,7 +183,7 @@ class Query_Loop {
 			return $count;
 		}
 
-		return $je_query->get_items_page_count();
+		return $je_query->get_items_total_count();
 	}
 
 	public function set_max_num_pages( $max_num_pages, $query ) {

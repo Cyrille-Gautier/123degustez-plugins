@@ -54,6 +54,14 @@ class Maps_Listings extends Listing_Grid {
 			]
 		);
 
+		$this->register_jet_control_group(
+			'section_user_location_settings',
+			[
+				'title' => esc_html__( 'User Location', 'jet-engine' ),
+				'tab'   => 'content',
+			]
+		);
+
 		$this->register_group_query_settings();
 		$this->register_group_visibility_settings();
 
@@ -62,6 +70,15 @@ class Maps_Listings extends Listing_Grid {
 			[
 				'title' => esc_html__( 'Marker', 'jet-engine' ),
 				'tab'   => 'style',
+			]
+		);
+
+		$this->register_jet_control_group(
+			'section_user_location_style',
+			[
+				'title'    => esc_html__( 'User Location', 'jet-engine' ),
+				'tab'      => 'style',
+				'required' => [ 'user_location_enabled', '=', true ],
 			]
 		);
 
@@ -229,6 +246,87 @@ class Maps_Listings extends Listing_Grid {
 				'min'      => 1,
 				'max'      => 20,
 				'required' => [ 'centering_on_open', '=', true ],
+			]
+		);
+
+		$this->end_jet_control_group();
+
+		$this->start_jet_control_group( 'section_user_location_settings' );
+
+		$this->register_jet_control(
+			'user_location_enabled',
+			[
+				'tab'         => 'content',
+				'label'       => esc_html__( 'Enable User Location Marker', 'jet-engine' ),
+				'type'        => 'checkbox',
+				'default'     => false,
+				'description' => esc_html__( '', 'jet-engine' ),
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_type',
+			[
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Marker type', 'jet-engine' ),
+				'type'    => 'select',
+				'options' => array(
+					'image' => __( 'Image', 'jet-engine' ),
+					'icon'  => __( 'Icon', 'jet-engine' ),
+					'text'  => __( 'Text', 'jet-engine' ),
+				),
+				'default'  => 'icon',
+				'required' => [ 'user_location_enabled', '=', true ],
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_label_text',
+			[
+				'tab'      => 'content',
+				'label'    => esc_html__( 'Marker Label', 'jet-engine' ),
+				'type'     => 'text',
+				'default'  => 'Your Location',
+				'required'       => [
+					[ 'user_location_enabled', '=', true ],
+					[ 'user_location_marker_type', '=', 'text' ],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_image',
+			[
+				'tab'            => 'content',
+				'label'          => esc_html__( 'Image', 'jet-engine' ),
+				'type'           => 'image',
+				'hasDynamicData' => false,
+				'required'       => [
+					[ 'user_location_enabled', '=', true ],
+					[ 'user_location_marker_type', '=', 'image' ],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_icon',
+			[
+				'tab'      => 'content',
+				'label'    => esc_html__( 'Icon', 'jet-engine' ),
+				'type'     => 'icon',
+				'default'  => [
+					'library' => 'fontawesomeSolid',
+					'icon'    => 'fas fa-location-dot',
+				],
+				'required'       => [
+					[ 'user_location_enabled', '=', true ],
+					[ 'user_location_marker_type', '=', 'icon' ],
+				],
+				'css'     => [
+					[
+						'selector' => '.jet-map-user-location-marker svg', // Use to target SVG file
+					],
+				],
 			]
 		);
 
@@ -876,6 +974,191 @@ class Maps_Listings extends Listing_Grid {
 		);
 
 		$this->end_jet_control_group();
+
+		$this->start_jet_control_group( 'section_user_location_style' );
+
+		$this->register_jet_control(
+			'user_location_marker_width',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Width', 'jet-engine' ),
+				'type'  => 'number',
+				'units' => true,
+				'css'   => [
+					[
+						'property' => 'width',
+						'selector' => '.jet-map-user-location-marker-wrap, .jet-map-user-location-marker-image',
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_text_separator',
+			[
+				'tab'   => 'style',
+				'type'  => 'separator',
+				'label' => esc_html__( 'Marker text', 'jet-engine' ),
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_typography',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Typography', 'jet-engine' ),
+				'type'  => 'typography',
+				'css'   => [
+					[
+						'property' => 'typography',
+						'selector' => '.jet-map-user-location-marker-wrap',
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_bg_color',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Background color', 'jet-engine' ),
+				'type'  => 'color',
+				'css'   => [
+					[
+						'property' => 'background-color',
+						'selector' => '.jet-map-user-location-marker-wrap',
+					],
+					[
+						'property' => 'border-top-color',
+						'selector' => '.jet-map-user-location-marker-wrap:after',
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_padding',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Padding', 'jet-engine' ),
+				'type'  => 'dimensions',
+				'css'   => [
+					[
+						'property' => 'padding',
+						'selector' => '.jet-map-user-location-marker-wrap',
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_border',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Border', 'jet-engine' ),
+				'type'  => 'border',
+				'css'   => [
+					[
+						'property' => 'border',
+						'selector' => '.jet-map-user-location-marker-wrap',
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_box_shadow',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Box shadow', 'jet-engine' ),
+				'type'  => 'box-shadow',
+				'css'   => [
+					[
+						'property' => 'box-shadow',
+						'selector' => '.jet-map-user-location-marker-wrap',
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_pin_size',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Pin size', 'jet-engine' ),
+				'type'  => 'number',
+				'units' => true,
+				'css'   => [
+					[
+						'property' => 'border-top-width',
+						'selector' => '.jet-map-user-location-marker-wrap:after',
+					],
+					[
+						'property' => 'border-right-width',
+						'selector' => '.jet-map-user-location-marker-wrap:after',
+					],
+					[
+						'property' => 'border-left-width',
+						'selector' => '.jet-map-user-location-marker-wrap:after',
+					],
+					[
+						'property' => 'margin-bottom',
+						'selector' => '.jet-map-user-location-marker-wrap',
+					],
+					[
+						'property' => 'margin-left',
+						'selector' => '.jet-map-user-location-marker-wrap:after',
+						'invert'   => true,
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_icon_separator',
+			[
+				'tab'   => 'style',
+				'type'  => 'separator',
+				'label' => esc_html__( 'Marker icon', 'jet-engine' ),
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_icon_color',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Icon color', 'jet-engine' ),
+				'type'  => 'color',
+				'css'   => [
+					[
+						'property' => 'color',
+						'selector' => '.jet-map-user-location-marker-wrap',
+					],
+					[
+						'property' => 'fill',
+						'selector' => '.jet-map-user-location-marker-wrap path',
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'user_location_marker_icon_size',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Icon size', 'jet-engine' ),
+				'type'  => 'number',
+				'units' => true,
+				'css'   => [
+					[
+						'property' => 'font-size',
+						'selector' => '.jet-map-user-location-marker',
+					],
+				],
+			]
+		);
+
+		$this->end_jet_control_group();
 	}
 
 	// Enqueue element styles and scripts
@@ -940,13 +1223,14 @@ class Maps_Listings extends Listing_Grid {
 	}
 
 	public function parse_jet_render_attributes( $attrs = [] ) {
-		$attrs['auto_center']          = $attrs['auto_center'] ?? false;
-		$attrs['zoom_controls']        = $attrs['zoom_controls'] ?? false;
-		$attrs['fullscreen_control']   = $attrs['fullscreen_control'] ?? false;
-		$attrs['street_view_controls'] = $attrs['street_view_controls'] ?? false;
-		$attrs['map_type_controls']    = $attrs['map_type_controls'] ?? false;
-		$attrs['marker_clustering']    = $attrs['marker_clustering'] ?? false;
-		$attrs['marker_icon']          = ! empty( $attrs['marker_icon'] ) ? Element::render_icon( $attrs['marker_icon'] ) : null;
+		$attrs['auto_center']               = $attrs['auto_center'] ?? false;
+		$attrs['zoom_controls']             = $attrs['zoom_controls'] ?? false;
+		$attrs['fullscreen_control']        = $attrs['fullscreen_control'] ?? false;
+		$attrs['street_view_controls']      = $attrs['street_view_controls'] ?? false;
+		$attrs['map_type_controls']         = $attrs['map_type_controls'] ?? false;
+		$attrs['marker_clustering']         = $attrs['marker_clustering'] ?? false;
+		$attrs['marker_icon']               = ! empty( $attrs['marker_icon'] ) ? Element::render_icon( $attrs['marker_icon'] ) : null;
+		$attrs['user_location_marker_icon'] = ! empty( $attrs['user_location_marker_icon'] ) ? Element::render_icon( $attrs['user_location_marker_icon'] ) : null;
 
 		if ( ! empty( $attrs['multiple_markers'] ) ) {
 			foreach ( $attrs['multiple_markers'] as &$value ) {

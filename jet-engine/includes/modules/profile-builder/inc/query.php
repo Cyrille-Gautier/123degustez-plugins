@@ -81,14 +81,17 @@ class Query {
 		}
 
 		if ( ( $this->subpagenow && empty( $this->subpage ) )
-			|| ( $this->is_single_user_page && ! $this->get_queried_user() )
+		     || ( $this->is_single_user_page && ! $this->get_queried_user() )
 		) {
 			global $wp_query;
 			$wp_query->set_404();
 			status_header( 404 );
 			nocache_headers();
-			get_template_part( 404 );
-			exit;
+
+			// Disable WordPress canonical redirect to ensure proper 404 handling
+			add_filter( 'redirect_canonical', '__return_false' );
+
+			return;
 		}
 
 		if ( $this->pagenow ) {

@@ -103,7 +103,7 @@ if ( ! class_exists( 'Jet_Engine_Listings' ) ) {
 		/**
 		 * Holder for legacy instance.
 		 *
-		 * @var null
+		 * @var \Jet_Engine_Listings_Legacy
 		 */
 		public $legacy = null;
 

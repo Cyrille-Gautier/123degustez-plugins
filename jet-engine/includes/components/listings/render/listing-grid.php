@@ -1001,7 +1001,6 @@ if ( ! class_exists( 'Jet_Engine_Render_Listing_Grid' ) ) {
 		 * @return void
 		 */
 		public function render_posts() {
-
 			$settings   = $this->get_settings();
 			$listing_id = absint( $settings['lisitng_id'] );
 
@@ -1108,7 +1107,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Listing_Grid' ) ) {
 				}
 			}
 
-			$post_id = apply_filters( 'jet-engine/listing/grid/lazy-load/post-id', $post_id );
+			$post_id = apply_filters( 'jet-engine/listing/grid/lazy-load/post-id', $post_id, $settings );
 
 			$options = array(
 				'offset'  => $offset,
@@ -1324,7 +1323,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Listing_Grid' ) ) {
 				),
 			);
 
-			$has_load_more  = ! empty( $settings['use_load_more'] );
+			$has_load_more = filter_var( $settings['use_load_more'] ?? false, FILTER_VALIDATE_BOOLEAN );
 			$add_query_data = apply_filters( 'jet-engine/listing/grid/add-query-data', $has_load_more, $this );
 
 			if ( $add_query_data ) {

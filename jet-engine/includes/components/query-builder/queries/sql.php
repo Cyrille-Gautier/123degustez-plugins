@@ -192,11 +192,8 @@ class SQL_Query extends Base_Query {
 			case 'meta_query':
 
 				foreach ( $value as $row ) {
-
 					$this->update_where_row( $this->prepare_where_row( $row ) );
-
 				}
-
 				break;
 		}
 
@@ -556,28 +553,30 @@ class SQL_Query extends Base_Query {
 
 			if ( ! empty( $this->final_query['group_results'] ) && ! empty( $this->final_query['group_by'] ) ) {
 				$group_col = str_replace( '`', '', $this->final_query['group_by'] );
-				$current_query .= " GROUP BY `" . $group_col . "`";
-			}
-
-			if ( ! empty( $this->final_query['orderby'] ) ) {
-
-				$orderby        = array();
-				$current_query .= " ";
-
-				foreach ( $this->final_query['orderby'] as $row ) {
-
-					if ( empty( $row['orderby'] ) ) {
-						continue;
-					}
-
-					$row['column'] = ! empty( $column_aliases[ $row['orderby'] ] ) ? $column_aliases[ $row['orderby'] ] : $row['orderby'];
-					$orderby[] = $row;
-				}
-
-				$current_query .= $this->add_order_args( $orderby );
+				$current_query .= " GROUP BY " . $group_col;
 			}
 
 			$this->current_query = $current_query;
+		}
+
+		$orderby_part = "";
+
+		if ( ! empty( $this->final_query['orderby'] ) && ! $is_count ) {
+
+			$orderby        = array();
+			$orderby_part .= " ";
+
+			foreach ( $this->final_query['orderby'] as $row ) {
+
+				if ( empty( $row['orderby'] ) ) {
+					continue;
+				}
+
+				$row['column'] = ! empty( $column_aliases[ $row['orderby'] ] ) ? $column_aliases[ $row['orderby'] ] : $row['orderby'];
+				$orderby[] = $row;
+			}
+
+			$orderby_part .= $this->add_order_args( $orderby );
 		}
 
 		$limit_offset = "";
@@ -600,7 +599,7 @@ class SQL_Query extends Base_Query {
 			} else {
 				$offset = ! empty( $this->final_query['offset'] ) ? $this->final_query['offset'] : 0;
 			}
-			
+
 			if ( ! $is_count && ! empty( $this->final_query['_page'] ) ) {
 				$page    = absint( $this->final_query['_page'] );
 				$pages   = $this->get_items_pages_count();
@@ -624,7 +623,7 @@ class SQL_Query extends Base_Query {
 
 		$result = apply_filters(
 			'jet-engine/query-builder/build-query/result',
-			$select_query . $this->current_query . $limit_offset . ";",
+			$select_query . $this->current_query . $orderby_part . $limit_offset . ";",
 			$this,
 			$is_count
 		);
@@ -658,7 +657,7 @@ class SQL_Query extends Base_Query {
 		$this->final_query = null;
 		$this->reset_query();
 		$this->setup_query();
-		
+
 		return $result;
 	}
 

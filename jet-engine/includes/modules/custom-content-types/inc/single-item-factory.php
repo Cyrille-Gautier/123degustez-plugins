@@ -45,7 +45,7 @@ class Single_Item_Factory {
 
 		add_filter(
 			'jet-engine/listings/data/object-by-context/' . $this->source_name(),
-			[ $this, 'apply_conntext' ]
+			[ $this, 'apply_context' ]
 		);
 
 	}
@@ -65,7 +65,7 @@ class Single_Item_Factory {
 	 * @param  [type] $result [description]
 	 * @return [type]         [description]
 	 */
-	public function apply_conntext( $result ) {
+	public function apply_context( $result ) {
 
 		$item = $this->get_item();
 

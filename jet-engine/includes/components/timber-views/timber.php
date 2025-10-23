@@ -140,8 +140,8 @@ class Package {
 
 		$css = wp_kses( $css, [] );
 		$css = str_replace(
-			['</style>', '<', '>'],
-			['&lt;&#47;style&gt;', '&lt;', '&gt;'],
+			[ '</style>', '<' ],
+			[ '&lt;&#47;style&gt;', '&lt;' ],
 			$css
 		);
 

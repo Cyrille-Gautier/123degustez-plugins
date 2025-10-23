@@ -1,5 +1,28 @@
 # ChangeLog
 
+## 3.7.7
+* ADD: Map Listings. Add pin for geolocation of the current user;
+* FIX: Custom Meta Storage. Random order breaks the ordering;
+* FIX: Query Builder. Query Loop by Current WP Query breaks if filter returns 0 results;
+* FIX: CCT. Item Duplication After Filter Page Reload + Load More;
+* FIX: Bricks. query_results_count and query_results_count_filter Count Incorrectly;
+* FIX: Relations + CCT. Bulk action on CCT page does not clean up relationships;
+* FIX: Listing Grid. Aligment call to action widget doesn't works in listing grid;
+* FIX: Query Builder. SQL query. Order by custom field;
+* FIX: Meta Boxes. Problem with scripts loading on the edit meta box page with SCRIPT_DEBUG;
+* FIX: Pofile Builder. Listing with lazy load on the profile page;
+* FIX: Map Listings. Dynamic widget Context doesn't work under Map Listing.
+
+## 3.7.6
+* FIX: Data Stores + CCT. Issue with adding to store from the single post related to CCT;
+* FIX: WPML Compatibility. The translated caption in the images slider is not displayed in translated page;
+* FIX: WPML Compatibility. Translation for the Location & Distance placeholder;
+* FIX: Profile Builder. Correct 404 page redirection;
+* FIX: Query Builder. SQL query + Group By option;
+* FIX: Components. Styles loading issue;
+* FIX: Map Listings. Map listing in Elementor tabs;
+* FIX: Listing Grid. Issues with load more functionality in some cases.
+
 ## 3.7.5
 * ADD: Bricks. Add Dynamic Repeater element;
 * UPD: Bricks and Data Stores. Support Bricks native SVG icon settings in Data Store button;

@@ -54,7 +54,7 @@
 			}
 
 			saveDefaults( e ) {
-				if ( this.mapDefaults !== null || e.detail.div !== document.querySelector( this.mapSelector ) ) {
+				if ( e.detail.div !== document.querySelector( this.mapSelector ) ) {
 					return;
 				}
 

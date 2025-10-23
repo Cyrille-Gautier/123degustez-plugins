@@ -12,9 +12,9 @@
 	<label for="listing_source"><?php esc_html_e( 'Listing source:', 'jet-engine' ); ?></label>
 	<select id="listing_source" name="listing_source" class="jet-listings-popup__control"><?php
 		foreach ( $sources as $source_key => $source_label ) {
-			printf( 
-				'<option value="%1$s" %3$s>%2$s</option>', 
-				$source_key, 
+			printf(
+				'<option value="%1$s" %3$s>%2$s</option>',
+				$source_key,
 				$source_label,
 				( ! empty( $data['listing_source'] ) ? selected( $data['listing_source'], $source_key, false ) : '' )
 			);
@@ -25,7 +25,7 @@
 	<label for="listing_post_type"><?php esc_html_e( 'From post type:', 'jet-engine' ); ?></label>
 	<select id="listing_post_type" name="listing_post_type" class="jet-listings-popup__control"><?php
 		foreach ( jet_engine()->listings->get_post_types_for_options() as $key => $value ) {
-			printf( 
+			printf(
 				'<option value="%1$s" %3$s>%2$s</option>',
 				$key,
 				$value,
@@ -38,7 +38,7 @@
 	<label for="listing_tax"><?php esc_html_e( 'From taxonomy:', 'jet-engine' ); ?></label>
 	<select id="listing_tax" name="listing_tax" class="jet-listings-popup__control"><?php
 		foreach ( jet_engine()->listings->get_taxonomies_for_options() as $key => $value ) {
-			printf( 
+			printf(
 				'<option value="%1$s" %3$s>%2$s</option>',
 				$key,
 				$value,
@@ -52,7 +52,7 @@
 	<select id="query_id" name="_query_id" class="jet-listings-popup__control">
 		<?php
 			foreach ( \Jet_Engine\Query_Builder\Manager::instance()->get_queries_for_options() as $query_id => $query_name ) {
-				printf( 
+				printf(
 					'<option value="%1$s" %3$s>%2$s</option>',
 					$query_id,
 					$query_name,
@@ -66,7 +66,7 @@
 	<label for="repeater_source"><?php esc_html_e( 'Repeater source:', 'jet-engine' ); ?></label>
 	<select id="repeater_source" name="repeater_source" class="jet-listings-popup__control"><?php
 		foreach ( jet_engine()->listings->repeater_sources() as $source_id => $source_name ) {
-			printf( 
+			printf(
 				'<option value="%1$s" %3$s>%2$s</option>',
 				$source_id,
 				$source_name,
@@ -104,7 +104,7 @@
 
 					echo '<optgroup label="' . $group['label'] . '">';
 					foreach ( $group['options'] as $opt_key => $opt_name ) {
-						printf( 
+						printf(
 							'<option value="%1$s" %3$s>%2$s</option>',
 							$opt_key,
 							$opt_name,
@@ -117,6 +117,9 @@
 		</div>
 	</div>
 </div>
+<div class="jet-listings-popup__form-row jet-template-listing jet-template-repeater">
+	<b><i>*Please note:</i></b> If you need to filter or paginate the final listing, you should use the "Query Builder" source and create a query of the "Repeater Query" type.
+</div>
 <?php do_action( 'jet-engine/templates/listing-options', $data ); ?>
 <?php if ( ! empty( $data['main_popup'] ) ) { ?>
 <div class="jet-listings-popup__form-row">
@@ -128,7 +131,7 @@
 	<label for="listing_view_type"><?php esc_html_e( 'Listing view:', 'jet-engine' ); ?></label>
 	<select id="listing_view_type" name="listing_view_type" class="jet-listings-popup__control"><?php
 		foreach ( $views as $view_key => $view_label ) {
-			printf( 
+			printf(
 				'<option value="%1$s" %3$s>%2$s</option>',
 				$view_key,
 				$view_label,

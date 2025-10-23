@@ -419,9 +419,13 @@ class List_Table extends \WP_List_Table {
 
 		foreach ( $ids as $id ) {
 
+			$item = $this->factory->db->get_item( $id );
+
 			switch ( $this->current_action() ) {
 				case 'delete':
 					$this->factory->db->delete( array( '_ID' => $id ) );
+
+					do_action( 'jet-engine/custom-content-types/delete-item/' . $this->factory->get_arg( 'slug' ), $id, $item );
 					break;
 
 				case 'switch_to_draft':

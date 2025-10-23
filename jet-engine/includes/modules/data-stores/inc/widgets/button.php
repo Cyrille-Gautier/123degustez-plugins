@@ -347,8 +347,8 @@ class Button extends \Elementor\Widget_Base {
 				'label' => __( 'Text Color', 'jet-engine' ),
 				'type'  => \Elementor\Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .jet-data-store-link:hover' => 'color: {{VALUE}};',
-					'{{WRAPPER}} .jet-data-store-link:hover svg' => 'fill: {{VALUE}};',
+					'body:not([data-elementor-device-mode="mobile"]) {{WRAPPER}} .jet-data-store-link:hover' => 'color: {{VALUE}};',
+					'body:not([data-elementor-device-mode="mobile"]) {{WRAPPER}} .jet-data-store-link:hover svg' => 'fill: {{VALUE}};',
 				),
 			)
 		);
@@ -359,8 +359,8 @@ class Button extends \Elementor\Widget_Base {
 				'label' => __( 'Icon Color', 'jet-engine' ),
 				'type'  => \Elementor\Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .jet-data-store-link:hover .jet-data-store-link__icon' => 'color: {{VALUE}};',
-					'{{WRAPPER}} .jet-data-store-link:hover .jet-data-store-link__icon svg' => 'fill: {{VALUE}};',
+					'body:not([data-elementor-device-mode="mobile"]) {{WRAPPER}} .jet-data-store-link:hover .jet-data-store-link__icon' => 'color: {{VALUE}};',
+					'body:not([data-elementor-device-mode="mobile"]) {{WRAPPER}} .jet-data-store-link:hover .jet-data-store-link__icon svg' => 'fill: {{VALUE}};',
 				),
 			)
 		);
@@ -372,7 +372,7 @@ class Button extends \Elementor\Widget_Base {
 				'label'    => __( 'Background', 'jet-engine' ),
 				'types'    => array( 'classic', 'gradient' ),
 				'exclude'  => array( 'image' ),
-				'selector' => '{{WRAPPER}} .jet-data-store-link:hover',
+				'selector' => 'body:not([data-elementor-device-mode="mobile"]) {{WRAPPER}} .jet-data-store-link:hover',
 			)
 		);
 
@@ -385,7 +385,7 @@ class Button extends \Elementor\Widget_Base {
 					'button_border_border!' => '',
 				),
 				'selectors' => array(
-					'{{WRAPPER}} .jet-data-store-link:hover' => 'border-color: {{VALUE}};',
+					'body:not([data-elementor-device-mode="mobile"]) {{WRAPPER}} .jet-data-store-link:hover' => 'border-color: {{VALUE}};',
 				),
 			)
 		);
@@ -408,8 +408,8 @@ class Button extends \Elementor\Widget_Base {
 				'label' => __( 'Text Color', 'jet-engine' ),
 				'type'  => \Elementor\Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .jet-data-store-link.in-store:not(:hover)' => 'color: {{VALUE}};',
-					'{{WRAPPER}} .jet-data-store-link.in-store:not(:hover) svg' => 'fill: {{VALUE}};',
+					'{{WRAPPER}} .jet-data-store-link.in-store' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .jet-data-store-link.in-store svg' => 'fill: {{VALUE}};',
 				),
 				'condition' => array(
 					'action_after_added' => array( 'remove_from_store', 'switch_status' ),
@@ -423,8 +423,8 @@ class Button extends \Elementor\Widget_Base {
 				'label' => __( 'Icon Color', 'jet-engine' ),
 				'type'  => \Elementor\Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .jet-data-store-link.in-store:not(:hover) .jet-data-store-link__icon' => 'color: {{VALUE}};',
-					'{{WRAPPER}} .jet-data-store-link.in-store:not(:hover) .jet-data-store-link__icon svg' => 'fill: {{VALUE}};',
+					'{{WRAPPER}} .jet-data-store-link.in-store .jet-data-store-link__icon' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .jet-data-store-link.in-store .jet-data-store-link__icon svg' => 'fill: {{VALUE}};',
 				),
 				'condition' => array(
 					'action_after_added' => array( 'remove_from_store', 'switch_status' ),
@@ -439,7 +439,7 @@ class Button extends \Elementor\Widget_Base {
 				'label'     => __( 'Background', 'jet-engine' ),
 				'types'     => array( 'classic', 'gradient' ),
 				'exclude'   => array( 'image' ),
-				'selector'  => '{{WRAPPER}} .jet-data-store-link.in-store:not(:hover)',
+				'selector'  => '{{WRAPPER}} .jet-data-store-link.in-store',
 				'condition' => array(
 					'action_after_added' => array( 'remove_from_store', 'switch_status' ),
 				),
@@ -452,7 +452,7 @@ class Button extends \Elementor\Widget_Base {
 				'label'     => __( 'Border Color', 'jet-engine' ),
 				'type'      => \Elementor\Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .jet-data-store-link.in-store:not(:hover)' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .jet-data-store-link.in-store' => 'border-color: {{VALUE}};',
 				),
 				'condition' => array(
 					'button_border_border!' => '',

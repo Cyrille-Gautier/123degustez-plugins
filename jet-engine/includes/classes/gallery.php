@@ -32,6 +32,22 @@ if ( ! class_exists( 'Jet_Engine_Img_Gallery' ) ) {
 				return '';
 			}
 
+			$images = array_map(
+				function( $id ) {
+					if ( is_array( $id ) ) {
+						if ( ! empty( $id['id'] ) ) {
+							$id = $id['id'];
+						} elseif ( ! empty( $id['url'] ) ) {
+							$id = attachment_url_to_postid( $id['url'] );
+						}
+					} elseif ( ! is_numeric( $id ) ) {
+						$id = attachment_url_to_postid( $id );
+					}
+
+					return apply_filters( 'jet-engine/compatibility/translate/post', $id );
+				}, $images
+			);
+
 			if ( wp_doing_ajax() ) {
 				jet_engine()->frontend->register_listing_deps();
 			}
@@ -175,6 +191,22 @@ if ( ! class_exists( 'Jet_Engine_Img_Gallery' ) ) {
 			if ( empty( $images ) ) {
 				return '';
 			}
+
+			$images = array_map(
+				function( $id ) {
+					if ( is_array( $id ) ) {
+						if ( ! empty( $id['id'] ) ) {
+							$id = $id['id'];
+						} elseif ( ! empty( $id['url'] ) ) {
+							$id = attachment_url_to_postid( $id['url'] );
+						}
+					} elseif ( ! is_numeric( $id ) ) {
+						$id = attachment_url_to_postid( $id );
+					}
+
+					return apply_filters( 'jet-engine/compatibility/translate/post', $id );
+				}, $images
+			);
 
 			$args = apply_filters( 'jet-engine/gallery/grid/args', wp_parse_args( $args, array(
 				'size'        => 'full',

@@ -297,6 +297,11 @@ if ( ! class_exists( 'Jet_Engine_Frontend' ) ) {
 		 */
 		public function ensure_listing_item_assets( $listing_id, $object = null ) {
 			if ( ! ( defined('REST_REQUEST') && REST_REQUEST ) && ! wp_doing_ajax() ) {
+				add_action(
+					'jet-engine/ensure-assets/slider',
+					array( $this, 'ensure_slider_assets' )
+				);
+
 				$initial_listing_id = $this->listing_id;
 				$this->listing_id   = absint( $listing_id );
 
@@ -311,10 +316,24 @@ if ( ! class_exists( 'Jet_Engine_Frontend' ) ) {
 				$default_post = $post;
 				$this->get_listing_item( $object );
 				$post = $default_post;
+				setup_postdata( $post );
 
 				$this->listing_id = $initial_listing_id;
 				jet_engine()->listings->data->set_current_object( $initial_object );
+
+				remove_action(
+					'jet-engine/ensure-assets/slider',
+					array( $this, 'ensure_slider_assets' )
+				);
 			}
+		}
+
+		public function ensure_slider_assets() {
+			if ( ! wp_script_is( 'jquery-slick', 'enqueued' ) ) {
+				wp_enqueue_script( 'jquery-slick' );
+			}
+			
+			$this->ensure_lib( 'imagesloaded' );
 		}
 
 		/**

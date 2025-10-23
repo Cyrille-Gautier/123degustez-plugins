@@ -199,15 +199,29 @@ class SQL_Query extends Base_Query {
 			$prepared_tables = array();
 
 			foreach ( $tables as $table ) {
-				$prepared_tables[] = sprintf( '\'%1$s%2$s\'', $wpdb->prefix, $table );
+				$table = sanitize_key( $table );
+
+				if ( ! $table ) {
+					continue;
+				}
+
+				$prepared_tables[] = $wpdb->prepare( '%s', $wpdb->prefix . $table );
 			}
 
-			$prepared_tables = implode( ', ', $prepared_tables );
+			if ( ! empty( $prepared_tables ) ) {
+				$prepared_tables = implode( ', ', $prepared_tables );
 
-			$all_columns = $wpdb->get_results( "SELECT TABLE_NAME, COLUMN_NAME FROM information_schema.columns WHERE table_schema = '$db_name' AND table_name IN ( $prepared_tables );", ARRAY_N );
+				$all_columns = $wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT TABLE_NAME, COLUMN_NAME FROM information_schema.columns WHERE table_schema = %s AND table_name IN ( $prepared_tables );",
+						$db_name
+					),
+					ARRAY_N
+				);
 
-			foreach ( $all_columns as $col ) {
-				$result[] = $col[1];
+				foreach ( $all_columns as $col ) {
+					$result[] = $col[1];
+				}
 			}
 		}
 

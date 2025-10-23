@@ -321,10 +321,10 @@ class Manager {
 
 		$id_prop = $related_cct . '___ID';
 
-		if ( isset( $current_object->cct_slug ) && $current_object->cct_slug === $related_cct ) {
-			return $current_object->_ID;
-		} elseif ( isset( $current_object->$id_prop ) ) {
+		if ( isset( $current_object->$id_prop ) ) {
 			return $current_object->$id_prop;
+		} elseif ( isset( $current_object->cct_slug ) && $current_object->cct_slug === $related_cct ) {
+			return $current_object->_ID;
 		} else {
 			return $post_id;
 		}

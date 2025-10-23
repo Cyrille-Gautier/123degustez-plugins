@@ -81,7 +81,7 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Frontend' ) ) {
 				),
 			) );
 
-			$preview_css = '.jet-engine-document-back-handle,.jet-engine-document-handle{position:absolute;top:0;left:0;z-index:100;display:none;align-items:center;justify-content:center;width:25px;height:25px;font-size:11px;color:#fff;background:#fcb92c;transition:0.3s;cursor:pointer}.elementor-editor-active .elementor[data-elementor-type=jet-listing-items]{position:relative}.elementor-editor-active .elementor[data-elementor-type=jet-listing-items]:not(.elementor-edit-mode):hover{box-shadow:none}.elementor-editor-active .jet-engine-document-edit-item.elementor-edit-mode,.elementor-editor-active .jet-listing-grid:hover .jet-engine-document-edit-item:not(.elementor-edit-mode){box-shadow:0 0 0 1px #fcb92c}.elementor-editor-active .jet-engine-document-edit-item.elementor-edit-mode .jet-engine-document-back-handle,.elementor-editor-active .jet-listing-grid:hover .jet-engine-document-edit-item:not(.elementor-edit-mode) .jet-engine-document-handle{display:flex}';
+			$preview_css = '.jet-engine-document-back-handle,.jet-engine-document-handle{position:absolute;top:0;left:0;z-index:100;display:none;align-items:center;justify-content:center;width:25px;height:25px;font-size:11px;color:#fff;background:#fcb92c;transition:0.3s;cursor:pointer}.elementor-editor-active .elementor[data-elementor-type=jet-listing-items]{position:relative}.elementor-editor-active .elementor[data-elementor-type=jet-listing-items]:not(.elementor-edit-mode):hover{box-shadow:none}.elementor-editor-active .jet-engine-document-edit-item.elementor-edit-mode,.elementor-editor-active .jet-listing-grid:hover .jet-engine-document-edit-item:not(.elementor-edit-mode){box-shadow:0 0 0 1px #fcb92c}.elementor-editor-active .jet-engine-document-edit-item.elementor-edit-mode .jet-engine-document-back-handle,.elementor-editor-active .jet-listing-grid:hover .jet-engine-document-edit-item:not(.elementor-edit-mode) .jet-engine-document-handle{display:flex} .jet-engine-document-back-handle:has(+.jet-engine-document-handle), div:has(>.jet-engine-document-back-handle)>.jet-engine-document-handle, .jet-engine-hidden-handle {display:none !important;}';
 
 			wp_add_inline_style( 'jet-engine-frontend', $preview_css );
 
@@ -174,9 +174,27 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Frontend' ) ) {
 
 			static $is_edit_mode = null;
 
+			// phpcs:disable
 			if ( null === $is_edit_mode ) {
 				$is_edit_mode = Elementor\Plugin::instance()->editor->is_edit_mode();
+
+				/**
+				 * Sometimes we need to ensure that is exactly edit page, not the mode.
+				 * Here we need this check just to ensure we're in the editor, but Elementor itself
+				 * might depend this on document ID and it could get incorrect result,
+				 * which will be cached
+				 *
+				 * @see https://github.com/Crocoblock/issues-tracker/issues/17004
+				 */
+				if ( ! $is_edit_mode
+					&& ! empty( $_REQUEST['action'] )
+					&& 'elementor' === $_REQUEST['action']
+					&& ! empty( $_REQUEST['post'] )
+				) {
+					$is_edit_mode = true;
+				}
 			}
+			// phpcs:enable
 
 			$add_inline_css = ! $is_edit_mode && ( wp_doing_ajax() || Jet_Engine_Tools::wp_doing_rest() ) && ! jet_engine()->elementor_views->is_editor_ajax();
 			$add_inline_css = apply_filters( 'jet-engine/elementor-views/frontend/add-inline-css', $add_inline_css );

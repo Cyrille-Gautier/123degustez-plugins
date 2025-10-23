@@ -191,6 +191,8 @@ if ( ! class_exists( 'Jet_Engine_Listings_Filters' ) ) {
 		 */
 		public function img_gallery_slider( $img_ids = null, $args = array() ) {
 
+			do_action( 'jet-engine/ensure-assets/slider' );
+
 			if ( ! $img_ids ) {
 				return null;
 			}

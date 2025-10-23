@@ -147,9 +147,24 @@ class Manager {
 			$clauses['fields'] .= ', ' . $custom_table_query['table'] . '.*';
 
 			if ( ! empty( $custom_table_query['order'] ) ) {
-				foreach( $custom_table_query['order'] as $order_by => $order ) {
-					$clauses['orderby'] .= sprintf( ', %1$s.%2$s %3$s', $custom_table_query['table'], $order_by, $order );
-					$clauses['orderby'] = ltrim( $clauses['orderby'], ',' );
+				$order_list = $custom_table_query['order'];
+
+				foreach ( $order_list as $clause ) {
+					if ( ! empty( $clause['custom_key'] ) && ! empty( $clause['replacement'] ) ) {
+						$r = $clause['replacement'];
+						$o = $clause['order'];
+						
+						$clauses['orderby'] = str_replace(
+							"$r $o",
+							sprintf(
+								'%1$s.%2$s %3$s',
+								$custom_table_query['table'],
+								$clause['custom_key'],
+								$clause['order']
+							),
+							$clauses['orderby']
+						);
+					}
 				}
 			}
 

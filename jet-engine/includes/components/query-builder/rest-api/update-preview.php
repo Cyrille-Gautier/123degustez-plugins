@@ -62,7 +62,6 @@ class Update_Preview extends \Jet_Engine_Base_API_Endpoint {
 		$count = $query->get_items_total_count();
 		$items = $query->get_items();
 		$more  = '';
-		$count = $query->get_items_total_count();
 
 		$max_count = absint( $preview['query_count'] ?? 10 );
 

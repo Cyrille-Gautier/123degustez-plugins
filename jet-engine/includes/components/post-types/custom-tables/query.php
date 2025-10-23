@@ -359,10 +359,12 @@ class Query {
 
 					$meta_query    = $query->get( 'meta_query' );
 					$meta_partials = $this->exctract_meta_query_partials( $meta_query );
-					$custom_order  = [];
 
 					$query_order_by = $query->get( 'orderby' );
 					$query_order    = $query->get( 'order' );
+
+					$unset_orders = false;
+					$order_list   = [];
 
 					if ( $query_order_by ) {
 
@@ -370,19 +372,18 @@ class Query {
 							$query_order_by = [ $query_order_by => $query_order ];
 						}
 
-						$unset_orders = [];
-
 						foreach ( $query_order_by as $order_by => $order ) {
-							if ( in_array( $order_by, [ 'meta_value_num', 'meta_value' ] ) ) {
-								
+							$custom_key = false;
+
+							if ( in_array( $order_by, [ 'meta_value_num', 'meta_value' ] ) ) {								
 								$meta_key = $query->get( 'meta_key' );
 								$order    = ! empty( $order ) ? $order : 'DESC';
 								$suffix   = ( 'meta_value_num' === $order_by ) ? '+0' : '';
 
 								if ( in_array( $meta_key, $this->fields ) ) {
-									$unset_orders[] = $order_by;
+									$unset_orders = true;
 									$query->set( 'meta_key', null );
-									$custom_order[ $meta_key . $suffix ] = $order;
+									$custom_key = $meta_key . $suffix;
 								}
 							}
 
@@ -391,36 +392,57 @@ class Query {
 							) {
 								$clause = $meta_partials['custom_query'][ $order_by ];
 								$meta_key = $clause['key'];
-								$unset_orders[] = $order_by;
+								$unset_orders = true;
 								$order = ! empty( $order ) ? $order : 'DESC';
 								$type = $clause['type'] ?? '';
 								$numeric_types = [ 'TIMESTAMP', 'NUMERIC', 'DECIMAL', 'SIGNED' ];
 								$suffix = in_array( $type, $numeric_types ) ? '+0' : '';
-								$custom_order[ $meta_key . $suffix ] = $order;
+								$custom_key = $meta_key . $suffix;
 							}
+
+							$order_list[] = array(
+								'custom_key'  => $custom_key,
+								'order'       => ! empty( $order ) ? $order : 'DESC',
+								'replacement' => false,
+							);
 
 						}
 
-						if ( ! empty( $unset_orders ) ) {
+						if ( $unset_orders ) {
+							$order_by_keys = array_keys( $query_order_by );
 
-							foreach ( $unset_orders as $order ) {
-								unset( $query_order_by[ $order ] );
+							$new_query_order_by = array();
+
+							$t = time() * 10;
+
+							foreach ( $order_by_keys as $i => $key ) {
+								$is_custom = ! empty( $order_list[ $i ][ 'custom_key' ] );
+								
+								if ( $is_custom ) {
+									$r = $t + $i;
+									$key = "RAND($r)";
+									$order_list[ $i ]['replacement'] = $key;
+								}
+
+								$new_order = $order_list[ $i ][ 'order' ];
+								$new_query_order_by[ $key ] = $new_order;
+								
 							}
 
-							$query->set( 'orderby', $query_order_by );
+							$query->set( 'orderby', $new_query_order_by );
 
 						}
 
 					}
 
-					if ( ! empty( $meta_partials['custom_query'] ) || ! empty( $custom_order ) ) {
+					if ( ! empty( $meta_partials['custom_query'] ) || $unset_orders ) {
 
 						$custom_query = $meta_partials['custom_query'] ?? [];
 						
 						$query->set( 'custom_table_query', [
 							'table' => $this->db->table(),
 							'query' => $custom_query,
-							'order' => $custom_order,
+							'order' => $order_list,
 						] );
 
 					}

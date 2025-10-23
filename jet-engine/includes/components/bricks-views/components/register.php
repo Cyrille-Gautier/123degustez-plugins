@@ -34,6 +34,8 @@ class Register {
 		add_action( 'jet-engine/bricks-views/setup-preview', [ $this, 'setup_preview_state' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'print_preview_vars' ], 10 );
 
+		add_action( 'bricks_page_bricks-elements', [ $this, 'fix_admin_list' ] );
+
 
 		/**
 		 * Fix Ajax popups rendering, when popup trggered from component
@@ -263,6 +265,14 @@ class Register {
 			'name'  => $element_instance->name,
 			'label' => $element_instance->get_label(),
 		];
+	}
+
+	public function fix_admin_list() {
+		if ( isset( \Bricks\Elements::$elements[''] )
+		     && \Bricks\Elements::$elements['']['class'] === 'Jet_Engine\Bricks_Views\Components\Base_Element'
+		) {
+			unset( \Bricks\Elements::$elements[''] );
+		}
 	}
 
 	/**

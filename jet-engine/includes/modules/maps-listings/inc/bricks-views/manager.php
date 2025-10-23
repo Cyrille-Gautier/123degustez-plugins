@@ -23,6 +23,10 @@ class Manager {
 	 * Constructor for the class
 	 */
 	function __construct() {
+		if ( ! $this->has_bricks() ) {
+			return;
+		}
+
 		add_action( 'jet-engine/bricks-views/init', array( $this, 'init' ), 10 );
 		add_action( 'jet-smart-filters/render/ajax/before', array( $this, 'initialize_map_filter_settings' ), 10, 2 );
 	}
@@ -66,5 +70,9 @@ class Manager {
 
 	public function sanitize_marker_data( $marker ) {
 		return wp_unslash( $marker );
+	}
+
+	public function has_bricks() {
+		return ( defined( 'BRICKS_VERSION' ) && \Jet_Engine\Modules\Performance\Module::instance()->is_tweak_active( 'enable_bricks_views' ) );
 	}
 }

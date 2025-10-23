@@ -27,6 +27,10 @@
 				JetEngineMaps.initHandlersOnEvent
 			);
 
+			elementorFrontend.elements.$window.on(
+				'elementor/nested-tabs/activate',
+				JetEngineMaps.nestedWidgetsReInit
+			);
 		},
 
 		initBlocks: function( $scope ) {
@@ -72,6 +76,23 @@
 			}
 
 			JetEngineMaps.widgetMap($scope);
+		},
+
+		nestedWidgetsReInit: function( e, content ) {
+			if ( mapProvider.getId() !== 'mapbox' ) {
+				return;
+			}
+
+			const mapWidgets = $( content ).find( '[data-widget_type="jet-engine-maps-listing.default"]:not(.nested-reinited)' );
+
+			mapWidgets.each( ( i, el ) => {
+				const $mapContainer = $( el ).find( '.jet-map-listing' );
+				const $mapWidget = $( el );
+
+				$mapContainer.attr( 'id', '' );
+				JetEngineMaps.widgetMap( $mapWidget );
+				$mapWidget.addClass( 'nested-reinited' );
+			} );
 		},
 
 		widgetMap: function( $scope ) {
@@ -394,6 +415,57 @@
 			offset = parseInt( general.offset, 10 );
 
 			$container.data( 'mapInstance', map );
+
+			if ( general.user_location_enabled && navigator.geolocation ) {
+					
+				navigator.geolocation.watchPosition(
+					( position ) => {
+
+						const userMarker = general.user_location_marker;
+
+						if ( ! userMarker ) {
+							return;
+						}
+
+						if ( map.jetPlugins.userLocationMarker ) {
+							mapProvider.removeMarker( map.jetPlugins.userLocationMarker );
+						}
+
+						let content = 'Your Location';
+						let coords = { lat: position.coords.latitude, lng: position.coords.longitude };
+
+						switch ( userMarker.type ) {
+							case 'image':
+								content = '<img src="' + userMarker.url + '" class="jet-map-user-location-marker-image '+ ( userMarker.additional_classes || '' ) +'" alt="" style="cursor: pointer;">';
+								break;
+							case 'text':
+								content = userMarker.html.replace( '_marker_label_', general.user_location_label );
+								break;
+							case 'icon':
+								content = userMarker.html;
+						}
+						
+						map.jetPlugins.userLocationMarker = mapProvider.addMarker(
+							{
+								content: content.replace( 'cursor: pointer;', 'cursor: default;' ),
+								position: coords,
+								map: map,
+								shadow: false,
+							}
+						);
+
+						$( window ).trigger( 'jet-engine/frontend-maps/user-position/update', [ $container, coords, mapProvider ] );
+					},
+					( error ) => {
+						$( window ).trigger( 'jet-engine/frontend-maps/user-position/error', [ error, $container ] );
+					},
+					{
+						enableHighAccuracy: true,
+						maximumAge: 30,
+						timeout: Infinity
+					}
+				);
+			}
 
 			if ( markers ) {
 				$.each( markers, function( index, markerData ) {

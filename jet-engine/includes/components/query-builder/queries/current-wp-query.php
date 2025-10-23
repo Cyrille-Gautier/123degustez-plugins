@@ -44,7 +44,7 @@ class Current_WP_Query extends Posts_Query {
 	 * @return void
 	 */
 	public function setup_query() {
-		
+
 		parent::setup_query();
 		$current_query = $this->get_current_wp_query();
 
@@ -174,9 +174,15 @@ class Current_WP_Query extends Posts_Query {
 
 		$query = $this->get_current_wp_query();
 
-		$this->update_query_cache( $query->found_posts, 'count' );
+		$count = $query->found_posts;
 
-		return $query->found_posts;
+		if ( empty( $query->posts ) ) {
+			$count = 0;
+		}
+
+		$this->update_query_cache( $count, 'count' );
+
+		return $count;
 
 	}
 

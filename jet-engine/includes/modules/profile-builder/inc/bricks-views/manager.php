@@ -2,6 +2,8 @@
 
 namespace Jet_Engine\Modules\Profile_Builder\Bricks_Views;
 
+use Jet_Engine\Modules\Profile_Builder\Module;
+
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
@@ -18,7 +20,12 @@ class Manager {
 	 * Constructor for the class
 	 */
 	function __construct() {
+		if ( ! $this->has_bricks() ) {
+			return;
+		}
+
 		add_action( 'jet-engine/bricks-views/init', array( $this, 'init' ), 10 );
+		add_filter( 'jet-engine/listing/grid/lazy-load/post-id', array( $this, 'resolve_lazy_load_post_id' ) );
 	}
 
 	public function init() {
@@ -94,5 +101,35 @@ class Manager {
 			'template_url' => add_query_arg( [ 'bricks' => 'run' ], get_permalink( $template_id ) ),
 			'template_id'  => $template_id,
 		];
+	}
+
+	/**
+	 * Detects the correct template/post ID for JetEngine Listing lazy load inside Bricks.
+	 *
+	 * Handle JetEngine Profile Builder pages (account/users/single user)
+	 *
+	 * @param int   $post_id  The current post or template ID.
+	 *
+	 * @return int Resolved post/template ID.
+	 */
+	public function resolve_lazy_load_post_id( $post_id ) {
+		if ( ! bricks_is_frontend() ) {
+			return $post_id;
+		}
+
+		$module              = Module::instance();
+		$is_account_page     = $module->query->is_account_page();
+		$is_users_page       = $module->query->is_users_page();
+		$is_single_user_page = $module->query->is_single_user_page();
+
+		if ( $is_account_page || $is_users_page || $is_single_user_page ) {
+			$post_id = $module->frontend->get_template_id();
+		}
+
+		return $post_id;
+	}
+
+	public function has_bricks() {
+		return ( defined( 'BRICKS_VERSION' ) && \Jet_Engine\Modules\Performance\Module::instance()->is_tweak_active( 'enable_bricks_views' ) );
 	}
 }

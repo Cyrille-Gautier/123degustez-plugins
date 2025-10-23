@@ -319,7 +319,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 		if ( $conditional_marker ) {
 			return $conditional_marker;
 		}
-
+		
 		$type = ! empty( $settings['marker_type'] ) ? $settings['marker_type'] : 'image';
 
 		switch ( $type ) {
@@ -341,7 +341,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 		if ( empty( $image ) ) {
 			return false;
 		}
-
+		
 		if ( is_array( $image ) && isset( $image['id'] ) ) {
 			$image = $image['id'];
 		}
@@ -361,8 +361,14 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 		} else {
 			$image_url = $image;
 		}
+//var_dump( $settings['marker_image_custom_class'] )->e();
+		if ( empty( $settings['marker_image_custom_class'] ) || ! is_string( $settings['marker_image_custom_class'] ) ) {
+			$image_class = 'jet-map-marker-image';
+		} else {
+			$image_class = $settings['marker_image_custom_class'];
+		}
 
-		return sprintf( '<img src=\'%1$s\' class=\'jet-map-marker-image\' alt=\'\' style=\'cursor: pointer;\'>', $image_url );
+		return sprintf( '<img src=\'%1$s\' class=\'%2$s\' alt=\'\' style=\'cursor: pointer;\'>', $image_url, $image_class );
 
 	}
 
@@ -565,6 +571,15 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 
 		$result = array( 'type' => null );
 
+		$additional_classes = ! empty( $settings['marker_class'] ) ? $settings['marker_class'] : '';
+		if ( is_array( $additional_classes ) ) {
+			$additional_classes = implode( ' ', $additional_classes );
+		}
+		$additional_classes = wp_strip_all_tags( $additional_classes );
+		$additional_classes = esc_attr( $additional_classes );
+
+		add_filter( 'wp_get_attachment_image_attributes', array( $this, 'prevent_bricks_lazy_load' ), 0 );
+
 		switch ( $type ) {
 
 			case 'image':
@@ -596,6 +611,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 				}
 
 				$result['url'] = wp_get_attachment_image_url( $image_id, $image_size );
+				$result['additional_classes'] = $additional_classes;
 
 				return $result;
 
@@ -604,7 +620,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 				$icon           = ! empty( $settings['marker_icon'] ) ? $settings['marker_icon'] : false;
 				$result['type'] = 'icon';
 
-				if ( $icon === false || ( is_array( $icon ) && empty( $icon['value'] ) ) ) {
+				if ( $icon === false || ( is_array( $icon ) && empty( $icon['value'] ) && empty( $settings['is_user_location'] ) ) ) {
 					$icon = $this->get_settings( 'marker_icon' );
 				}
 
@@ -612,9 +628,18 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 					return false;
 				} else {
 					$icon_style = '';
-					$icon_class = 'jet-map-marker';
-					$atts       = array();
+					
+					if ( empty( $settings['marker_custom_class'] ) || ! is_string( $settings['marker_custom_class'] ) ) {
+						$icon_class = 'jet-map-marker';
+					} else {
+						$icon_class = $settings['marker_custom_class'];
+					}
 
+					if ( $additional_classes ) {
+						$icon_class .= ' ' . $additional_classes;
+					}
+
+					$atts       = array();
 					$image_size = ! empty( $settings['marker_image_size'] ) ? $settings['marker_image_size'] : false;
 
 					if ( ! $image_size ) {
@@ -622,8 +647,8 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 						$image_size = ! empty( $widget_settings['marker_image_size'] ) ? $widget_settings['marker_image_size'] : 'full';
 					}
 
-					if ( ! empty( $settings['conditional_marker_type_index'] ) ) {
-						$icon_class .= ' jet-map-marker-condition ' . $settings['conditional_marker_type_index'];
+					if ( ! empty( $settings['conditional_marker_type_index'] ) || ! empty( $settings['is_user_location'] ) ) {
+						$icon_class .= ' ' . ( $settings['conditional_marker_type_index'] ?? '' );
 
 						$icon_color = ! empty( $settings['marker_icon_color_dynamic'] ) ? $settings['marker_icon_color_dynamic'] : false;
 
@@ -671,14 +696,28 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 			case 'text':
 
 				$result['type'] = 'text';
-				$result['html'] = '<div class="jet-map-marker-wrap" style="cursor: pointer;">_marker_label_</div>';
+
+				if ( empty( $settings['marker_wrap_custom_class'] ) || ! is_string( $settings['marker_wrap_custom_class'] ) ) {
+					$additional_classes .= ' jet-map-marker-wrap';
+				} else {
+					$additional_classes .= ' ' . $settings['marker_wrap_custom_class'];
+				}
+
+				$result['html'] = '<div class="' . $additional_classes . '" style="cursor: pointer;">_marker_label_</div>';
 
 				return $result;
 
 		}
 
+		remove_filter( 'wp_get_attachment_image_attributes', array( $this, 'prevent_bricks_lazy_load' ), 0 );
+
 		return false;
 
+	}
+
+	public function prevent_bricks_lazy_load( $attr ) {
+		$attr['_brx_disable_lazy_loading'] = true;
+		return $attr;
 	}
 
 	public function enqueue_deps( $listing_id ) {
@@ -791,6 +830,28 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 
 		$permalink_structure = get_option( 'permalink_structure' );
 
+		$user_location_enabled = $settings['user_location_enabled'] ?? false;
+		$user_location_enabled = filter_var( $user_location_enabled, FILTER_VALIDATE_BOOLEAN );
+
+		$user_location_settings = array();
+
+		if ( $user_location_enabled ) {
+			$user_location_settings = array(
+				'marker_type' => ! empty( $settings['user_location_marker_type'] ) ? $settings['user_location_marker_type'] : 'text',
+				'marker_image' => ! empty( $settings['user_location_marker_image'] ) ? $settings['user_location_marker_image'] : '',
+				'marker_image_size' => ! empty( $settings['user_location_marker_image_size'] ) ? $settings['user_location_marker_image_size'] : '',
+				'marker_icon' => ! empty( $settings['user_location_marker_icon'] ) ? $settings['user_location_marker_icon'] : '',
+				'marker_class' => 'user-location',
+				'marker_icon_color' => ! empty( $settings['user_location_marker_icon_color'] ) ? $settings['user_location_marker_icon_color'] : '',
+				'marker_icon_color_apply_to' => ! empty( $settings['user_location_marker_icon_color_apply_to'] ) ? $settings['user_location_marker_icon_color_apply_to'] : 'keep_jsm',
+				'is_user_location' => true,
+				'marker_image_custom_class' => 'jet-map-user-location-marker-image',
+				'marker_custom_class' => 'jet-map-user-location-marker',
+				'marker_wrap_custom_class' => 'jet-map-user-location-marker-wrap',
+			);
+			//var_dump( $user_location_settings )->e();
+		}
+
 		$general = apply_filters( 'jet-engine/maps-listings/data-settings', array(
 			'api'              => jet_engine()->api->get_route( 'get-map-marker-info', true ),
 			'restNonce'        => wp_create_nonce( 'wp_rest' ),
@@ -816,6 +877,9 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 			'advanced'         => array(
 				'zoom_control' => ! empty( $settings['zoom_control'] ) ? $settings['zoom_control'] : 'auto',
 			),
+			'user_location_enabled' => $user_location_enabled,
+			'user_location_marker'  => $this->prepare_marker_data( $this->get_marker_data( $user_location_settings ) ),
+			'user_location_label'   => ! empty( $settings['user_location_marker_label_text'] ) ? $settings['user_location_marker_label_text'] : '',
 		), $settings, $this );
 
 		if ( ! empty( $settings['custom_style'] ) ) {
@@ -887,10 +951,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 		 * @see https://github.com/Crocoblock/issues-tracker/issues/16571
 		 */
 		if ( ! ( defined('REST_REQUEST') && REST_REQUEST ) && ! wp_doing_ajax() ) {
-			global $post;
-			$default_post = $post;
-			jet_engine()->frontend->get_listing_item( $query[0] ?? null );
-			$post = $default_post;
+			jet_engine()->frontend->ensure_listing_item_assets( $listing_id, $query[0] ?? null );
 		}
 
 		echo apply_filters( 'jet-engine/maps-listings/content', $html, $this );

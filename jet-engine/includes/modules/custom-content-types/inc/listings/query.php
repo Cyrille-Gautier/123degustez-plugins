@@ -501,12 +501,16 @@ class Query {
 		$query = isset( $settings['jet_cct_query'] ) ? $settings['jet_cct_query'] : '{}';
 		$query = json_decode( wp_unslash( $query ), true );
 
-		if ( ! empty( $_REQUEST['action'] ) && 'jet_engine_ajax' === $_REQUEST['action'] && isset( $_REQUEST['query'] ) ) {
+		// JetEngine AJAX (Load More)
+		if ( ! empty( $_REQUEST['action'] )
+		     && 'jet_engine_ajax' === $_REQUEST['action']
+		     && isset( $_REQUEST['query'] )
+		) {
 			$query = $_REQUEST['query'];
 			$page  = isset( $_REQUEST['page'] ) ? absint( $_REQUEST['page'] ) : 1;
-		}
 
-		if ( $this->is_filters_request() ) {
+		// JetSmartFilters (Reload / Pagination)
+		} elseif ( $this->is_filters_request() ) {
 			if ( ! empty( $_REQUEST['pagenum'] ) ) {
 				$page = absint( $_REQUEST['pagenum'] );
 			} else {

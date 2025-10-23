@@ -253,6 +253,8 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 				'is_front_store',
 				'order',
 				'jet_ajax_search_settings',
+				'filtered_query',
+				'geo_query',
 			);
 
 			foreach ( $js_allowed as $param ) {

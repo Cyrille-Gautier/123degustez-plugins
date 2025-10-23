@@ -173,6 +173,37 @@ class Maps_Listing_Blocks_Views_Type extends \Jet_Engine_Blocks_Views_Type_Base 
 				'type'    => 'boolean',
 				'default' => true,
 			),
+			'user_location_enabled' => array(
+				'type'    => 'boolean',
+				'default' => false,
+			),
+			'user_location_marker_icon_color' => array(
+				'type'    => 'string',
+				'default' => '',
+			),
+			'user_location_marker_icon_color_apply_to' => array(
+				'type'    => 'string',
+				'default' => 'keep',
+			),
+			'user_location_marker_type' => array(
+				'type'    => 'string',
+				'default' => 'text',
+			),
+			'user_location_marker_label_text' => array(
+				'type'    => 'string',
+				'default' => 'Your Location',
+			),
+			'user_location_marker_icon' => array(
+				'type' => 'number',
+			),
+			'user_location_marker_icon_url' => array(
+				'type'    => 'string',
+				'default' => '',
+			),
+			'user_location_marker_image_size' => array(
+				'type'    => 'string',
+				'default' => '',
+			),
 			'cluster_max_zoom' => array(
 				'type' => 'number',
 			),
@@ -599,6 +630,227 @@ class Maps_Listing_Blocks_Views_Type extends \Jet_Engine_Blocks_Views_Type_Base 
 				),
 				'css_selector'  => array(
 					'{{WRAPPER}} .jet-map-marker-wrap' => 'text-align: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->controls_manager->end_section();
+
+		$this->controls_manager->start_section(
+			'style_controls',
+			array(
+				'id'    => 'section_user_location_marker_style',
+				'title' => esc_html__( 'User Location Marker', 'jet-engine' ),
+			)
+		);
+
+		$this->controls_manager->add_control(
+			array(
+				'id'    => 'user_location_marker_width',
+				'label' => __( 'Width', 'jet-engine' ),
+				'type'  => 'range',
+				'units' => array(
+					array(
+						'value'     => 'px',
+						'intervals' => array(
+							'step' => 1,
+							'min'  => 0,
+							'max'  => 200,
+						),
+					),
+				),
+				'css_selector' => array(
+					'{{WRAPPER}} .jet-map-user-location-marker-wrap' => 'width: {{VALUE}}{{UNIT}};',
+					'{{WRAPPER}} .jet-map-user-location-marker-image' => 'width: {{VALUE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->controls_manager->add_control(
+			array(
+				'id'           => 'user_location_marker_typography',
+				'label'        => __( 'Typography', 'jet-engine' ),
+				'type'         => 'typography',
+				'separator'    => 'before',
+				'css_selector' => array(
+					'{{WRAPPER}} .jet-map-user-location-marker-wrap' => 'font-family: {{FAMILY}}; font-weight: {{WEIGHT}}; text-transform: {{TRANSFORM}}; font-style: {{STYLE}}; text-decoration: {{DECORATION}}; line-height: {{LINEHEIGHT}}{{LH_UNIT}}; letter-spacing: {{LETTERSPACING}}{{LS_UNIT}}; font-size: {{SIZE}}{{S_UNIT}};',
+				),
+			)
+		);
+
+		$this->controls_manager->add_control(
+			array(
+				'id'    => 'user_location_marker_icon_size',
+				'label' => __( 'Icon Size', 'jet-engine' ),
+				'type'  => 'range',
+				'units' => array(
+					array(
+						'value'     => 'px',
+						'intervals' => array(
+							'step' => 1,
+							'min' => 10,
+							'max' => 300,
+						),
+					),
+				),
+				'css_selector' => array(
+					'{{WRAPPER}} .jet-map-user-location-marker' => 'font-size: {{VALUE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->controls_manager->start_tabs(
+			'style_controls',
+			array(
+				'id'        => 'tabs_user_location_marker_state',
+				'separator' => 'both',
+			)
+		);
+
+		$this->controls_manager->start_tab(
+			'style_controls',
+			array(
+				'id'    => 'user_location_marker_state_normal',
+				'title' => __( 'Normal', 'jet-engine' ),
+			)
+		);
+
+		$this->controls_manager->add_control(
+			array(
+				'id'    => 'user_location_marker_color',
+				'label' => __( 'Text Color', 'jet-engine' ),
+				'type'  => 'color-picker',
+				'css_selector' => array(
+					'{{WRAPPER}} .jet-map-user-location-marker-wrap' => 'color: {{VALUE}}',
+				),
+			)
+		);
+
+		$this->controls_manager->add_control(
+			array(
+				'id'    => 'user_location_marker_bg_color',
+				'label' => __( 'Background Color', 'jet-engine' ),
+				'type'  => 'color-picker',
+				'css_selector' => array(
+					'{{WRAPPER}} .jet-map-user-location-marker-wrap' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .jet-map-user-location-marker-wrap:after' => 'border-color: {{VALUE}} transparent transparent transparent;',
+				),
+			)
+		);
+
+		$this->controls_manager->add_control(
+			array(
+				'id'    => 'user_location_marker_icon_color',
+				'label' => __( 'Icon Color', 'jet-engine' ),
+				'type'  => 'color-picker',
+				'css_selector' => array(
+					'{{WRAPPER}} .jet-map-user-location-marker:not( .keep-color, .custom-color )' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .jet-map-user-location-marker:not( .keep-color, .custom-color ) path' => 'fill: {{VALUE}} !important',
+				),
+			)
+		);
+
+		$this->controls_manager->end_tab();
+
+		$this->controls_manager->start_tab(
+			'style_controls',
+			array(
+				'id'    => 'user_location_marker_state_hover',
+				'title' => __( 'Hover', 'jet-engine' ),
+			)
+		);
+
+		$this->controls_manager->add_control(
+			array(
+				'id'    => 'user_location_marker_color_hover',
+				'label' => __( 'Text Color', 'jet-engine' ),
+				'type'  => 'color-picker',
+				'css_selector' => array(
+					'{{WRAPPER}} .jet-map-user-location-marker-wrap:hover' => 'color: {{VALUE}}',
+				),
+			)
+		);
+
+		$this->controls_manager->add_control(
+			array(
+				'id'    => 'user_location_marker_bg_color_hover',
+				'label' => __( 'Background Color', 'jet-engine' ),
+				'type'  => 'color-picker',
+				'css_selector' => array(
+					'{{WRAPPER}} .jet-map-user-location-marker-wrap:hover' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .jet-map-user-location-marker-wrap:hover:after' => 'border-color: {{VALUE}} transparent transparent transparent;',
+				),
+			)
+		);
+
+		$this->controls_manager->add_control(
+			array(
+				'id'    => 'user_location_marker_icon_color_hover',
+				'label' => __( 'Icon Color', 'jet-engine' ),
+				'type'  => 'color-picker',
+				'css_selector' => array(
+					'{{WRAPPER}} .jet-map-user-location-marker:hover' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .jet-map-user-location-marker:hover path' => 'fill: {{VALUE}} !important',
+				),
+			)
+		);
+
+		$this->controls_manager->end_tab();
+
+		$this->controls_manager->end_tabs();
+
+		$this->controls_manager->add_responsive_control(
+			array(
+				'id'    => 'user_location_marker_padding',
+				'label' => __( 'Padding', 'jet-engine' ),
+				'type'  => 'dimensions',
+				'units' => array( 'px', '%', 'em' ),
+				'css_selector'  => array(
+					'{{WRAPPER}} .jet-map-user-location-marker-wrap' => 'padding: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
+				),
+			)
+		);
+
+		$this->controls_manager->add_responsive_control(
+			array(
+				'id'    => 'user_location_marker_border_radius',
+				'label' => __( 'Border Radius', 'jet-engine' ),
+				'type'  => 'dimensions',
+				'units' => array( 'px', '%' ),
+				'css_selector'  => array(
+					'{{WRAPPER}} .jet-map-user-location-marker-wrap' => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
+				),
+			)
+		);
+
+		// Not supported
+		//$this->controls_manager->add_control(
+		//	array(
+		//		'id'    => 'marker_box_shadow',
+		//		'label' => __( 'Box Shadow', 'jet-engine' ),
+		//		'type'  => 'box-shadow',
+		//		'css_selector' => '{{WRAPPER}} .jet-map-marker-wrap',
+		//	)
+		//);
+
+		$this->controls_manager->add_control(
+			array(
+				'id'    => 'user_location_marker_pin_size',
+				'label' => __( 'Pin Size', 'jet-engine' ),
+				'type'  => 'range',
+				'units' => array(
+					array(
+						'value'     => 'px',
+						'intervals' => array(
+							'step' => 1,
+							'min' => 4,
+							'max' => 60,
+						),
+					),
+				),
+				'css_selector' => array(
+					'{{WRAPPER}} .jet-map-user-location-marker-wrap:after' => 'margin: 0 0 0 -{{VALUE}}{{UNIT}}; border-width: {{VALUE}}{{UNIT}} {{VALUE}}{{UNIT}} 0 {{VALUE}}{{UNIT}};',
+					'{{WRAPPER}} .jet-map-user-location-marker-wrap' => 'margin-bottom: {{VALUE}}{{UNIT}};',
 				),
 			)
 		);

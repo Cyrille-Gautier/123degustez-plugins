@@ -123,6 +123,16 @@ class Query {
 
 		if ( ! empty( $_REQUEST['query']['filtered_query'] ) ) {
 			foreach ( $_REQUEST['query']['filtered_query'] as $prop => $value ) {
+
+				/**
+				 * Ensure slashes removed from regex meta-query
+				 *
+				 * @see https://github.com/Crocoblock/issues-tracker/issues/17351 (item #3)
+				 */
+				if ( 'meta_query' === $prop ) {
+					$value = wp_unslash( $value );
+				}
+
 				$query->set_filtered_prop( $prop, $value );
 			}
 		}
