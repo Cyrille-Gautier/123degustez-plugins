@@ -169,14 +169,14 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 			)
 		);
 
-		$this->add_control(
-			'speed',
-			array(
-				'label'   => esc_html__( 'Scroll Speed', 'jet-elements' ),
-				'type'    => Controls_Manager::NUMBER,
-				'default' => 500,
-			)
-		);
+		// $this->add_control(
+		// 	'speed',
+		// 	array(
+		// 		'label'   => esc_html__( 'Scroll Speed', 'jet-elements' ),
+		// 		'type'    => Controls_Manager::NUMBER,
+		// 		'default' => 500,
+		// 	)
+		// );
 
 		$this->add_control(
 			'offset',
@@ -184,6 +184,16 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 				'label'   => esc_html__( 'Scroll Offset', 'jet-elements' ),
 				'type'    => Controls_Manager::NUMBER,
 				'default' => 0,
+			)
+		);
+
+		$this->add_control(
+			'scroll_threshold',
+			array(
+				'label'   => esc_html__( 'Scroll Threshold (px)', 'jet-elements' ),
+				'type'    => Controls_Manager::NUMBER,
+				'default' => 5,
+				'min'     => 0,
 			)
 		);
 
@@ -725,8 +735,9 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 
 		$instance_settings = array(
 			'position'              => $settings['position'],
-			'speed'                 => absint( $settings['speed'] ),
+			//'speed'                 => absint( $settings['speed'] ),
 			'offset'                => absint( $settings['offset'] ),
+			'scroll_threshold'		=> absint( $settings['scroll_threshold'] ),
 			'sectionSwitch'         => filter_var( $settings['full_section_switch'], FILTER_VALIDATE_BOOLEAN ),
 			'sectionSwitchOnMobile' => filter_var( $settings['full_section_switch_on_mobile'], FILTER_VALIDATE_BOOLEAN ),
 			'hintShowType'          => $settings['hint_show_type'],

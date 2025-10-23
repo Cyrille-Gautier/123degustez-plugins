@@ -148,7 +148,7 @@ class Jet_Elements_Horizontal_Timeline extends Jet_Elements_Base {
 			'item_desc',
 			array(
 				'label'   => esc_html__( 'Description', 'jet-elements' ),
-				'type'    => Controls_Manager::TEXTAREA,
+				'type'    => Controls_Manager::WYSIWYG,
 				'dynamic' => array( 'active' => true ),
 			)
 		);

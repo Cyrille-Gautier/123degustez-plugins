@@ -4,6 +4,25 @@ Brand new addon for Elementor Page builder. It provides the set of modules to cr
 
 # ChangeLog
 
+## [2.7.12](https://github.com/ZemezLab/jet-elements/archive/2.7.12.zip) - 20.10.2025
+* Added: coordinates (lat/lon) support for Weather widget
+* Fixed: prevent bullet flickering when jumping through multiple sections in Jet Scroll Navigation
+* Fixed: detect dynamic tag values in tooltip check for pricing features
+* Fixed: proper tooltip escaping in pricing features
+* Fixed: improve smooth scroll navigation behavior on mobile devices
+* Update: Changed description field type from TEXTAREA to WYSIWYG in Timeline widgets
+
+## [2.7.11](https://github.com/ZemezLab/jet-elements/archive/2.7.11.zip) - 22.09.2025
+* Added: "Scroll Threshold" setting to jet-scroll-navigation widget
+* Fixed: [Crocoblock/suggestions#7129](https://github.com/Crocoblock/suggestions/issues/7129)
+* Fixed: mobile layout detection in Elementor editor for Horizontal Timeline widget
+* Fixed: pixel transparency detection in Animated Box widget
+* Fixed: Progress bar overflow handling when current value exceeds maximum
+* Fixed: add smooth scroll animation with configurable speed on desktop navigation
+
+## [2.7.10.1](https://github.com/ZemezLab/jet-elements/archive/2.7.10.1.zip) - 09.09.2025
+* Fixed: Countdown Timer widget broken on initial page load
+
 ## [2.7.10](https://github.com/ZemezLab/jet-elements/archive/2.7.10.zip) - 21.08.2025
 * Fixed: WP Security Standard warnings
 

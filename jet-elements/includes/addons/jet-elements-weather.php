@@ -107,6 +107,19 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 		}
 
 		$this->add_control(
+			'location_type',
+			array(
+				'label'   => esc_html__( 'Location Type', 'jet-elements' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'city',
+				'options' => array(
+					'city'        => esc_html__( 'City name', 'jet-elements' ),
+					'coordinates' => esc_html__( 'Coordinates (Lat/Lon)', 'jet-elements' ),
+				),
+			)
+		);
+
+		$this->add_control(
 			'location',
 			array(
 				'label'       => esc_html__( 'Location', 'jet-elements' ),
@@ -115,6 +128,25 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 				'dynamic'     => array( 'active' => true, ),
 				'placeholder' => esc_html__( 'London, UK', 'jet-elements' ),
 				'default'     => esc_html__( 'London, UK', 'jet-elements' ),
+				'condition'   => array(
+					'location_type' => 'city',
+				),
+			)
+		);
+
+		$this->add_control(
+			'coordinates',
+			array(
+				'label'       => esc_html__( 'Coordinates', 'jet-elements' ),
+				'description' => esc_html__( 'Enter latitude and longitude separated by ";" or ",". Example: 51.5074, -0.1278', 'jet-elements' ),
+				'type'        => Controls_Manager::TEXT,
+				'dynamic'     => array( 'active' => true, ),
+				'placeholder' => esc_html__( '51.5074, -0.1278', 'jet-elements' ),
+				'default'     => '51.5074, -0.1278',
+				'label_block' => true,
+				'condition'   => array(
+					'location_type' => 'coordinates',
+				),
 			)
 		);
 
@@ -1013,29 +1045,31 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 			return false;
 		}
 
-		$settings = $this->get_settings_for_display();
-		$location = trim( $settings['location'] );
+		$settings      = $this->get_settings_for_display();
+		$location_type = isset( $settings['location_type'] ) ? $settings['location_type'] : 'city';
+				
+		$location_identifier = $this->get_location_identifier( $settings, $location_type );
 
-		if ( empty( $location ) ) {
+		if ( empty( $location_identifier ) ) {
 			return false;
 		}
 
 		$units = $this->get_units_param( $settings['units'] );
 
-		$transient_key = sprintf( 'jet-weather-data-%1$s-%2$s', $this->api_count, md5( $location . $units ) );
+		$transient_key = sprintf( 'jet-weather-data-%1$s-%2$s', $this->api_count, md5( $location_identifier . $units ) );
 
 		$data = get_transient( $transient_key );
 
 		if ( ! $data ) {
 			// Prepare request data
-			$location = esc_attr( $location );
-			$api_key  = esc_attr( $api_key );
+			$api_key = esc_attr( $api_key );
 
 			$request_args = array(
 				'key'   => urlencode( $api_key ),
 				'units' => urlencode( $units ),
-				'city'  => urlencode( $location ),
 			);
+			
+			$request_args = $this->add_location_params( $request_args, $settings, $location_type );
 
 			$current_request_url = add_query_arg(
 				$request_args,
@@ -1101,6 +1135,114 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 		}
 
 		return 'M';
+	}
+
+	/**
+	 * Get location identifier for caching and validation.
+	 *
+	 * @param array  $settings      Widget settings.
+	 * @param string $location_type Location type.
+	 *
+	 * @return string
+	 */
+	public function get_location_identifier( $settings, $location_type ) {
+		$identifier = '';
+
+		switch ( $location_type ) {
+			case 'coordinates':
+				$coordinates = isset( $settings['coordinates'] ) ? trim( $settings['coordinates'] ) : '';
+				
+				if ( ! empty( $coordinates ) ) {
+					$parsed = $this->parse_coordinates( $coordinates );
+					
+					if ( $parsed && ! empty( $parsed['lat'] ) && ! empty( $parsed['lon'] ) ) {
+						$identifier = sprintf( 'lat:%s|lon:%s', $parsed['lat'], $parsed['lon'] );
+					}
+				}
+				break;
+
+			case 'city':
+			default:
+				$identifier = isset( $settings['location'] ) ? trim( $settings['location'] ) : '';
+				break;
+		}
+
+		return $identifier;
+	}
+
+	/**
+	 * Add location parameters to request args based on location type.
+	 *
+	 * @param array  $request_args  Request arguments.
+	 * @param array  $settings      Widget settings.
+	 * @param string $location_type Location type.
+	 *
+	 * @return array
+	 */
+	public function add_location_params( $request_args, $settings, $location_type ) {
+
+		switch ( $location_type ) {
+			case 'coordinates':
+				$coordinates = isset( $settings['coordinates'] ) ? trim( $settings['coordinates'] ) : '';
+				
+				if ( ! empty( $coordinates ) ) {
+					$parsed = $this->parse_coordinates( $coordinates );
+					
+					if ( $parsed && ! empty( $parsed['lat'] ) && ! empty( $parsed['lon'] ) ) {
+						$request_args['lat'] = urlencode( esc_attr( $parsed['lat'] ) );
+						$request_args['lon'] = urlencode( esc_attr( $parsed['lon'] ) );
+					}
+				}
+				break;
+
+			case 'city':
+			default:
+				$location = isset( $settings['location'] ) ? trim( $settings['location'] ) : '';
+				
+				if ( ! empty( $location ) ) {
+					$request_args['city'] = urlencode( esc_attr( $location ) );
+				}
+				break;
+		}
+
+		return $request_args;
+	}
+
+	/**
+	 * Parse coordinates from string.
+	 * Supports formats: "lat;lon", "lat,lon"
+	 *
+	 * @param string $coordinates Coordinates string.
+	 *
+	 * @return array|bool Array with 'lat' and 'lon' keys or false on failure.
+	 */
+	public function parse_coordinates( $coordinates ) {
+		
+		if ( empty( $coordinates ) ) {
+			return false;
+		}
+
+		// Split by ; or ,
+		$parts = preg_split( '/[;,]/', $coordinates );
+		if ( count( $parts ) === 2 ) {
+			$lat = floatval( str_replace( ',', '.', trim( $parts[0] ) ) );
+			$lon = floatval( str_replace( ',', '.', trim( $parts[1] ) ) );
+		} else {
+			$lat = null;
+			$lon = null;
+		}
+
+		// Validate ranges
+		if ( $lat === null || $lon === null || $lat < -90 || $lat > 90 || $lon < -180 || $lon > 180 ) {
+			$message = esc_html__( 'Invalid coordinates format or values outside valid range', 'jet-elements' );
+			echo $this->get_weather_notice( $message ); // phpcs:ignore
+			return false;
+		}
+
+		return array(
+			'lat' => $lat,
+			'lon' => $lon,
+		);
 	}
 
 	/**
@@ -1428,7 +1570,13 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 
 		switch ( $type ) {
 			case 'location':
-				$title = esc_html( $settings['location'] );
+				$location_type = isset( $settings['location_type'] ) ? $settings['location_type'] : 'city';
+				
+				if ( 'coordinates' === $location_type ) {					
+					$title = esc_html( $settings['coordinates'] );
+				} else {					
+					$title = esc_html( $settings['location'] );
+				}
 				break;
 
 			case 'custom':

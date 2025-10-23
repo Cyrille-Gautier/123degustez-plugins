@@ -3035,8 +3035,13 @@ class Jet_Elements_Pricing_Table extends Jet_Elements_Base {
 			$check         = false;
 
 			foreach ( $features_list as $item ) {
+				
 				if ( ! empty( $item['item_tooltip'] ) ) {
 					$check = true;
+				}
+
+				if ( ! empty( $item['__dynamic__']['item_tooltip'] ) ) {
+					return true;
 				}
 			}
 

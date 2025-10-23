@@ -64,12 +64,23 @@
 			elementorFrontend.hooks.addAction( 'frontend/element_ready/loop-carousel.post', function( $scope, $ ) {
 				$( window ).on( 'load', function() {
 					var loopCarousel = $scope.find( '.swiper' ),
-					swiperInstance = loopCarousel.data( 'swiper' ),
-					audioPlayProgress = $scope.find( '.mejs-time-slider, .mejs-horizontal-volume-slider, .mejs-volume-button' );
+					swiperInstance = loopCarousel.data( 'swiper' );					
+
+					$scope.find( '[data-widget_type="jet-audio.default"]' ).each(function( index, element ) {
+						JetElements.initAudioPlayer( $( element ) );
+					});
+
+					var audioPlayProgress = $scope.find( '.mejs-time-slider, .mejs-horizontal-volume-slider, .mejs-volume-button' );
 			
 					if ( !loopCarousel.length || !audioPlayProgress.length ) {
 						console.warn( "Swiper or audioPlayProgress not found!" );
 						return;
+					}
+					
+					if ( audioPlayProgress.length && swiperInstance.params.loop && swiperInstance.params.slidesPerView === 1 ) {
+						swiperInstance.on( 'slideChangeTransitionEnd', function() {
+							this.loopFix();
+						} );
 					}
 					
 					// Disable swipe when interacting with the audio progress
@@ -1536,7 +1547,8 @@
 
 				if ( currentValue && maxValue ) {
 					if ( ( currentValue > maxValue ) ) {
-						return;
+						percent = 100;						
+						animeObject = { Counter: 0 };
 					} else {
 						animeObject  = { Counter: 0 }
 					}
@@ -2598,6 +2610,12 @@
 		},
 
 		widgetAudio: function( $scope ) {
+			if ( ! $scope.closest('[data-widget_type="loop-carousel.post"]').length ) {
+				JetElements.initAudioPlayer( $scope );
+			}
+		},
+
+		initAudioPlayer: function( $scope ) {
 			var $wrapper    = $scope.find( '.jet-audio' ),
 				$player     = $scope.find( '.jet-audio-player' ),
 				settings    = $wrapper.data( 'audio-settings' ),
@@ -4434,29 +4452,46 @@
 		
 			offset = sections[sectionId].offset - settings.offset;
 		
-			if ( !isScrolling ) {
+			if ( settings.sectionSwitch && isScrolling ) {
+				return;
+			}
+		
+			if ( settings.sectionSwitch ) {
 				isScrolling = true;
+			}
 		
-				if ( false === settings.sectionIdVisibility ) {
-					window.history.pushState( null, null, '#' + sectionId );
-				}
+			if ( false === settings.sectionIdVisibility ) {
+				window.history.pushState( null, null, '#' + sectionId );
+			}
 		
-				currentSection = sectionId;
+			currentSection = sectionId;
 		
-				$itemsList.removeClass( 'active' );
-				$this.addClass( 'active' );
+			$itemsList.removeClass( 'active' );
+			$this.addClass( 'active' );
 		
-				$itemsList.removeClass( 'invert' );
-		
-				if ( sections[sectionId].invert ) {
-					$itemsList.addClass( 'invert' );
-				}
-				
-				$htmlBody.scrollTop( offset );
-		
-				isScrolling = false;
+			$itemsList.removeClass( 'invert' );
+
+			if ( sections[sectionId].invert ) {
+				$itemsList.addClass( 'invert' );
+			}
+
+			window.scrollTo({
+				top: offset,
+				behavior: 'smooth'
+			});
+
+			if ( settings.sectionSwitch ) {
+				let checkScroll = setInterval( function() {
+					let current = window.scrollY;
+					if ( Math.abs( current - offset ) < 2 ) {
+						clearInterval( checkScroll );
+						isScrolling = false;
+					}
+				}, 100 );
 			}
 		};
+
+		
 
 		/**
 		 * [directionSwitch description]
@@ -4501,87 +4536,49 @@
 					document.addEventListener( 'wheel', self.onWheel, { passive: false } );
 				}
 
-				if ( isMobile && settings['sectionSwitchOnMobile'] ) {
+				if ( isMobile && settings['sectionSwitchOnMobile']) {
 
-					document.addEventListener( 'touchstart', function( event ) {
-						if ( !self.isEnabled() ) {
-							return;
+					let scrollTimeout = null;
+				
+					document.addEventListener( 'touchstart', function ( event ) {
+						if ( !self.isEnabled() ) return;
+				
+						touchStartY = event.changedTouches[0].clientY;
+				
+						if ( scrollTimeout ) {
+							clearTimeout( scrollTimeout );
 						}
-
-						var $target   = $( event.target ),
-							$section  = 0 < $target.closest( '.elementor-top-section' ).length ? $target.closest( '.elementor-top-section' ) : $target.closest( '.e-con.jet-scroll-navigation-section' ),
-							sectionId = $section.attr( 'id' ) || false;
-
-						touchStartY = event.changedTouches[0].clientY; // clientY instead of screenY, screenY is implemented differently in iOS, making it useless for thresholding
-
-						if ( sectionId && isScrolling ) {
-							event.preventDefault();
-						}
-
-					}, { passive: false } );
-
-					document.addEventListener( 'touchend', function( event ) {
-						if ( !self.isEnabled() ) {
-							return;
-						}
-
-						var $target         = $( event.target ),
-							$navigation     = $target.closest( '.jet-scroll-navigation' ) || false,
-							$section        = ( 0 < $target.closest( '.elementor-top-section' ).length ? $target.closest( '.elementor-top-section' ) : $target.closest( '.e-con.jet-scroll-navigation-section' ) ) || false,
-							sectionId       = $section.attr( 'id' ) || false,
-							endScrollTop    = $window.scrollTop(),
-							touchEndY       = event.changedTouches[0].clientY,
-							direction       = touchEndY > touchStartY ? 'up' : 'down',
-							sectionOffset   = false,
-							newSectionId    = false,
-							prevSectionId   = false,
-							nextSectionId   = false,
-							swipeYthreshold = (window.screen.availHeight / 8); // defining pageswitch threshold at 1/8 of screenheight
-
-						if ( Math.abs( touchEndY - touchStartY ) < 5 ) {
-							return false;
-						}
-
-						if ( $navigation[0] ) {
-							return false;
-						}
-
-						if ( sectionId && sections.hasOwnProperty( sectionId ) ) {
-
-							prevSectionId = JetElementsTools.getObjectPrevKey( sections, sectionId );
-							nextSectionId = JetElementsTools.getObjectNextKey( sections, sectionId );
-
-							sectionOffset = sections[ sectionId ].offset;
-
-							if ( 'up' === direction ) {
-
-								if ( sectionOffset - swipeYthreshold < endScrollTop ) { //threshold used here
-									prevSectionId = sectionId;
-								}
-
-								if ( prevSectionId ) {
-									newSectionId = prevSectionId;
-								}
-							}
-
-							if ( 'down' === direction ) {
-
-								if ( sectionOffset + swipeYthreshold > endScrollTop ) { //threshold used here
-									nextSectionId = sectionId;
-								}
-
-								if ( nextSectionId ) {
-									newSectionId = nextSectionId;
-								}
-							}
-
-							if ( newSectionId ) {
-
+					}, { passive: true } );
+				
+					document.addEventListener( 'touchend', function ( event ) {
+						if ( !self.isEnabled() ) return;
+				
+						const touchEndY = event.changedTouches[0].clientY;
+						const delta = touchEndY - touchStartY;
+				
+						if ( Math.abs( delta ) < settings['scroll_threshold'] ) return;
+				
+						const direction = delta > 0 ? 'up' : 'down';
+				
+						const $target = $( event.target );
+						const $section = $target.closest( '.elementor-top-section[id], .e-con.jet-scroll-navigation-section[id]' );
+						const sectionId = $section.attr( 'id' ) || false;
+				
+						if ( !sectionId || !sections.hasOwnProperty( sectionId ) ) return;
+				
+						let newSectionId = false;
+						let prevSectionId = JetElementsTools.getObjectPrevKey( sections, sectionId );
+						let nextSectionId = JetElementsTools.getObjectNextKey( sections, sectionId );
+				
+						if ( direction === 'up' && prevSectionId ) newSectionId = prevSectionId;
+						if ( direction === 'down' && nextSectionId ) newSectionId = nextSectionId;
+				
+						if ( newSectionId ) {
+							scrollTimeout = setTimeout(() => {
 								self.onAnchorChange( newSectionId );
-							}
+							}, 80);
 						}
-
-					}, { passive: false } );
+					}, { passive: true } );
 				}
 			}
 		}
@@ -5648,12 +5645,12 @@
 
 			var pixels   = ctx.getImageData(0, 0, canvasWidth, canvasHeight),
 				pdata    = pixels.data,
-				l        = pdata.length,
-				total    = ( l / stride ),
+				l        = pdata.length,				
+				total    = ( l / 4 / stride ),
 				count    = 0;
 
-			for( var i = count = 0; i < l; i += stride ) {
-				if ( parseInt( pdata[i] ) === 0 ) {
+			for( var i = count = 0; i < l; i += (stride * 4) ) {
+				if ( parseInt( pdata[i + 3] ) === 0 ) {
 					count++;
 				}
 			}
