@@ -63,6 +63,10 @@ Vue.component( 'jet-search-ajax-search-settings', {
 			},
 		};
 	},
+	watch: {
+		'querySettings.search_results_url': 'searchQueryParamValidation',
+		'querySettings.search_query_param': 'searchQueryParamValidation',
+	},
 	methods: {
 		getTerms: function( query, ids ) {
 			return this.getQueryControlOptions( query, ids, 'terms' )
@@ -71,6 +75,16 @@ Vue.component( 'jet-search-ajax-search-settings', {
 			return this.getQueryControlOptions( query, ids, 'posts' )
 		},
 		searchQueryParamValidation: function ( value, key ) {
+			const url = ( this.querySettings.search_results_url || '' ).trim();
+
+			if ( ! url ) {
+				this.searchQueryParamNameError = false;
+				this.isValidated = true;
+				this.placeholders.searchQueryParam = '';
+				this.querySettings.search_query_param = '';
+				return;
+			}
+
 			const notAllowedQueryParams = [ '', 's', '_s', 'search', 'jsearch', 'jet_ajax_search_settings', 'jet_search_suggestions_settings' ];
 
 			if ( notAllowedQueryParams.includes( value ) ) {
@@ -141,6 +155,41 @@ Vue.component( 'jet-search-ajax-search-settings', {
 
 				xhr.send( data );
 			} );
+		},
+		cleanTermIds: function ( ids ) {
+			const uniqueIds = new Set();
+
+			( ids || [] ).forEach( function ( rawId ) {
+				const idNumber = parseInt( rawId, 10 );
+
+				if ( Number.isFinite( idNumber ) && idNumber > 0 ) {
+					uniqueIds.add( idNumber );
+				}
+
+			} );
+
+			return Array.from( uniqueIds );
+		},
+		validateTermIds() {
+			const doSanitize = (ids) => {
+				const cleanedIds = this.cleanTermIds( ids );
+
+				if ( ! cleanedIds.length ) {
+					return Promise.resolve( [] );
+				}
+
+				return this.getTerms( '', cleanedIds ).then( function ( options ) {
+					return options.map( function ( opt ) { return opt.value; } );
+				} );
+			};
+
+			return Promise.all([
+				doSanitize( this.querySettings.include_terms_ids ),
+				doSanitize( this.querySettings.exclude_terms_ids ),
+			] ).then( ( results ) => {
+				this.querySettings.include_terms_ids = results[0];
+				this.querySettings.exclude_terms_ids = results[1];
+			} ).catch( function () { });
 		},
 		saveQuerySettings: function() {
 
@@ -224,7 +273,10 @@ Vue.component( 'jet-search-ajax-search-settings', {
 		this.taxonomiesListExtended = this.settings['settingsData']['taxonomiesListExtended'];
 		this.requestTypeList  = this.settings['settingsData']['request_type_list'];
 
-		this.loadQuerySettings().then( () => {
+		this.loadQuerySettings()
+			.then(() => this.validateTermIds())
+			.then( () => {
+			this.searchQueryParamValidation( this.querySettings.search_query_param );
 			this.isDataLoaded = true;
 		} ).catch( error => {
 			eventHub.$CXNotice.add( {

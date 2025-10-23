@@ -4,6 +4,13 @@ The best tool for adding complex search functionality to pages built with Elemen
 
 # ChangeLog
 
+# 3.5.14
+* ADD: Weglot compatibility for custom search results redirect;
+* FIX: add validation for include/exclude term IDs in settings;
+* FIX: recalculate results list height on resize and orientation change to prevent hidden results;
+* FIX: pause Slick slider autoplay during search typing, resume after leaving input field;
+* FIX: sync validation between Custom Search Results URL and Search Query Param in default Ajax Search settings.
+
 # 3.5.13
 * FIX: prevent fatal error on incorrect JSON in Jet_Search_Ajax_Handlers;
 * FIX: replace _stock_status meta_query with product_visibility taxonomy to improve query performance;

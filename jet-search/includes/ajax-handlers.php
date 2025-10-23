@@ -937,6 +937,18 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 				$form_settings['search_results_target_widget_id'] = $val;
 			}
 
+			foreach ( ['include_terms_ids','exclude_terms_ids'] as $key ) {
+				if ( ! empty( $form_settings[$key] ) ) {
+					$form_settings[$key] = array_values( array_filter(
+						array_unique( array_map( 'intval', (array) $form_settings[ $key ] ) ),
+						function( $id ) {
+							$term = get_term( $id );
+							return $term && ! is_wp_error( $term );
+						}
+					) );
+				}
+			}
+
 			return $form_settings;
 		}
 

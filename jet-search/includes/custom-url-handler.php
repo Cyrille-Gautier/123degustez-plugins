@@ -491,11 +491,15 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 
 			$result = array();
 
-			foreach ( $terms_ids as $term_id ) {
-				$term     = get_term( $term_id );
-				$taxonomy = $term->taxonomy;
+			foreach ( wp_parse_id_list( (array) $terms_ids ) as $term_id ) {
+				$term = get_term( $term_id );
 
-				$result[ $taxonomy ][] = $term_id;
+				if ( ! $term || is_wp_error( $term ) || empty( $term->taxonomy ) ) {
+					continue;
+				}
+
+				$taxonomy = $term->taxonomy;
+				$result[ $taxonomy ][] = (int) $term->term_id;
 			}
 
 			return $result;

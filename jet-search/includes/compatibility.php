@@ -53,8 +53,61 @@ if ( ! class_exists( 'Jet_Search_Compatibility' ) ) {
 				add_action( 'jet-search/search-suggestions/search-query', array( $this, 'modify_search_query' ), 10, 2 );
 			}
 
+			// Weglot Compatibility
+			if ( defined( 'WEGLOT_VERSION' ) || function_exists( 'weglot_init' ) || function_exists( 'weglot_get_current_language' ) ) {
+				add_filter( 'jet-search/search-form/home-url', array( $this, 'modify_weglot_home_url' ), 10, 1 );
+				add_filter( 'redirect_canonical',              array( $this, 'modify_prevent_canonical' ), 10, 2 );
+			}
+
 			add_action( 'jet-search/ajax-search/add-custom-controls',        array( $this, 'add_custom_controls' ), 10, 2 );
 			add_action( 'jet-search/ajax-search-bricks/add-custom-controls', array( $this, 'add_bricks_custom_controls' ), 10, 2 );
+		}
+
+		/**
+		 * Modify the search form home URL to respect the current Weglot language
+		 *
+		 * @param  string $url Base URL used by the search form
+		 * @return string      Corrected URL with the current Weglot language slug
+		 */
+		public function modify_weglot_home_url( $url ) {
+			$home    = trailingslashit( home_url() );
+			$current = function_exists( 'weglot_get_current_language' ) ? (string) weglot_get_current_language() : '';
+			$default = function_exists( 'weglot_get_original_language' ) ? (string) weglot_get_original_language() : '';
+
+			if ( ( ! $current || $current === $default ) && ! empty( $_SERVER['REQUEST_URI'] ) ) {
+				$path = strtok( $_SERVER['REQUEST_URI'], '?' );
+
+				if ( preg_match( '#^/([a-z]{2}(?:-[A-Z]{2})?)(/|$)#', $path, $m ) ) {
+					$current = $m[1];
+				}
+
+			}
+
+			if ( $current && $default && $current !== $default ) {
+				return rtrim( $home, '/' ) . '/' . $current . '/';
+			}
+
+			return $home;
+		}
+
+		/**
+		 * Modify the canonical redirect behavior
+		 *
+		 * @param  string $redirect_url   The canonical URL WordPress wants to redirect to
+		 * @param  string $requested_url  The original requested URL
+		 * @return string|false           Redirect URL or false to disable redirect
+		 */
+		public function modify_prevent_canonical( $redirect_url, $requested_url ) {
+
+			if ( is_admin() ) {
+				return $redirect_url;
+			}
+
+			if ( isset( $_GET['jet_ajax_search_settings'] ) || isset( $_GET['jsearch'] ) ) { // phpcs:ignore
+				return false;
+			}
+
+			return $redirect_url;
 		}
 
 		/**

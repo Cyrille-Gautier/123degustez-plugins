@@ -26,7 +26,7 @@ class Jet_Search_Render {
 	public $current_query  = null;
 
 	public function __construct( $settings = array(), $id = null ) {
-		$this->settings = $settings;
+		$this->settings = $this->sanitize_terms_ids_settings( $settings );
 
 		if ( $id ) {
 			$this->id = $id;
@@ -862,6 +862,31 @@ class Jet_Search_Render {
 		}
 
 		return $this->current_query;
+	}
+
+	private function sanitize_terms_ids_settings( $settings ) {
+
+		foreach ( array( 'include_terms_ids', 'exclude_terms_ids' ) as $key ) {
+
+			if ( empty( $settings[ $key ] ) ) {
+				continue;
+			}
+
+			$ids = wp_parse_id_list( (array) $settings[ $key ] );
+
+			$ids = array_values( array_filter( $ids, static function( $id ) {
+				$exists = term_exists( (int) $id );
+				return ( $id && $exists && ! is_wp_error( $exists ) );
+			} ) );
+
+			if ( empty( $ids ) ) {
+				unset( $settings[ $key ] );
+			} else {
+				$settings[ $key ] = $ids;
+			}
+		}
+
+		return $settings;
 	}
 
 }

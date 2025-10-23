@@ -186,6 +186,14 @@
 
 			$scope.find( settings.searchClass ).jetAjaxSearch( settings );
 
+			$scope.find( settings.inputClass )
+				.on( 'focus.jetSearchSlick input.jetSearchSlick', function() {
+					window.JetSearch.pauseAllSlick( $( document ) );
+				})
+				.on( 'blur.jetSearchSlick', function() {
+					window.JetSearch.playAllSlick( $( document ) );
+				});
+
 			var $chosenSelect = $scope.find( settings.chosenClass );
 
 			if ( $chosenSelect[0] ) {
@@ -276,6 +284,12 @@
 				redirectUrl = form.attr( 'action' );
 			}
 
+			if ( redirectUrl && ! redirectUrl.startsWith( 'http' ) && ! redirectUrl.startsWith( '/' ) ) {
+				const actionBase = ( form.attr( 'action' ) || '/' ).replace( /\/+$/, '' );
+
+				redirectUrl = actionBase + '/' + redirectUrl.replace( /^\/+/, '' );
+			}
+
 			let formData = {},
 				result   = '';
 
@@ -290,7 +304,7 @@
 			}, {} );
 
 			if ( Object.keys( formData ).length > 0 ) {
-				result = redirectUrl + '?' + $.param( formData ).replace(/=&/g, '&' ).replace(/=$/, '');;
+				result = redirectUrl + '?' + $.param( formData ).replace(/=&/g, '&' ).replace(/=$/, '');
 			} else {
 				result = redirectUrl;
 			}
@@ -404,6 +418,25 @@
 				} );
 			}
 		},
+
+		toggleSlickAutoplay: function( $root, shouldPlay ) {
+			const $slicks = $root ? $root.find( '.slick-initialized' ) : $( '.slick-initialized' );
+
+			$slicks.each( function(){
+				try {
+					$( this ).slick( shouldPlay ? 'slickPlay' : 'slickPause' );
+				} catch(e) {}
+			});
+		},
+
+		pauseAllSlick: function( $root ) {
+			this.toggleSlickAutoplay( $root || $( document ), false );
+		},
+
+		playAllSlick: function( $root ) {
+			setTimeout( () => this.toggleSlickAutoplay( $root || $( document ), true ), 60 );
+		},
+
 		enqueueAssetsFromResponse: function( response ) {
 			if ( response.data.scripts ) {
 				JetSearch.enqueueScripts( response.data.scripts );
@@ -1181,7 +1214,6 @@
 			customResultUrl         = data['search_results_url'] || '',
 			hightlightText          = data['highlight_searched_text'] || '',
 			formFocusClass          = settings.searchFormClass.replace( '.', '' ) + '--focus',
-			customResultUrl         = data['search_results_url'] || '',
 			searchLogging           = data['search_logging'] || '',
 			currentPosition         = 1,
 			lang                    = '',
@@ -2344,7 +2376,10 @@
 
 			$( window ).on( 'orientationchange resize', function () {
 				resultsListInner.imagesLoaded( function() {
-					resultsList.css( 'height', $( settings.listSlideClass, resultsListInner ).eq(0).outerHeight() );
+					const $firstSlide      = $( settings.listSlideClass, resultsListInner ).eq(0);
+					const firstSlideHeight = $firstSlide.length ? $firstSlide.outerHeight() : 0;
+
+					resultsList.css( 'height', firstSlideHeight > 0 ? firstSlideHeight : 'auto' );
 				} );
 			} );
 
