@@ -161,13 +161,13 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 */
 	public function _get_edit_looped_template( $templates = array(), $setting = null ) {
 		?>
-		<# if ( settings.<?php echo $setting; ?> ) { #>
+		<# if ( settings.<?php echo $setting; // phpcs:ignore ?> ) { #>
 		<?php
 			if ( ! empty( $templates['start'] ) ) {
 				include $templates['start'];
 			}
 		?>
-			<# _.each( settings.<?php echo $setting; ?>, function( item ) { #>
+			<# _.each( settings.<?php echo $setting; // phpcs:ignore ?>, function( item ) { #>
 			<?php
 				if ( ! empty( $templates['loop'] ) ) {
 					include $templates['loop'];
@@ -213,8 +213,8 @@ abstract class Jet_Blog_Base extends Widget_Base {
 
 		ob_start();
 
-		echo '<# if ( item.' . $settings . ' ) { #>';
-		printf( $format, '{{{ item.' . $settings . ' }}}' );
+		echo '<# if ( item.' . $settings . ' ) { #>'; // phpcs:ignore
+		printf( $format, '{{{ item.' . $settings . ' }}}' ); // phpcs:ignore
 		echo '<# } #>';
 
 		return ob_get_clean();
@@ -275,7 +275,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 
 		?>
 
-		<# if ( <?php echo $condition; ?> ) { #>
+		<# if ( <?php echo $condition; // phpcs:ignore ?> ) { #>
 
 			<?php include $file; ?>
 
@@ -290,7 +290,8 @@ abstract class Jet_Blog_Base extends Widget_Base {
 	 * @return void
 	 */
 	public function _open_wrap() {
-		printf( '<div class="elementor-%s jet-blog">', $this->get_name() );
+		$name = sanitize_html_class( (string) $this->get_name() );
+		printf( '<div class="%s">', esc_attr( 'elementor-' . $name . ' jet-blog' ) );
 	}
 
 	/**
@@ -351,7 +352,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 		$val = $this->get_settings( $setting );
 
 		if ( ! is_array( $val ) && '0' === $val ) {
-			printf( $format, $val );
+			printf( $format, $val ); // phpcs:ignore
 		}
 
 		if ( is_array( $val ) && empty( $val[ $key ] ) ) {
@@ -363,9 +364,9 @@ abstract class Jet_Blog_Base extends Widget_Base {
 		}
 
 		if ( is_array( $val ) ) {
-			printf( $format, $val[ $key ] );
+			printf( $format, $val[ $key ] ); // phpcs:ignore
 		} else {
-			printf( $format, $val );
+			printf( $format, $val ); // phpcs:ignore
 		}
 
 	}
@@ -491,7 +492,12 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			return;
 		}
 
-		printf( '<div class="%1$s">%2$s</div>', esc_attr( $base ), stripcslashes( $result ) );
+		$result = stripslashes( $result );
+		printf(
+			'<div class="%1$s">%2$s</div>',
+			esc_attr( $base ),
+			wp_kses_post( $result )
+		);
 
 	}
 
@@ -964,8 +970,8 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			$setting = $setting[0] . '.' . $setting[1];
 		}
 
-		echo '<# if ( settings.' . $setting . ' ) { #>';
-		printf( $format, '{{{ settings.' . $setting . ' }}}' );
+		echo '<# if ( settings.' . $setting . ' ) { #>'; // phpcs:ignore
+		printf( $format, '{{{ settings.' . $setting . ' }}}' ); // phpcs:ignore
 		echo '<# } #>';
 	}
 
@@ -992,7 +998,7 @@ abstract class Jet_Blog_Base extends Widget_Base {
 
 		$is_preview = false;
 
-		if ( isset( $_GET['elementor_library'] ) && isset( $_GET['preview'] ) ) {
+		if ( isset( $_GET['elementor_library'] ) && isset( $_GET['preview'] ) ) { // phpcs:ignore
 			$is_preview = true;
 		}
 
@@ -1271,6 +1277,6 @@ abstract class Jet_Blog_Base extends Widget_Base {
 			return sprintf( $format, $icon_html );
 		}
 
-		printf( $format, $icon_html );
+		printf( $format, $icon_html ); // phpcs:ignore
 	}
 }

@@ -1,3 +1,6 @@
+<?php
+// Silence is golden.
+?>
 <div class="jet-blog-settings-page jet-blog-settings-page__available-widgets">
 	<div class="jet-blog-settings-page__available-controls">
 		<div

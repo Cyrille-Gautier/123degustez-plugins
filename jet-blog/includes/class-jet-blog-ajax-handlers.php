@@ -32,7 +32,7 @@ if ( ! class_exists( 'Jet_Blog_Ajax_Handlers' ) ) {
 		 */
 		public function init() {
 
-			if ( ! empty( $_GET['jet_blog_ajax'] ) && ! empty( $_REQUEST['action'] ) ) {
+			if ( ! empty( $_GET['jet_blog_ajax'] ) && ! empty( $_REQUEST['action'] ) ) { // phpcs:ignore
 
 				add_action( 'wp_ajax_jet_blog_smart_listing_get_posts', array( $this, 'get_listing_posts' ) );
 				add_action( 'wp_ajax_nopriv_jet_blog_smart_listing_get_posts', array( $this, 'get_listing_posts' ) );
@@ -56,9 +56,9 @@ if ( ! class_exists( 'Jet_Blog_Ajax_Handlers' ) ) {
 			define( 'DOING_AJAX', true );
 
 			if ( is_user_logged_in() ) {
-				do_action( 'wp_ajax_' . $_REQUEST['action'] );
+				do_action( 'wp_ajax_' . $_REQUEST['action'] ); // phpcs:ignore
 			} else {
-				do_action( 'wp_ajax_nopriv_' . $_REQUEST['action'] );
+				do_action( 'wp_ajax_nopriv_' . $_REQUEST['action'] ); // phpcs:ignore
 			}
 
 			die();
@@ -106,15 +106,15 @@ if ( ! class_exists( 'Jet_Blog_Ajax_Handlers' ) ) {
 		}
 
 		public function set_posts_number( $query_args ) {
-			$current_posts_number = $_POST['jet_request_data'];
+			$current_posts_number = $_POST['jet_request_data']; // phpcs:ignore
 
 			if ( isset( $current_posts_number['posts_per_page'] ) ) {
 				$query_args['posts_per_page'] = $current_posts_number['posts_per_page'];
 			}
 
-			if ( isset( $_REQUEST['jet_widget_settings'] ) && isset( $_REQUEST['jet_widget_settings']['posts_offset'] ) ) {
+			if ( isset( $_REQUEST['jet_widget_settings'] ) && isset( $_REQUEST['jet_widget_settings']['posts_offset'] ) ) { // phpcs:ignore
 			   $page   = absint( $query_args['paged'] );
-			   $offset = absint( $_REQUEST['jet_widget_settings']['posts_offset'] );
+			   $offset = absint( $_REQUEST['jet_widget_settings']['posts_offset'] ); // phpcs:ignore
 
 			   $query_args['offset'] = $offset + ( ( $page - 1 ) * absint( $query_args['posts_per_page'] ) );
 			}

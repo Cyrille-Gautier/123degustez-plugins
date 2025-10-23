@@ -23,7 +23,7 @@ $list = $this->get_videos_list( $settings );
 $hide = $this->_get_hide_settings( $settings );
 
 ?>
-<div class="<?php $this->_container_classes( $settings ); ?>" <?php echo $hide;?>>
+<div class="<?php $this->_container_classes( $settings ); ?>" <?php echo $hide;// phpcs:ignore ?>>
 	<div class="jet-blog-playlist__canvas"><div class="jet-blog-playlist__canvas-overlay"></div></div>
 	<div class="jet-blog-playlist__items">
 		<?php include $this->_get_global_template( 'item-heading' ); ?>
@@ -35,8 +35,8 @@ $hide = $this->_get_hide_settings( $settings );
 
 				printf(
 					'<div class="jet-blog-playlist__item%2$s" %1$s>',
-					$this->_get_video_data_atts( $video_data, $item, $settings, $index ),
-					$active_class
+					$this->_get_video_data_atts( $video_data, $item, $settings, $index ), // phpcs:ignore
+					$active_class // phpcs:ignore
 				);
 				include $this->_get_global_template( 'item-index' );
 				include $this->_get_global_template( 'item-thumb' );

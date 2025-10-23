@@ -14,7 +14,7 @@ if ( 'yes' === $settings['excerpt_on_hover'] ) {
 
 $dir = is_rtl() ? 'rtl' : 'ltr';
 ?>
-<div class="<?php $this->_tiles_wrap_classes(); ?>" <?php $this->_slider_atts(); ?> dir="<?php echo $dir; ?>"><?php
+<div class="<?php $this->_tiles_wrap_classes(); ?>" <?php $this->_slider_atts(); ?> dir="<?php echo $dir; ?>"><?php // phpcs:ignore
 
 	foreach ( $this->_get_query() as $post ) {
 

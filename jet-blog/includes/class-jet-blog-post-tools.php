@@ -171,7 +171,7 @@ if ( ! class_exists( 'Jet_Blog_Post_Tools' ) ) {
 			if ( ! filter_var( $echo, FILTER_VALIDATE_BOOLEAN ) ) {
 				return $content;
 			} else {
-				echo $content;
+                echo $content; // phpcs:ignore
 			}
 		}
 

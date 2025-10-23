@@ -24,7 +24,10 @@ foreach ( $this->_get_query() as $post ) {
 		if ( 'simple' === $layout ) {
 			$this->_featured_image( $context );
 		} else {
-			printf( '<a href="%s" class="jet-smart-listing__featured-box-link">', get_permalink() );
+			printf(
+				'<a href="%s" class="jet-smart-listing__featured-box-link">',
+				esc_url( get_permalink() )
+			);
 		}
 
 		echo '<div class="jet-smart-listing__featured-content">';

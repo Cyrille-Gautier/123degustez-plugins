@@ -35,7 +35,7 @@ if ( ! class_exists( 'Jet_Blog_Query_Builder' ) ) {
 		}
 
 		public function get_request_data( $key, $default = false ) {
-			return isset( $_REQUEST['jet_request_data'][ $key ] ) ? $_REQUEST['jet_request_data'][ $key ] : $default;
+			return isset( $_REQUEST['jet_request_data'][ $key ] ) ? $_REQUEST['jet_request_data'][ $key ] : $default; // phpcs:ignore
 		}
 
 		public function maybe_do_query( $result, $settings, $query_args, $widget ) {

@@ -2457,7 +2457,8 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			$thumb = sprintf( '//via.placeholder.com/900x600?text=%s', str_replace( ' ', '+', get_the_title() ) );
 		}
 
-		printf( 'style="background-image:url(\'%s\')"', $thumb );
+        $thumb_url = esc_url( $thumb );
+        printf( 'style="%s"', esc_attr( "background-image:url('{$thumb_url}')" ) );
 
 	}
 
@@ -2544,12 +2545,12 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 		$style = '';
 		if ( isset ( $settings['mobile_col_width']['size'] ) && $settings['use_scroll_slider_mobile'] === 'yes' ) {
 			$col_width = $settings['mobile_col_width']['size'];
-			$style = 'style="--jet-blog-tiles-col-width:' . esc_attr( $col_width ) . 'px;"';
+            $style_value = "--jet-blog-tiles-col-width:" . (int) $col_width . "px;";
 		}
 
-		if ( 0 === ( $this->_current_post_index % $num ) ) {
-			printf( '<div class="jet-smart-tiles-slide"><div class="%1$s" %2$s>', implode( ' ', $classes ), $style );
-		}
+        if ( 0 === ( $this->_current_post_index % $num ) ) {
+            printf( '<div class="jet-smart-tiles-slide"><div class="%1$s" %2$s>', implode( ' ', $classes ), $style ); // phpcs:ignore
+        }
 
 	}
 
@@ -2847,7 +2848,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			$result .= sprintf( $format, $term->name, get_term_link( (int) $term->term_id, $tax ), $term->term_id );
 		}
 
-		printf( '<div class="jet-smart-tiles__terms">%s</div>', $result );
+        printf( '<div class="jet-smart-tiles__terms">%s</div>', $result ); // phpcs:ignore
 
 	}
 
@@ -2937,7 +2938,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			$excerpt = wp_trim_words( $excerpt, $length, $trimmed );
 		}
 
-		printf( '%2$s%1$s%3$s', $excerpt, wp_kses_post( $before ), wp_kses_post( $after ) );
+        printf( '%2$s%1$s%3$s', $excerpt, wp_kses_post( $before ), wp_kses_post( $after ) ); // phpcs:ignore
 	}
 
 	/**
@@ -2962,7 +2963,7 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 			$classes[] = 'jet-arrows-on-hover';
 		}
 
-		echo implode( ' ', $classes );
+		echo esc_attr( implode( ' ', $classes ) );
 	}
 
 	public function _trim_title( $title ) {

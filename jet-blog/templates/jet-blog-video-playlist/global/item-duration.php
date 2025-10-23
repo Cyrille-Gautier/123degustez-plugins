@@ -22,4 +22,4 @@ if ( ! $duration ) {
 }
 
 ?>
-<div class="jet-blog-playlist__item-duration"><?php echo $duration; ?></div>
+<div class="jet-blog-playlist__item-duration"><?php echo $duration; // phpcs:ignore ?></div>

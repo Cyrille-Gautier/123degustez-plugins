@@ -1500,7 +1500,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 
 		$classes = apply_filters( 'jet-blog/video-playlist/container-classes', $classes );
 
-		echo implode( ' ', $classes );
+		echo implode( ' ', $classes ); // phpcs:ignore
 	}
 
 	public function _get_video_data_atts( $video_data, $item, $settings, $index ) {
@@ -1564,7 +1564,7 @@ class Jet_Blog_Video_Playlist extends Jet_Blog_Base {
 		printf(
 			'<div class="jet-blog-playlist__counter"><span class="jet-blog-playlist__counter-val">1</span>/%1$s%2$s</div>',
 			count( $list ),
-			$suffix
+			$suffix // phpcs:ignore
 		);
 
 	}

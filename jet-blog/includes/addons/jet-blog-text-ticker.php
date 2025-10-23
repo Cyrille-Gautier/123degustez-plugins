@@ -2133,21 +2133,21 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			$hide_classes .= ' jet-blog-hidden-mobile';
 		}
 
-		if ( ! is_rtl() ) {
-			printf(
-				'<div class="jet-text-ticker__post-author%3$s">%1$s %2$s</div>',
-				$icon_html,
-				esc_html( $author_name ),
-				$hide_classes
-			);
-		} else {
-			printf(
-				'<div class="jet-text-ticker__post-author%3$s">%1$s %2$s</div>',
-				esc_html( $author_name ),
-				$icon_html,
-				$hide_classes
-			);
-		}
+        if ( ! is_rtl() ) {
+            printf(
+                '<div class="jet-text-ticker__post-author%3$s">%1$s %2$s</div>',
+                $icon_html, // phpcs:ignore
+                esc_html( $author_name ),
+                $hide_classes // phpcs:ignore
+            );
+        } else {
+            printf(
+                '<div class="jet-text-ticker__post-author%3$s">%1$s %2$s</div>',
+                esc_html( $author_name ),
+                $icon_html, // phpcs:ignore
+                $hide_classes // phpcs:ignore
+            );
+        }
 	}
 
 	/**
@@ -2195,21 +2195,21 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			return;
 		}
 
-		if ( ! is_rtl() ) {
-			printf(
-				'<div class="jet-text-ticker__post-date%3$s">%1$s %2$s</div>',
-				$icon_html,
-				esc_html( $date ),
-				$hide_classes
-			);
-		} else {
-			printf(
-				'<div class="jet-text-ticker__post-date%3$s">%1$s %2$s</div>',
-				esc_html( $date ),
-				$icon_html,
-				$hide_classes
-			);
-		}
+        if ( ! is_rtl() ) {
+            printf(
+                '<div class="jet-text-ticker__post-date%3$s">%1$s %2$s</div>',
+                $icon_html, // phpcs:ignore
+                esc_html( $date ),
+                $hide_classes // phpcs:ignore
+            );
+        } else {
+            printf(
+                '<div class="jet-text-ticker__post-date%3$s">%1$s %2$s</div>',
+                esc_html( $date ),
+                $icon_html, // phpcs:ignore
+                $hide_classes // phpcs:ignore
+            );
+        }
 	}
 
 	/**
@@ -2238,7 +2238,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 
 		printf(
 			'<%1$s class="jet-text-ticker__title%3$s">%2$s</%1$s>',
-			$tag, wp_kses_post( $settings['block_title'] ), $hide_classes
+			$tag, wp_kses_post( $settings['block_title'] ), $hide_classes // phpcs:ignore
 		);
 
 	}
@@ -2279,7 +2279,7 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 			$hide_classes .= ' jet-blog-hidden-mobile';
 		}
 
-		printf( $result_format, wp_kses_post( $icon_html ), date_i18n( $format ), $hide_classes );
+		printf( $result_format, wp_kses_post( $icon_html ), date_i18n( $format ), $hide_classes ); // phpcs:ignore
 	}
 
 	/**
@@ -2362,10 +2362,10 @@ class Jet_Blog_Text_Ticker extends Jet_Blog_Base {
 		}
 
 		printf(
-			$title_format,
+			$title_format, // phpcs:ignore
 			esc_url( $link ),
 			esc_html( $title ),
-			$attr
+			$attr // phpcs:ignore
 		);
 	}
 

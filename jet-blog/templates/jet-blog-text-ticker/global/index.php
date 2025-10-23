@@ -36,7 +36,7 @@ if ( $is_typing ) {
 
 				?>
 				<div class="jet-text-ticker__item">
-					<div class="<?php echo join( ' ', $content_classes ); ?>">
+					<div class="<?php echo esc_attr( implode( ' ', $content_classes ) ); ?>">
 						<?php $this->_post_thumbnail( $settings ); ?>
 						<?php $this->_post_author( $settings ); ?>
 						<?php $this->_post_date( $settings ); ?>

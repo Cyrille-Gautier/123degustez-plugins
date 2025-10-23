@@ -13,5 +13,9 @@ $thumb = ! empty( $custom_thumb ) ? $custom_thumb : $thumb;
 ?>
 
 <div class="jet-blog-playlist__item-thumb">
-	<img src="<?php echo $thumb; ?>" alt="<?php echo esc_attr( $title ); ?>" title="<?php echo esc_attr( $title ); ?>" class="jet-blog-playlist__item-thumb-img">
+	<img
+		src="<?php echo esc_url( $thumb ); ?>"
+		alt="<?php echo esc_attr( $title ); ?>"
+		title="<?php echo esc_attr( $title ); ?>"
+		class="jet-blog-playlist__item-thumb-img">
 </div>

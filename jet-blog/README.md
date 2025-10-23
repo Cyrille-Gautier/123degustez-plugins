@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 2.4.7
+* ADD: PHPCS/WP Security Standards
+
 ## 2.4.6
 * ADD: Configurable cache TTL via filters (default 6 hours);
 

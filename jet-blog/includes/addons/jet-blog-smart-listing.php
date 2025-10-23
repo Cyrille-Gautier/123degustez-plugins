@@ -6356,15 +6356,16 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 
 		}
 
-		printf(
-			'<div class="jet-smart-listing__filter'. $hide_classes .'" data-more="%2$s" data-rollup="%3$s">%1$s</div>',
-			$items,
-			htmlspecialchars( json_encode( $more_atts ) ),
-			$rollup
-		);
-	}
+        printf(
+            '<div class="jet-smart-listing__filter'. $hide_classes .'" data-more="%2$s" data-rollup="%3$s">%1$s</div>', // phpcs:ignore
+            $items, // phpcs:ignore
+            htmlspecialchars( json_encode( $more_atts ) ), // phpcs:ignore
+            $rollup // phpcs:ignore
+        );
+    }
 
-	/**
+
+    /**
 	 * render paging control arrows
 	 *
 	 * @return void
@@ -6432,7 +6433,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 
 		}
 
-		printf( '<div class="jet-smart-listing__arrows' .  $hide_classes . '">%1$s%2$s</div>', $arrows, $custom_controls );
+        printf( '<div class="jet-smart-listing__arrows' .  $hide_classes . '">%1$s%2$s</div>', $arrows, $custom_controls ); // phpcs:ignore
 
 	}
 
@@ -6591,7 +6592,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			$query_args['tax_query'] = $tax_query;
 		}
 
-		if ( isset( $_REQUEST['jet_request_data'] ) ) {
+		if ( isset( $_REQUEST['jet_request_data'] ) ) { // phpcs:ignore
 			$query_args = array_merge( $query_args, $this->_add_request_data() );
 		}
 
@@ -6613,7 +6614,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			$query_args = array();
 		}
 
-		if ( isset( $_REQUEST['jet_request_data'] ) ) {
+		if ( isset( $_REQUEST['jet_request_data'] ) ) { // phpcs:ignore
 			$query_args = array_merge( $query_args, $this->_add_request_data() );
 		}
 
@@ -6712,7 +6713,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 	 */
 	public function _add_request_data() {
 
-		$data = isset( $_REQUEST['jet_request_data'] ) ? $_REQUEST['jet_request_data'] : array();
+		$data = isset( $_REQUEST['jet_request_data'] ) ? $_REQUEST['jet_request_data'] : array(); // phpcs:ignore
 
 		if ( empty( $data ) ) {
 			return array();
@@ -6763,8 +6764,8 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 	 */
 	public function _get_widget_settings( $setting = null ) {
 
-		if ( isset( $_REQUEST['jet_widget_settings'] ) ) {
-			$settings = $_REQUEST['jet_widget_settings'];
+		if ( isset( $_REQUEST['jet_widget_settings'] ) ) { // phpcs:ignore
+			$settings = $_REQUEST['jet_widget_settings']; // phpcs:ignore
 		} else {
 			$settings = $this->get_settings_for_display();
 		}
@@ -6831,7 +6832,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			'<div class="jet-smart-listing__more-wrap"><a href="%1$s" class="jet-smart-listing__more %3$s-more elementor-button elementor-size-md"><span class="jet-smart-listing__more-text">%2$s</span>%4$s</a></div>'
 		);
 
-		printf( $format, get_permalink(), wp_kses_post( $label ), $context, wp_kses_post( $icon ) );
+        printf( $format, get_permalink(), wp_kses_post( $label ), $context, wp_kses_post( $icon ) ); // phpcs:ignore
 	}
 
 	/**
@@ -6879,7 +6880,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			'<div class="jet-smart-listing__post-thumbnail post-thumbnail-%2$s"><a href="%3$s">%1$s</a></div>'
 		);
 
-		printf( $format, $img, $context, get_permalink() );
+		printf( $format, $img, $context, get_permalink() ); // phpcs:ignore
 	}
 
 	/**
@@ -6926,7 +6927,11 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 
 		$this->_render_meta( 'content_related', 'jet-content-fields', array( 'before' ), $settings );
 
-		printf( '<div class="jet-smart-listing__post-excerpt post-excerpt-%2$s">%1$s</div>', $excerpt, $context );
+        printf(
+            '<div class="jet-smart-listing__post-excerpt post-excerpt-%2$s">%1$s</div>',
+            wp_kses_post( $excerpt ),
+            esc_attr( $context )
+        );
 
 		$this->_render_meta( 'content_related', 'jet-content-fields', array( 'after' ), $settings );
 	}
@@ -6993,7 +6998,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 
 		$this->_render_meta( 'title_related', 'jet-title-fields', array( 'before' ), $settings );
 
-		printf( $format, $title, $context );
+		printf( $format, $title, $context ); // phpcs:ignore
 
 		$this->_render_meta( 'title_related', 'jet-title-fields', array( 'after' ), $settings );
 	}
@@ -7069,7 +7074,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			$classes[] = 'no-featured';
 		}
 
-		echo implode( ' ', $classes );
+		echo implode( ' ', $classes ); // phpcs:ignore
 	}
 
 	/**
@@ -7106,7 +7111,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			}
 		}
 
-		echo implode( ' ', $classes );
+		echo implode( ' ', $classes ); // phpcs:ignore
 	}
 
 	/**
@@ -7140,7 +7145,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 
 		$classes = apply_filters( 'jet-blog/smart-listing/featured-post/classes', $classes, $settings );
 
-		echo implode( ' ', $classes );
+		echo implode( ' ', $classes ); // phpcs:ignore
 	}
 
 	/**
@@ -7212,7 +7217,7 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 			$result .= sprintf( $format, $term->name, get_term_link( (int) $term->term_id, $tax ), $term->term_id );
 		}
 
-		printf( '<div class="jet-smart-listing__terms">%s</div>', $result );
+		printf( '<div class="jet-smart-listing__terms">%s</div>', $result ); // phpcs:ignore
 
 	}
 

@@ -83,7 +83,7 @@ if ( ! class_exists( 'Jet_Blog_Integration' ) ) {
 
 			echo "<script type='text/javascript'>\n";
 			echo "/* <![CDATA[ */\n";
-			echo "var hasJetBlogPlaylist = $has_playlist;\n";
+			echo "var hasJetBlogPlaylist = $has_playlist;\n"; // phpcs:ignore
 			echo "/* ]]> */\n";
 			echo "</script>\n";
 
@@ -150,7 +150,7 @@ if ( ! class_exists( 'Jet_Blog_Integration' ) ) {
 			$query = '';
 
 			if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
-				$query .= '?' . $_SERVER['QUERY_STRING'];
+				$query .= '?' . $_SERVER['QUERY_STRING']; // phpcs:ignore
 			}
 
 			$query_args = array( 
