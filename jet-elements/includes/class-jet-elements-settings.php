@@ -144,6 +144,23 @@ if ( ! class_exists( 'Jet_Elements_Settings' ) ) {
 
 			$rest_api_url = apply_filters( 'jet-elements/rest/frontend/url', get_rest_url() );
 
+			$map_provider_options = [];
+			$geocode_provider_options = [];
+
+			foreach ( jet_elements_advanced_map_providers()->get_providers_for_controls() as $value => $label ) {
+				$map_provider_options[] = [
+					'label' => $label,
+					'value' => $value,
+				];
+			}
+
+			foreach ( jet_elements_advanced_map_geocode_providers()->get_providers_for_controls() as $value => $label ) {
+				$geocode_provider_options[] = [
+					'label' => $label,
+					'value' => $value,
+				];
+			}
+
 			$this->settings_page_config = [
 				'messages' => [
 					'saveSuccess' => esc_html__( 'Saved', 'jet-elements' ),
@@ -188,11 +205,25 @@ if ( ! class_exists( 'Jet_Elements_Settings' ) ) {
 					'disable_api_js'          => [
 						'value' => $this->get( 'disable_api_js', [ 'disable' => 'false' ] ),
 					],
+					'map_provider'            => [
+						'value'   => $this->get( 'map_provider', jet_elements_advanced_map_providers()->get_default_provider() ),
+						'options' => $map_provider_options,
+					],
+					'geocode_provider'        => [
+						'value'   => $this->get( 'geocode_provider', jet_elements_advanced_map_geocode_providers()->get_default_provider() ),
+						'options' => $geocode_provider_options,
+					],
+					'mapbox_access_token'     => [
+						'value' => $this->get( 'mapbox_access_token', '' ),
+					],
 					'use_geocoding_key'       => [
 						'value' => $this->get( 'use_geocoding_key', [ 'disable' => 'false' ] ),
 					],
 					'geocoding_key'           => [
 						'value' => $this->get( 'geocoding_key', '' ),
+					],
+					'bing_key'                => [
+						'value' => $this->get( 'bing_key', '' ),
 					],
 					'mailchimp-api-key'       => [
 						'value' => $this->get( 'mailchimp-api-key', '' ),
@@ -214,6 +245,9 @@ if ( ! class_exists( 'Jet_Elements_Settings' ) ) {
 					],
 					'weather_api_key'         => [
 						'value' => $this->get( 'weather_api_key', '' ),
+					],
+					'openweathermap_api_key'         => [
+						'value' => $this->get( 'openweathermap_api_key', '' ),
 					],
 					'avaliable_widgets'       => [
 						'value'   => $active_widgets,

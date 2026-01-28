@@ -3,8 +3,8 @@
 	 * Loop item template
 	 */
 	$settings  = $this->get_settings_for_display();
-	$target    = $this->_loop_item( array( 'item_link_target' ), ' target="%s"' );
-	$rel       = $this->_loop_item( array( 'item_link_rel' ), ' rel="%s"' );
+	$target    = (string) $this->_loop_item( array( 'item_link_target' ), ' target="%s"' );
+	$rel       = (string) $this->_loop_item( array( 'item_link_rel' ), ' rel="%s"' );
 	$img       = $this->get_advanced_carousel_img( 'jet-carousel__item-img' );
 
 	if( 'true' === $settings['hide_items_without_image'] && empty( $img ) ){
@@ -55,7 +55,7 @@
 					$text   = $this->_loop_item( array( 'item_text' ), '<div class="jet-carousel__item-text">%s</div>' );
 					$button = $this->_loop_button_item( array( 'item_link', 'item_button_text' ), '<a class="elementor-button elementor-size-md jet-carousel__item-button" href="%1$s"' . $target . $rel . '>%2$s</a>' );
 
-					$link         = $this->_loop_item( array( 'item_link' ) );
+					$link         = (string) $this->_loop_item( array( 'item_link' ) );
 					$title_format = '<%1$s class="jet-carousel__item-title">%2$s</%1$s>';
 
 					if ( $link_title && $link ) {
@@ -63,7 +63,7 @@
 					}
 
 					if ( $title || $text || $button ) {
-						printf( $title_format, $title_tag , esc_html( $title ), esc_url( $link ), esc_attr( $target ), esc_attr( $rel ) ); // phpcs:ignore
+						printf( $title_format, $title_tag, $title, esc_url( $link ), esc_attr( $target ), esc_attr( $rel ) ); // phpcs:ignore
 						echo $text; // phpcs:ignore
 						echo $button; // phpcs:ignore
 					}

@@ -172,6 +172,17 @@ gulp.task( 'js-minify', function() {
 		.pipe( notify( 'js Minify Done!' ) );
 } );
 
+// Minify JS Addons
+gulp.task('js-minify-addons', function () {
+    return gulp.src([
+        './assets/js/addons/*.js', 
+        '!./assets/js/addons/*.min.js' // исключили min
+    ])
+    .pipe(uglify())
+    .pipe(rename({ extname: '.min.js' }))
+    .pipe(gulp.dest('./assets/js/addons'))
+});
+
 gulp.task( 'js-editor-minify', function() {
 	return gulp.src( './assets/js/jet-elements-editor.js' )
 		.pipe( uglify() )
@@ -185,6 +196,8 @@ gulp.task('watch', () => {
 	gulp.watch( './assets/scss/**', gulp.series( ...['css', 'css-addons', 'css-skin', 'css-admin', 'css-rtl', 'css-icons', 'css-editor'] ) );
 
 	gulp.watch( './assets/js/jet-elements.js', gulp.series( 'js-minify' ) );
+
+	gulp.watch( [ './assets/js/addons/*.js', '!./assets/js/addons/*.min.js' ], gulp.series('js-minify-addons'));
 	gulp.watch( './assets/js/jet-elements-editor.js', gulp.series( 'js-editor-minify' ) );
 });
 

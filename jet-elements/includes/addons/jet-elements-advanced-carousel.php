@@ -56,7 +56,7 @@ class Jet_Elements_Advanced_Carousel extends Jet_Elements_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'jet-slick' );
+		return [ 'jet-slick', 'jet-carousel' ];
 	}
 
 	protected function register_controls() {

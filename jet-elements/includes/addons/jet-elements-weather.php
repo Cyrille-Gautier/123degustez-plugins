@@ -32,8 +32,9 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 	private $api_count = '3.0';
 
 	private $current_weather_api_url = 'https://api.weatherbit.io/v2.0/current';
-
 	private $forecast_weather_api_url = 'https://api.weatherbit.io/v2.0/forecast/daily';
+	private $owm_current_url  = 'https://api.openweathermap.org/data/2.5/weather';
+	private $owm_forecast_url = 'https://api.openweathermap.org/data/2.5/forecast';
 
 	public function get_name() {
 		return 'jet-weather';
@@ -91,8 +92,23 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 		);
 
 		$api_key = jet_elements_settings()->get( 'weather_api_key' );
+		$openweathermap_api_key = jet_elements_settings()->get( 'openweathermap_api_key' );
+
+		$this->add_control(
+			'weather_api_provider',
+			array(
+				'label'   => esc_html__( 'Weather API Provider', 'jet-elements' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'weatherbit',
+				'options' => array(
+					'weatherbit'     => esc_html__( 'Weatherbit (default)', 'jet-elements' ),
+					'openweathermap' => esc_html__( 'OpenWeatherMap (free)', 'jet-elements' ),
+				),
+			)
+		);
 
 		if ( ! $api_key ) {
+
 			$this->add_control(
 				'set_api_key',
 				array(
@@ -101,23 +117,29 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 						esc_html__( 'Please set Weather API key before using this widget. You can create own API key  %1$s. Paste created key on %2$s', 'jet-elements' ),
 						'<a target="_blank" href="https://www.weatherbit.io/">' . esc_html__( 'here', 'jet-elements' ) . '</a>',
 						'<a target="_blank" href="' . jet_elements_settings()->get_settings_page_link( 'integrations' ) . '">' . esc_html__( 'settings page', 'jet-elements' ) . '</a>'
-					)
+					),
+					'condition' => array(
+						'weather_api_provider' => 'weatherbit',
+					),
 				)
 			);
 		}
-
-		$this->add_control(
-			'location_type',
-			array(
-				'label'   => esc_html__( 'Location Type', 'jet-elements' ),
-				'type'    => Controls_Manager::SELECT,
-				'default' => 'city',
-				'options' => array(
-					'city'        => esc_html__( 'City name', 'jet-elements' ),
-					'coordinates' => esc_html__( 'Coordinates (Lat/Lon)', 'jet-elements' ),
-				),
-			)
-		);
+		if ( ! $openweathermap_api_key ) {
+			$this->add_control(
+				'set_api_key_owm',
+				array(
+					'type' => Controls_Manager::RAW_HTML,
+					'raw'  => sprintf(
+						esc_html__( 'Please set OpenWeatherMap API key before using this widget. You can create your API key %1$s. Paste created key on %2$s', 'jet-elements' ),
+						'<a target="_blank" href="https://openweathermap.org/appid">' . esc_html__( 'here', 'jet-elements' ) . '</a>',
+						'<a target="_blank" href="' . jet_elements_settings()->get_settings_page_link( 'integrations' ) . '">' . esc_html__( 'settings page', 'jet-elements' ) . '</a>'
+					),
+					'condition' => array(
+						'weather_api_provider' => 'openweathermap',
+					),
+				)
+			);
+		}
 
 		$this->add_control(
 			'location',
@@ -128,25 +150,6 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 				'dynamic'     => array( 'active' => true, ),
 				'placeholder' => esc_html__( 'London, UK', 'jet-elements' ),
 				'default'     => esc_html__( 'London, UK', 'jet-elements' ),
-				'condition'   => array(
-					'location_type' => 'city',
-				),
-			)
-		);
-
-		$this->add_control(
-			'coordinates',
-			array(
-				'label'       => esc_html__( 'Coordinates', 'jet-elements' ),
-				'description' => esc_html__( 'Enter latitude and longitude separated by ";" or ",". Example: 51.5074, -0.1278', 'jet-elements' ),
-				'type'        => Controls_Manager::TEXT,
-				'dynamic'     => array( 'active' => true, ),
-				'placeholder' => esc_html__( '51.5074, -0.1278', 'jet-elements' ),
-				'default'     => '51.5074, -0.1278',
-				'label_block' => true,
-				'condition'   => array(
-					'location_type' => 'coordinates',
-				),
 			)
 		);
 
@@ -185,6 +188,9 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 					'<a target="_blank" href="https://www.weatherbit.io/terms">' . esc_html__( 'Terms and Conditions of Weatherbit', 'jet-elements' ) . '</a>'
 				),
 		        'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'condition' => array(
+					'weather_api_provider' => 'weatherbit',
+				),
 		   )
 		);
 
@@ -326,6 +332,21 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 				),
 				'condition' => array(
 					'show_forecast_weather' => 'true',
+				),
+			)
+		);
+
+		$this->add_control(
+			'set_api_key',
+			array(
+				'type' => Controls_Manager::RAW_HTML,
+				'raw'  => esc_html__( 
+					'OpenWeatherMap has a limitation — the daily forecast is available only for a limited number of days depending on your plan.',
+					'jet-elements'
+				),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'condition' => array(
+					'weather_api_provider' => 'openweathermap',
 				),
 			)
 		);
@@ -1035,89 +1056,128 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 	 */
 	public function get_weather_data() {
 
-		$api_key = jet_elements_settings()->get( 'weather_api_key' );
-
+		$settings      = $this->get_settings_for_display();
+		$location_type = isset( $settings['location_type'] ) ? $settings['location_type'] : 'city';
+		$provider      = isset( $settings['weather_api_provider'] ) ? $settings['weather_api_provider'] : 'weatherbit';
+	
+		// API KEYS
+		$weatherbit_api_key = jet_elements_settings()->get( 'weather_api_key' );
+		$owm_api_key        = jet_elements_settings()->get( 'openweathermap_api_key' );
+	
+		$api_key = ( 'openweathermap' === $provider ) ? $owm_api_key : $weatherbit_api_key;
+	
 		// Do nothing if api key not provided
 		if ( ! $api_key ) {
 			$message = esc_html__( 'Please set Weather API key before using this widget.', 'jet-elements' );
-
-			echo $this->get_weather_notice( $message ); // phpcs:ignore
+			echo $this->get_weather_notice( $message );
 			return false;
 		}
-
-		$settings      = $this->get_settings_for_display();
-		$location_type = isset( $settings['location_type'] ) ? $settings['location_type'] : 'city';
-				
+	
 		$location_identifier = $this->get_location_identifier( $settings, $location_type );
-
+	
 		if ( empty( $location_identifier ) ) {
 			return false;
 		}
-
+	
 		$units = $this->get_units_param( $settings['units'] );
-
-		$transient_key = sprintf( 'jet-weather-data-%1$s-%2$s', $this->api_count, md5( $location_identifier . $units ) );
-
+	
+		$transient_key = sprintf(
+			'jet-weather-data-%1$s-%2$s',
+			$provider,
+			md5( $location_identifier . $units )
+		);
+	
 		$data = get_transient( $transient_key );
+	
+		if ( $data ) {
+			return $data;
+		}
 
-		if ( ! $data ) {
-			// Prepare request data
-			$api_key = esc_attr( $api_key );
-
+		$api_key = esc_attr( $api_key );
+		$units   = esc_attr( $units );
+	
+		if ( 'weatherbit' === $provider ) {
+	
 			$request_args = array(
 				'key'   => urlencode( $api_key ),
 				'units' => urlencode( $units ),
 			);
-			
+	
 			$request_args = $this->add_location_params( $request_args, $settings, $location_type );
 
-			$current_request_url = add_query_arg(
-				$request_args,
-				$this->current_weather_api_url
-			);
-
+			$current_request_url = add_query_arg( $request_args, $this->current_weather_api_url );
 			$current_request_data = $this->_get_request_data( $current_request_url );
-
+	
 			if ( ! $current_request_data ) {
-				$message = esc_html__( 'Weather data of this location not found.', 'jet-elements' );
-
-				echo $this->get_weather_notice( $message ); // phpcs:ignore
-
+				echo $this->get_weather_notice( esc_html__( 'Weather data of this location not found.', 'jet-elements' ) );
 				return false;
 			}
-
+	
 			if ( isset( $current_request_data['error'] ) ) {
-
-				echo $this->get_weather_notice( $current_request_data['error'] ); // phpcs:ignore
-
+				echo $this->get_weather_notice( $current_request_data['error'] );
 				return false;
 			}
 
 			$request_args['days'] = 8;
-
-			$forecast_request_url = add_query_arg(
-				$request_args,
-				$this->forecast_weather_api_url
+			$forecast_request_url = add_query_arg( $request_args, $this->forecast_weather_api_url );
+			$forecast_request_data = $this->_get_request_data( $forecast_request_url );
+	
+			if ( isset( $forecast_request_data['error'] ) ) {
+				echo $this->get_weather_notice( $forecast_request_data['error'] );
+				return false;
+			}
+	
+			$data = $this->prepare_weather_data( $current_request_data, $forecast_request_data );
+		}
+	
+		else {
+	
+			$request_args = array(
+				'appid' => urlencode( $api_key ),
+				'units' => ( 'M' === $units ? 'metric' : 'imperial' ),
 			);
 
+			$request_args = $this->add_location_params( $request_args, $settings, $location_type );
+	
+			if ( isset( $request_args['city'] ) ) {
+				$request_args['q'] = $request_args['city'];
+				unset( $request_args['city'] );
+			}
+
+			$current_request_url = add_query_arg( $request_args, $this->owm_current_url );
+			$current_request_data = $this->_get_request_data( $current_request_url );
+	
+			if ( ! $current_request_data || ( isset( $current_request_data['cod'] ) && (int) $current_request_data['cod'] !== 200 ) ) {
+	
+				$message = isset( $current_request_data['message'] )
+					? $current_request_data['message']
+					: esc_html__( 'Weather data of this location not found.', 'jet-elements' );
+	
+				echo $this->get_weather_notice( $message );
+				return false;
+			}
+
+			$forecast_request_url = add_query_arg( $request_args, $this->owm_forecast_url );
 			$forecast_request_data = $this->_get_request_data( $forecast_request_url );
-
-			if ( isset( $forecast_request_data['error'] ) ) {
-
-				echo $this->get_weather_notice( $forecast_request_data['error'] ); // phpcs:ignore
-
+	
+			if ( isset( $forecast_request_data['cod'] ) && (int) $forecast_request_data['cod'] !== 200 ) {
+				echo $this->get_weather_notice( $forecast_request_data['message'] );
 				return false;
 			}
-
-			$data = $this->prepare_weather_data( $current_request_data, $forecast_request_data );
-
-			if ( empty( $data ) ) {
-				return false;
-			}
-
-			set_transient( $transient_key, $data, apply_filters( 'jet-elements/weather/cached-time', HOUR_IN_SECONDS ) );
+	
+			$data = $this->normalize_owm_data( $current_request_data, $forecast_request_data );
 		}
-
+	
+		if ( empty( $data ) ) {
+			return false;
+		}
+	
+		set_transient(
+			$transient_key,
+			$data,
+			apply_filters( 'jet-elements/weather/cached-time', HOUR_IN_SECONDS )
+		);
+	
 		return $data;
 	}
 
@@ -1322,6 +1382,63 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 		}
 
 		return $data;
+	}
+
+	public function normalize_owm_data( $current_data = [], $forecast_data = [] ) {
+
+		$current = [
+			'code'       => $current_data['weather'][0]['id'],
+			'is_day'     => date( 'H', $current_data['dt'] + $current_data['timezone'] ) >= 6 
+							&& date( 'H', $current_data['dt'] + $current_data['timezone'] ) < 18,
+			'temp'       => $current_data['main']['temp'],
+			'temp_min'   => null,
+			'temp_max'   => null,
+			'wind_speed' => $current_data['wind']['speed'],
+			'wind_deg'   => $current_data['wind']['deg'],
+			'wind_dir'   => $this->deg_to_compass( $current_data['wind']['deg'] ),
+			'humidity'   => $current_data['main']['humidity'] . '%',
+			'pressure'   => $current_data['main']['pressure'],
+			'sunrise'    => date( 'H:i', $current_data['sys']['sunrise'] + $current_data['timezone'] ),
+			'sunset'     => date( 'H:i', $current_data['sys']['sunset'] + $current_data['timezone'] ),
+		];
+	
+		$location = [
+			'city'    => $current_data['name'],
+			'country' => $current_data['sys']['country'],
+		];
+	
+		$forecast = [];
+		if ( !empty( $forecast_data['list'] ) && is_array( $forecast_data['list'] )) {
+			$days = [];
+			foreach ( $forecast_data['list'] as $entry ) {
+				$date = date( 'Y-m-d', $entry['dt'] );
+				if ( !isset( $days[$date] )) {
+					$days[$date] = [
+						'temp_min' => $entry['main']['temp_min'],
+						'temp_max' => $entry['main']['temp_max'],
+						'code'     => $entry['weather'][0]['id'],
+					];
+				} else {
+					$days[$date]['temp_min'] = min( $days[$date]['temp_min'], $entry['main']['temp_min'] );
+					$days[$date]['temp_max'] = max( $days[$date]['temp_max'], $entry['main']['temp_max'] );
+				}
+			}
+	
+			foreach ( $days as $date => $data ) {
+				$forecast[] = array_merge( ['date' => $date], $data );
+			}
+	
+			$current['temp_min'] = $forecast[0]['temp_min'];
+			$current['temp_max'] = $forecast[0]['temp_max'];
+		}
+	
+		return compact( 'location', 'current', 'forecast' );
+	}
+	
+	private function deg_to_compass( $deg ) {
+		$val = floor((( $deg / 22.5) + 0.5 ));
+		$directions = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+		return $directions[ $val % 16 ];
 	}
 
 	/**
@@ -1606,14 +1723,15 @@ class Jet_Elements_Weather extends Jet_Elements_Base {
 	public function get_weather_temp( $temp ) {
 		$units     = $this->get_settings_for_display( 'units' );
 		$temp_unit = ( 'metric' === $units ) ? '&#176;C' : '&#176;F';
-
+	
 		// For 2.0 API Count
 		if ( is_array( $temp ) ) {
 			$temp = ( 'metric' === $units ) ? $temp['c'] : $temp['f'];
 		}
 
+		$temp = floatval( $temp );
 		$format = apply_filters( 'jet-elements/weather/temperature-format', '%1$s%2$s' );
-
+	
 		return sprintf( $format, round( $temp ), $temp_unit );
 	}
 

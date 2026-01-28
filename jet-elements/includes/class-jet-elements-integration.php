@@ -279,7 +279,10 @@ if ( ! class_exists( 'Jet_Elements_Integration' ) ) {
 				'jet-testimonials',
 				'jet-timeline',
 				'jet-video',
-				'jet-weather'
+				'jet-weather',
+				'jet-pie-chart',
+				'jet-bar-chart',
+				'jet-line-chart',
 			];
 		}
 

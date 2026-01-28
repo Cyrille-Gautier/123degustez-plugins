@@ -44,10 +44,12 @@ class Jet_Elements_Pricing_Table extends Jet_Elements_Base {
 	public function get_script_depends() {
 
 		if ( isset( $_GET['elementor-preview'] ) && 'wp_enqueue_scripts' === current_filter() ) { // phpcs:ignore
-			return array( 'tippy-bundle', 'jet-anime-js' );
+			return array( 'tippy-bundle', 'jet-anime-js', 'jet-pricing-table' );
 		}
 
 		$scripts = array();
+
+		$scripts[] = 'jet-pricing-table';
 
 		if ( $this->_pricing_features_items_tooltips_check() ) {
 			$scripts[] = 'tippy-bundle';

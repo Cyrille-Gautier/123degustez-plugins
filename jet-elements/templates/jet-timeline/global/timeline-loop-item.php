@@ -58,7 +58,7 @@ $this->_processed_item_index += 1;
 		}
 		echo $this->_loop_item( array( 'item_meta' ), '<div ' . $item_meta_attr . '>%s</div>' ); // phpcs:ignore
 		if ( 'yes' === $item_settings['show_item_image'] && $image_position === 'outside_after' && 'center' === $settings['horizontal_alignment'] ) {
-			echo $this->_get_timeline_image();
+			echo $this->_get_timeline_image(); // phpcs:ignore
 		}
 		echo '</div>';
 	?>

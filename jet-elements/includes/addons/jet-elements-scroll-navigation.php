@@ -49,7 +49,7 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'jet-resize-sensor' );
+		return array( 'jet-resize-sensor', 'jet-scroll-navigation' );
 	}
 
 	protected function register_controls() {
@@ -734,17 +734,17 @@ class Jet_Elements_Scroll_Navigation extends Jet_Elements_Base {
 		$settings = $this->get_settings();
 
 		$instance_settings = array(
-			'position'              => $settings['position'],
+			'position'              => $this->ensure_allowed_value( $settings['position'], array( 'right', 'left' ) ),
 			//'speed'                 => absint( $settings['speed'] ),
 			'offset'                => absint( $settings['offset'] ),
 			'scroll_threshold'		=> absint( $settings['scroll_threshold'] ),
 			'sectionSwitch'         => filter_var( $settings['full_section_switch'], FILTER_VALIDATE_BOOLEAN ),
 			'sectionSwitchOnMobile' => filter_var( $settings['full_section_switch_on_mobile'], FILTER_VALIDATE_BOOLEAN ),
-			'hintShowType'          => $settings['hint_show_type'],
+			'hintShowType'          => $this->ensure_allowed_value( $settings['hint_show_type'], array( 'show-active-hint', 'show-hint-on-hover' ) ),
 			'sectionIdVisibility'   => filter_var( $settings['section_id_visibility'], FILTER_VALIDATE_BOOLEAN ),
 		);
 
-		$instance_settings = json_encode( $instance_settings );
+		$instance_settings = wp_json_encode( $instance_settings );
 
 		// Escape the JSON string for safe use in HTML attributes
 		$data_settings_attribute = esc_attr( $instance_settings );

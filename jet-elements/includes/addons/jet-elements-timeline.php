@@ -48,6 +48,10 @@ class Jet_Elements_Timeline extends Jet_Elements_Base {
 		return array( 'jet-timeline', 'jet-timeline-skin' ); 
 	}
 
+	public function get_script_depends() {
+		return array( 'jet-timeline' );
+	}
+
 	protected function register_controls() {
 		$css_scheme = apply_filters(
 			'jet-elements/timeline/css-scheme',

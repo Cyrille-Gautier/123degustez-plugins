@@ -51,7 +51,7 @@ class Jet_Elements_Circle_Progress extends Jet_Elements_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'jquery-numerator' );
+		return array( 'jquery-numerator', 'jet-circle-progress' );
 	}
 
 	protected function register_controls() {

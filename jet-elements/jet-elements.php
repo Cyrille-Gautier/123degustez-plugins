@@ -3,7 +3,7 @@
  * Plugin Name: JetElements For Elementor
  * Plugin URI:  https://crocoblock.com/plugins/jetelements/
  * Description: Brand new addon for Elementor Page builder. It provides the set of modules to create different kinds of content, adds custom modules to your website and applies attractive styles in the matter of several clicks!
- * Version:     2.7.12
+ * Version:     2.8.0.1
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-elements
@@ -65,7 +65,7 @@ if ( ! class_exists( 'Jet_Elements' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '2.7.12';
+		private $version = '2.8.0.1';
 
 		/**
 		 * Framework component
@@ -116,6 +116,7 @@ if ( ! class_exists( 'Jet_Elements' ) ) {
 					$this->plugin_path( 'includes/modules/db-updater/cx-db-updater.php' ),
 					$this->plugin_path( 'includes/modules/jet-dashboard/jet-dashboard.php' ),
 					$this->plugin_path( 'includes/modules/jet-elementor-extension/jet-elementor-extension.php' ),
+					$this->plugin_path( 'includes/modules/jet-cache/jet-cache.php' ),
 				)
 			);
 		}
@@ -151,6 +152,10 @@ if ( ! class_exists( 'Jet_Elements' ) ) {
 			jet_elements_compatibility()->init();
 			jet_elements_ext_section()->init();
 			jet_family_column_orientation_ext()->init();
+
+			// Init Jet Cache Module
+			$cache_module_data = $this->module_loader->get_included_module_data( 'jet-cache.php' );
+			\Jet_Cache\Manager::get_instance( $cache_module_data );
 
 			//Init Rest Api
 			new \Jet_Elements\Rest_Api();
@@ -281,7 +286,9 @@ if ( ! class_exists( 'Jet_Elements' ) ) {
 			require $this->plugin_path( 'includes/class-jet-elements-post-tools.php' );
 			require $this->plugin_path( 'includes/class-jet-elements-integration.php' );
 			require $this->plugin_path( 'includes/class-jet-elements-shortcodes.php' );
+			require $this->plugin_path( 'includes/class-jet-elements-advanced-map-geocode-providers.php' );
 			require $this->plugin_path( 'includes/class-jet-elements-settings.php' );
+			require $this->plugin_path( 'includes/class-jet-elements-advanced-map-providers.php' );
 			require $this->plugin_path( 'includes/settings/manager.php' );
 			require $this->plugin_path( 'includes/class-jet-elements-svg-manager.php' );
 			require $this->plugin_path( 'includes/class-jet-elements-ajax-handlers.php' );

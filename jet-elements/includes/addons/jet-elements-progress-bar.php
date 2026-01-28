@@ -51,7 +51,7 @@ class Jet_Elements_Progress_Bar extends Jet_Elements_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'jet-anime-js' );
+		return array( 'jet-anime-js', 'jet-progress-bar' );
 	}
 
 	protected function register_controls() {

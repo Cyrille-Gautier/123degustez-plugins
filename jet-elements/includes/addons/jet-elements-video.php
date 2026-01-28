@@ -47,14 +47,14 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 
 	public function get_script_depends() {
 		if ( isset( $_GET['elementor-preview'] ) && 'wp_enqueue_scripts' === current_filter() ) { // phpcs:ignore
-			return array( 'mediaelement' );
+			return array( 'mediaelement', 'jet-video' );
 		}
 
 		if ( 'mejs' === $this->get_settings( 'self_hosted_player' ) ) {
-			return array( 'mediaelement' );
+			return array( 'mediaelement', 'jet-video' );
 		}
 
-		return array();
+		return array( 'jet-video' );
 	}
 
 	public function get_style_depends() {
@@ -517,6 +517,22 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 				),
 				'dynamic' => array(
 					'active' => true,
+				),
+			)
+		);
+
+		$this->add_control(
+			'disable_caching',
+			array(
+				'label'        => esc_html__( 'Disable Caching', 'jet-elements' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-elements' ),
+				'label_off'    => esc_html__( 'No', 'jet-elements' ),
+				'return_value' => 'yes',
+				'default'      => '',
+				'description'  => esc_html__( 'Force fetching fresh video data on each page load. Not recommended, for debugging only.', 'jet-elements' ),
+				'condition'    => array(
+					'video_type' => array( 'youtube', 'vimeo' ),
 				),
 			)
 		);
@@ -2153,22 +2169,31 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 
 	public function get_iframe_thumbnail_url( $url ) {
 		$settings  = $this->get_settings_for_display();
+		$caching   = empty( $settings['disable_caching'] ) || 'yes' !== $settings['disable_caching'];
+		
+		$cache_data = $this->get_video_cache( $url, $caching );
+		$data       = $cache_data['oembed'] ?? null;
 
-		$oembed = _wp_oembed_get_object();
-		$data   = $oembed->get_data( $url );
+		if ( ! $data || is_wp_error( $data ) ) {
+			return '';
+		}
+
+		if ( empty( $data->thumbnail_url ) ) {
+			return '';
+		}
 
 		$thumb_url = $data->thumbnail_url;
 
 		if ( 'youtube' === $settings['video_type'] ) {
 			if ( isset( $settings['show_thumbnail_max_res'] ) && 'yes' === $settings['show_thumbnail_max_res'] ) {
 				if ( apply_filters( 'jet-elements/video/youtube/load-max-resolution-thumb', true ) ) {
-					$thumb_url = $this->get_thumb_image_url( $url, 'maxresdefault' );
+					$thumb_url = $this->get_thumb_image_url( $url, 'maxresdefault', $cache_data );
 
 					if ( '' === $thumb_url ) {
-						$thumb_url = $this->get_thumb_image_url( $url, 'hqdefault' );
+						$thumb_url = $this->get_thumb_image_url( $url, 'hqdefault', $cache_data );
 					}
 				} else {
-					$thumb_url = $this->get_thumb_image_url( $url, 'hqdefault' );
+					$thumb_url = $this->get_thumb_image_url( $url, 'hqdefault', $cache_data );
 				}
 
 				if ( '' === $thumb_url ) {
@@ -2182,27 +2207,60 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 		return esc_url( $thumb_url );
 	}
 
-	public function get_thumb_image_url( $url, $quality ) {
-		parse_str( parse_url( $url, PHP_URL_QUERY ) ?? '', $url_vars );
+	public function get_thumb_image_url( $url, $quality, $cache_data = null ) {
+		$settings = $this->get_settings_for_display();
+		$caching  = empty( $settings['disable_caching'] ) || 'yes' !== $settings['disable_caching'];
 
 		preg_match('/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $match);
+		
+		if ( empty( $match[1] ) ) {
+			return '';
+		}
+
 		$video_id = $match[1];
+
+		if ( null === $cache_data ) {
+			$cache_data = $this->get_video_cache( $url, $caching );
+		}
+
+		if ( isset( $cache_data['thumbnails'][ $quality ] ) ) {
+			$thumb_url = $cache_data['thumbnails'][ $quality ];
+			if ( false !== $thumb_url ) {
+				return $thumb_url;
+			}
+		}
 
 		$response_webp      = wp_remote_get( 'https://i.ytimg.com/vi_webp/' . $video_id . '/' . $quality . '.webp' );
 		$response_webp_code = wp_remote_retrieve_response_code( $response_webp );
 
 		if ( ! is_wp_error( $response_webp ) && 200 === $response_webp_code ) {
-			return $thumb_url = 'https://i.ytimg.com/vi_webp/' . $video_id . '/' . $quality . '.webp';
+			$thumb_url = 'https://i.ytimg.com/vi_webp/' . $video_id . '/' . $quality . '.webp';
+			
+			if ( $caching ) {
+				$this->set_video_cache_thumbnail( $url, $quality, $thumb_url, $cache_data );
+			}
+			
+			return $thumb_url;
 		}
 
 		$response      = wp_remote_get( 'https://i.ytimg.com/vi/' . $video_id . '/' . $quality . '.jpg' );
 		$response_code = wp_remote_retrieve_response_code( $response );
 
 		if ( ! is_wp_error( $response ) && 200 === $response_code ) {
-			return $thumb_url = 'https://i.ytimg.com/vi/' . $video_id . '/' . $quality . '.jpg';
+			$thumb_url = 'https://i.ytimg.com/vi/' . $video_id . '/' . $quality . '.jpg';
+			
+			if ( $caching ) {
+				$this->set_video_cache_thumbnail( $url, $quality, $thumb_url, $cache_data );
+			}
+			
+			return $thumb_url;
 		}
 
-		return $thumb_url = '';
+		if ( $caching ) {
+			$this->set_video_cache_thumbnail( $url, $quality, '', $cache_data );
+		}
+
+		return '';
 	}
 
 	public function get_thumbnail_url() {
@@ -2233,5 +2291,78 @@ class Jet_Elements_Video extends Jet_Elements_Base {
 		$lightbox_url = Embed::get_embed_url( $video_url, $embed_params, $embed_options );
 		
 		return $lightbox_url;
+	}
+
+	/**
+	 * Get unified video cache (oEmbed + thumbnails).
+	 *
+	 * @param  string $url     Video URL.
+	 * @param  bool   $caching Whether to use caching.
+	 * @return array  Cache data with 'oembed' and 'thumbnails' keys.
+	 */
+	private function get_video_cache( $url, $caching ) {
+		$cache_key = 'jet_elements_video_' . jet_elements()->get_version() . md5( $url );
+		$cache_data = array(
+			'oembed'    => null,
+			'thumbnails' => array(),
+		);
+
+		if ( $caching ) {
+			$cached = jet_get_transient( $cache_key, false );
+			if ( false !== $cached && is_array( $cached ) ) {
+				$cache_data = $cached;
+			}
+		}
+
+		if ( null === $cache_data['oembed'] ) {
+			$oembed = _wp_oembed_get_object();
+			$data   = $oembed->get_data( $url );
+
+			if ( $data && ! is_wp_error( $data ) ) {
+				$cache_data['oembed'] = $data;
+			} else {
+				$cache_data['oembed'] = false;
+			}
+
+			if ( $caching ) {
+				$ttl = $this->get_cache_ttl();
+				jet_set_transient( $cache_key, $cache_data, $ttl, 0, 'jet-elements' );
+			}
+		}
+
+		return $cache_data;
+	}
+
+	/**
+	 * Update thumbnail in video cache.
+	 *
+	 * @param string $url        Video URL.
+	 * @param string $quality    Thumbnail quality.
+	 * @param string $thumb_url  Thumbnail URL (or empty string for negative result).
+	 * @param array  $cache_data Existing cache data.
+	 */
+	private function set_video_cache_thumbnail( $url, $quality, $thumb_url, $cache_data ) {
+		if ( ! isset( $cache_data['thumbnails'] ) ) {
+			$cache_data['thumbnails'] = array();
+		}
+
+		$cache_data['thumbnails'][ $quality ] = $thumb_url;
+
+		$cache_key = 'jet_elements_video_' . jet_elements()->get_version() . md5( $url );
+		$ttl       = $this->get_cache_ttl();
+
+		jet_set_transient( $cache_key, $cache_data, $ttl, 0, 'jet-elements' );
+	}
+
+	/**
+	 * Filter cache lifetime for video thumbnails and oEmbed data.
+	 *
+	 * @return int   TTL in seconds.
+	 */
+	private function get_cache_ttl() {
+		$hours = 6;
+		$hours = (int) apply_filters( 'jet-elements/video-cache/ttl-hours', $hours );
+		
+		return HOUR_IN_SECONDS * $hours;
 	}
 }

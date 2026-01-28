@@ -52,7 +52,7 @@ class Jet_Elements_Portfolio extends Jet_Elements_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'imagesloaded', 'jet-masonry-js', 'jet-anime-js' );
+		return array( 'imagesloaded', 'jet-masonry-js', 'jet-anime-js', 'jet-portfolio' );
 	}
 
 	protected function register_controls() {
@@ -2062,11 +2062,14 @@ class Jet_Elements_Portfolio extends Jet_Elements_Base {
 		$module_settings = $this->get_settings();
 
 		$settings = array(
-			'layoutType' => $module_settings['layout_type'],
-			'perPage'    => $module_settings['per_page'],
+			'layoutType' => $this->ensure_allowed_value( $module_settings['layout_type'], array( 'masonry', 'grid', 'justify', 'list' ) ),
+			'perPage'    => absint( $module_settings['per_page'] ),
 		);
 
-		$settings = json_encode( $settings );
+		$settings = wp_json_encode( $settings );
+
+		// Escape the JSON string for safe use in HTML attributes
+		$settings = esc_attr( $settings );
 
 		return $settings;
 	}

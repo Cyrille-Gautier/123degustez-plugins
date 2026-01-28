@@ -73,7 +73,7 @@ class Jet_Elements_Bar_Chart extends Jet_Elements_Base {
 	 * @return array
 	 */
 	public function get_script_depends() {
-		return array( 'chart-js' );
+		return array( 'chart-js', 'jet-bar-chart' );
 	}
 
 	/**

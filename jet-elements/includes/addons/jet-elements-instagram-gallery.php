@@ -98,6 +98,10 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 		return array( 'jet-instagram-gallery', 'jet-instagram-gallery-skin' ); 
 	}
 
+	public function get_script_depends() {
+		return array( 'jet-instagram-gallery' );
+	}
+
 	protected function register_controls() {
 
 		$css_scheme = apply_filters(
@@ -1798,15 +1802,18 @@ class Jet_Elements_Instagram_Gallery extends Jet_Elements_Base {
 		$module_settings = $this->get_settings();
 
 		$settings = array(
-			'layoutType'    => $module_settings['layout_type'],
-			'columns'       => $module_settings['columns'],
-			'columnsTablet' => $module_settings['columns_tablet'],
-			'columnsMobile' => $module_settings['columns_mobile'],
+			'layoutType'    => $this->ensure_allowed_value( $module_settings['layout_type'], array( 'masonry', 'grid', 'list' ) ),
+			'columns'       => absint( $module_settings['columns'] ),
+			'columnsTablet' => absint( $module_settings['columns_tablet'] ),
+			'columnsMobile' => absint( $module_settings['columns_mobile'] ),
 		);
 
-		$settings = json_encode( $settings );
+		$settings = wp_json_encode( $settings );
 
-		return sprintf( 'data-settings=\'%1$s\'', $settings );
+		// Escape the JSON string for safe use in HTML attributes
+		$data_settings_attribute = esc_attr( $settings );
+
+		return sprintf( 'data-settings=\'%1$s\'', $data_settings_attribute );
 	}
 
 	/**

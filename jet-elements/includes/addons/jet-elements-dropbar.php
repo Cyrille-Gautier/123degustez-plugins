@@ -44,6 +44,10 @@ class Jet_Elements_Dropbar extends Jet_Elements_Base {
 		return array( 'jet-dropbar' ); 
 	}
 
+	public function get_script_depends() {
+		return array( 'jet-dropbar' );
+	}
+
 	protected function register_controls() {
 		$css_scheme = apply_filters(
 			'jet-elements/dropbar/css-scheme',

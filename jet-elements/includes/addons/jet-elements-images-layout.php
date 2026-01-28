@@ -47,7 +47,7 @@ class Jet_Elements_Images_Layout extends Jet_Elements_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'imagesloaded', 'jet-salvattore' );
+		return array( 'imagesloaded', 'jet-salvattore', 'jet-images-layout' );
 	}
 
 	/**
@@ -964,11 +964,11 @@ class Jet_Elements_Images_Layout extends Jet_Elements_Base {
 		$module_settings = $this->get_settings();
 
 		$settings = array(
-			'layoutType'    => $module_settings['layout_type'],
-			'justifyHeight' => $module_settings['justify_height'],
+			'layoutType'    => $this->ensure_allowed_value( $module_settings['layout_type'], array( 'masonry', 'grid', 'justify', 'list' ) ),
+			'justifyHeight' => absint( $module_settings['justify_height'] ),
 		);
 
-		$settings = json_encode( $settings );
+		$settings = wp_json_encode( $settings );
 
 		// Escape the JSON string for safe use in HTML attributes
 		$data_settings_attribute = esc_attr( $settings );

@@ -47,11 +47,11 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 
 	public function get_script_depends() {
 		if ( isset( $_GET['elementor-preview'] ) && 'wp_enqueue_scripts' === current_filter() ) { // phpcs:ignore
-			return array( 'mediaelement', 'mejs-speed' );
+			return array( 'mediaelement', 'mejs-speed', 'jet-audio' );
 		} else if ( 'yes' === $this->get_settings( 'speed' ) ){
-			return array( 'mediaelement', 'mejs-speed' );
+			return array( 'mediaelement', 'mejs-speed', 'jet-audio' );
 		} else {
-			return array( 'mediaelement' );
+			return array( 'mediaelement', 'jet-audio' );
 		}
 	}
 
@@ -161,7 +161,7 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 			'audio_support_desc',
 			array(
 				'type' => Controls_Manager::RAW_HTML,
-				'raw'  => esc_html__( 'Audio Player support MP3 audio format', 'jet-elements' ),
+				'raw'  => esc_html__( 'Audio Player supports MP3, Google Drive, SoundCloud, Spotify, and YouTube audio formats', 'jet-elements' ),
 				'content_classes' => 'elementor-descriptor',
 			)
 		);
@@ -1514,16 +1514,42 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 
 		endswitch;
 
+		if ( empty( $audio_url ) ) {
+			return;
+		}
+
+		$is_embed  = false;
+		$embed_src = '';
+		
+		if ( preg_match( '#drive\.google\.com\/file\/d\/([^\/]+)/?#', $audio_url, $m ) ) {
+			$is_embed  = true;
+			$embed_src = sprintf( 'https://drive.google.com/file/d/%s/preview', esc_attr( $m[1] ) );
+		}
+		// SoundCloud
+		elseif ( preg_match( '#soundcloud\.com#i', $audio_url ) ) {
+			$is_embed  = true;
+			$embed_src = sprintf(
+				'https://w.soundcloud.com/player/?url=%s',
+				rawurlencode( $audio_url )
+			);
+		}
+		// Spotify
+		elseif ( preg_match( '#open\.spotify\.com/track/([A-Za-z0-9]+)#', $audio_url, $m ) ) {
+			$is_embed  = true;
+			$embed_src = sprintf( 'https://open.spotify.com/embed/track/%s', esc_attr( $m[1] ) );
+		}
+		// YouTube
+		elseif ( preg_match( '#(?:youtube\.com/watch\?v=|youtu\.be/)([A-Za-z0-9_-]+)#', $audio_url, $m ) ) {
+			$is_embed  = true;
+			$embed_src = sprintf( 'https://www.youtube.com/embed/%s', esc_attr( $m[1] ) );
+		}
+
 		if ( is_numeric( $audio_url ) ) {
 			$audio_url = wp_get_attachment_url( $audio_url );
 		} else if ( strpos( $audio_url, ',' ) !== false ) {
 			$parts = array_map( 'trim', explode( ',', $audio_url ) );
 			$url = wp_get_attachment_url( $parts[0] );
 			$audio_url = $url ? $url : ( $parts[1] ?? '' );
-		}
-
-		if ( empty( $audio_url ) ) {
-			return;
 		}
 
 		$controls = array( 'playpause' );
@@ -1591,7 +1617,19 @@ class Jet_Elements_Audio extends Jet_Elements_Base {
 		?>
 
 		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
-			<audio <?php $this->print_render_attribute_string( 'player' ); ?>></audio>
+			<?php if ( ! $is_embed ) : ?>
+				<audio <?php $this->print_render_attribute_string( 'player' ); ?>></audio>
+			<?php else : ?>
+				<iframe
+					class="jet-audio-iframe"
+					src="<?php echo esc_url( $embed_src ); ?>"
+					width="100%"
+					height="200"
+					frameborder="0"
+					allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+					allowfullscreen>
+				</iframe>
+			<?php endif; ?>
 		</div>
 
 		<?php

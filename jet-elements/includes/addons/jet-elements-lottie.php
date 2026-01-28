@@ -48,7 +48,7 @@ class Jet_Elements_Lottie extends Jet_Elements_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'jet-lottie' );
+		return array( 'jet-lottie-js', 'jet-lottie' );
 	}
 
 	protected function register_controls() {
@@ -170,11 +170,12 @@ class Jet_Elements_Lottie extends Jet_Elements_Base {
 				'type'    => Controls_Manager::SELECT,
 				'default' => 'autoplay',
 				'options' => array(
-					'autoplay'    => esc_html__( 'Autoplay', 'jet-elements' ),
-					'on_hover'    => esc_html__( 'On Hover', 'jet-elements' ),
-					'on_click'    => esc_html__( 'On Click', 'jet-elements' ),
-					'on_scroll'   => esc_html__( 'Scroll', 'jet-elements' ),
-					'on_viewport' => esc_html__( 'Viewport', 'jet-elements' ),
+					'autoplay'            => esc_html__( 'Autoplay', 'jet-elements' ),
+					'on_hover'            => esc_html__( 'On Hover', 'jet-elements' ),
+					'on_click'            => esc_html__( 'On Click', 'jet-elements' ),
+					'on_click_reversible' => esc_html__( 'On Click Reversible', 'jet-elements' ),
+					'on_scroll'           => esc_html__( 'Scroll', 'jet-elements' ),
+					'on_viewport'         => esc_html__( 'Viewport', 'jet-elements' ),
 				),
 			)
 		);
@@ -255,7 +256,7 @@ class Jet_Elements_Lottie extends Jet_Elements_Base {
 				'type'      => Controls_Manager::SWITCHER,
 				'default'   => 'yes',
 				'condition' => array(
-					'action_start!' => 'on_scroll',
+					'action_start!' => array( 'on_scroll', 'on_click_reversible' ),
 				),
 			)
 		);
@@ -270,7 +271,7 @@ class Jet_Elements_Lottie extends Jet_Elements_Base {
 				'default'     => '',
 				'condition'   => array(
 					'loop'          => 'yes',
-					'action_start!' => 'on_scroll',
+					'action_start!' => array( 'on_scroll', 'on_click_reversible' ),
 				),
 			)
 		);
@@ -533,16 +534,16 @@ class Jet_Elements_Lottie extends Jet_Elements_Base {
 
 		$data = array(
 			'path'             => $path,
-			'renderer'         => $settings['renderer'],
-			'action_start'     => $settings['action_start'],
-			'delay'            => $settings['delay'],
-			'on_hover_out'     => $settings['on_hover_out'],
-			'redirect_timeout' => $settings['redirect_timeout'],
-			'viewport'         => isset( $settings['viewport'] ) ? $settings['viewport']['sizes'] : '',
+			'renderer'         => $this->ensure_allowed_value( $settings['renderer'], array( 'svg', 'canvas' ) ),
+			'action_start'     => $this->ensure_allowed_value( $settings['action_start'], array( 'autoplay', 'on_hover', 'on_click', 'on_scroll', 'on_viewport', 'on_click_reversible' ) ),
+			'delay'            => absint( $settings['delay'] ),
+			'on_hover_out'     => $this->ensure_allowed_value( $settings['on_hover_out'], array( 'default', 'pause', 'stop', 'reverse' ) ),
+			'redirect_timeout' => absint( $settings['redirect_timeout'] ),
+			'viewport'         => isset( $settings['viewport'] ) ? absint( $settings['viewport']['sizes'] ) : '',
 			'loop'             => filter_var( $settings['loop'], FILTER_VALIDATE_BOOLEAN ),
-			'loop_times'       => ! empty( $settings['loop_times'] ) ? $settings['loop_times'] : '',
+			'loop_times'       => ! empty( $settings['loop_times'] ) ? absint( $settings['loop_times'] ) : '',
 			'reversed'         => filter_var( $settings['reversed'], FILTER_VALIDATE_BOOLEAN ),
-			'play_speed'       => $settings['play_speed'],
+			'play_speed'       => floatval( $settings['play_speed'] ),
 		);
 
 		$inner = '<div class="jet-lottie__elem"></div>';
@@ -556,7 +557,7 @@ class Jet_Elements_Lottie extends Jet_Elements_Base {
 
 		$this->_open_wrap();
 
-		printf( '<div class="jet-lottie" data-settings="%2$s">%1$s</div>', $inner, esc_attr( json_encode( $data ) ) ); // phpcs:ignore
+		printf( '<div class="jet-lottie" data-settings="%2$s">%1$s</div>', $inner, esc_attr( wp_json_encode( $data ) ) ); // phpcs:ignore
 
 		$this->_close_wrap();
 	}

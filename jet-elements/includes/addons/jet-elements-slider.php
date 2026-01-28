@@ -43,7 +43,7 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'imagesloaded', 'jet-slider-pro' );
+		return array( 'imagesloaded', 'jet-slider-pro', 'jet-slider' );
 	}
 
 	public function get_style_depends() {
@@ -3333,38 +3333,38 @@ class Jet_Elements_Slider extends Jet_Elements_Base {
 		$widget_id = $this->get_id();
 
 		$settings = array(
-			'sliderWidth'           => $module_settings['slider_width'],
-			'sliderHeight'          => $module_settings['slider_height'],
+			'sliderWidth'           => absint( $module_settings['slider_width'] ),
+			'sliderHeight'          => absint( $module_settings['slider_height'] ),
 			'sliderNavigation'      => filter_var( $module_settings['slider_navigation'], FILTER_VALIDATE_BOOLEAN ),
-			'sliderNavigationIcon'  => 'jet-slider__arrow-icon-' . $widget_id,
+			'sliderNavigationIcon'  => 'jet-slider__arrow-icon-' . sanitize_key( $widget_id ),
 			'sliderNaviOnHover'     => filter_var( $module_settings['slider_navigation_on_hover'], FILTER_VALIDATE_BOOLEAN ),
 			'sliderPagination'      => filter_var( $module_settings['slider_pagination'], FILTER_VALIDATE_BOOLEAN ),
 			'sliderAutoplay'        => filter_var( $module_settings['slider_autoplay'], FILTER_VALIDATE_BOOLEAN ),
-			'sliderAutoplayDelay'   => $module_settings['slider_autoplay_delay'],
-			'sliderAutoplayOnHover' => $module_settings['slide_autoplay_on_hover'],
+			'sliderAutoplayDelay'   => absint( $module_settings['slider_autoplay_delay'] ),
+			'sliderAutoplayOnHover' => $this->ensure_allowed_value( $module_settings['slide_autoplay_on_hover'], array( 'pause', 'none', 'stop' ) ),
 			'sliderFullScreen'      => filter_var( $module_settings['slider_fullScreen'], FILTER_VALIDATE_BOOLEAN ),
-			'sliderFullscreenIcon'  => 'jet-slider__fullscreen-icon-' . $widget_id,
+			'sliderFullscreenIcon'  => 'jet-slider__fullscreen-icon-' . sanitize_key( $widget_id ),
 			'sliderShuffle'         => filter_var( $module_settings['slider_shuffle'], FILTER_VALIDATE_BOOLEAN ),
 			'sliderLoop'            => filter_var( $module_settings['slider_loop'], FILTER_VALIDATE_BOOLEAN ),
 			'sliderFadeMode'        => filter_var( $module_settings['slider_fade_mode'], FILTER_VALIDATE_BOOLEAN ),
-			'slideDistance'         => $module_settings['slide_distance'],
-			'slideDuration'         => $module_settings['slide_duration'],
-			'imageScaleMode'        => $module_settings['slide_image_scale_mode'],
+			'slideDistance'         => absint( $module_settings['slide_distance'] ),
+			'slideDuration'         => absint( $module_settings['slide_duration'] ),
+			'imageScaleMode'        => $this->ensure_allowed_value( $module_settings['slide_image_scale_mode'], array( 'exact', 'contain' ) ),
 			'thumbnails'            => filter_var( $module_settings['thumbnails'], FILTER_VALIDATE_BOOLEAN ),
-			'thumbnailWidth'        => $module_settings['thumbnail_width'],
-			'thumbnailHeight'       => $module_settings['thumbnail_height'],
+			'thumbnailWidth'        => absint( $module_settings['thumbnail_width'] ),
+			'thumbnailHeight'       => absint( $module_settings['thumbnail_height'] ),
 			'rightToLeft'           => is_rtl(),
 			'touchswipe'            => filter_var( $module_settings['slider_touchswipe'], FILTER_VALIDATE_BOOLEAN ),
 			'fractionPag'           => filter_var( $module_settings['fraction_pagination'], FILTER_VALIDATE_BOOLEAN ),
-			'fractionPrefix'   		=> $module_settings['fractionPrefix'],
-			'fractionSeparator'		=> $module_settings['fractionSeparator'],
-			'fractionSuffix'   		=> $module_settings['fractionSuffix'],
+			'fractionPrefix'   		=> sanitize_text_field( $module_settings['fractionPrefix'] ),
+			'fractionSeparator'		=> sanitize_text_field( $module_settings['fractionSeparator'] ),
+			'fractionSuffix'   		=> sanitize_text_field( $module_settings['fractionSuffix'] ),
 			'autoSliderHeight'    => filter_var( $module_settings['auto_adjust_slide_height'], FILTER_VALIDATE_BOOLEAN ),
 		);
 
 		$settings = apply_filters( 'jet-elements/slider/slider-options', $settings, $module_settings );
 
-		$settings = json_encode( $settings );
+		$settings = wp_json_encode( $settings );
 
     	// Escape the JSON string for safe use in HTML attributes
    		$data_settings_attribute = esc_attr( $settings );

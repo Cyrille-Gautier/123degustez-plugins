@@ -55,7 +55,7 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 	 * @return array
 	 */
 	public function get_script_depends() {
-		return array( 'imagesloaded', 'html2canvas', 'oridomi', 'peel-js', 'jquery-ui-draggable', 'jquery-touch-punch' );
+		return array( 'imagesloaded', 'html2canvas', 'oridomi', 'peel-js', 'jquery-ui-draggable', 'jquery-touch-punch', 'jet-animated-box' );
 	}
 
 
@@ -2266,18 +2266,18 @@ class Jet_Elements_Animated_Box extends Jet_Elements_Base {
 		$settings = $this->get_settings();
 
 		$instance_settings = array(
-			'widgetId'           => $this->get_id(),
-			'switchEventType'    => $settings['switch_event_type'],
-			'paperFoldDirection' => isset( $settings['paper_fold_direction'] ) ? $settings['paper_fold_direction'] : 'left',
-			'slideOutDirection'  => isset( $settings['slide_out_direction'] ) ? $settings['slide_out_direction'] : 'left',
-			'peelCornerPosition' => isset( $settings['peel_corner_position'] ) ? $settings['peel_corner_position'] : 'right',
+			'widgetId'           => sanitize_key( $this->get_id() ),
+			'switchEventType'    => $this->ensure_allowed_value( $settings['switch_event_type'], array( 'hover', 'click', 'toggle', 'scratch', 'fold', 'peel', 'slide-out' ) ),
+			'paperFoldDirection' => $this->ensure_allowed_value( $settings['paper_fold_direction'], array( 'left', 'top', 'right', 'bottom' ) ),
+			'slideOutDirection'  => $this->ensure_allowed_value( $settings['slide_out_direction'], array( 'left', 'top', 'right', 'bottom' ) ),
+			'peelCornerPosition' => $this->ensure_allowed_value( $settings['peel_corner_position'], array( 'right', 'left' ) ),
 		);
 
 		if ( 'scratch' === $settings['switch_event_type'] ) {
-			$instance_settings['scratchFillPercent'] = ! empty( $settings['scratch_fill_percent']['size'] ) ? $settings['scratch_fill_percent']['size'] : 75;
+			$instance_settings['scratchFillPercent'] = ! empty( $settings['scratch_fill_percent']['size'] ) ? absint( $settings['scratch_fill_percent']['size'] ) : 75;
 		}
 
-		$instance_settings = json_encode( $instance_settings );
+		$instance_settings = wp_json_encode( $instance_settings );
 
 		// Escape the JSON string for safe use in HTML attributes
 		$data_settings_attribute = esc_attr( $instance_settings );

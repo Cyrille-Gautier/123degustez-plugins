@@ -45,7 +45,7 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 	}
 
 	public function get_script_depends() {
-		return array( 'jet-slick' );
+		return array( 'jet-slick', 'jet-testimonials' );
 	}
 
 	protected function register_controls() {
@@ -2761,25 +2761,26 @@ class Jet_Elements_Testimonials extends Jet_Elements_Base {
 			'autoplay'       => filter_var( $settings['autoplay'], FILTER_VALIDATE_BOOLEAN ),
 			'infinite'       => filter_var( $settings['infinite'], FILTER_VALIDATE_BOOLEAN ),
 			'centerMode'     => filter_var( $settings['centered'], FILTER_VALIDATE_BOOLEAN ),
-			'centerPadding'  => ! empty( $settings['centered_padding'] ) ? $settings['centered_padding'] . 'px' : '50px',
+			'centerPadding'  => ! empty( $settings['centered_padding'] ) ? absint( $settings['centered_padding'] ) . 'px' : '50px',
 			'adaptiveHeight' => filter_var( $settings['adaptive_height'], FILTER_VALIDATE_BOOLEAN ),
 			'pauseOnHover'   => filter_var( $settings['pause_on_hover'], FILTER_VALIDATE_BOOLEAN ),
 			'speed'          => absint( $settings['speed'] ),
 			'arrows'         => filter_var( $settings['arrows'], FILTER_VALIDATE_BOOLEAN ),
 			'dots'           => filter_var( $settings['dots'], FILTER_VALIDATE_BOOLEAN ),
 			'slidesToScroll' => 1 < absint( $settings['slides_to_show'] ) ? absint( $settings['slides_to_scroll'] ) : 1,
-			'prevArrow'      => '.jet-testimonial__prev-arrow-' . $widget_id,
-			'nextArrow'      => '.jet-testimonial__next-arrow-' . $widget_id,
+			'prevArrow'      => '.jet-testimonial__prev-arrow-' . sanitize_key( $widget_id ),
+			'nextArrow'      => '.jet-testimonial__next-arrow-' . sanitize_key( $widget_id ),
 			'rtl'            => is_rtl(),
 		);
 
-		if ( 'fade' === $settings['effect'] && 1 >= absint( $settings['slides_to_show'] ) ) {
+		$effect = $this->ensure_allowed_value( $settings['effect'], array( 'slide', 'fade' ) );
+		if ( 'fade' === $effect && 1 >= absint( $settings['slides_to_show'] ) ) {
 			$instance_settings['fade'] = true;
 		}
 
 		$instance_settings = apply_filters( 'jet-elements/jet-testimonials/carousel-options', $instance_settings, $settings, $widget_id );
 
-		$instance_settings = json_encode( $instance_settings );
+		$instance_settings = wp_json_encode( $instance_settings );
 
 		// Escape the JSON string for safe use in HTML attributes
 		$data_settings_attribute = esc_attr( $instance_settings );

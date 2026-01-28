@@ -50,6 +50,10 @@ class Jet_Elements_Countdown_Timer extends Jet_Elements_Base {
 		return array( 'jet-countdown-timer', 'jet-countdown-timer-skin' ); 
 	}
 
+	public function get_script_depends() {
+		return array( 'jet-countdown-timer' );
+	}
+
 	protected function register_controls() {
 
 		$css_scheme = apply_filters(

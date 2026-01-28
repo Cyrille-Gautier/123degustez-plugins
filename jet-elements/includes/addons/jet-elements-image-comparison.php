@@ -45,6 +45,7 @@ class Jet_Elements_Image_Comparison extends Jet_Elements_Base {
 		return array(
 			'jet-slick',
 			'jet-juxtapose',
+			'jet-image-comparison'
 		);
 	}
 
@@ -1683,14 +1684,18 @@ class Jet_Elements_Image_Comparison extends Jet_Elements_Base {
 			'rtl' => is_rtl(),
 		);
 
-		if ( 'fade' === $settings['effect'] ) {
+		$effect = $this->ensure_allowed_value( $settings['effect'], array( 'slide', 'fade' ) );
+		if ( 'fade' === $effect ) {
 			$instance_settings['fade'] = true;
 		}
 
 		$instance_settings = apply_filters( 'jet-elements/jet-image-comparison/carousel-options', $instance_settings, $settings, $widget_id );
 
-		$instance_settings = json_encode( $instance_settings );
+		$instance_settings = wp_json_encode( $instance_settings );
 
-		return sprintf( 'data-settings=\'%1$s\'', $instance_settings );
+		// Escape the JSON string for safe use in HTML attributes
+		$data_settings_attribute = esc_attr( $instance_settings );
+
+		return sprintf( 'data-settings=\'%1$s\'', $data_settings_attribute );
 	}
 }

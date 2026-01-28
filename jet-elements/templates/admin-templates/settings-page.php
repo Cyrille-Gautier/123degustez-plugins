@@ -59,6 +59,16 @@
 						class="cx-vui-subtitle"
 						v-html="'<?php esc_html_e( 'Google Maps', 'jet-elements' ); ?>'"></div>
 
+					<cx-vui-select
+						name="map-provider"
+						label="<?php esc_attr_e( 'Map Provider', 'jet-elements' ); ?>"
+						description="<?php esc_attr_e( 'Select a maps rendering provider for the Advanced Map widget.', 'jet-elements' ); ?>"
+						:wrapper-css="[ 'equalwidth' ]"
+						size="fullwidth"
+						:options-list="pageOptions.map_provider.options"
+						v-model="pageOptions.map_provider.value"></cx-vui-select>
+
+					<template v-if="'google' === pageOptions.map_provider.value">
 					<cx-vui-input
 						name="google-map-api-key"
 						label="<?php esc_attr_e( 'Google Map API Key', 'jet-elements' ); ?>"
@@ -80,7 +90,29 @@
 						return-false="false"
 						v-model="pageOptions.disable_api_js.value.disable">
 					</cx-vui-switcher>
+					</template>
 
+					<template v-if="'mapbox' === pageOptions.map_provider.value">
+						<cx-vui-input
+							name="mapbox-access-token"
+							label="<?php esc_attr_e( 'Access token', 'jet-elements' ); ?>"
+							description="<?php _e( 'Create access token at Mapbox <a href=\'https://www.mapbox.com/\' target=\'_blank\'>website</a>', 'jet-elements' ); ?>"
+							:wrapper-css="[ 'equalwidth' ]"
+							size="fullwidth"
+							v-model="pageOptions.mapbox_access_token.value"></cx-vui-input>
+					</template>
+
+					<cx-vui-select
+						name="geocode-provider"
+						label="<?php esc_attr_e( 'Geocoding Provider', 'jet-elements' ); ?>"
+						description="<?php esc_attr_e( 'Select a service for converting addresses into coordinates.', 'jet-elements' ); ?>"
+						:wrapper-css="[ 'equalwidth' ]"
+						size="fullwidth"
+						:options-list="pageOptions.geocode_provider.options"
+						v-model="pageOptions.geocode_provider.value"></cx-vui-select>
+
+					<template v-if="'google' === pageOptions.geocode_provider.value">
+						<template v-if="'google' === pageOptions.map_provider.value">
 					<cx-vui-switcher
 						name="google-map-use-geocoding-key"
 						label="<?php esc_attr_e( 'Separate Geocoding API key', 'jet-elements' ); ?>"
@@ -88,7 +120,7 @@
 						:wrapper-css="[ 'equalwidth' ]"
 						return-true="true"
 						return-false="false"
-						v-model="pageOptions.use_geocoding_key.value.disable">
+								v-model="pageOptions.use_geocoding_key.value">
 					</cx-vui-switcher>
 
 					<cx-vui-input
@@ -98,8 +130,38 @@
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						v-model="pageOptions.geocoding_key.value"
-						v-if="pageOptions.use_geocoding_key">
+								v-if="pageOptions.use_geocoding_key.value === 'true'">
+							</cx-vui-input>
+						</template>
+						<template v-else>
+							<cx-vui-input
+								name="google-map-geocoding-api-key"
+								label="<?php esc_attr_e( 'Geocoding API Key', 'jet-elements' ); ?>"
+								description="<?php esc_attr_e( 'Google maps API key with Geocoding API enabled. For this key <b>Application restrictions</b> should be set to <b>None</b> or <b>IP addresses</b> and in the <b>API restrictions</b> you need to select <b>Don\'t restrict key</b> or enable <b>Geocoding API</b>', 'jet-elements' );?>"
+								:wrapper-css="[ 'equalwidth' ]"
+								size="fullwidth"
+								v-model="pageOptions.geocoding_key.value">
+							</cx-vui-input>
+						</template>
+					</template>
+
+					<template v-if="'openstreetmap' === pageOptions.geocode_provider.value">
+						<cx-vui-component-wrapper
+							label="<?php esc_attr_e( 'Note', 'jet-elements' ); ?>"
+							description="<?php esc_attr_e( 'Be aware that this service runs on donated servers and has a very limited capacity. So please avoid heavy uses (an absolute maximum of 1 request per second).', 'jet-elements' ); ?>"
+						></cx-vui-component-wrapper>
+					</template>
+
+					<template v-if="'bing' === pageOptions.geocode_provider.value">
+						<cx-vui-input
+							name="bing-map-api-key"
+							label="<?php esc_attr_e( 'Bing API Key', 'jet-elements' ); ?>"
+							description="<?php _e( 'API key instructions - <a href=\'https://www.microsoft.com/en-us/maps/create-a-bing-maps-key\' target=\'_blank\'>https://www.microsoft.com/en-us/maps/create-a-bing-maps-key</a>', 'jet-elements' ); ?>"
+							:wrapper-css="[ 'equalwidth' ]"
+							size="fullwidth"
+							v-model="pageOptions.bing_key.value">
 					</cx-vui-input>
+					</template>
 
 					<div
 						class="cx-vui-subtitle"
@@ -174,6 +236,30 @@
 						:wrapper-css="[ 'equalwidth' ]"
 						size="fullwidth"
 						v-model="pageOptions.weather_api_key.value"></cx-vui-input>
+
+						<div
+							class="cx-vui-subtitle"
+							v-html="'<?php esc_html_e( 'OpenWeatherMap API (free & commercial plans)', 'jet-elements' ); ?>'">
+						</div>
+
+						<div class="cx-vui-component__desc"
+							v-html="'<?php
+								echo sprintf( esc_html__( 'If you plan to use the weather widget commercially, please choose the applicable pricing plan: %1$s', 'jet-elements' ),
+									esc_html( '<a href="https://openweathermap.org/price" target="_blank">Pricing and Terms of OpenWeatherMap</a>' )
+								); ?>'">
+						</div>
+
+						<cx-vui-input
+							name="openweathermap-api-key"
+							label="<?php esc_attr_e( 'OpenWeatherMap API Key', 'jet-elements' ); ?>"
+							description="<?php
+								echo sprintf( esc_html__( 'Create your own OpenWeatherMap API key, more info %1$s', 'jet-elements' ),
+									esc_html( '<a href="https://home.openweathermap.org/users/sign_up" target="_blank">here</a>' )
+								);?>"
+							:wrapper-css="[ 'equalwidth' ]"
+							size="fullwidth"
+							v-model="pageOptions.openweathermap_api_key.value">
+						</cx-vui-input>
 
 				</cx-vui-tabs-panel>
 

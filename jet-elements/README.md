@@ -4,6 +4,30 @@ Brand new addon for Elementor Page builder. It provides the set of modules to cr
 
 # ChangeLog
 
+## [2.8.0.1](https://github.com/ZemezLab/jet-elements/archive/2.8.0.1.zip) - 26.01.2026
+* Fixed: enqueue jet-elements script for section parallax on frontend
+* Fixed: improve section switch scrolling alignment
+
+## [2.8.0](https://github.com/ZemezLab/jet-elements/archive/2.8.0.zip) - 15.01.2026
+* Added: [Crocoblock/suggestions#221](https://github.com/Crocoblock/suggestions/issues/221)
+* Added: [Crocoblock/suggestions#7824](https://github.com/Crocoblock/suggestions/issues/7824)
+* Added: [Crocoblock/suggestions#5679](https://github.com/Crocoblock/suggestions/issues/5679)
+* Added: [Crocoblock/suggestions#6987](https://github.com/Crocoblock/suggestions/issues/6987)
+* Added: [Crocoblock/suggestions#6301](https://github.com/Crocoblock/suggestions/issues/6301)
+* Added: [Crocoblock/suggestions#961](https://github.com/Crocoblock/suggestions/issues/961)
+* Added: [Crocoblock/suggestions#8289](https://github.com/Crocoblock/suggestions/issues/8289)
+* Fixed: removed extra escaping for variable
+
+## [2.7.12.3](https://github.com/ZemezLab/jet-elements/archive/2.7.12.3.zip) - 23.12.2025
+* Fixed: sanitize and escape JSON data-settings attributes in multiple widgets to prevent XSS
+
+## [2.7.12.2](https://github.com/ZemezLab/jet-elements/archive/2.7.12.2.zip) - 15.12.2025
+* Fixed: escape classes in Headline widget to prevent XSS
+* Fixed: minor issue
+
+## [2.7.12.1](https://github.com/ZemezLab/jet-elements/archive/2.7.12.1.zip) - 27.10.2025
+* Fixed: Ensure image URL is properly escaped in Heading widget before print.
+
 ## [2.7.12](https://github.com/ZemezLab/jet-elements/archive/2.7.12.zip) - 20.10.2025
 * Added: coordinates (lat/lon) support for Weather widget
 * Fixed: prevent bullet flickering when jumping through multiple sections in Jet Scroll Navigation

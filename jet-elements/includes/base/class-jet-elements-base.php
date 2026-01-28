@@ -31,6 +31,17 @@ abstract class Jet_Elements_Base extends Widget_Base {
 	}
 
 	/**
+	 * Ensure value is in allowed list.
+	 *
+	 * @param mixed $current Current value.
+	 * @param array $allowed Allowed values.
+	 * @return mixed First element of allowed array if current value is not in the list.
+	 */
+	public function ensure_allowed_value( $current, $allowed ) {
+		return in_array( $current, $allowed, true ) ? $current : $allowed[0];
+	}
+
+	/**
 	 * [get_jet_help_url description]
 	 * @return [type] [description]
 	 */

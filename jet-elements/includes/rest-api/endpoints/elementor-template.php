@@ -252,13 +252,13 @@ class Elementor_Template extends Base {
         $received_signature = isset( $args['signature'] ) ? sanitize_text_field( $args['signature'] ) : '';
 
         if ( ! $template_id || empty( $received_signature ) ) {
-            return new WP_Error( 'rest_forbidden', __( 'Access denied.', 'jet-elements' ), [ 'status' => 403 ] );
+            return new \WP_Error( 'rest_forbidden', __( 'Access denied.', 'jet-elements' ), [ 'status' => 403 ] );
         }
 
         $expected_signature = $this->generate_template_signature( $template_id );
 
         if ( $received_signature !== $expected_signature ) {
-            return new WP_Error( 'rest_forbidden', __( 'Invalid request signature.', 'jet-elements' ), [ 'status' => 403 ] );
+            return new \WP_Error( 'rest_forbidden', __( 'Invalid request signature.', 'jet-elements' ), [ 'status' => 403 ] );
         }
 
         return true;
