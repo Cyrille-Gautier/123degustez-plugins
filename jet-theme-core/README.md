@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.3.1.1 - 02.12.2025
+- Fixed: WP admin bar visible
+
+## 2.3.1 - 27.10.2025
+- Upd: Added ability to modify list of WP Options in Theme Builder
+- Upd: Elementor compatibility improvements
+- Fixed: Gutenberg Templates disappearing after enabling Elementor
+- Fixed: Frontend JS errors (reading 'handlers') / (reading 'tools')
+- Fixed: Search Results template not applied for specific keywords
+
 ## 2.3.0.3 - 26.06.2025
 - Fixed: Location templates and theme builder conflict
 - Fixed: Saving page template to elementor error

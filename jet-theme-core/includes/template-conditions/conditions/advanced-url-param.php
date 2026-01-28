@@ -39,7 +39,7 @@ class Url_Param extends Base {
 	 * @return int
 	 */
 	public  function get_priority() {
-		return 95;
+		return 8;
 	}
 
 	/**

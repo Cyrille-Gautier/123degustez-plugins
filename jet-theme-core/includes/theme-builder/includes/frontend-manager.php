@@ -115,8 +115,6 @@ class Frontend_Manager {
 		$override_footer = ( $layout['footer']['override'] && $layout['footer']['id'] ) || ! $layout['footer']['enabled'] ? true : false;
 
 		if ( $override_header ) {
-			// wp-version >= 5.2
-			remove_action( 'wp_body_open', 'wp_admin_bar_render', 0 );
 			add_action( 'get_header', [ $this, 'get_override_header' ] );
 		}
 
@@ -181,13 +179,12 @@ class Frontend_Manager {
 			if ( ! empty( $action ) ) {
 				// Skip any partial-specific actions so they don't run twice.
 				$actions = \Jet_Theme_Core\Utils::array_get( $wp_filter, $action, [] );
-
 				unset( $wp_filter[ $action ] );
 			}
 
 			locate_template( $templates, true, true );
 			$html = ob_get_clean();
-
+			
 			if ( 'wp_head' === $action ) {
 				$jet_theme_core_theme_head = $this->extract_head( $html );
 			}
@@ -196,9 +193,11 @@ class Frontend_Manager {
 				// Restore skipped actions.
 				$wp_filter[ $action ] = $actions;
 			}
+
 		}
 
 		require_once jet_theme_core()->plugin_path( "includes/theme-builder/templates/frontend-{$partial}-template.php" );
+
 	}
 
 	/**
@@ -645,6 +644,40 @@ class Frontend_Manager {
 	}
 
 	/**
+	 * @return void
+	 */
+	function jet_fix_elementor_scripts_order() {
+		global $wp_scripts;
+
+		if ( ! $wp_scripts || ! is_array( $wp_scripts->queue ) ) {
+			return;
+		}
+
+		$handles_to_move = [
+			'elementor-webpack-runtime',
+			'elementor-frontend-modules',
+			'elementor-frontend',
+		];
+
+		$keep  = [];
+		$moved = [];
+
+		foreach ( $wp_scripts->queue as $handle ) {
+			if ( in_array( $handle, $handles_to_move, true ) ) {
+				$moved[] = $handle;
+			} else {
+				$keep[] = $handle;
+			}
+		}
+
+		if ( empty( $moved ) ) {
+			return;
+		}
+
+		$wp_scripts->queue = array_merge( $keep, $moved );
+	}
+
+	/**
 	 * Constructor for the class
 	 */
 	public function __construct() {
@@ -660,6 +693,8 @@ class Frontend_Manager {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_frontend_styles' ], 9 );
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_assets' ], 10 );
+
+		add_action( 'wp_print_scripts', [ $this, 'jet_fix_elementor_scripts_order' ], 0 );
 
 	}
 }
