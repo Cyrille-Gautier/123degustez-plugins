@@ -373,6 +373,7 @@
 			// Legacy Elementor-only init
 			$selector.find( '[data-element_type]' ).each( function() {
 				var excludeWidgets = [
+					'jet-form-builder-form.default',
 					'nav-menu.default',
 					'jet-woo-product-gallery-slider.default',
 					'accordion.default'
@@ -879,8 +880,15 @@
 
 			self.selectSuggestion = function( event ) {
 				const keyCode = event.keyCode || event.which;
+				const $target = $( event.currentTarget );
 
-				let value = event.target.parentElement.getAttribute('aria-label').trim();
+				let value = $target.attr( 'aria-label' );
+
+				if ( ! value ) {
+					return;
+				}
+
+				value = value.trim();
 
 				if ( false === disableInputs && !editMode ) {
 
@@ -979,7 +987,13 @@
 						inlineItem.on( 'keydown', function( e ) {
 							const keyCode = e.keyCode || e.which;
 
-							let value = e.target.parentElement.getAttribute('aria-label').trim();
+							let value = $( this ).attr( 'aria-label' );
+
+							if ( ! value ) {
+								return;
+							}
+
+							value = value.trim();
 
 							if ( 13 === keyCode ) {
 								$( settings.inputClass, self )[0].value = value;
@@ -2131,9 +2145,17 @@
 
 			self.selectSuggestion = function( event ) {
 				const keyCode = event.keyCode || event.which;
+				const $target = $( event.currentTarget );
 
-				let value = event.target.parentElement.getAttribute('aria-label').trim(),
-					url   = null;
+				let value = $target.attr( 'aria-label' );
+
+				if ( ! value ) {
+					return;
+				}
+
+				value = value.trim();
+
+				let url = null;
 
 				if ( false === disableInputs && !editMode ) {
 

@@ -465,7 +465,7 @@ class Jet_Search_Suggestions_Render {
 			'name'            => 'jet_search_suggestions_categories',
 			'class'           => 'jet-search-suggestions__categories-select',
 			'echo'            => 0,
-			'show_option_all' => $placeholder,
+			'show_option_all' => esc_attr( $placeholder ),
 			'hierarchical'    => 1,
 			'hide_if_empty'   => true,
 			'taxonomy'        => $taxonomy,
@@ -478,7 +478,7 @@ class Jet_Search_Suggestions_Render {
 			return '';
 		}
 
-		$categories_list = str_replace( 'name=\'jet_search_suggestions_categories\'', 'name="jet_search_suggestions_categories" data-placeholder="' . $placeholder . '"' , $categories_list );
+		$categories_list = str_replace( 'name=\'jet_search_suggestions_categories\'', 'name="jet_search_suggestions_categories" data-placeholder="' . esc_attr( $placeholder ) . '"' , $categories_list );
 
 		return sprintf( $select_wrapper_html, $categories_list, $select_icon_html );
 	}

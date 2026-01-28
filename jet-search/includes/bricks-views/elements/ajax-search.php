@@ -604,6 +604,17 @@ class Jet_Search_Bricks_Ajax_Search extends Base {
 		);
 
 		$this->register_jet_control(
+			'terms_info',
+			[
+				'tab'         => 'content',
+				'type'        => 'info',
+				'label'       => '',
+				'content'     => esc_html__( 'Please note! All available terms and posts are displayed (regardless of selected Source).', 'jet-search' ),
+				'required'    => [ 'current_query', '=', false ],
+			]
+		);
+
+		$this->register_jet_control(
 			'tab_search_query_include',
 			[
 				'type'     => 'separator',
@@ -623,7 +634,7 @@ class Jet_Search_Bricks_Ajax_Search extends Base {
 				'optionsAjax'    => [
 					'action'     => 'jet_search_get_query_control_options',
 					'query_type' => 'terms',
-					'post_type'  => $this->get_jet_settings( 'search_source' )
+					'bricks-is-builder' => 1,
 				],
 				'default'        => $default_query_settings['include_terms_ids'],
 				'required'       => [ 'current_query', '=', false ],
@@ -650,7 +661,7 @@ class Jet_Search_Bricks_Ajax_Search extends Base {
 				'optionsAjax'    => [
 					'action'     => 'jet_search_get_query_control_options',
 					'query_type' => 'terms',
-					'post_type'  => $this->get_jet_settings( 'search_source' )
+					'bricks-is-builder' => 1,
 				],
 				'default'        => $default_query_settings['exclude_terms_ids'],
 				'required'       => [ 'current_query', '=', false ],
@@ -668,7 +679,7 @@ class Jet_Search_Bricks_Ajax_Search extends Base {
 				'optionsAjax'    => [
 					'action'     => 'jet_search_get_query_control_options',
 					'query_type' => 'posts',
-					'post_type'  => $this->get_jet_settings( 'search_source' )
+					'bricks-is-builder' => 1,
 				],
 				'default'        => $default_query_settings['exclude_posts_ids'],
 				'required'       => [ 'current_query', '=', false ],

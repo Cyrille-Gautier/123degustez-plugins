@@ -4,6 +4,20 @@ The best tool for adding complex search functionality to pages built with Elemen
 
 # ChangeLog
 
+# 3.5.16.1
+* FIX: WP Security Standards.
+
+# 3.5.16
+* ADD: Current JetSearch Results macros for JetEngine Query Builder integration;
+* ADD: Bulk delete support for Suggestions;
+* FIX: Show All Results Button ignores toggle state in Bricks;
+* FIX: improve accessibility for Ajax Search and Search Suggestions widgets.
+
+# 3.5.15
+* FIX: display all terms and posts in Ajax Search widget for Bricks editor;
+* FIX: add post_type parameter to AJAX request in block editor to load terms based on selected source in Ajax Search widget;
+* FIX: prevent double initialization of JetForm inside tabs;
+
 # 3.5.14
 * ADD: Weglot compatibility for custom search results redirect;
 * FIX: add validation for include/exclude term IDs in settings;

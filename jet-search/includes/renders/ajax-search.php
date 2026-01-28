@@ -105,8 +105,8 @@ class Jet_Search_Render {
 		$settings = $this->settings;
 
 		if ( 'in_header' === $settings['navigation_arrows'] || 'in_footer' === $settings['navigation_arrows'] || 'both' === $settings['navigation_arrows'] ) {
-			$prev_button = apply_filters( 'jet-search/ajax-search/prev-button-html', '<div role=button class="jet-ajax-search__prev-button jet-ajax-search__arrow-button jet-ajax-search__navigate-button jet-ajax-search__navigate-button-disable" data-direction="-1">%s</div>' );
-			$next_button = apply_filters( 'jet-search/ajax-search/next-button-html', '<div role=button class="jet-ajax-search__next-button jet-ajax-search__arrow-button jet-ajax-search__navigate-button" data-direction="1">%s</div>' );
+			$prev_button = apply_filters( 'jet-search/ajax-search/prev-button-html', '<button role=button class="jet-ajax-search__prev-button jet-ajax-search__arrow-button jet-ajax-search__navigate-button jet-ajax-search__navigate-button-disable" data-direction="-1">%s</button>' );
+			$next_button = apply_filters( 'jet-search/ajax-search/next-button-html', '<button role=button class="jet-ajax-search__next-button jet-ajax-search__arrow-button jet-ajax-search__navigate-button" data-direction="1">%s</button>' );
 			$arrow       = Jet_Search_Tools::get_svg_arrows( $settings['navigation_arrows_type'] );
 			$output_html = sprintf( $prev_button . $next_button, $arrow['left'], $arrow['right'] );
 		}
@@ -114,15 +114,15 @@ class Jet_Search_Render {
 		if ( 'top' === $position ) {
 			if ( 'in_header' === $settings['bullet_pagination'] || 'both' === $settings['bullet_pagination'] ) {
 				echo '<div class="jet-ajax-search__navigation-container">
-					<div role=button class="jet-ajax-search__navigate-button jet-ajax-search__bullet-button jet-ajax-search__active-button" data-number="1"></div>
-					<div role=button class="jet-ajax-search__navigate-button jet-ajax-search__bullet-button" data-number="2"></div>
+					<button role=button class="jet-ajax-search__navigate-button jet-ajax-search__bullet-button jet-ajax-search__active-button" data-number="1"></button>
+					<button role=button class="jet-ajax-search__navigate-button jet-ajax-search__bullet-button" data-number="2"></button>
 				</div>';
 			}
 
 			if ( 'in_header' === $settings['number_pagination'] || 'both' === $settings['number_pagination'] ) {
 				echo '<div class="jet-ajax-search__navigation-container">
-					<div role=button class="jet-ajax-search__navigate-button jet-ajax-search__number-button jet-ajax-search__active-button" data-number="1"></div>
-					<div role=button class="jet-ajax-search__navigate-button jet-ajax-search__number-button" data-number="2"></div>
+					<button role=button class="jet-ajax-search__navigate-button jet-ajax-search__number-button jet-ajax-search__active-button" data-number="1"></button>
+					<button role=button class="jet-ajax-search__navigate-button jet-ajax-search__number-button" data-number="2"></button>
 				</div>';
 			}
 
@@ -138,15 +138,15 @@ class Jet_Search_Render {
 		if ( 'bottom' === $position ) {
 			if ( 'in_footer' === $settings['bullet_pagination'] || 'both' === $settings['bullet_pagination'] ) {
 				echo '<div class="jet-ajax-search__navigation-container">
-					<div role=button class="jet-ajax-search__navigate-button jet-ajax-search__bullet-button jet-ajax-search__active-button" data-number="1"></div>
-					<div role=button class="jet-ajax-search__navigate-button jet-ajax-search__bullet-button" data-number="2"></div>
+					<button role=button class="jet-ajax-search__navigate-button jet-ajax-search__bullet-button jet-ajax-search__active-button" data-number="1"></button>
+					<button role=button class="jet-ajax-search__navigate-button jet-ajax-search__bullet-button" data-number="2"></button>
 				</div>';
 			}
 
 			if ( 'in_footer' === $settings['number_pagination'] || 'both' === $settings['number_pagination'] ) {
 				echo '<div class="jet-ajax-search__navigation-container">
-					<div role=button class="jet-ajax-search__navigate-button jet-ajax-search__number-button jet-ajax-search__active-button" data-number="1"></div>
-					<div role=button class="jet-ajax-search__navigate-button jet-ajax-search__number-button" data-number="2"></div>
+					<button role=button class="jet-ajax-search__navigate-button jet-ajax-search__number-button jet-ajax-search__active-button" data-number="1"></button>
+					<button role=button class="jet-ajax-search__navigate-button jet-ajax-search__number-button" data-number="2"></button>
 				</div>';
 			}
 

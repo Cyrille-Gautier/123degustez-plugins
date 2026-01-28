@@ -42,6 +42,7 @@ Vue.component( 'jet-search-suggestions-settings', {
 			pageNumber: 1,
 			currentFilterQuery: {},
 			columnsIDs: [
+				'bulk',
 				'id',
 				'type',
 				'name',
@@ -49,6 +50,7 @@ Vue.component( 'jet-search-suggestions-settings', {
 				'actions'
 			],
 			labels: {
+				bulk: '',
 				id: 'ID',
 				type: 'Type',
 				name : 'Name',
@@ -61,13 +63,16 @@ Vue.component( 'jet-search-suggestions-settings', {
 				order: 'ASC',
 			},
 			notSortable: [
+				'bulk',
 				'type',
 				'actions',
 			],
 			popUpState: '',
 			popUpContent: {},
 			popUpShow: false,
-			nameError: false
+			nameError: false,
+			selectedItems: [],
+			bulkAction: '',
 		};
 	},
 	methods: {
@@ -123,6 +128,14 @@ Vue.component( 'jet-search-suggestions-settings', {
 				this.itemsList   = item_list;
 				this.totalItems  = response.total;
 				this.onPage      = response.on_page;
+
+				const idsOnPage = this.itemsList.map( function ( item ) {
+					return item.id;
+				} );
+
+				this.selectedItems = this.selectedItems.filter( function ( id ) {
+					return idsOnPage.includes( id );
+				} );
 
 				if ( 0 < response.parents_list.length && response.success ) {
 					this.parentsList.push( ...response.parents_list );
@@ -248,7 +261,9 @@ Vue.component( 'jet-search-suggestions-settings', {
 					duration: 7000,
 				} );
 
-				this.getItems();
+				this.adjustPageAfterDelete( 1 );
+
+				this.getItems( this.currentFilterQuery );
 
 			} ).catch( function ( e ) {
 				eventHub.$CXNotice.add( {
@@ -301,6 +316,9 @@ Vue.component( 'jet-search-suggestions-settings', {
 					break;
 				case 'delete':
 					this.deleteItem( content );
+					break;
+				case 'bulk-delete':
+					this.bulkDeleteItems( content );
 					break;
 			}
 		},
@@ -417,7 +435,102 @@ Vue.component( 'jet-search-suggestions-settings', {
 				} );
 			} );
 		},
+		toggleSelectAll( e ) {
+			const checked   = e && e.target ? e.target.checked : false;
+
+			const idsOnPage = this.itemsList.map( function ( item ) {
+				return item.id;
+			} );
+
+			if ( checked ) {
+				const merged = [].concat( this.selectedItems, idsOnPage );
+				const unique = Array.from( new Set( merged ) );
+
+				this.selectedItems = unique;
+			} else {
+				this.selectedItems = this.selectedItems.filter( function ( id ) {
+					return ! idsOnPage.includes( id );
+				} );
+			}
+		},
+		adjustPageAfterDelete: function( deletedCount ) {
+			let newTotal = this.totalItems - deletedCount;
+
+			if ( newTotal < 0 ) {
+				newTotal = 0;
+			}
+
+			if ( 0 < newTotal && this.offset >= newTotal ) {
+				this.pageNumber = Math.ceil( newTotal / this.perPage );
+				this.offset     = this.perPage * ( this.pageNumber - 1 );
+			}
+		},
+		applyBulkAction( action ) {
+			this.bulkAction = action;
+
+			if ( action !== 'trash' || ! this.selectedItems.length ) {
+				return;
+			}
+			this.callPopup( 'delete', { bulk: true, ids: this.selectedItems } );
+		},
+		bulkDeleteItems: function( content ) {
+			if ( ! content || ! Array.isArray( content.ids ) || ! content.ids.length ) {
+				return;
+			}
+
+			this.isLoading = true;
+
+			const nonce = this.settings.nonce;
+
+			const query = buildQuery({
+				action: encodeURIComponent( 'jet_search_delete_suggestion' ),
+				nonce: nonce,
+				content: JSON.stringify({ ids: content.ids })
+			});
+
+			const queryPath = `${ this.settings.deleteSuggestionUrl }?${ query }`;
+
+			wp.apiFetch({
+				method: 'POST',
+				url: queryPath,
+			}).then( (response) => {
+				const message = response && response.data ? response.data : wp.i18n.__( 'Done', 'jet-search' );
+				const type    = response && response.success ? 'success' : 'error';
+
+				eventHub.$CXNotice.add({ message, type, duration: 7000 });
+
+				this.adjustPageAfterDelete( content.ids.length );
+
+				this.getItems( this.currentFilterQuery );
+				this.selectedItems = [];
+				this.bulkAction = '';
+			}).catch( (e) => {
+				eventHub.$CXNotice.add({
+					message: e && e.message ? e.message : wp.i18n.__( 'Request failed', 'jet-search' ),
+					type: 'error',
+					duration: 7000,
+				});
+			}).finally( () => {
+				this.isLoading = false;
+			});
+		},
 	},
+	computed: {
+		allSelectedOnPage() {
+			if ( ! this.itemsList || ! this.itemsList.length ) {
+				return false;
+			}
+
+			const idsOnPage = this.itemsList.map( function ( item ) {
+				return item.id;
+			} );
+
+			return idsOnPage.every( function ( id ) {
+				return this.selectedItems.includes( id );
+			}, this );
+		},
+	},
+
 	mounted: function() {
 		this.getSettings();
 		this.getItems();
@@ -469,7 +582,16 @@ Vue.component( 'jet-search-suggestions-pagination', {
 		},
 		onPage: {
 			type: Number
+		},
+		hasSelection: {
+			type: Boolean,
+			default: false
 		}
+	},
+	data() {
+		return {
+			bulkActionLocal: '',
+		};
 	},
 	computed: {
 		currentPerPage: {
@@ -488,7 +610,10 @@ Vue.component( 'jet-search-suggestions-pagination', {
 			get() {
 				return this.pageNumber;
 			}
-		}
+		},
+		canApply() {
+			return this.hasSelection && !! this.bulkActionLocal;
+		},
 	},
 	methods: {
 		perPageInfo: function () {
@@ -500,6 +625,9 @@ Vue.component( 'jet-search-suggestions-pagination', {
 		},
 		changePage: function ( value ) {
 			this.$emit( 'changePage', value );
+		},
+		onApplyBulk() {
+			this.$emit( 'apply-bulk', this.bulkActionLocal );
 		},
 	},
 } );
@@ -608,6 +736,10 @@ Vue.component( 'jet-search-suggestions-popup', {
 			let action = 'delete';
 
 			this.$emit( 'popUpActions', action, this.content );
+			this.$emit( 'cancelPopup' );
+		},
+		bulkDelete: function () {
+			this.$emit( 'popUpActions', 'bulk-delete', { ids: this.popUpContent.ids } );
 			this.$emit( 'cancelPopup' );
 		},
 		updateItem: function () {
@@ -960,7 +1092,16 @@ Vue.component( 'jet-search-suggestions-popup', {
 
 			return false;
 		},
-	}
+	},
+	computed: {
+		isBulkDelete() {
+			return this.popUpState === 'delete'
+				&& this.popUpContent
+				&& this.popUpContent.bulk === true
+				&& Array.isArray( this.popUpContent.ids );
+		}
+	},
+
 } );
 
 //FILTERS

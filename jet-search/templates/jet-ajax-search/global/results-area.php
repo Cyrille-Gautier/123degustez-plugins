@@ -97,7 +97,9 @@ if ( $this->preview_results() || $this->preview_focus_suggestions() ) {
 		</div>
 		<?php if ( false === $hide ): ?>
 			<div class="jet-ajax-search__results-footer">
-				<?php $this->html( 'full_results_btn_text', '<button class="jet-ajax-search__full-results">%s</button>' ); ?>
+				<?php if ( ! empty( $settings['show_full_results'] ) ): ?>
+					<?php $this->html( 'full_results_btn_text', '<button class="jet-ajax-search__full-results">%s</button>' ); ?>
+				<?php endif; ?>
 				<div class="jet-ajax-search__navigation-holder"><?php
 					$this->preview_navigation_template( 'bottom' );
 				?></div>

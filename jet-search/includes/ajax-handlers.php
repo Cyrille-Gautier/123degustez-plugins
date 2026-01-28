@@ -63,6 +63,23 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		public $settings_source = 'jet_ajax_search';
 
 		/**
+		 * Flag indicating that the internal query for the macro
+		 * get_current_results_ids() is currently being executed.
+		 *
+		 * When this flag is true, pre_get_posts must not modify the query.
+		 *
+		 * @var bool
+		 */
+		public $is_building_current_results = false;
+
+		/**
+		 * Cached IDs of current JetSearch results.
+		 *
+		 * @var array
+		 */
+		public $current_results_ids = array();
+
+		/**
 		 * Constructor for the class
 		 */
 		public function init() {
@@ -1085,6 +1102,18 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 
 			$data = $_REQUEST; // phpcs:ignore WordPress.Security.NonceVerification
 
+			$q = isset( $data['q'] ) ? sanitize_text_field( wp_unslash( $data['q'] ) ) : '';
+
+			$post_types = array();
+
+			if ( isset( $data['post_type'] ) ) {
+				if ( is_array( $data['post_type'] ) ) {
+					$post_types = array_map( 'sanitize_key', $data['post_type'] );
+				} elseif ( is_string( $data['post_type'] ) && '' !== $data['post_type'] ) {
+					$post_types = array_map( 'sanitize_key', array_map( 'trim', explode( ',', $data['post_type'] ) ) );
+				}
+			}
+
 			if ( ! isset( $data['query_type'] ) ) {
 				wp_send_json_error();
 				return;
@@ -1100,14 +1129,46 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 						'hide_empty' => false,
 					);
 
-					if ( ! empty( $data['q'] ) ) {
-						$terms_args['search'] = $data['q'];
+					if ( $q ) {
+						$terms_args['search'] = $q;
 					}
 
-					if ( ! empty( $data['post_type'] ) ) {
-						$terms_args['taxonomy'] = get_object_taxonomies( $data['post_type'], 'names' );
+					if ( $is_bricks_builder ) {
+						$taxonomies = get_taxonomies( array( 'public' => true ), 'names' );
+
+						if ( class_exists( 'WooCommerce' ) ) {
+							foreach ( array( 'product_cat', 'product_tag', 'product_visibility', 'product_shipping_class' ) as $woo_tax ) {
+
+								if ( taxonomy_exists( $woo_tax ) ) {
+									$taxonomies[] = $woo_tax;
+								}
+
+							}
+
+							if ( function_exists( 'wc_get_attribute_taxonomies' ) ) {
+								foreach ( wc_get_attribute_taxonomies() as $attr ) {
+									$tax = wc_attribute_taxonomy_name( $attr->attribute_name );
+
+									if ( taxonomy_exists( $tax ) ) {
+										$taxonomies[] = $tax;
+									}
+
+								}
+							}
+						}
+
+						$terms_args['taxonomy'] = array_values( array_unique( (array) $taxonomies ) );
+
 					} else {
-						$terms_args['taxonomy'] = get_taxonomies( array( 'show_in_nav_menus' => true ), 'names' );
+
+						if ( ! empty( $post_types ) ) {
+							$object = ( 1 === count( $post_types ) ) ? $post_types[0] : $post_types;
+
+							$terms_args['taxonomy'] = get_object_taxonomies( $object, 'names' );
+						} else {
+							$terms_args['taxonomy'] = get_taxonomies( array( 'show_in_nav_menus' => true ), 'names' );
+						}
+
 					}
 
 					if ( ! empty( $data['ids'] ) ) {
@@ -1457,7 +1518,7 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 		 */
 		public function get_navigation_buttons_html( $settings = array(), $type = 'bullet_pagination' ) {
 			$output_html = '';
-			$bullet_html = apply_filters( 'jet-search/ajax-search/navigate-button-html', '<div role=button class="jet-ajax-search__navigate-button %1$s" data-number="%2$s"></div>' );
+			$bullet_html = apply_filters( 'jet-search/ajax-search/navigate-button-html', '<button role=button class="jet-ajax-search__navigate-button %1$s" data-number="%2$s" aria-label="%3$s"></button>' );
 
 			switch ( $type ) {
 				case 'bullet_pagination':
@@ -1468,13 +1529,14 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 
 					for ( $i = 0; $i < $settings['columns']; $i++ ) {
 						$active_button_class = ( $i === 0 ) ? ' jet-ajax-search__active-button' : '' ;
-						$output_html .= sprintf( $bullet_html, $button_class . $active_button_class, $i + 1 );
+						$aria_label   = sprintf( __( 'Page %d', 'jet-search' ), $i + 1 );
+						$output_html .= sprintf( $bullet_html, $button_class . $active_button_class, $i + 1, esc_attr( $aria_label ) );
 					}
 					break;
 
 				case 'navigation_arrows':
-					$prev_button = apply_filters( 'jet-search/ajax-search/prev-button-html', '<div role=button class="jet-ajax-search__prev-button jet-ajax-search__arrow-button jet-ajax-search__navigate-button jet-ajax-search__navigate-button-disable" data-direction="-1">%s</div>' );
-					$next_button = apply_filters( 'jet-search/ajax-search/next-button-html', '<div role=button class="jet-ajax-search__next-button jet-ajax-search__arrow-button jet-ajax-search__navigate-button" data-direction="1">%s</div>' );
+					$prev_button = apply_filters( 'jet-search/ajax-search/prev-button-html', '<button role=button class="jet-ajax-search__prev-button jet-ajax-search__arrow-button jet-ajax-search__navigate-button jet-ajax-search__navigate-button-disable" data-direction="-1" aria-label="' . esc_attr__( 'Previous page', 'jet-search' ) . '">%s</button>' );
+					$next_button = apply_filters( 'jet-search/ajax-search/next-button-html', '<button role=button class="jet-ajax-search__next-button jet-ajax-search__arrow-button jet-ajax-search__navigate-button" data-direction="1" aria-label="' . esc_attr__( 'Next page', 'jet-search' ) . '">%s</button>' );
 					$arrow       = Jet_Search_Tools::get_svg_arrows( $settings['navigation_arrows_type'] );
 					$output_html = sprintf( $prev_button . $next_button, $arrow['left'], $arrow['right'] );
 					break;
@@ -2373,6 +2435,43 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 			$suggestion = stripcslashes( $suggestion );
 			$suggestion = json_decode( $suggestion, true );
 
+			if ( isset( $suggestion['ids'] ) && is_array( $suggestion['ids'] ) && ! empty( $suggestion['ids'] ) ) {
+
+				global $wpdb;
+
+				$table_name = 'search_suggestions';
+				$ids_int    = array_map( 'intval', $suggestion['ids'] );
+
+				foreach ( $ids_int as $sid ) {
+					jet_search()->db->delete( $table_name, array( 'id' => esc_sql( $sid ) ) );
+				}
+
+				$prefix     = 'jet_';
+				$table_name = $wpdb->prefix . $prefix . 'search_suggestions';
+				$query      = "SELECT * FROM {$table_name}";
+				$suggestions = $wpdb->get_results( $query, ARRAY_A );
+
+				if ( $suggestions ) {
+					foreach ( $ids_int as $deleted_id ) {
+						foreach ( $suggestions as $suggestion_item ) {
+							if ( $suggestion_item['id'] !== $deleted_id ) {
+								$this->remove_deleted_parent( $suggestion_item, $deleted_id );
+							}
+						}
+					}
+				}
+
+				$success_text = sprintf(
+					esc_html__( 'Success! %d suggestion(s) have been deleted', 'jet-search' ),
+					count( $ids_int )
+				);
+
+				return wp_send_json( array(
+					'success' => true,
+					'data'    => $success_text,
+				) );
+			}
+
 			if ( empty( $suggestion ) || ! $suggestion['id'] ) {
 				return wp_send_json( array(
 					'success' => false,
@@ -2437,6 +2536,201 @@ if ( ! class_exists( 'Jet_Search_Ajax_Handlers' ) ) {
 					$item['parent'] = maybe_serialize( $item['parent'] );
 				}
 			}
+		}
+
+		/**
+		 * Build query args for current JetSearch results (used by macros).
+		 *
+		 * @param array  $settings      form settings.
+		 * @param string $search_string Search string from request.
+		 *
+		 * @return array
+		 */
+		protected function build_current_results_query_args( $settings = array(), $search_string = '' ) {
+
+			$args = array(
+				's'                   => $search_string,
+				'post_status'         => 'publish',
+				'ignore_sticky_posts' => false,
+				'nopaging'            => false,
+				'posts_per_page'      => isset( $settings['limit_query_in_result_area'] ) ? (int) $settings['limit_query_in_result_area'] : 25,
+			);
+
+			$search_source = isset( $settings['search_source'] ) ? $settings['search_source'] : 'any';
+
+			$args['post_type'] = $search_source;
+
+			if ( ! empty( $settings['custom_fields_source'] ) && class_exists( 'Jet_Search_Tools' ) ) {
+				$args['post_type'] = Jet_Search_Tools::custom_fields_post_type_update(
+					$settings['custom_fields_source'],
+					$args['post_type']
+				);
+			}
+
+			$args['sentence'] = isset( $settings['sentence'] ) ? filter_var( $settings['sentence'], FILTER_VALIDATE_BOOLEAN ) : false;
+
+			if ( ! empty( $settings['category__in'] ) ) {
+				$tax = ! empty( $settings['search_taxonomy'] ) ? $settings['search_taxonomy'] : 'category';
+
+				$args['tax_query'] = array(
+					'relation' => 'AND',
+					array(
+						'taxonomy' => $tax,
+						'field'    => 'id',
+						'operator' => 'IN',
+						'terms'    => $settings['category__in'],
+					),
+				);
+			} else {
+				$tax_query = array( 'relation' => 'AND' );
+
+				if ( ! empty( $settings['include_terms_ids'] ) && method_exists( $this, 'prepare_terms_data' ) ) {
+					$include_tax_query = array( 'relation' => 'OR' );
+					$terms_data        = $this->prepare_terms_data( $settings['include_terms_ids'] );
+
+					foreach ( $terms_data as $taxonomy => $terms_ids ) {
+						$include_tax_query[] = array(
+							'taxonomy' => $taxonomy,
+							'field'    => 'id',
+							'operator' => 'IN',
+							'terms'    => $terms_ids,
+						);
+					}
+
+					$tax_query[] = $include_tax_query;
+				}
+
+				if ( ! empty( $settings['exclude_terms_ids'] ) && method_exists( $this, 'prepare_terms_data' ) ) {
+					$exclude_tax_query = array( 'relation' => 'AND' );
+					$terms_data        = $this->prepare_terms_data( $settings['exclude_terms_ids'] );
+
+					foreach ( $terms_data as $taxonomy => $terms_ids ) {
+						$exclude_tax_query[] = array(
+							'taxonomy' => $taxonomy,
+							'field'    => 'id',
+							'operator' => 'NOT IN',
+							'terms'    => $terms_ids,
+						);
+					}
+
+					$tax_query[] = $exclude_tax_query;
+				}
+
+				if ( count( $tax_query ) > 1 ) {
+					$args['tax_query'] = $tax_query;
+				}
+			}
+
+			if ( ! empty( $settings['exclude_posts_ids'] ) ) {
+				$args['post__not_in'] = $settings['exclude_posts_ids'];
+			}
+
+			if ( ! empty( $settings['current_query'] ) ) {
+				$args = array_merge( $args, (array) $settings['current_query'] );
+			}
+
+			if ( ! empty( $settings['results_order_by'] ) ) {
+				$args['orderby'] = $settings['results_order_by'];
+
+				if ( ! empty( $settings['results_order'] ) ) {
+					$args['order'] = $settings['results_order'];
+				}
+			}
+
+			return $args;
+		}
+
+		/**
+		 * Build cache key for current results IDs.
+		 *
+		 * @param array $query_args
+		 *
+		 * @return string
+		 */
+		protected function get_current_results_cache_key( $query_args = array() ) {
+
+			$key_data = array(
+				's'         => isset( $query_args['s'] ) ? $query_args['s'] : '',
+				'post_type' => isset( $query_args['post_type'] ) ? $query_args['post_type'] : '',
+				'tax_query' => isset( $query_args['tax_query'] ) ? $query_args['tax_query'] : '',
+				'lang'      => defined( 'ICL_LANGUAGE_CODE' ) ? ICL_LANGUAGE_CODE : '',
+				'paged'     => isset( $query_args['paged'] ) ? (int) $query_args['paged'] : 0,
+			);
+
+			$raw = wp_json_encode( $key_data );
+
+			return 'jet_search_current_results_' . md5( $raw );
+		}
+
+
+		/**
+		 * Get IDs of posts returned by current results.
+		 *
+		 * @return array
+		 */
+		public function get_current_results_ids() {
+
+			if ( ! empty( $this->current_results_ids ) && is_array( $this->current_results_ids ) ) {
+				$ids = wp_parse_id_list( $this->current_results_ids );
+
+				return array_values( array_unique( $ids ) );
+			}
+
+			$search_key    = $this->get_custom_search_query_param();
+			$search_string = isset( $_REQUEST[ $search_key ] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				? sanitize_text_field( wp_unslash( $_REQUEST[ $search_key ] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				: '';
+
+			if ( '' === $search_string ) {
+				return array();
+			}
+
+			$settings = $this->get_form_settings();
+
+			if ( empty( $settings ) || ! is_array( $settings ) ) {
+				return array();
+			}
+
+			$query_args = $this->build_current_results_query_args( $settings, $search_string );
+
+			if ( empty( $query_args ) || ! is_array( $query_args ) ) {
+				return array();
+			}
+
+			$cache_key   = $this->get_current_results_cache_key( $query_args );
+			$cache_group = 'jet-search-current-results';
+
+			$cached_ids = wp_cache_get( $cache_key, $cache_group );
+
+			if ( false !== $cached_ids && is_array( $cached_ids ) ) {
+				$ids = wp_parse_id_list( $cached_ids );
+				$ids = array_values( array_unique( $ids ) );
+
+				$this->current_results_ids = $ids;
+
+				return $ids;
+			}
+
+			$query_args['fields'] = 'ids';
+
+			$this->is_building_current_results = true;
+			$search = new WP_Query( $query_args );
+			$this->is_building_current_results = false;
+
+			if ( is_wp_error( $search ) || empty( $search->posts ) ) {
+				return array();
+			}
+
+			$ids = wp_parse_id_list( $search->posts );
+			$ids = array_values( array_unique( $ids ) );
+
+			$this->current_results_ids = $ids;
+
+			$ttl = apply_filters( 'jet-search/current-results-cache-ttl', HOUR_IN_SECONDS, $query_args, $settings, $search_string );
+
+			wp_cache_set( $cache_key, $ids, $cache_group, $ttl );
+
+			return $ids;
 		}
 
 		/**

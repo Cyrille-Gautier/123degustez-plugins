@@ -25,16 +25,18 @@ class Jet_Search_Tax_Query {
 	}
 
 	public function set_settings() {
-		// phpcs:disable WordPress.Security.NonceVerification
+		// phpcs:disable
 		if ( isset( $_GET['action'] ) && $this->action === $_GET['action']
 			&& ! empty( $_GET['data']['search_in_taxonomy'] )
 			&& ! empty( $_GET['data']['search_in_taxonomy_source'] )
 		) {
-			$this->settings = wp_unslash( $_GET['data'] );
+			$raw_data = wp_unslash( $_GET['data'] );
+
+			$this->settings = map_deep( $raw_data, 'sanitize_text_field' );
 		} else {
 			$this->settings = jet_search_ajax_handlers()->get_form_settings();
 		}
-		// phpcs:enable WordPress.Security.NonceVerification
+		// phpcs:enable
 	}
 
 	public function get_taxonomies() {

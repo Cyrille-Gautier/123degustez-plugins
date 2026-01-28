@@ -61,6 +61,13 @@ if ( ! class_exists( 'Jet_Search_Compatibility' ) ) {
 
 			add_action( 'jet-search/ajax-search/add-custom-controls',        array( $this, 'add_custom_controls' ), 10, 2 );
 			add_action( 'jet-search/ajax-search-bricks/add-custom-controls', array( $this, 'add_bricks_custom_controls' ), 10, 2 );
+
+			// JetEngine compatibility
+			if ( function_exists( 'jet_engine' ) ) {
+				require_once jet_search()->plugin_path( 'includes/compatibility/jet-engine/manager.php' );
+
+				new Jet_Search_Compatibility_JE();
+			}
 		}
 
 		/**
@@ -74,8 +81,14 @@ if ( ! class_exists( 'Jet_Search_Compatibility' ) ) {
 			$current = function_exists( 'weglot_get_current_language' ) ? (string) weglot_get_current_language() : '';
 			$default = function_exists( 'weglot_get_original_language' ) ? (string) weglot_get_original_language() : '';
 
-			if ( ( ! $current || $current === $default ) && ! empty( $_SERVER['REQUEST_URI'] ) ) {
-				$path = strtok( $_SERVER['REQUEST_URI'], '?' );
+			$request_uri = '';
+
+			if ( ! empty( $_SERVER['REQUEST_URI'] ) ) {
+				$request_uri = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
+			}
+
+			if ( ( ! $current || $current === $default ) && $request_uri ) {
+				$path = strtok( $request_uri, '?' );
 
 				if ( preg_match( '#^/([a-z]{2}(?:-[A-Z]{2})?)(/|$)#', $path, $m ) ) {
 					$current = $m[1];

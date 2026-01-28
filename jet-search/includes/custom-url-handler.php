@@ -218,9 +218,40 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 						unset( $final_search_query['post_type'] );
 					}
 
+					if ( isset( $final_search_query['post__not_in'] ) && ! empty( $query->final_query['post__not_in'] ) ) {
+						$query->final_query['post__not_in'] = array_unique(
+							array_merge(
+								(array) $query->final_query['post__not_in'],
+								(array) $final_search_query['post__not_in']
+							)
+						);
+
+						unset( $final_search_query['post__not_in'] );
+					}
+
 					$query->final_query = array_merge( $query->final_query, $final_search_query );
 
-					$query->final_query['s'] = $this->get_search_string();
+					$is_negative_search = false;
+
+					if ( isset( $query->final_query['post__not_in'] ) && is_array( $query->final_query['post__not_in'] ) ) {
+						$current_results_ids = jet_search_ajax_handlers()->get_current_results_ids();
+
+						if ( ! empty( $current_results_ids ) && is_array( $current_results_ids ) ) {
+							$post_not_in         = array_map( 'intval', $query->final_query['post__not_in'] );
+							$current_results_ids = array_map( 'intval', $current_results_ids );
+
+							sort( $post_not_in );
+							sort( $current_results_ids );
+
+							if ( $post_not_in === $current_results_ids ) {
+								$is_negative_search = true;
+							}
+						}
+					}
+
+					if ( ! $is_negative_search ) {
+						$query->final_query['s'] = $this->get_search_string();
+					}
 
 					if ( function_exists( 'jet_smart_filters' ) ) {
 						$request_query = jet_smart_filters()->query->get_query_from_request();
@@ -352,6 +383,10 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 		 */
 		public function handle_custom_results_page( $query ) {
 
+			if ( ! empty( jet_search_ajax_handlers()->is_building_current_results ) ) {
+				return;
+			}
+
 			if ( ! $this->is_search_query( $query ) ) {
 				return;
 			}
@@ -360,7 +395,11 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 
 			$this->set_query_settings( $args );
 
-			$query->set( 's', $this->get_search_string() );
+			$is_negative_search = $this->is_exclude_current_results_query( $query );
+
+			if ( ! $is_negative_search ) {
+				$query->set( 's', $this->get_search_string() );
+			}
 
 			if ( ! empty( $this->query_builder_post_type ) ) {
 				$this->search_query['post_type'] = $this->query_builder_post_type;
@@ -368,6 +407,15 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 
 			if ( ! empty( $this->search_query ) ) {
 				foreach ( $this->search_query as $key => $value ) {
+
+					if ( 'post__not_in' === $key ) {
+						$existing = $query->get( 'post__not_in' );
+
+						if ( ! empty( $existing ) ) {
+							$value = array_unique( array_merge( (array) $existing, (array) $value ) );
+						}
+					}
+
 					$query->set( $key, $value );
 					$query->query[$key] = $value;
 				}
@@ -503,6 +551,37 @@ if ( ! class_exists( 'Jet_Search_Custom_URL_Handler' ) ) {
 			}
 
 			return $result;
+		}
+
+		/**
+		 * Check if current query excludes exactly current results
+		 * jet_search_current_results macros.
+		 *
+		 * @param WP_Query $query
+		 *
+		 * @return bool
+		 */
+		protected function is_exclude_current_results_query( $query ) {
+
+			$post_not_in = $query->get( 'post__not_in' );
+
+			if ( empty( $post_not_in ) || ! is_array( $post_not_in ) ) {
+				return false;
+			}
+
+			$current_results_ids = jet_search_ajax_handlers()->get_current_results_ids();
+
+			if ( empty( $current_results_ids ) || ! is_array( $current_results_ids ) ) {
+				return false;
+			}
+
+			$post_not_in         = array_map( 'intval', $post_not_in );
+			$current_results_ids = array_map( 'intval', $current_results_ids );
+
+			sort( $post_not_in );
+			sort( $current_results_ids );
+
+			return $post_not_in === $current_results_ids;
 		}
 
 	}
