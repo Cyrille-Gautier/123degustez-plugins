@@ -5358,11 +5358,18 @@ module.exports = {
 		tags: {}
 	},
 	material: {
-		styleToPrefix: {
-			duotone: 'material-icons-two-tone',
-			solid: '',
-			outlined: '-outline',
-		},
+		styleToPrefix: ( function () {
+			const prefixes = {
+				solid: '',
+				outlined: '-outline',
+			};
+
+			// Dual tone icons are only available when Google Fonts are enabled.
+			if ( typeof TVE_Dash_Const === 'undefined' || ! TVE_Dash_Const.disable_google_fonts ) {
+				prefixes.duotone = 'material-icons-two-tone';
+			}
+			return prefixes;
+		} )(),
 		render: ( prefix, icon, style ) => {
 			let tpl = `<i class="${prefix}">${icon}</i>`;
 

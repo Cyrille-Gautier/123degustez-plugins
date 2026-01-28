@@ -187,10 +187,11 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 	 * Get any extra settings needed by the api
 	 *
 	 * @param array $arguments
+	 * @param bool  $force     force refresh from API
 	 *
 	 * @return array
 	 */
-	public function get_extra_settings( $arguments = array() ) {
+	public function get_extra_settings( $arguments = array(), $force = false ) {
 
 		$response = array();
 

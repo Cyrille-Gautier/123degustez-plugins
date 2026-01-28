@@ -63,6 +63,8 @@ unset( $available_apis['zoom'] );
 				<div class="tvd-col tvd-s12 tvd-m6">
 					<h4>
 						<#= item.get('title') === 'Brevo' ? 'Brevo (SendinBlue)' : item.get('title') #>
+						<?php /* Raw HTML output intentional - badge HTML is pre-escaped in prepare_json() using esc_attr() and esc_html() */ ?>
+						<#= item.get('upgrade_badge') || '' #>
 					</h4>
 				</div>
 				<div class="tvd-col tvd-s12 tvd-m6">
@@ -171,7 +173,11 @@ unset( $available_apis['zoom'] );
 				<?php echo esc_html__( "You can now connect your opt-in forms to ", 'thrive-dash' ) ?>
 				<#= item.get('title') #>.
 
-				<# if ( item.get('type') !== 'storage' ) { #>
+				<# if ( item.get('key') === 'aweber' ) { #>
+				<a href="https://thrivethemes.com/docs/setting-up-an-api-connection-with-aweber/" target="_blank" onclick="event.stopPropagation();">
+					<?php echo esc_html__( "See how it's done.", 'thrive-dash' ) ?>
+				</a>
+				<# } else if ( item.get('type') !== 'storage' ) { #>
 				<a>
 					<?php echo esc_html__( "See how it's done.", 'thrive-dash' ) ?>
 				</a>

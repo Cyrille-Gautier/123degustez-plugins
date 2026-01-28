@@ -12,6 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Thrive_Dash_List_Connection_ActiveCampaign extends Thrive_Dash_List_Connection_Abstract {
 
 	/**
+	 * Cache for field types to avoid repeated API calls per instance
+	 *
+	 * @var array|null
+	 */
+	protected $field_types_cache = null;
+
+	/**
 	 * Return the connection type
 	 *
 	 * @return String
@@ -290,7 +297,8 @@ class Thrive_Dash_List_Connection_ActiveCampaign extends Thrive_Dash_List_Connec
 			if ( isset( $contact['result_code'] ) && ( empty( $contact['result_code'] ) || false === $update ) ) {
 				$api->add_subscriber( $list_identifier, $prepared_args );
 			} else {
-				$prepared_args['contact'] = $contact;
+				// Sanitize contact data to remove invalid datetime field values before updating
+				$prepared_args['contact'] = $this->sanitize_contact_data( $contact );
 				$api->updateSubscriber( $list_identifier, $prepared_args );
 			}
 
@@ -311,7 +319,8 @@ class Thrive_Dash_List_Connection_ActiveCampaign extends Thrive_Dash_List_Connec
 				if ( isset( $contact['result_code'] ) && ( empty( $contact['result_code'] ) || false === $update ) ) {
 					$api->add_subscriber( $list_identifier, $prepared_args );
 				} else {
-					$prepared_args['contact'] = $contact;
+					// Sanitize contact data to remove invalid datetime field values before updating
+					$prepared_args['contact'] = $this->sanitize_contact_data( $contact );
 					$api->updateSubscriber( $list_identifier, $prepared_args );
 				}
 
@@ -354,7 +363,10 @@ class Thrive_Dash_List_Connection_ActiveCampaign extends Thrive_Dash_List_Connec
 		try {
 
 			// Refresh the contact data for mapping custom fields
-			$prepared_args['contact'] = $api->call( 'contact_view_email', array( 'email' => $arguments['email'] ) );
+			$contact_data = $api->call( 'contact_view_email', array( 'email' => sanitize_email( $arguments['email'] ) ) );
+
+			// Sanitize contact data to remove invalid datetime field values before updating
+			$prepared_args['contact'] = $this->sanitize_contact_data( $contact_data );
 
 			// Build mapped fields array
 			$prepared_args['custom_fields'] = $this->buildMappedCustomFields( $arguments );
@@ -372,16 +384,74 @@ class Thrive_Dash_List_Connection_ActiveCampaign extends Thrive_Dash_List_Connec
 	}
 
 	/**
+	 * Get all tags from ActiveCampaign
+	 *
+	 * @param bool $force Force refresh from API
+	 * @return array
+	 */
+	public function getTags( $force = false ) {
+		// Create cache key
+		$credentials = $this->get_credentials();
+		$cache_key   = 'activecampaign_tags_' . md5( serialize( $credentials ) );
+		$cached_tags = false;
+
+		// Try to get cached tags if not force refresh
+		if ( ! $force ) {
+			$cached_tags = get_transient( $cache_key );
+		}
+
+		if ( false !== $cached_tags && is_array( $cached_tags ) ) {
+			return $cached_tags;
+		}
+
+		$tags = array();
+
+		try {
+			/** @var Thrive_Dash_Api_ActiveCampaign $api */
+			$api = $this->get_api();
+
+			// ActiveCampaign API v3 endpoint for tags
+			$response = $api->call( 'tags_list' );
+
+			if ( empty( $response ) || ! is_array( $response ) ) {
+				return $tags; // Return empty array if response is empty or not an array.
+			}
+
+			foreach ( $response as $tag ) {
+				if ( ! empty( $tag['name'] ) ) {
+					$tags[ $tag['id'] ] = $tag['name'];
+				}
+			}
+
+			// Cache the tags for 15 minutes
+			if ( ! empty( $tags ) ) {
+				set_transient( $cache_key, $tags, 15 * MINUTE_IN_SECONDS );
+			}
+		} catch ( Exception $e ) {
+			// If API call fails, return empty array
+		}
+
+		return $tags;
+	}
+
+	/**
 	 * output any (possible) extra editor settings for this API
 	 *
 	 * @param array $params allow various different calls to this method
+	 * @param bool  $force  force refresh from API
 	 *
 	 * @return array
 	 */
-	public function get_extra_settings( $params = array() ) {
+	public function get_extra_settings( $params = array(), $force = false ) {
 		$params['forms'] = $this->_get_forms();
 		if ( ! is_array( $params['forms'] ) ) {
 			$params['forms'] = array();
+		}
+
+		$params['tags'] = $this->getTags( $force );
+
+		if ( ! is_array( $params['tags'] ) ) {
+			$params['tags'] = array();
 		}
 
 		return $params;
@@ -561,7 +631,6 @@ class Thrive_Dash_List_Connection_ActiveCampaign extends Thrive_Dash_List_Connec
 		return $mapped_data;
 	}
 
-
 	/**
 	 * get relevant data from webhook trigger
 	 *
@@ -642,5 +711,213 @@ class Thrive_Dash_List_Connection_ActiveCampaign extends Thrive_Dash_List_Connec
 
 	public function has_forms() {
 		return true;
+	}
+
+	/**
+	 * Sanitize contact data to remove invalid datetime field values
+	 * This prevents API errors when updating subscribers with existing invalid datetime values
+	 *
+	 * @param array $contact The contact data from ActiveCampaign API
+	 *
+	 * @return array Sanitized contact data
+	 */
+	protected function sanitize_contact_data( $contact ) {
+		if ( ! is_array( $contact ) || empty( $contact['fields'] ) || ! is_array( $contact['fields'] ) ) {
+			return $contact;
+		}
+
+		// Get all field types to identify datetime fields
+		$field_types = $this->get_all_field_types();
+
+		// Sanitize fields array
+		foreach ( $contact['fields'] as $field_id => $field_data ) {
+			if ( ! is_array( $field_data ) ) {
+				continue;
+			}
+
+			$field_id = absint( $field_id );
+
+			if ( ! $this->is_datetime_field( $field_id, $field_data, $field_types ) ) {
+				continue;
+			}
+
+			$this->sanitize_datetime_field( $contact, $field_id, $field_data );
+		}
+
+		return $contact;
+	}
+
+	/**
+	 * Check if a field is a datetime field type
+	 *
+	 * @param int   $field_id    The field ID
+	 * @param array $field_data  The field data array
+	 * @param array $field_types Array of field types by ID
+	 *
+	 * @return bool True if datetime field, false otherwise
+	 */
+	protected function is_datetime_field( $field_id, $field_data, $field_types ) {
+		$field_type = isset( $field_types[ $field_id ] ) ? sanitize_text_field( $field_types[ $field_id ] ) : '';
+
+		if ( empty( $field_type ) && ! empty( $field_data['type'] ) ) {
+			$field_type = sanitize_text_field( $field_data['type'] );
+		}
+
+		return 'datetime' === $field_type;
+	}
+
+	/**
+	 * Sanitize a datetime field value in contact data
+	 *
+	 * @param array $contact    The contact data array (passed by reference)
+	 * @param int   $field_id    The field ID
+	 * @param array $field_data  The field data array
+	 *
+	 * @return void
+	 */
+	protected function sanitize_datetime_field( &$contact, $field_id, $field_data ) {
+		$field_value = isset( $field_data['val'] ) ? $field_data['val'] : '';
+
+		// If the value is empty, null, or invalid, remove the field entirely
+		// ActiveCampaign API doesn't accept empty strings or null for datetime fields
+		if ( empty( $field_value ) ) {
+			unset( $contact['fields'][ $field_id ] );
+
+			return;
+		}
+
+		// Try to format the existing value to ISO 8601 if it's not already
+		$formatted_value = $this->format_datetime_for_api( $field_value );
+
+		if ( ! empty( $formatted_value ) ) {
+			$contact['fields'][ $field_id ]['val'] = $formatted_value;
+		} else {
+			// If we can't format it, remove the field to avoid API errors
+			unset( $contact['fields'][ $field_id ] );
+		}
+	}
+
+	/**
+	 * Get all custom fields including datetime types for type checking
+	 * This is used internally to check field types, not for display
+	 *
+	 * @return array Array of field ID => field type
+	 */
+	protected function get_all_field_types() {
+		if ( null !== $this->field_types_cache ) {
+			return $this->field_types_cache;
+		}
+
+		$this->field_types_cache = array();
+
+		try {
+			// Get all custom fields including datetime types
+			$custom_fields = $this->get_api()->getCustomFields();
+
+			if ( ! is_array( $custom_fields ) || empty( $custom_fields ) ) {
+				return $this->field_types_cache;
+			}
+
+			foreach ( $custom_fields as $field ) {
+				if ( empty( $field['id'] ) || empty( $field['type'] ) ) {
+					continue;
+				}
+
+				$field_id   = absint( $field['id'] );
+				$field_type = sanitize_text_field( $field['type'] );
+
+				$this->field_types_cache[ $field_id ] = $field_type;
+			}
+		} catch ( Exception $e ) {
+			// If we can't get field types, return empty array
+			// This will cause datetime formatting to be skipped, which is safer than failing
+		}
+
+		return $this->field_types_cache;
+	}
+
+	/**
+	 * Format datetime value to ISO 8601 format for ActiveCampaign API
+	 *
+	 * @param string|mixed $datetime_value The datetime value to format
+	 *
+	 * @return string ISO 8601 formatted datetime string or empty string if invalid
+	 */
+	protected function format_datetime_for_api( $datetime_value ) {
+		if ( empty( $datetime_value ) ) {
+			return '';
+		}
+
+		// Sanitize input
+		$datetime_value = sanitize_text_field( $datetime_value );
+
+		if ( empty( $datetime_value ) ) {
+			return '';
+		}
+
+		// If already in ISO 8601 format, return as is
+		if ( preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?$/', $datetime_value ) ) {
+			return $datetime_value;
+		}
+
+		// Try to parse the datetime value
+		try {
+			$datetime = $this->parse_datetime_value( $datetime_value );
+
+			if ( false !== $datetime ) {
+				// Format to RFC 3339 (ISO 8601 compatible) with timezone
+				return $datetime->format( 'c' );
+			}
+		} catch ( Exception $e ) {
+			// If parsing fails, return empty string to skip this field
+			return '';
+		}
+
+		// If we can't parse it, return empty string to skip this field
+		return '';
+	}
+
+	/**
+	 * Parse datetime value from various formats
+	 *
+	 * @param string $datetime_value The datetime value to parse
+	 *
+	 * @return DateTime|false DateTime object on success, false on failure
+	 */
+	protected function parse_datetime_value( $datetime_value ) {
+		// Try common date formats
+		$formats = array(
+			'Y-m-d H:i:s',
+			'Y-m-d H:i',
+			'Y-m-d',
+			'm/d/Y H:i:s',
+			'm/d/Y H:i',
+			'm/d/Y',
+			'd/m/Y H:i:s',
+			'd/m/Y H:i',
+			'd/m/Y',
+			'YmdHis',
+			'Ymd',
+		);
+
+		foreach ( $formats as $format ) {
+			$datetime = DateTime::createFromFormat( $format, $datetime_value );
+
+			if ( false !== $datetime ) {
+				return $datetime;
+			}
+		}
+
+		// Fallback to strtotime if format parsing fails
+		$timestamp = strtotime( $datetime_value );
+
+		if ( false !== $timestamp ) {
+			$datetime = new DateTime();
+			$datetime->setTimestamp( $timestamp );
+
+			return $datetime;
+		}
+
+		return false;
 	}
 }

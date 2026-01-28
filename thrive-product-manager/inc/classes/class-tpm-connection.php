@@ -44,9 +44,11 @@ class TPM_Connection {
 
 	private function __construct() {
 
-		$this->_data = get_option( self::NAME, array() );
+		$this->_data     = get_option( self::NAME, array() );
+		$this->_data     = is_array( $this->_data ) ? $this->_data : array();
 
 		$this->_messages = get_option( 'tpm_connection_messages', array() );
+		$this->_messages = is_array( $this->_messages ) ? $this->_messages : array();
 
 		add_filter( 'tpm_messages', array( $this, 'apply_messages' ) );
 	}
@@ -92,7 +94,7 @@ class TPM_Connection {
 	}
 
 	public function set_data( $data ) {
-		$this->_data = $data;
+		$this->_data = is_array( $data ) ? $data : array();
 	}
 
 	public function get_login_url() {
@@ -289,6 +291,7 @@ class TPM_Connection {
 
 	public function apply_messages( $messages = array() ) {
 
+		$messages = is_array( $messages ) ? $messages : array();
 		$messages = array_merge( $messages, $this->_messages );
 
 		$this->_messages = array();

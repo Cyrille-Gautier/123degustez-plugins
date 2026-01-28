@@ -64,6 +64,7 @@ class TPM_License {
 	public function save() {
 
 		$current_licenses              = get_option( self::NAME, array() );
+		$current_licenses              = is_array( $current_licenses ) ? $current_licenses : array();
 		$current_licenses[ $this->id ] = $this->tags;
 
 		update_option( self::NAME, $current_licenses );
@@ -74,6 +75,7 @@ class TPM_License {
 	public function delete() {
 
 		$current_licenses = get_option( self::NAME, array() );
+		$current_licenses = is_array( $current_licenses ) ? $current_licenses : array();
 
 		if ( isset( $current_licenses[ $this->id ] ) ) {
 			unset( $current_licenses[ $this->id ] );
@@ -92,9 +94,11 @@ class TPM_License {
 	 */
 	public static function get_saved_licenses() {
 
-		$licenses = array();
+		$licenses       = array();
+		$saved_licenses = get_option( self::NAME, array() );
+		$saved_licenses = is_array( $saved_licenses ) ? $saved_licenses : array();
 
-		foreach ( get_option( self::NAME, array() ) as $license_id => $tags ) {
+		foreach ( $saved_licenses as $license_id => $tags ) {
 			$licenses[ $license_id ] = new self( $license_id, $tags );
 		}
 

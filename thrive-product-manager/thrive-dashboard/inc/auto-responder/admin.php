@@ -244,7 +244,8 @@ function tve_dash_api_api_handle_redirect() {
 	$result = $connection->getAuthorizeUrl();
 
 	$response['success'] = ! ( ( filter_var( $result, FILTER_VALIDATE_URL ) ) === false );
-	$response['message'] = ! $response['success'] ? 'An unknown error has occurred' : $result;
+	// Pass through the actual error message from getAuthorizeUrl() instead of generic message
+	$response['message'] = $result;
 
 	if ( $doing_ajax ) {
 		exit( json_encode( $response ) );
@@ -361,4 +362,3 @@ function tve_dash_api_filter_ui_hooks( $hooks ) {
 
 	return $hooks;
 }
-

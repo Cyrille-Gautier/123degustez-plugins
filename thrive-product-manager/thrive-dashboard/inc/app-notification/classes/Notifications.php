@@ -178,16 +178,27 @@ class TD_Notifications {
 
 	// Retrieve data from the server using the REST API
 	private function get( $args = [] ) {
+		// Check for cached fallback response from previous 403 error
+		$fallback_cache = get_transient( 'td_notifications_403_fallback' );
+		if ( $fallback_cache !== false ) {
+			return [];
+		}
+
+		// Build URL with query parameters instead of body (standard HTTP practice for GET)
+		$url = $this->_url;
+		if ( ! empty( $args ) ) {
+			$url = add_query_arg( $args, $url );
+		}
+
 		$request_params = [
-			'body'      => $args,
 			'headers'   => [
-				'Content-Type' => 'application/json',
+				'User-Agent' => 'WordPress',
 			],
 			'timeout'   => 30,
 			'sslverify' => false,
 		];
 
-		$notifications = wp_remote_get( $this->_url, $request_params );
+		$notifications = wp_remote_get( $url, $request_params );
 
 		if ( is_wp_error( $notifications ) ) {
 			return [];
@@ -195,9 +206,19 @@ class TD_Notifications {
 
 		$response_code = wp_remote_retrieve_response_code( $notifications );
 
-		if ( $response_code != 200 ) {
+		// Handle 403 Forbidden errors with caching fallback
+		if ( $response_code === 403 ) {
+			// Cache empty response for 6 hours to prevent repeated failures
+			set_transient( 'td_notifications_403_fallback', [], 21600 );
 			return [];
 		}
+
+		if ( $response_code !== 200 ) {
+			return [];
+		}
+
+		// Clear any cached fallback on successful request
+		delete_transient( 'td_notifications_403_fallback' );
 
 		if ( is_wp_error( $notifications ) ) {
 			return false;

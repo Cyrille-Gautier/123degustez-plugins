@@ -44,6 +44,13 @@ class Thrive_Dash_List_Connection_FluentCRM extends Thrive_Dash_List_Connection_
 	/**
 	 * @return bool
 	 */
+	public function can_create_tags_via_api() {
+		return true;
+	}
+
+	/**
+	 * @return bool
+	 */
 	public function has_optin() {
 		return true;
 	}
@@ -550,7 +557,7 @@ class Thrive_Dash_List_Connection_FluentCRM extends Thrive_Dash_List_Connection_
 
 		$list_api = FluentCrmApi( 'lists' );
 
-		// Get all the lists
+		// Get all the lists.
 		$all_lists = $list_api->all();
 
 		foreach ( $all_lists as $list ) {
@@ -563,7 +570,50 @@ class Thrive_Dash_List_Connection_FluentCRM extends Thrive_Dash_List_Connection_
 		return $lists;
 	}
 
-	public function get_tags() {
+	/**
+	 * Override get_api_data to include tags.
+	 *
+	 * @param array $params
+	 * @param bool  $force
+	 *
+	 * @return array
+	 */
+	public function get_api_data( $params = array(), $force = false ) {
+		if ( empty( $params ) ) {
+			$params = array();
+		}
+
+		$transient = 'tve_api_data_' . $this->get_key();
+		$data      = get_transient( $transient );
+
+		if ( false === $force && tve_dash_is_debug_on() ) {
+			$force = true;
+		}
+
+		if ( true === $force || false === $data ) {
+			$data = array(
+				'lists'          => $this->get_lists( false ),
+				'extra_settings' => $this->get_extra_settings( $params ),
+				'custom_fields'  => $this->get_custom_fields( $params ),
+				'tags'           => $this->get_tags( $force ),
+			);
+
+			set_transient( $transient, $data, MONTH_IN_SECONDS );
+		} else {
+			if ( ! is_array( $data ) ) {
+				$data = array();
+			}
+
+			// Always fetch tags separately since they have their own 15-minute cache
+			$data['tags'] = $this->get_tags( $force );
+		}
+
+		$data['api_custom_fields'] = $this->get_api_custom_fields( $params, $force );
+
+		return $data;
+	}
+
+	public function get_tags( $force = false ) {
 
 		if ( ! $this->pluginInstalled() || ! function_exists( 'FluentCrmApi' ) ) {
 			$this->_error = __( 'FluentCRM plugin could not be found.', 'thrive-dash' );
@@ -571,22 +621,156 @@ class Thrive_Dash_List_Connection_FluentCRM extends Thrive_Dash_List_Connection_
 			return array();
 		}
 
+		// Create a unique cache key for tags
+		$cache_key = 'fluentcrm_tags_' . $this->get_key();
+		$cached_tags = false;
+
+		// Try to get cached tags if not force refresh
+		if ( ! $force ) {
+			$cached_tags = get_transient( $cache_key );
+		}
+
+		if ( false !== $cached_tags && is_array( $cached_tags ) ) {
+			return $cached_tags;
+		}
+
 		$tags = array();
 
-		$tag_api = FluentCrmApi( 'tags' );
+		try {
+			$tag_api = FluentCrmApi( 'tags' );
 
-		// Get all the tags
-		$all_tags = $tag_api->all();
+			// Get all the tags
+			$all_tags = $tag_api->all();
 
-		foreach ( $all_tags as $tag ) {
-			$tags[] = array(
-				'id'       => $tag->id,
-				'text'     => $tag->title,
-				'selected' => false,
-			);
+			foreach ( $all_tags as $tag ) {
+				$tags[] = array(
+					'id'       => $tag->id,
+					'text'     => $tag->title,
+					'selected' => false,
+				);
+			}
+
+			// Cache the tags for 15 minutes
+			if ( is_array( $tags ) && ! empty( $tags ) ) {
+				set_transient( $cache_key, $tags, 15 * MINUTE_IN_SECONDS );
+				// Store a backup cache that doesn't expire for fallback
+				set_transient( $cache_key . '_backup', $tags, YEAR_IN_SECONDS );
+			}
+		} catch ( Exception $e ) {
+			// If API call fails, try to use backup cache
+			$backup_cache = get_transient( $cache_key . '_backup' );
+			if ( false !== $backup_cache && is_array( $backup_cache ) ) {
+				return $backup_cache;
+			}
 		}
 
 		return $tags;
+	}
+
+	/**
+	 * Clear the tags cache (useful when tags are created/updated)
+	 *
+	 * @return void
+	 */
+	public function clearTagsCache() {
+		$cache_key = 'fluentcrm_tags_' . $this->get_key();
+		delete_transient( $cache_key );
+		delete_transient( $cache_key . '_backup' );
+	}
+
+	/**
+	 * Create tags if they don't exist (called from TCB editor on Apply)
+	 *
+	 * @param array $params
+	 * @return array 
+	 */
+	public function _create_tags_if_needed( $params ) {
+		if ( ! $this->pluginInstalled() || ! function_exists( 'FluentCrmApi' ) ) {
+			return array(
+				'success' => false,
+				'message' => __( 'FluentCRM plugin not found', 'thrive-dash' )
+			);
+		}
+
+		$tag_names = isset( $params['tag_names'] ) ? $params['tag_names'] : array();
+
+		// Handle both array and comma-separated string.
+		if ( is_string( $tag_names ) ) {
+			$tag_names = explode( ',', $tag_names );
+			$tag_names = array_map( 'trim', $tag_names );
+		}
+
+		// Filter out empty values
+		$tag_names = array_filter( $tag_names );
+
+		if ( empty( $tag_names ) ) {
+			return array(
+				'success' => true,
+				'message' => __( 'No tags to create', 'thrive-dash' ),
+				'tags_created' => 0
+			);
+		}
+
+		try {
+			// Get all existing tags to check for duplicates
+			$existing_tags = $this->get_tags( true ); // Force fresh fetch
+			$existing_tag_names = array();
+
+			foreach ( $existing_tags as $tag ) {
+				$existing_tag_names[] = strtolower( $tag['text'] );
+			}
+
+			// Filter out tags that already exist (case-insensitive comparison)
+			$new_tag_names = array();
+			foreach ( $tag_names as $tag_name ) {
+				$tag_name = trim( $tag_name );
+				if ( ! empty( $tag_name ) && ! in_array( strtolower( $tag_name ), $existing_tag_names, true ) ) {
+					$new_tag_names[] = $tag_name;
+				}
+			}
+
+			if ( empty( $new_tag_names ) ) {
+				return array(
+					'success' => true,
+					'message' => __( 'All tags already exist', 'thrive-dash' ),
+					'tags_created' => 0
+				);
+			}
+
+			// Prepare tags for importBulk
+			$tags_to_import = array();
+			foreach ( $new_tag_names as $tag_name ) {
+				$tags_to_import[] = array( 'title' => $tag_name );
+			}
+
+			// Create tags using FluentCRM API
+			$tagApi = FluentCrmApi( 'tags' );
+			$created_tags = $tagApi->importBulk( $tags_to_import );
+
+			// Clear cache so new tags appear immediately
+			$this->clearTagsCache();
+
+			return array(
+				'success' => true,
+				'message' => sprintf(
+					_n( '%d tag created successfully', '%d tags created successfully', count( $created_tags ), 'thrive-dash' ),
+					count( $created_tags )
+				),
+				'tags_created' => count( $created_tags ),
+				'tags' => array_map( function( $tag ) {
+					return array(
+						'id' => $tag->id,
+						'text' => $tag->title
+					);
+				}, $created_tags )
+			);
+
+		} catch ( Exception $e ) {
+			return array(
+				'success' => false,
+				'message' => $e->getMessage()
+			);
+		}
 	}
 
 	/**

@@ -38,7 +38,10 @@ class Tve_Dash_Icon_Manager {
 			$license = 'pro';
 		}
 
-		wp_enqueue_style( 'tvd_material', '//fonts.googleapis.com/css?family=Material+Icons+Two+Tone' );
+		if ( ! tve_dash_is_google_fonts_blocked() ) {
+			wp_enqueue_style( 'tvd_material', '//fonts.googleapis.com/css?family=Material+Icons+Two+Tone' );
+		}
+
 		wp_enqueue_style( 'tvd_material_community', '//cdn.materialdesignicons.com/5.3.45/css/materialdesignicons.min.css' );
 		wp_enqueue_style( 'tvd_fa', "//$license.fontawesome.com/releases/v6.7.1/css/all.css" );
 	}

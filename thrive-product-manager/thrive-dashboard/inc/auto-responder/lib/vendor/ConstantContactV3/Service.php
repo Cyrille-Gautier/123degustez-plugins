@@ -49,20 +49,46 @@ class Thrive_Dash_Api_ConstantContactV3_Service {
 	}
 
 	/**
+	 * Exchange authorization code for access token
+	 *
 	 * https://v3.developer.constantcontact.com/api_guide/server_flow.html#step-8-refresh-the-access-token
 	 *
-	 * @param string $code
+	 * @param string $code Authorization code from OAuth2 flow
 	 *
-	 * @return mixed
+	 * @return array Contains access_token, refresh_token, expires_in, and token_type
+	 * @throws Thrive_Dash_Api_ConstantContactV3_Exception When authorization fails
 	 */
 	public function get_access_token( $code ) {
-		return $this->post( static::TOKEN_URI, array(
-			'client_id'     => $this->client_id,
-			'client_secret' => $this->client_secret,
-			'code'          => $code,
-			'grant_type'    => 'authorization_code',
-			'redirect_uri'  => $this->get_redirect_uri(),
-		), array(), false );
+		if ( empty( $code ) ) {
+			throw new Thrive_Dash_Api_ConstantContactV3_Exception( 'Authorization code is required to get access token.' );
+		}
+
+		try {
+			$data = $this->post( static::TOKEN_URI, array(
+				'client_id'     => $this->client_id,
+				'client_secret' => $this->client_secret,
+				'code'          => $code,
+				'grant_type'    => 'authorization_code',
+				'redirect_uri'  => $this->get_redirect_uri(),
+			), array(), false );
+
+			// Validate the response contains required fields
+			if ( empty( $data['access_token'] ) || empty( $data['refresh_token'] ) ) {
+				throw new Thrive_Dash_Api_ConstantContactV3_Exception( 'Invalid response from authorization server. Missing access_token or refresh_token.' );
+			}
+
+			return $data;
+		} catch ( Thrive_Dash_Api_ConstantContactV3_Exception $e ) {
+			// Provide more context for authorization failures
+			if ( strpos( $e->getMessage(), 'invalid_grant' ) !== false ) {
+				throw new Thrive_Dash_Api_ConstantContactV3_Exception(
+					'The authorization code is invalid or expired. Authorization codes can only be used once and expire quickly. Please try connecting again.',
+					$e->getCode(),
+					$e
+				);
+			}
+			throw $e;
+		}
 	}
 
 	/**
@@ -70,21 +96,51 @@ class Thrive_Dash_Api_ConstantContactV3_Service {
 	 *
 	 * https://v3.developer.constantcontact.com/api_guide/server_flow.html#step-8-refresh-the-access-token
 	 *
-	 * @param string $refresh_token
+	 * Note: Refresh tokens expire after 180 days according to Constant Contact documentation
 	 *
-	 * @return array
+	 * @param string $refresh_token The refresh token to use for getting a new access token
+	 *
+	 * @return array Contains new access_token, refresh_token, expires_in, and token_type
+	 * @throws Thrive_Dash_Api_ConstantContactV3_Exception When refresh token is invalid, expired, or revoked
 	 */
 	public function refresh_access_token( $refresh_token ) {
-		$data = $this->post( static::TOKEN_URI, array(
-			'client_id'     => $this->client_id,
-			'client_secret' => $this->client_secret,
-			'refresh_token' => $refresh_token,
-			'grant_type'    => 'refresh_token',
-		), array(), false );
-		/* store the new access token in the instance */
-		$this->access_token = $data['access_token'];
+		if ( empty( $refresh_token ) ) {
+			throw new Thrive_Dash_Api_ConstantContactV3_Exception(
+				'Refresh token is required to refresh access token. Please reconnect your Constant Contact account.'
+			);
+		}
 
-		return $data;
+		try {
+			$data = $this->post( static::TOKEN_URI, array(
+				'client_id'     => $this->client_id,
+				'client_secret' => $this->client_secret,
+				'refresh_token' => $refresh_token,
+				'grant_type'    => 'refresh_token',
+			), array(), false );
+
+			// Validate the response contains required fields
+			if ( empty( $data['access_token'] ) ) {
+				throw new Thrive_Dash_Api_ConstantContactV3_Exception(
+					'Invalid response from authorization server. Missing access_token in refresh response.'
+				);
+			}
+
+			/* store the new access token in the instance */
+			$this->access_token = $data['access_token'];
+
+			return $data;
+		} catch ( Thrive_Dash_Api_ConstantContactV3_Exception $e ) {
+			// Check if this is a refresh token expiration error
+			if ( strpos( $e->getMessage(), 'invalid_grant' ) !== false ) {
+				throw new Thrive_Dash_Api_ConstantContactV3_Exception(
+					'The refresh token is invalid or expired. Refresh tokens expire after 180 days of inactivity. Please reconnect your Constant Contact account.',
+					$e->getCode(),
+					$e
+				);
+			}
+			// Re-throw the original exception
+			throw $e;
+		}
 	}
 
 	protected function prepare_scopes( $scopes ) {
@@ -96,23 +152,74 @@ class Thrive_Dash_Api_ConstantContactV3_Service {
 	}
 
 	/**
-	 * @param $response
+	 * Parse API response and handle errors
 	 *
-	 * @return array
-	 * @throws Thrive_Dash_Api_ConstantContactV3_Exception
+	 * @param $response WP HTTP API response object
+	 *
+	 * @return array Parsed JSON response
+	 * @throws Thrive_Dash_Api_ConstantContactV3_Exception When request fails or returns error
 	 */
 	protected function parse_response( $response ) {
-
-		$response = json_decode( wp_remote_retrieve_body( $response ), true );
-
-		if ( empty( $response ) || ! empty( $response['error'] ) ) {
-			$this->throw_error( $response );
+		// Check for WordPress HTTP errors
+		if ( is_wp_error( $response ) ) {
+			throw new Thrive_Dash_Api_ConstantContactV3_Exception(
+				'HTTP request failed: ' . $response->get_error_message()
+			);
 		}
 
-		return $response;
+		$status_code = wp_remote_retrieve_response_code( $response );
+		$body = wp_remote_retrieve_body( $response );
+		$parsed_response = json_decode( $body, true );
+
+		// Handle HTTP error status codes
+		if ( $status_code >= 400 ) {
+			// Handle rate limiting (429)
+			if ( $status_code === 429 ) {
+				$retry_after = wp_remote_retrieve_header( $response, 'retry-after' );
+				$message = 'Rate limit exceeded. ';
+				if ( $retry_after ) {
+					$message .= 'Please retry after ' . $retry_after . ' seconds.';
+				} else {
+					$message .= 'Please try again later.';
+				}
+				throw new Thrive_Dash_Api_ConstantContactV3_Exception( $message );
+			}
+
+			// Handle authentication errors (401)
+			if ( $status_code === 401 ) {
+				throw new Thrive_Dash_Api_ConstantContactV3_Exception(
+					'Authentication failed. Your access token may be expired or invalid. Please reconnect your Constant Contact account.'
+				);
+			}
+
+			// For other errors, check if there's an error in the response body
+			if ( ! empty( $parsed_response['error'] ) ) {
+				$this->throw_error( $parsed_response );
+			} else {
+				throw new Thrive_Dash_Api_ConstantContactV3_Exception(
+					'API request failed with status code ' . $status_code
+				);
+			}
+		}
+
+		// Check for errors in successful responses (some APIs return 200 with error)
+		if ( ! empty( $parsed_response['error'] ) ) {
+			$this->throw_error( $parsed_response );
+		}
+
+		// Handle empty or invalid JSON responses
+		if ( empty( $parsed_response ) && ! empty( $body ) ) {
+			throw new Thrive_Dash_Api_ConstantContactV3_Exception(
+				'Invalid JSON response from API: ' . substr( $body, 0, 200 )
+			);
+		}
+
+		return $parsed_response;
 	}
 
 	/**
+	 * Parse and throw error with user-friendly messages
+	 *
 	 * @param $response
 	 *
 	 * @return string
@@ -121,12 +228,51 @@ class Thrive_Dash_Api_ConstantContactV3_Service {
 	 */
 	protected function throw_error( $response ) {
 		if ( ! isset( $response['error'] ) ) {
-			$message = 'Unknownerror. Raw response was: ' . print_r( $response, true );
+			$message = 'Unknown error. Raw response was: ' . print_r( $response, true );
 		} elseif ( is_string( $response['error'] ) ) {
-			$description = isset( $response['error_description'] ) ? ' (' . $response['error_description'] . ')' : '';
-			$message     = $response['error'] . $description;
+			$error_type = $response['error'];
+			$description = isset( $response['error_description'] ) ? $response['error_description'] : '';
+
+			// Provide user-friendly messages for common OAuth2 errors
+			// Reference: https://developer.constantcontact.com/api_guide/auth_overview.html
+			switch ( $error_type ) {
+				case 'invalid_grant':
+					$message = 'The refresh token is invalid or expired.';
+					if ( $description ) {
+						$message .= ' (' . $description . ')';
+					}
+					$message .= ' Refresh tokens expire after 180 days of inactivity. Please reconnect your Constant Contact account.';
+					break;
+				case 'invalid_token':
+					$message = 'The access token is invalid or expired. Please reconnect your Constant Contact account.';
+					break;
+				case 'invalid_client':
+					$message = 'The API credentials (client ID or secret) are invalid. Please verify your Constant Contact API settings.';
+					break;
+				case 'access_denied':
+					$message = 'Access was denied. The user may have revoked access to your application.';
+					break;
+				case 'invalid_scope':
+					$message = 'The requested permissions (scopes) are invalid or unsupported.';
+					break;
+				case 'unauthorized_client':
+					$message = 'The client is not authorized to use this authorization method.';
+					break;
+				case 'server_error':
+					$message = 'Constant Contact server error. Please try again later.';
+					break;
+				case 'temporarily_unavailable':
+					$message = 'Constant Contact service is temporarily unavailable. Please try again later.';
+					break;
+				default:
+					$message = $error_type;
+					if ( $description ) {
+						$message .= ' (' . $description . ')';
+					}
+					break;
+			}
 		} elseif ( is_array( $response['error'] ) ) {
-			$message = isset( $response['error']['message'] ) ? $response['error']['message'] : '';
+			$message = isset( $response['error']['message'] ) ? $response['error']['message'] : 'Unknown error';
 		} else {
 			$message = 'Unknown error. Raw response was: ' . print_r( $response, true );
 		}

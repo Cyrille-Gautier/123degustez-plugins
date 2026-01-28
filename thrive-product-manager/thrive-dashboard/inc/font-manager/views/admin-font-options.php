@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $all_fonts = tve_dash_get_font_family_array();
 
 $link         = 'https://www.googleapis.com/webfonts/v1/webfonts?key=';
-$key          = 'AIzaSyDJhU1bXm2YTz_c4VpWZrAyspOS37Nn-kI';
+$key          = '[REDACTED]';
 $request      = wp_remote_get( $link . $key, array( 'sslverify' => false ) );
 $response     = json_decode( wp_remote_retrieve_body( $request ), true );
 $google_fonts = $response['items'];
@@ -448,8 +448,9 @@ if ( isset( $_GET['font_action'] ) && sanitize_text_field( $_GET['font_action'] 
 			subset = undefined;
 		}
 
+		// Google fonts is replaced with Bunny net fonts.
 		if ( window.selected_fonts_set === 'google_fonts' || window.selected_fonts_set === 'prefered_fonts' ) {
-			var font_link = "//fonts.googleapis.com/css?family=" + font.replace( " ", "+" ) + (
+			var font_link = "//fonts.bunny.net/css?family=" + font.replace( " ", "+" ) + (
 					style !== undefined ? ":" + style : ""
 				) + (
 				                subset !== undefined ? "&subset=" + subset : ""

@@ -278,9 +278,13 @@ class Thrive_Dash_Api_Ontraport {
 			}
 		}
 
-		$this->call( '1/objects/subscribe', $subscribe_fields, 'PUT' );
+		// Only subscribe to campaign/sequence if a list_id was provided
+		// This allows creating contacts with tags only, without requiring a campaign/sequence
+		if ( ! empty( $list_id ) ) {
+			$this->call( '1/objects/subscribe', $subscribe_fields, 'PUT' );
+		}
 
-		return true;
+		return $contact_data;
 	}
 
 	/**
@@ -291,6 +295,117 @@ class Thrive_Dash_Api_Ontraport {
 	 * @return array|mixed|object
 	 * @throws Thrive_Dash_Api_Ontraport_Exception
 	 */
+
+	/**
+	 * Get all tags
+	 *
+	 * @return array
+	 * @throws Thrive_Dash_Api_Ontraport_Exception
+	 */
+	public function get_tags() {
+		$tags   = array();
+		$offset = 0;
+		$range  = 50;
+		$data   = array();
+
+		do {
+			$raw_tags = $this->call(
+				"{$this->v}/objects",
+				array(
+					'objectID' => OntraportObjectType::TAG,
+					'sort'     => 'tag_name',
+					'sortDir'  => 'asc',
+					'start'    => $offset,
+					'range'    => $range,
+				)
+			);
+
+			if ( ! is_array( $raw_tags ) || empty( $raw_tags['data'] ) ) {
+				break;
+			}
+
+			$data = array_merge_recursive( $data, $raw_tags['data'] );
+
+			if ( count( $raw_tags['data'] ) < $range ) {
+				break;
+			}
+
+			$offset += $range;
+
+		} while ( 0 !== count( $raw_tags['data'] ) );
+
+		foreach ( $data as $item ) {
+			if ( isset( $item['tag_id'] ) && isset( $item['tag_name'] ) ) {
+				$tags[ $item['tag_id'] ] = $item;
+			}
+		}
+
+		return $tags;
+	}
+
+	/**
+	 * Add tag to contact
+	 *
+	 * @param int   $contact_id Contact ID
+	 * @param array $tag_ids    Array of tag IDs
+	 *
+	 * @return bool
+	 * @throws Thrive_Dash_Api_Ontraport_Exception
+	 */
+	public function add_tag_to_contact( $contact_id, $tag_ids ) {
+		if ( empty( $contact_id ) || empty( $tag_ids ) ) {
+			return false;
+		}
+
+		// Convert single tag ID to array
+		if ( ! is_array( $tag_ids ) ) {
+			$tag_ids = array( $tag_ids );
+		}
+
+		foreach ( $tag_ids as $tag_id ) {
+			$this->call(
+				'1/objects/tag',
+				array(
+					'objectID'  => OntraportObjectType::CONTACT,
+					'add_list'  => $tag_id,
+					'ids'       => $contact_id,
+				),
+				'PUT'
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Create a new tag
+	 *
+	 * @param string $tag_name Tag name
+	 *
+	 * @return array|bool Tag data or false on failure
+	 * @throws Thrive_Dash_Api_Ontraport_Exception
+	 */
+	public function create_tag( $tag_name ) {
+		if ( empty( $tag_name ) ) {
+			return false;
+		}
+
+		$result = $this->call(
+			'1/objects',
+			array(
+				'objectID' => OntraportObjectType::TAG,
+				'tag_name' => $tag_name,
+			),
+			'POST'
+		);
+
+		if ( ! empty( $result['data'] ) ) {
+			return $result['data'];
+		}
+
+		return false;
+	}
+
 	public function call( $path, $params = array(), $method = 'GET' ) {
 
 		$method = strtoupper( $method );

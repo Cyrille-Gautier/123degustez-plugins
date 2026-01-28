@@ -63,6 +63,7 @@ class TPM_Product {
 	public function is_licensed() {
 
 		$thrive_license = get_option( 'thrive_license', array() );
+		$thrive_license = is_array( $thrive_license ) ? $thrive_license : array();
 
 		$backwards = in_array( $this->get_tag(), $thrive_license ) || in_array( 'all', $thrive_license );
 

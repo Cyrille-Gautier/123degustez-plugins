@@ -7,7 +7,7 @@ namespace Composer\Autoload;
 class ComposerStaticInit1cea552656b4d4ff62908fbfd4a41724
 {
     public static $prefixLengthsPsr4 = array (
-        'T' => 
+        'T' =>
         array (
             'Thrive_Dashboard\\Font_Library\\Interfaces\\' => 41,
             'Thrive_Dashboard\\Font_Library\\' => 30,
@@ -15,11 +15,11 @@ class ComposerStaticInit1cea552656b4d4ff62908fbfd4a41724
     );
 
     public static $prefixDirsPsr4 = array (
-        'Thrive_Dashboard\\Font_Library\\Interfaces\\' => 
+        'Thrive_Dashboard\\Font_Library\\Interfaces\\' =>
         array (
             0 => __DIR__ . '/../..' . '/inc/font-library/interfaces',
         ),
-        'Thrive_Dashboard\\Font_Library\\' => 
+        'Thrive_Dashboard\\Font_Library\\' =>
         array (
             0 => __DIR__ . '/../..' . '/inc/font-library/classes',
         ),

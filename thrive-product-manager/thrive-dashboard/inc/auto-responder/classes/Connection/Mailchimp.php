@@ -47,6 +47,13 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 	/**
 	 * @return bool
 	 */
+	public function can_create_tags_via_api() {
+		return true;
+	}
+
+	/**
+	 * @return bool
+	 */
 	public function has_optin() {
 		return true;
 	}
@@ -770,23 +777,6 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 		), 'POST' );
 	}
 
-	/**
-	 * Allow the user to choose whether to have a single or a double optin for the form being edited
-	 * It will hold the latest selected value in a cookie so that the user is presented by default with the same option selected the next time he edits such a form
-	 *
-	 * @param array $params
-	 *
-	 * @return array
-	 * @throws Thrive_Dash_Api_Mailchimp_Exception
-	 */
-	public function get_extra_settings( $params = array() ) {
-		$params['optin'] = empty( $params['optin'] ) ? ( isset( $_COOKIE['tve_api_mailchimp_optin'] ) ? sanitize_text_field( $_COOKIE['tve_api_mailchimp_optin'] ) : 'd' ) : $params['optin'];
-		setcookie( 'tve_api_mailchimp_optin', $params['optin'], strtotime( '+6 months' ), '/' );
-		$groups           = $this->_get_groups( $params );
-		$params['groups'] = $groups;
-
-		return $params;
-	}
 
 	/**
 	 * Extract the info we need for custom fields based on list_id or API's first list_id
@@ -884,6 +874,131 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 	}
 
 	/**
+	 * Gets a list of tags through GET /lists/{list_id}/tag-search API with 15-minute transient caching
+	 *
+	 * @param string $list_id Optional list ID to get tags for a specific list
+	 * @return array
+	 */
+	public function getTags( $list_id = null, $force = false ) {
+		// Create a unique cache key based on API credentials and list ID
+		$credentials = $this->get_credentials();
+		$cache_key = 'mailchimp_tags_' . md5( serialize( $credentials ) . '_' . $list_id );
+		$cached_tags = false;
+
+		// Try to get cached tags if not force refresh.
+		if ( ! $force ) {
+			$cached_tags = get_transient( $cache_key );
+		}
+
+		if ( false !== $cached_tags && is_array( $cached_tags ) ) {
+			// Sort cached tags alphabetically by value
+			asort( $cached_tags );
+			return $cached_tags;
+		}
+		
+		$tags = array();
+
+		try {
+			/** @var Thrive_Dash_Api_Mailchimp $api */
+			$api = $this->get_api();
+
+			// If no specific list ID provided, try to get from the first available list
+			if ( empty( $list_id ) ) {
+				$lists = $this->_get_lists();
+				if ( ! empty( $lists ) && is_array( $lists ) ) {
+					$list_id = $lists[0]['id'];
+				}
+			}
+
+			if ( ! empty( $list_id ) ) {
+				// Get all tags for the list using the tag-search endpoint
+				// This is the proper Mailchimp API endpoint for getting tags
+				try {
+					$tags_response = $api->request( 'lists/' . $list_id . '/tag-search', array( 'count' => 1000 ) );
+					if ( isset( $tags_response->tags ) && is_array( $tags_response->tags ) ) {
+						foreach ( $tags_response->tags as $tag ) {
+							if ( isset( $tag->name ) ) {
+								// Use tag name as both key and value for consistency with other APIs
+								$tags[ $tag->name ] = $tag->name;
+							}
+						}
+					}
+				} catch ( Exception $e ) {
+					// If tag-search endpoint fails, try to get segments as fallback
+					// Some older Mailchimp accounts might use segments for tags
+					try {
+						$response = $api->request( 'lists/' . $list_id . '/segments', array( 'count' => 1000 ) );
+						if ( isset( $response->segments ) && is_array( $response->segments ) ) {
+							foreach ( $response->segments as $segment ) {
+								if ( isset( $segment->name ) && isset( $segment->id ) ) {
+									// Only include segments that are tag-based or static segments
+									if ( isset( $segment->type ) && in_array( $segment->type, array( 'static', 'saved' ) ) ) {
+										$tags[ $segment->name ] = $segment->name;
+									}
+								}
+							}
+						}
+					} catch ( Exception $e2 ) {
+						// Both endpoints failed, continue with empty tags
+					}
+				}
+			}
+
+			// Cache the tags for 15 minutes (900 seconds)
+			if ( is_array( $tags ) && ! empty( $tags ) ) {
+				// Sort tags alphabetically by value before caching
+				asort( $tags );
+				set_transient( $cache_key, $tags, 15 * MINUTE_IN_SECONDS );
+			}
+		} catch ( Exception $e ) {
+			// If API call fails but we have expired cache, use it
+			$expired_cache = get_transient( $cache_key . '_backup' );
+			if ( false !== $expired_cache && is_array( $expired_cache ) ) {
+				asort( $expired_cache );
+				return $expired_cache;
+			}
+		}
+
+		// Sort tags alphabetically by value
+		if ( is_array( $tags ) && ! empty( $tags ) ) {
+			asort( $tags );
+			// Store a backup cache that doesn't expire for fallback
+			set_transient( $cache_key . '_backup', $tags, YEAR_IN_SECONDS );
+		}
+
+		return $tags;
+	}
+
+	/**
+	 * Clear the tags cache (useful when tags are created/updated)
+	 *
+	 * @param string $list_id Optional list ID to clear cache for specific list
+	 * @return void
+	 */
+	public function clearTagsCache( $list_id = null ) {
+		$credentials = $this->get_credentials();
+		$cache_key = 'mailchimp_tags_' . md5( serialize( $credentials ) . '_' . $list_id );
+
+		delete_transient( $cache_key );
+		delete_transient( $cache_key . '_backup' );
+	}
+
+	/**
+	 * output any (possible) extra editor settings for this API
+	 *
+	 * @param array $params allow various different calls to this method
+	 */
+	public function get_extra_settings( $params = array(), $force = false ) {
+		$list_id = isset( $params['list_id'] ) ? $params['list_id'] : null;
+		$params['tags'] = $this->getTags( $list_id, $force );
+		if ( ! is_array( $params['tags'] ) ) {
+			$params['tags'] = array();
+		}
+
+		return $params;
+	}
+
+	/**
 	 * Allow the user to choose whether to have a single or a double optin for the form being edited
 	 * It will hold the latest selected value in a cookie so that the user is presented by default with the same option selected the next time he edits such a form
 	 *
@@ -892,10 +1007,18 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 	 * @throws Thrive_Dash_Api_Mailchimp_Exception
 	 */
 	public function render_extra_editor_settings( $params = array() ) {
-		$params['optin'] = empty( $params['optin'] ) ? ( isset( $_COOKIE['tve_api_mailchimp_optin'] ) ? sanitize_text_field( $_COOKIE['tve_api_mailchimp_optin'] ) : 'd' ) : $params['optin'];
+		$params['optin'] = empty( $params['optin'] ) ? ( isset( $_COOKIE['tve_api_mailchimp_optin'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['tve_api_mailchimp_optin'] ) ) : 'd' ) : $params['optin'];
 		setcookie( 'tve_api_mailchimp_optin', $params['optin'], strtotime( '+6 months' ), '/' );
 		$groups           = $this->_get_groups( $params );
 		$params['groups'] = $groups;
+
+		// Add tags to params
+		$list_id = isset( $params['list_id'] ) ? $params['list_id'] : null;
+		$params['tags'] = $this->getTags( $list_id );
+		if ( ! is_array( $params['tags'] ) ) {
+			$params['tags'] = array();
+		}
+
 		$this->output_controls_html( 'mailchimp/api-groups', $params );
 		$this->output_controls_html( 'mailchimp/optin-type', $params );
 	}
@@ -1075,5 +1198,114 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 
 	public function has_custom_fields() {
 		return true;
+	}
+
+	/**
+	 * Create tags if needed (called from editor when page is saved)
+	 *
+	 * @param array $params
+	 * @return array 
+	 */
+	public function _create_tags_if_needed( $params ) {
+		$tag_names = isset( $params['tag_names'] ) ? $params['tag_names'] : array();
+		$list_id = isset( $params['list_id'] ) ? $params['list_id'] : null;
+
+		// Handle both array and comma-separated string.
+		if ( is_string( $tag_names ) ) {
+			$tag_names = explode( ',', $tag_names );
+			$tag_names = array_map( 'trim', $tag_names );
+		}
+
+		// Filter out empty values
+		$tag_names = array_filter( $tag_names );
+
+		if ( empty( $tag_names ) ) {
+			return array(
+				'success' => true,
+				'message' => __( 'No tags to create', 'thrive-dash' ),
+				'tags_created' => 0
+			);
+		}
+
+		// Get list_id if not provided
+		if ( empty( $list_id ) ) {
+			$lists = $this->_get_lists();
+			if ( ! empty( $lists ) && is_array( $lists ) ) {
+				$list_id = $lists[0]['id'];
+			}
+		}
+
+		if ( empty( $list_id ) ) {
+			return array(
+				'success' => false,
+				'message' => __( 'No list ID available for tag creation', 'thrive-dash' )
+			);
+		}
+
+		try {
+			// Get all existing tags to check for duplicates
+			$existing_tags = $this->getListTags( $list_id );
+			$existing_tag_names = array();
+
+			foreach ( $existing_tags as $tag_name => $tag_data ) {
+				$existing_tag_names[] = strtolower( $tag_name );
+			}
+
+			// Filter out tags that already exist (case-insensitive comparison)
+			$new_tag_names = array();
+			foreach ( $tag_names as $tag_name ) {
+				$tag_name = trim( $tag_name );
+				if ( ! empty( $tag_name ) && ! in_array( strtolower( $tag_name ), $existing_tag_names, true ) ) {
+					$new_tag_names[] = $tag_name;
+				}
+			}
+
+			if ( empty( $new_tag_names ) ) {
+				return array(
+					'success' => true,
+					'message' => __( 'All tags already exist', 'thrive-dash' ),
+					'tags_created' => 0
+				);
+			}
+
+			// Create tags using Mailchimp API
+			/** @var Thrive_Dash_Api_Mailchimp $api */
+			$api = $this->get_api();
+			$created_tags = array();
+			
+			foreach ( $new_tag_names as $tag_name ) {
+				try {
+					// Create tag/segment directly via API (doesn't require email address)
+					$created_tag = $api->request( 'lists/' . $list_id . '/segments', array(
+						'name'           => $tag_name,
+						'static_segment' => array(),
+					), 'POST' );
+					
+					if ( $created_tag ) {
+						$created_tags[] = $tag_name;
+					}
+				} catch ( Thrive_Dash_Api_Mailchimp_Exception $e ) {
+					// Silent fail - continue with other tags
+				}
+			}
+
+			// Clear cache so new tags appear immediately
+			$this->clearTagsCache( $list_id );
+
+			return array(
+				'success' => true,
+				'message' => sprintf(
+					_n( '%d tag created successfully', '%d tags created successfully', count( $created_tags ), 'thrive-dash' ),
+					count( $created_tags )
+				),
+				'tags_created' => count( $created_tags )
+			);
+
+		} catch ( Exception $e ) {
+			return array(
+				'success' => false,
+				'message' => $e->getMessage()
+			);
+		}
 	}
 }

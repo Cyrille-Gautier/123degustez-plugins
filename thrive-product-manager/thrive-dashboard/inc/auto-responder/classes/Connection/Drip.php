@@ -256,10 +256,11 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 * It will hold the latest selected value in a cookie so that the user is presented by default with the same option selected the next time he edits such a form
 	 *
 	 * @param array $params
+	 * @param bool  $force  force refresh from API
 	 *
 	 * @return mixed
 	 */
-	public function get_extra_settings( $params = array() ) {
+	public function get_extra_settings( $params = array(), $force = false ) {
 		$processed_params = array();
 
 		$params['optin'] = empty( $params['optin'] ) ? ( isset( $_COOKIE['tve_api_drip_optin'] ) ? sanitize_text_field( $_COOKIE['tve_api_drip_optin'] ) : 'd' ) : $params['optin'];

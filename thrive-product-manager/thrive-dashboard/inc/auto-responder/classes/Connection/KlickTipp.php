@@ -42,6 +42,13 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function can_create_tags_via_api() {
+		return true;
+	}
+
+	/**
 	 * Define support for custom fields.
 	 *
 	 * @return boolean
@@ -52,14 +59,24 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 
 	public function push_tags( $tags, $data = array() ) {
 
-		if ( ! $this->has_tags() && ( ! is_array( $tags ) || ! is_string( $tags ) ) ) {
+		// If there are no tags, or the tags are not an array or a string, return the data.
+		if ( ! $this->has_tags() || ( ! is_array( $tags ) && ! is_string( $tags ) ) ) {
 			return $data;
+		}
+
+		// If the tags are a string, convert them to an array.
+		if ( is_string( $tags ) ) {
+			$tags = array_filter( array_map( 'trim', explode( ',', $tags ) ) );
 		}
 
 		$_key = $this->get_tags_key();
 
 		if ( ! isset( $data[ $_key ] ) ) {
 			$data[ $_key ] = array();
+		}
+
+		if ( is_string( $data[ $_key ] ) ) {
+			$data[ $_key ] = explode( ',', $data[ $_key ] );
 		}
 
 		if ( isset( $data['klicktipp_tag'] ) ) {
@@ -76,25 +93,19 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 			return $this->error( sprintf( __( 'Could not connect to Klick Tipp using the provided data (%s)', 'thrive-dash' ), $e->getMessage() ) );
 		}
 
-		foreach ( $tags as $key => $tag ) {
+		foreach ( $tags as $tag ) {
 
 			$tag = trim( $tag );
 
-			if ( empty( $tags ) ) {
+			if ( empty( $tag ) ) {
 				continue;
 			}
 
-			if ( ! in_array( $tag, $existing_tags ) ) {
-				try {
-					$data[ $_key ][] = (int) $api->createTag( $tag );
-				} catch ( Thrive_Dash_Api_KlickTipp_Exception $e ) {
-					$this->error = $e->getMessage();
-				}
-			} else {
-				$data[ $_key ][] = array_search( $tag, $existing_tags );
-			}
+			$data[ $_key ][] = $tag;
 		}
-
+		
+		// $data[ $_key ] is expected to be a comma-separated string of tag names.
+		$data[ $_key ] = implode( ',', $data[ $_key ] );
 		return $data;
 	}
 
@@ -226,13 +237,40 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 		}
 
 		// Handle tags - get or create tag IDs BEFORE contact creation.
-		if ( ! empty( $arguments['klicktipp_tags'] ) ) {
-			$tag_names = explode( ',', trim( $arguments['klicktipp_tags'], ' ,' ) );
-			$tag_names = array_map( 'trim', $tag_names );
-			$tag_names = array_filter( $tag_names ); // Remove empty tags.
+		$tag_ids = array();
+		$all_tag_names = array();
 
-			// Get or create tag IDs.
-			$tag_ids = $this->get_or_create_tag_ids( $tag_names ) ?? [];
+		// Helper function to process tag string
+		$process_tags = function( $tags_string ) {
+			$tag_names = explode( ',', trim( $tags_string, ' ,' ) );
+			return array_filter( array_map( 'trim', $tag_names ) );
+		};
+
+		// Check for tags in all possible field names and collect them
+		if ( ! empty( $arguments['klicktipp_tags'] ) ) {
+			$all_tag_names = array_merge( $all_tag_names, $process_tags( $arguments['klicktipp_tags'] ) );
+		}
+
+		if ( ! empty( $arguments['tags'] ) ) {
+			$all_tag_names = array_merge( $all_tag_names, $process_tags( $arguments['tags'] ) );
+		}
+
+		// Also check for old single tag field (klicktipp_tag)
+		if ( ! empty( $arguments['klicktipp_tag'] ) && $arguments['klicktipp_tag'] !== '0' ) {
+			// This is a tag ID, we need to convert it to tag name
+			$existing_tags = $this->getTags();
+			if ( isset( $existing_tags[ $arguments['klicktipp_tag'] ] ) ) {
+				$old_tag_name = $existing_tags[ $arguments['klicktipp_tag'] ];
+				if ( ! in_array( $old_tag_name, $all_tag_names ) ) {
+					$all_tag_names[] = $old_tag_name;
+				}
+			}
+		}
+
+		// Remove duplicates and get tag IDs
+		if ( ! empty( $all_tag_names ) ) {
+			$all_tag_names = array_unique( $all_tag_names );
+			$tag_ids = $this->get_or_create_tag_ids( $all_tag_names ) ?? [];
 		}
 
 		// Prepare default fields
@@ -354,6 +392,8 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 			$result = $this->get_api()->createTag( $tag_data );
 
 			if ( isset( $result ) && is_numeric( $result ) ) {
+				// Clear the tags cache since we created a new tag
+				$this->clearTagsCache();
 				return $result;
 			}
 		} catch ( Exception $e ) {
@@ -366,31 +406,80 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 	}
 
 	/**
-	 * Gets a list of tags through GET /tag API
+	 * Gets a list of tags through GET /tag API with 15-minute transient caching
 	 *
+	 * @param bool $force Force refresh from API
 	 * @return array
 	 */
-	public function getTags() {
+	public function getTags( $force = false ) {
+		// Create a unique cache key based on API credentials
+		$credentials = $this->get_credentials();
+		$cache_key = 'klicktipp_tags_' . md5( serialize( $credentials ) );
+		$cached_tags = false;
+
+		// Try to get cached tags first if not force refresh.
+		if ( ! $force ) {
+			$cached_tags = get_transient( $cache_key );
+		}
+		if ( false !== $cached_tags && is_array( $cached_tags ) ) {
+			// Sort cached tags alphabetically by value
+			asort( $cached_tags );
+			return $cached_tags;
+		}
+
 		$tags = array();
 
 		try {
 			/** @var Thrive_Dash_Api_KlickTipp $api */
 			$api  = $this->get_api();
 			$tags = $api->getTags();
-		} catch ( Exception $e ) {
 
+			// Cache the tags for 15 minutes (900 seconds)
+			if ( is_array( $tags ) && ! empty( $tags ) ) {
+				// Sort tags alphabetically by value before caching
+				asort( $tags );
+				set_transient( $cache_key, $tags, 15 * MINUTE_IN_SECONDS );
+			}
+		} catch ( Exception $e ) {
+			// If API call fails but we have expired cache, use it
+			$expired_cache = get_transient( $cache_key . '_backup' );
+			if ( false !== $expired_cache && is_array( $expired_cache ) ) {
+				asort( $expired_cache );
+				return $expired_cache;
+			}
+		}
+
+		// Sort tags alphabetically by value
+		if ( is_array( $tags ) && ! empty( $tags ) ) {
+			asort( $tags );
+			// Store a backup cache that doesn't expire for fallback
+			set_transient( $cache_key . '_backup', $tags, YEAR_IN_SECONDS );
 		}
 
 		return $tags;
 	}
 
 	/**
+	 * Clear the tags cache (useful when tags are created/updated)
+	 *
+	 * @return void
+	 */
+	public function clearTagsCache() {
+		$credentials = $this->get_credentials();
+		$cache_key = 'klicktipp_tags_' . md5( serialize( $credentials ) );
+
+		delete_transient( $cache_key );
+		delete_transient( $cache_key . '_backup' );
+	}
+
+	/**
 	 * output any (possible) extra editor settings for this API
 	 *
 	 * @param array $params allow various different calls to this method
+	 * @param bool  $force  force refresh from API
 	 */
-	public function get_extra_settings( $params = array() ) {
-		$params['tags'] = $this->getTags();
+	public function get_extra_settings( $params = array(), $force = false ) {
+		$params['tags'] = $this->getTags( $force );
 		if ( ! is_array( $params['tags'] ) ) {
 			$params['tags'] = array();
 		}
@@ -761,6 +850,89 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 				error_log( 'KlickTipp: Failed to add custom fields - ' . $e->getMessage() );
 			}
 			return false;
+		}
+	}
+
+	/**
+	 * Create tags if needed (called from editor when page is saved)
+	 *
+	 * @param array $params
+	 * @return array 
+	 */
+	public function _create_tags_if_needed( $params ) {
+		$tag_names = isset( $params['tag_names'] ) ? $params['tag_names'] : array();
+
+		// Handle both array and comma-separated string.
+		if ( is_string( $tag_names ) ) {
+			$tag_names = explode( ',', $tag_names );
+			$tag_names = array_map( 'trim', $tag_names );
+		}
+
+		// Filter out empty values
+		$tag_names = array_filter( $tag_names );
+
+		if ( empty( $tag_names ) ) {
+			return array(
+				'success' => true,
+				'message' => __( 'No tags to create', 'thrive-dash' ),
+				'tags_created' => 0
+			);
+		}
+
+		try {
+			/** @var Thrive_Dash_Api_KlickTipp $api */
+			$api = $this->get_api();
+			$api->login();
+
+			// Get all existing tags to check for duplicates
+			$existing_tags = $this->getTags( true ); // Force fresh fetch
+			$existing_tag_names = array();
+
+			foreach ( $existing_tags as $tag_id => $tag_name ) {
+				$existing_tag_names[] = strtolower( $tag_name );
+			}
+
+			// Filter out tags that already exist (case-insensitive comparison)
+			$new_tag_names = array();
+			foreach ( $tag_names as $tag_name ) {
+				$tag_name = trim( $tag_name );
+				if ( ! empty( $tag_name ) && ! in_array( strtolower( $tag_name ), $existing_tag_names, true ) ) {
+					$new_tag_names[] = $tag_name;
+				}
+			}
+
+			if ( empty( $new_tag_names ) ) {
+				return array(
+					'success' => true,
+					'message' => __( 'All tags already exist', 'thrive-dash' ),
+					'tags_created' => 0
+				);
+			}
+
+			// Create tags using KlickTipp API
+			$created_tags = array();
+			
+			foreach ( $new_tag_names as $tag_name ) {
+				$new_tag_id = $this->create_new_tag( $tag_name );
+				if ( $new_tag_id ) {
+					$created_tags[] = $tag_name;
+				}
+			}
+
+			return array(
+				'success' => true,
+				'message' => sprintf(
+					_n( '%d tag created successfully', '%d tags created successfully', count( $created_tags ), 'thrive-dash' ),
+					count( $created_tags )
+				),
+				'tags_created' => count( $created_tags )
+			);
+
+		} catch ( Exception $e ) {
+			return array(
+				'success' => false,
+				'message' => $e->getMessage()
+			);
 		}
 	}
 }

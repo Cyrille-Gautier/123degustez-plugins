@@ -16,6 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class TD_Webhooks_Templating {
     /**
+     * JSON encode options: no escaped slashes or unicode.
+     *
+     * @var int
+     */
+    const JSON_OPTIONS = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+
+    /**
      * Build request payload from mapping and context
      *
      * @param array $mapping [ [ 'key' => 'user[name]', 'value' => '{{data.name}}' ], ... ]
@@ -115,7 +122,7 @@ class TD_Webhooks_Templating {
             return (string) $found;
         }
 
-        return (string) wp_json_encode( $found );
+        return self::json_encode( $found );
     }
 
     /**
@@ -173,5 +180,19 @@ class TD_Webhooks_Templating {
         }
 
         return null;
+    }
+
+    /**
+     * JSON encode data with webhook-friendly options.
+     *
+     * Encodes without escaping slashes or unicode characters,
+     * making URLs and international text more readable.
+     *
+     * @param mixed $data Data to encode
+     * @return string JSON string
+     */
+    public static function json_encode( $data ): string {
+        $json = wp_json_encode( $data, self::JSON_OPTIONS );
+        return ($json === false) ? '' : $json;
     }
 }

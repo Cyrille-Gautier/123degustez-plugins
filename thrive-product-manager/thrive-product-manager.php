@@ -1,16 +1,17 @@
 <?php
-
 /**
  * Plugin Name: Thrive Product Manager
  * Plugin URI: https://thrivethemes.com
  * Description: Connect this site with Thrive Themes account to install and activate Thrive product.
- * Version: 10.8.1
- * Author: <a href="https://thrivethemes.com">Thrive Themes</a>
+ * Version: 10.8.6
+ * Author: Thrive Themes
+ * Author URI: https://thrivethemes.com
+ * Text Domain: thrive-product-manager
  * Requires PHP: 8.1
  */
 class Thrive_Product_Manager {
 
-	const V = '10.8.1';
+	const V = '10.8.6';
 	const T = 'thrive_product_manager';
 
 	protected static $_instance;

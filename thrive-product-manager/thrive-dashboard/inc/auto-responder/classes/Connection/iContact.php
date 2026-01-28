@@ -145,14 +145,14 @@ class Thrive_Dash_List_Connection_iContact extends Thrive_Dash_List_Connection_A
 		$sStatus                        = 'normal';
 		$sPrefix                        = null;
 		$sPhone                         = null;
-		list( $sFirstName, $sLastName ) = $this->get_name_parts( $arguments['name'] );
+		list( $sFirstName, $sLastName ) = $this->get_name_parts( wp_unslash( $arguments['name'] ) );
 		$sSuffix                        = null;
 		$sStreet                        = null;
 		$sStreet2                       = null;
 		$sCity                          = null;
 		$sState                         = null;
 		$sPostalCode                    = null;
-		$sPhone                         = empty( $arguments['phone'] ) ? '' : $arguments['phone'];
+		$sPhone                         = empty( $arguments['phone'] ) ? '' : wp_unslash( $arguments['phone'] );
 
 		// Prepare custom fields data
 		try {
@@ -306,7 +306,7 @@ class Thrive_Dash_List_Connection_iContact extends Thrive_Dash_List_Connection_A
 
 				if ( ! empty( $field[ $this->_key ] ) && $has_meaningful_value ) {
 					$custom_field_name  = $field[ $this->_key ];
-					$custom_field_value = $arguments[ $name ];
+					$custom_field_value = wp_unslash( $arguments[ $name ] );
 
 					// Check if field type is available in mapping data
 					$field_type = '';

@@ -2,6 +2,7 @@
 <div class="tvd-row">
 	<form class="tvd-col tvd-s12">
 		<input type="hidden" name="api" value="<?php echo esc_attr( $this->get_key() ); ?>"/>
+		<?php wp_nonce_field( 'tve_dash_api_save', 'nonce', true, true ); ?>
 		<div class="tvd-input-field">
 			<input id="tvd-is-api-client" type="text" name="connection[client_id]"
 				   value="<?php echo esc_attr( $this->param( 'client_id' ) ); ?>">

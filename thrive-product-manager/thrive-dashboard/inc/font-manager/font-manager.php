@@ -85,8 +85,11 @@ function tve_dash_font_manager_update_posts_fonts() {
 				$post_fonts[] = Tve_Dash_Font_Import_Manager::getCssFile();
 				continue;
 			}
+
+			// Google fonts will be replaced with Bunny net fonts if blocked. see tve_get_post_custom_fonts
 			$post_fonts[] = "//fonts.googleapis.com/css?family=" . str_replace( " ", "+", $font->font_name ) . ( $font->font_style != 0 ? ":" . $font->font_style : "" ) . ( $font->font_italic ? "" . $font->font_italic : "" ) . ( $font->font_bold != 0 ? "," . $font->font_bold : "" ) . ( $font->font_character_set != 0 ? "&subset=" . $font->font_character_set : "" );
 		}
+
 		$post_fonts = array_unique( $post_fonts );
 		update_post_meta( $post_id, 'thrive_post_fonts', sanitize_text_field( json_encode( $post_fonts ) ) );
 	}

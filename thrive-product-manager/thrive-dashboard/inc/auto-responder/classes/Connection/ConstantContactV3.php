@@ -24,6 +24,13 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function can_create_tags_via_api() {
+		return true;
+	}
+
+	/**
 	 * Builds an authorization URI - the user will be redirected to that URI and asked to give app access
 	 *
 	 * @return string
@@ -31,7 +38,12 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 	public function getAuthorizeUrl() {
 		$this->save(); // save the client_id and client_secret for later use
 
-		return $this->get_api()->get_authorize_url();
+		$api = $this->get_api();
+		if ( ! $api ) {
+			return '';
+		}
+
+		return $api->get_authorize_url();
 	}
 
 	/**
@@ -63,7 +75,12 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 
 		try {
 			/* get access token from constant contact API */
-			$response = $this->get_api()->get_access_token( $code );
+			$api = $this->get_api();
+			if ( ! $api ) {
+				throw new Thrive_Dash_Api_ConstantContactV3_Exception( 'Cannot establish API connection' );
+			}
+
+			$response = $api->get_access_token( $code );
 			if ( empty( $response['access_token'] ) ) {
 				throw new Thrive_Dash_Api_ConstantContactV3_Exception( 'Missing token from response data' );
 			}
@@ -107,7 +124,16 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 			'message' => __( 'Connection works', 'thrive-dash' ),
 		);
 		try {
-			$this->get_api()->get_account_details(); // this will throw the exception if there is a connection problem
+			$api = $this->get_api();
+
+			if ( ! $api ) {
+				return array(
+					'success' => false,
+					'message' => __( 'Cannot establish API connection. Your Constant Contact token may have expired. Please reconnect your account.', 'thrive-dash' ),
+				);
+			}
+
+			$api->get_account_details(); // this will throw the exception if there is a connection problem
 		} catch ( Thrive_Dash_Api_ConstantContactV3_Exception $e ) {
 			$result['success'] = false;
 			$result['message'] = $e->getMessage();
@@ -119,29 +145,77 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 	/**
 	 * Instantiate the service and set any available data
 	 *
-	 * @return Thrive_Dash_Api_ConstantContactV3_Service
+	 * @return Thrive_Dash_Api_ConstantContactV3_Service|null Returns null if token refresh fails
 	 */
 	protected function get_api_instance() {
-		$api = new Thrive_Dash_Api_ConstantContactV3_Service(
-			$this->param( 'client_id' ),
-			$this->param( 'client_secret' ),
-			$this->param( 'access_token' )
-		);
+		try {
+			$api = new Thrive_Dash_Api_ConstantContactV3_Service(
+				$this->param( 'client_id' ),
+				$this->param( 'client_secret' ),
+				$this->param( 'access_token' )
+			);
 
-		/* check for expired token and renew it */
-		if ( $this->param( 'refresh_token' ) && $this->param( 'expires_at' ) && time() > (int) $this->param( 'expires_at' ) ) {
-			$data                               = $api->refresh_access_token( $this->param( 'refresh_token' ) );
-			$this->_credentials['access_token'] = $data['access_token'];
-			$this->_credentials['refresh_token'] = $data['refresh_token'];
-			$this->_credentials['expires_at']   = time() + $data['expires_in'];
+			/* check for expired token and renew it */
+			if ( $this->param( 'refresh_token' ) && $this->param( 'expires_at' ) && time() > (int) $this->param( 'expires_at' ) ) {
+				// Attempt to refresh the token
+				$data = $api->refresh_access_token( $this->param( 'refresh_token' ) );
+
+				// Update credentials with new tokens
+				$this->_credentials['access_token'] = $data['access_token'];
+				// Only update refresh_token if a new one is provided (not all OAuth flows return a new refresh token)
+				if ( ! empty( $data['refresh_token'] ) ) {
+					$this->_credentials['refresh_token'] = $data['refresh_token'];
+				}
+				$this->_credentials['expires_at'] = time() + $data['expires_in'];
+				$this->save();
+			}
+
+			return $api;
+		} catch ( Thrive_Dash_Api_ConstantContactV3_Exception $e ) {
+			// Log the error for debugging
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'ConstantContact V3: Token refresh failed - ' . $e->getMessage() );
+			}
+
+			// Clear only expired/invalid tokens so the user is prompted to reconnect, but preserve other credential data.
+			unset( $this->_credentials['access_token'], $this->_credentials['refresh_token'], $this->_credentials['expires_at'] );
 			$this->save();
-		}
 
-		return $api;
+			return null;
+		} catch ( Exception $e ) {
+			// Log unexpected errors
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'ConstantContact V3: API initialization failed - ' . $e->getMessage() );
+			}
+
+			// Clear invalid credentials so the user is prompted to reconnect
+			$this->_credentials = array();
+			$this->save();
+
+			return null;
+		}
 	}
 
 	protected function _get_lists() {
-		return $this->get_api()->getLists();
+		try {
+			$api = $this->get_api();
+
+			if ( ! $api ) {
+				return array();
+			}
+
+			return $api->getLists();
+		} catch ( Thrive_Dash_Api_ConstantContactV3_Exception $e ) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'ConstantContact V3: Failed to get lists - ' . $e->getMessage() );
+			}
+			return array();
+		} catch ( Exception $e ) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'ConstantContact V3: Unexpected error getting lists - ' . $e->getMessage() );
+			}
+			return array();
+		}
 	}
 
 	/**
@@ -149,57 +223,70 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 	 *
 	 * @param string $list_identifier Contact list identifier.
 	 * @param array  $arguments Subscriber data.
-	 * @return bool
+	 * @return bool|string true for success, error message string for failure
 	 */
 	public function add_subscriber( $list_identifier, $arguments ) {
-		// add logic here.
-		$params = array(
-			'create_source'    => 'Contact',
-			'list_memberships' => array( $list_identifier ),
-		);
-
-		if ( $arguments['email'] ) {
-			$params['email_address'] = array(
-				'address'            => $arguments['email'],
-				'permission_to_send' => 'implicit',
+		try {
+			// add logic here.
+			$params = array(
+				'create_source'    => 'Contact',
+				'list_memberships' => array( $list_identifier ),
 			);
-		}
+
+			if ( $arguments['email'] ) {
+				$params['email_address'] = array(
+					'address'            => $arguments['email'],
+					'permission_to_send' => 'implicit',
+				);
+			}
 
 		if ( $arguments['name'] ) {
-			$split_name           = $this->_splitFullName( $arguments['name'] );
+			$split_name           = $this->_splitFullName( wp_unslash( $arguments['name'] ) );
 			$params['first_name'] = $split_name['first_name'];
 			$params['last_name']  = $split_name['last_name'];
 		}
 
-		if ( $arguments['first_name'] ) {
-			$params['first_name'] = $arguments['first_name'];
+		if ( ! empty( $arguments['first_name'] ) ) {
+			$params['first_name'] = wp_unslash( $arguments['first_name'] );
 		}
 
-		if ( $arguments['last_name'] ) {
-			$params['last_name'] = $arguments['last_name'];
+		if ( ! empty( $arguments['last_name'] ) ) {
+			$params['last_name'] = wp_unslash( $arguments['last_name'] );
 		}
 
-		if ( $arguments['phone'] ) {
-			$params['phone_number'] = $arguments['phone'];
+		if ( ! empty( $arguments['phone'] ) ) {
+			$params['phone_number'] = wp_unslash( $arguments['phone'] );
 		}
 
-		// Handle tags - get or create tag IDs BEFORE contact creation.
-		if ( ! empty( $arguments['constantcontact_v3_tags'] ) ) {
-			$tag_names = explode( ',', trim( $arguments['constantcontact_v3_tags'], ' ,' ) );
-			$tag_names = array_map( 'trim', $tag_names );
-			$tag_names = array_filter( $tag_names ); // Remove empty tags.
+			// Handle tags - get or create tag IDs BEFORE contact creation.
+			if ( ! empty( $arguments['constantcontact_v3_tags'] ) ) {
+				$tag_names = explode( ',', trim( $arguments['constantcontact_v3_tags'], ' ,' ) );
+				$tag_names = array_map( 'trim', $tag_names );
+				$tag_names = array_filter( $tag_names ); // Remove empty tags.
 
-			// Get or create tag IDs.
-			$tag_ids = $this->get_or_create_tag_ids( $tag_names );
+				// Get or create tag IDs.
+				$tag_ids = $this->get_or_create_tag_ids( $tag_names );
 
-			if ( ! empty( $tag_ids ) ) {
-				$params['taggings'] = $tag_ids; // Pass tag IDs to API wrapper.
+				if ( ! empty( $tag_ids ) ) {
+					$params['taggings'] = $tag_ids; // Pass tag IDs to API wrapper.
+				}
 			}
+
+			$params = array_merge( $params, $this->_generateMappingFields( $arguments ) );
+
+			$api = $this->get_api();
+			if ( ! $api ) {
+				return __( 'Cannot establish API connection. Your Constant Contact token may have expired. Please reconnect your account.', 'thrive-dash' );
+			}
+
+			return $api->addSubscriber( $params );
+		} catch ( Thrive_Dash_Api_ConstantContactV3_Exception $e ) {
+			error_log( 'ConstantContactV3 Exception: ' . $e->getMessage() );
+			return __( 'An error occurred while adding the subscriber. Please try again later.', 'thrive-dash' );
+		} catch ( Exception $e ) {
+			error_log( 'General Exception in ConstantContactV3: ' . $e->getMessage() );
+			return __( 'An error occurred while adding the subscriber. Please try again later.', 'thrive-dash' );
 		}
-
-		$params = array_merge( $params, $this->_generateMappingFields( $arguments ) );
-
-		return $this->get_api()->addSubscriber( $params );
 	}
 
 
@@ -213,8 +300,13 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 		$tag_ids = array();
 
 		try {
+			$api = $this->get_api();
+			if ( ! $api ) {
+				return $tag_ids;
+			}
+
 			// Get all existing tags first - GET /contact_tags.
-			$existing_tags = $this->get_api()->getAllTags();
+			$existing_tags = $api->getAllTags();
 			$tag_map = array();
 
 			// Create a map of tag name => tag_id (case-insensitive).
@@ -257,14 +349,21 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 	 */
 	private function create_new_tag( $tag_name ) {
 		try {
+			$api = $this->get_api();
+			if ( ! $api ) {
+				return false;
+			}
+
 			$tag_data = array(
 				'name'       => trim( $tag_name ),
 				'tag_source' => 'API',  // Indicates this tag was created via API.
 			);
 
-			$result = $this->get_api()->createTag( $tag_data );
+			$result = $api->createTag( $tag_data );
 
 			if ( is_array( $result ) && isset( $result['tag_id'] ) ) {
+				// Clear the tags cache since we created a new tag
+				$this->clearTagsCache();
 				return $result['tag_id'];
 			}
 		} catch ( Exception $e ) {
@@ -331,9 +430,29 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 			return $cached_data;
 		}
 
-		$custom_data = $this->get_api()->getAllFields();
+		$custom_data = array();
 
-		$this->_save_custom_fields( $custom_data );
+		try {
+			$api = $this->get_api();
+
+			if ( ! $api ) {
+				return $custom_data;
+			}
+
+			$custom_data = $api->getAllFields();
+
+			if ( is_array( $custom_data ) && ! empty( $custom_data ) ) {
+				$this->_save_custom_fields( $custom_data );
+			}
+		} catch ( Thrive_Dash_Api_ConstantContactV3_Exception $e ) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'ConstantContact V3: Failed to get custom fields - ' . $e->getMessage() );
+			}
+		} catch ( Exception $e ) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'ConstantContact V3: Unexpected error getting custom fields - ' . $e->getMessage() );
+			}
+		}
 
 		return $custom_data;
 	}
@@ -368,10 +487,10 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 				if ( preg_match( '/[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}/', $field_name ) ) {
 					$mapping_fields['custom_fields'][] = array(
 						'custom_field_id' => $field_name,
-						'value'           => $field_value,
+						'value'           => wp_unslash( $field_value ),
 					);
 				} else {
-					$mapping_fields[ $field_name ] = $field_value;
+					$mapping_fields[ $field_name ] = wp_unslash( $field_value );
 					if ( 'birthday_day' === $field_name || 'birthday_month' === $field_name ) {
 						$mapping_fields[ $field_name ] = (int) $field_value;
 					}
@@ -437,5 +556,193 @@ class Thrive_Dash_List_Connection_ConstantContactV3 extends Thrive_Dash_List_Con
 
 	public function get_automator_add_autoresponder_mapping_fields() {
 		return array( 'autoresponder' => array( 'mailing_list', 'api_fields', 'tag_input' ) );
+	}
+
+	/**
+	 * Gets a list of tags through GET /contact_tags API with 15-minute transient caching
+	 *
+	 * @return array
+	 */
+	public function getTags( $force = false ) {
+		// Create a unique cache key based on API credentials
+		$credentials = $this->get_credentials();
+		$cache_key = 'constantcontact_v3_tags_' . md5( serialize( $credentials ) );
+		$cached_tags = false;
+
+		// Try to get cached tags first if not force refresh.
+		if ( ! $force ) {
+			$cached_tags = get_transient( $cache_key );
+		}
+
+		if ( false !== $cached_tags && is_array( $cached_tags ) ) {
+			// Sort cached tags alphabetically by value
+			asort( $cached_tags );
+			return $cached_tags;
+		}
+
+		$tags = array();
+
+		try {
+			/** @var Thrive_Dash_Api_ConstantContactV3_Service $api */
+			$api = $this->get_api();
+
+			if ( ! $api ) {
+				return $tags;
+			}
+
+			$response = $api->getAllTags();
+
+			// Process the response to create a simple tag_id => tag_name array
+			if ( is_array( $response ) && isset( $response['tags'] ) ) {
+				foreach ( $response['tags'] as $tag ) {
+					if ( isset( $tag['name'] ) && isset( $tag['tag_id'] ) ) {
+						$tags[ $tag['tag_id'] ] = $tag['name'];
+					}
+				}
+			}
+
+			// Cache the tags for 15 minutes (900 seconds)
+			if ( is_array( $tags ) && ! empty( $tags ) ) {
+				// Sort tags alphabetically by value before caching
+				asort( $tags );
+				set_transient( $cache_key, $tags, 15 * MINUTE_IN_SECONDS );
+			}
+		} catch ( Exception $e ) {
+			// If API call fails but we have expired cache, use it
+			$expired_cache = get_transient( $cache_key . '_backup' );
+			if ( false !== $expired_cache && is_array( $expired_cache ) ) {
+				asort( $expired_cache );
+				return $expired_cache;
+			}
+		}
+
+		// Sort tags alphabetically by value
+		if ( is_array( $tags ) && ! empty( $tags ) ) {
+			asort( $tags );
+			// Store a backup cache that doesn't expire for fallback
+			set_transient( $cache_key . '_backup', $tags, YEAR_IN_SECONDS );
+		}
+
+		return $tags;
+	}
+
+	/**
+	 * Clear the tags cache (useful when tags are created/updated)
+	 *
+	 * @return void
+	 */
+	public function clearTagsCache() {
+		$credentials = $this->get_credentials();
+		$cache_key = 'constantcontact_v3_tags_' . md5( serialize( $credentials ) );
+
+		delete_transient( $cache_key );
+		delete_transient( $cache_key . '_backup' );
+	}
+
+	/**
+	 * output any (possible) extra editor settings for this API
+	 *
+	 * @param array $params allow various different calls to this method
+	 */
+	public function get_extra_settings( $params = array(), $force = false ) {
+		$params['tags'] = $this->getTags( $force );
+
+		if ( ! is_array( $params['tags'] ) ) {
+			$params['tags'] = array();
+		}
+
+		return $params;
+	}
+
+	/**
+	 * output any (possible) extra editor settings for this API
+	 *
+	 * @param array $params allow various different calls to this method
+	 */
+	public function render_extra_editor_settings( $params = array() ) {
+		$params['tags'] = $this->getTags();
+		if ( ! is_array( $params['tags'] ) ) {
+			$params['tags'] = array();
+		}
+		$this->output_controls_html( 'constantcontact_v3/tags', $params );
+	}
+
+	/**
+	 * Create tags if needed (called from editor when page is saved)
+	 *
+	 * @param array $params
+	 * @return array
+	 */
+	public function _create_tags_if_needed( $params ) {
+		$tag_names = isset( $params['tag_names'] ) ? $params['tag_names'] : array();
+
+		// Handle both array and comma-separated string.
+		if ( is_string( $tag_names ) ) {
+			$tag_names = explode( ',', $tag_names );
+			$tag_names = array_map( 'trim', $tag_names );
+		}
+
+		// Filter out empty values
+		$tag_names = array_filter( $tag_names );
+
+		if ( empty( $tag_names ) ) {
+			return array(
+				'success' => true,
+				'message' => __( 'No tags to create', 'thrive-dash' ),
+				'tags_created' => 0
+			);
+		}
+
+		try {
+			// Get all existing tags to check for duplicates
+			$existing_tags = $this->getTags( true ); // Force fresh fetch
+			$existing_tag_names = array();
+
+			foreach ( $existing_tags as $tag_id => $tag_name ) {
+				$existing_tag_names[] = strtolower( $tag_name );
+			}
+
+			// Filter out tags that already exist (case-insensitive comparison)
+			$new_tag_names = array();
+			foreach ( $tag_names as $tag_name ) {
+				$tag_name = trim( $tag_name );
+				if ( ! empty( $tag_name ) && ! in_array( strtolower( $tag_name ), $existing_tag_names, true ) ) {
+					$new_tag_names[] = $tag_name;
+				}
+			}
+
+			if ( empty( $new_tag_names ) ) {
+				return array(
+					'success' => true,
+					'message' => __( 'All tags already exist', 'thrive-dash' ),
+					'tags_created' => 0
+				);
+			}
+
+			// Create tags using ConstantContact API
+			$created_tags = array();
+
+			foreach ( $new_tag_names as $tag_name ) {
+				$new_tag_id = $this->create_new_tag( $tag_name );
+				if ( $new_tag_id ) {
+					$created_tags[] = $tag_name;
+				}
+			}
+
+			return array(
+				'success' => true,
+				'message' => sprintf(
+					_n( '%d tag created successfully', '%d tags created successfully', count( $created_tags ), 'thrive-dash' ),
+					count( $created_tags )
+				),
+				'tags_created' => count( $created_tags )
+			);
+
+		} catch ( Exception $e ) {
+			return array(
+				'success' => false,
+				'message' => $e->getMessage()
+			);
+		}
 	}
 }

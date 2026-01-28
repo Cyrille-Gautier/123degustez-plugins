@@ -78,6 +78,10 @@ require_once TVE_DASH_PATH . '/inc/pdf/class-pdf-from-url.php';
 require_once TVE_DASH_PATH . '/inc/metrics/class-main.php';
 require_once TVE_DASH_PATH . '/inc/webhooks/class-main.php';
 
+// Load shared utilities
+require_once TVE_DASH_PATH . '/inc/utils/class-tt-http-error-map.php';
+require_once TVE_DASH_PATH . '/inc/utils/class-name-parser.php';
+
 require_once TVE_DASH_PATH . '/inc/reporting-dashboard/functions.php';
 
 require_once TVE_DASH_PATH . '/inc/growth-tools/classes/Tve_Dash_Growth_Tools.php';

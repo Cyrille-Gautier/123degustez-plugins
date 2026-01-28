@@ -12,14 +12,90 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connection_Abstract {
 
 	/**
-	 * @var string
+	 * Get GoToWebinar API keys from endpoint with transient caching
+	 *
+	 * @return array API keys or empty array on error
 	 */
-	private $_consumer_key = 'Mtm8i2IdR2mOkAY3uVoW5f4TdGaBxpkY';
+	private function get_gotowebinar_api_keys() {
+		// Check transient first
+		if ( false !== $keys = get_transient( 'thrive_gotowebinar_v2_api_keys' ) ) {
+			return $keys;
+		}
+
+		$endpoint = 'https://thrivethemesapi.com/api/secrets/v1/api_key_gotowebinar';
+		
+		$response = wp_remote_get( $endpoint, array( 
+			'timeout' => 10,
+			'sslverify' => true 
+		) );
+		
+		if ( is_wp_error( $response ) ) {
+			$correlation_code = 'G2W2-KEYS-NET-' . substr( wp_hash( uniqid( '', true ) ), 0, 8 );
+			$this->api_log_error( 'auth', array(
+				'endpoint'         => $endpoint,
+				'correlation_code' => $correlation_code,
+			), sprintf( '%s. Please contact customer support at thrivethemes.com and mention code %s', $response->get_error_message(), $correlation_code ) );
+			return array();
+		}
+
+		$status_code = wp_remote_retrieve_response_code( $response );
+		if ( ! empty( $status_code ) && (int) $status_code !== 200 ) {
+			$correlation_code = 'G2W2-KEYS-HTTP-' . substr( wp_hash( uniqid( '', true ) ), 0, 8 );
+			$error_message   = sprintf( 'GoToWebinar (v2) API key fetch failed: HTTP %d. Please contact customer support at thrivethemes.com and mention code %s', (int) $status_code, $correlation_code );
+			$this->api_log_error( 'auth', array(
+				'endpoint'         => $endpoint,
+				'status_code'      => (int) $status_code,
+				'correlation_code' => $correlation_code,
+			), $error_message );
+			return array();
+		}
+		
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body, true );
+		
+		if ( ! is_array( $data ) || 
+			 ! isset( $data['success'] ) || 
+			 ! $data['success'] || 
+			 ! isset( $data['data']['value']['consumer_key'] ) ||
+			 ! isset( $data['data']['value']['consumer_secret'] ) ) {
+			$correlation_code = 'G2W2-KEYS-PAY-' . substr( wp_hash( uniqid( '', true ) ), 0, 8 );
+			$this->api_log_error( 'auth', array(
+				'endpoint'         => $endpoint,
+				'correlation_code' => $correlation_code,
+			), sprintf( 'GoToWebinar (v2) API key fetch returned unexpected payload. Please contact customer support at thrivethemes.com and mention code %s', $correlation_code ) );
+			return array();
+		}
+		
+		$keys = array(
+			'consumer_key'    => sanitize_text_field( $data['data']['value']['consumer_key'] ),
+			'consumer_secret' => sanitize_text_field( $data['data']['value']['consumer_secret'] )
+		);
+		
+		// Cache for 24 hours
+		set_transient( 'thrive_gotowebinar_v2_api_keys', $keys, 24 * HOUR_IN_SECONDS );
+		
+		return $keys;
+	}
 
 	/**
-	 * @var string
+	 * Get consumer key with fallback
+	 *
+	 * @return string
 	 */
-	private $_consumer_secret = 'qjr8KW9Ga6G2AJjE';
+	private function get_consumer_key() {
+		$keys = $this->get_gotowebinar_api_keys();
+		return ! empty( $keys['consumer_key'] ) ? $keys['consumer_key'] : '';
+	}
+
+	/**
+	 * Get consumer secret with fallback
+	 *
+	 * @return string
+	 */
+	private function get_consumer_secret() {
+		$keys = $this->get_gotowebinar_api_keys();
+		return ! empty( $keys['consumer_secret'] ) ? $keys['consumer_secret'] : '';
+	}
 
 	/**
 	 * Return the connection type
@@ -127,6 +203,11 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 			return $this->success( __( 'GoToWebinar connected successfully', 'thrive-dash' ) );
 
 		} catch ( Thrive_Dash_Api_GoToWebinar_Exception $e ) {
+			$correlation_code = 'G2W2-AUTH-LOGIN-' . substr( wp_hash( uniqid( '', true ) ), 0, 8 );
+			$this->api_log_error( 'auth', array(
+				'step'             => 'login',
+				'correlation_code' => $correlation_code,
+			), sprintf( '%s. Please contact customer support at thrivethemes.com and mention code %s', $e->getMessage(), $correlation_code ) );
 			return $this->error( sprintf( __( 'Could not connect to GoToWebinar using the provided data (%s)', 'thrive-dash' ), $e->getMessage() ) );
 		}
 	}
@@ -302,7 +383,7 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 			);
 		}
 
-		return new Thrive_Dash_Api_GoToWebinar( base64_encode( $this->_consumer_key . ':' . $this->_consumer_secret ), $access_token, $organizer_key, $settings );
+		return new Thrive_Dash_Api_GoToWebinar( base64_encode( $this->get_consumer_key() . ':' . $this->get_consumer_secret() ), $access_token, $organizer_key, $settings );
 	}
 
 	/**

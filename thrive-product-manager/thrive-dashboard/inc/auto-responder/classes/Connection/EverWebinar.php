@@ -158,10 +158,11 @@ class Thrive_Dash_List_Connection_EverWebinar extends Thrive_Dash_List_Connectio
 
 	/**
 	 * @param array $params
+	 * @param bool  $force  force refresh from API
 	 *
 	 * @return array
 	 */
-	public function get_extra_settings( $params = array() ) {
+	public function get_extra_settings( $params = array(), $force = false ) {
 		$webinar_id = '';
 		try {
 			// Used on webinar select/change ajax [in admin Lead generation]

@@ -39,7 +39,8 @@ class TPM_License_Manager {
 
 	private function __construct() {
 
-		$this->_thrive_license = get_option( 'thrive_license', array() );
+		$thrive_license            = get_option( 'thrive_license', array() );
+		$this->_thrive_license = is_array( $thrive_license ) ? $thrive_license : array();
 	}
 
 	public static function get_instance() {
@@ -87,6 +88,7 @@ class TPM_License_Manager {
 
 		//check old licenses
 		$thrive_license = get_option( 'thrive_license', array() );
+		$thrive_license = is_array( $thrive_license ) ? $thrive_license : array();
 		if ( in_array( 'all', $thrive_license, false ) || in_array( $product->get_tag(), $thrive_license, false ) ) {
 			return true;
 		}
@@ -128,8 +130,7 @@ class TPM_License_Manager {
 
 		$licenses = tpm_get_transient( self::NAME );
 
-		if ( Thrive_Product_Manager::CACHE_ENABLED && $licenses !== false ) {
-
+		if ( Thrive_Product_Manager::CACHE_ENABLED && $licenses !== false && is_array( $licenses ) ) {
 			return $licenses;
 		}
 
@@ -155,6 +156,7 @@ class TPM_License_Manager {
 		}
 
 		$licenses = $body['data'];
+		$licenses = is_array( $licenses ) ? $licenses : array();
 
 		//sort licenses so that the ones with 'all' tags will be 1st in list
 		//so they have priority on usage

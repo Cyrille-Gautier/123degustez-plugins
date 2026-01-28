@@ -33,6 +33,13 @@ class Thrive_Dash_List_Connection_Zoho extends Thrive_Dash_List_Connection_Abstr
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function can_create_tags_via_api() {
+		return true;
+	}
+
+	/**
 	 * Output the setup form html.
 	 *
 	 * @return void
@@ -564,6 +571,8 @@ class Thrive_Dash_List_Connection_Zoho extends Thrive_Dash_List_Connection_Abstr
 			$result = $api->createTag( $tag_data );
 
 			if ( isset( $result['status'] ) && 'success' === $result['status'] ) {
+				// Clear the tags cache since we created a new tag
+				$this->clearTagsCache();
 				return trim( $tag_name );
 			}
 		} catch ( Exception $e ) {
@@ -777,5 +786,198 @@ class Thrive_Dash_List_Connection_Zoho extends Thrive_Dash_List_Connection_Abstr
 		}
 
 		return stripslashes( (string) $field );
+	}
+
+	/**
+	 * Gets a list of tags through GET /tag/getalltags API with 15-minute transient caching
+	 *
+	 * @return array
+	 */
+	public function getTags( $force = false ) {
+		// Create a unique cache key based on API credentials
+		$credentials = $this->get_credentials();
+		$cache_key = 'zoho_tags_' . md5( serialize( $credentials ) );
+		$cached_tags = false;
+
+		// Try to get cached tags first if not force refresh.
+		if ( ! $force ) {
+			$cached_tags = get_transient( $cache_key );
+		}
+
+		if ( false !== $cached_tags && is_array( $cached_tags ) ) {
+			// Sort cached tags alphabetically by value
+			asort( $cached_tags );
+			return $cached_tags;
+		}
+
+		$tags = array();
+
+		try {
+			/** @var Thrive_Dash_Api_Zoho $api */
+			$api = $this->get_api();
+			$response = $api->getAllTags();
+
+			// Process the nested Zoho API response structure
+			// Based on API docs: tags array contains objects with tag_id as key and tag details as value
+			if ( is_array( $response ) && isset( $response['tags'] ) ) {
+				// Flatten all tag containers into a single array to avoid nested loops
+				$all_tag_details = array();
+				foreach ( $response['tags'] as $tag_container ) {
+					if ( is_array( $tag_container ) ) {
+						$all_tag_details = array_merge( $all_tag_details, $tag_container );
+					}
+				}
+
+				// Process all tag details in a single loop
+				foreach ( $all_tag_details as $tag_id => $tag_details ) {
+					if ( isset( $tag_details['tag_name'] ) ) {
+						$tags[ $tag_id ] = $tag_details['tag_name'];
+					}
+				}
+			}
+
+			// Cache the tags for 15 minutes (900 seconds)
+			if ( is_array( $tags ) && ! empty( $tags ) ) {
+				// Sort tags alphabetically by value before caching
+				asort( $tags );
+				set_transient( $cache_key, $tags, 15 * MINUTE_IN_SECONDS );
+			}
+		} catch ( Exception $e ) {
+			// If API call fails but we have expired cache, use it
+			$expired_cache = get_transient( $cache_key . '_backup' );
+			if ( false !== $expired_cache && is_array( $expired_cache ) ) {
+				asort( $expired_cache );
+				return $expired_cache;
+			}
+		}
+
+		// Sort tags alphabetically by value
+		if ( is_array( $tags ) && ! empty( $tags ) ) {
+			asort( $tags );
+			// Store a backup cache that doesn't expire for fallback
+			set_transient( $cache_key . '_backup', $tags, YEAR_IN_SECONDS );
+		}
+
+		return $tags;
+	}
+
+	/**
+	 * Clear the tags cache (useful when tags are created/updated)
+	 *
+	 * @return void
+	 */
+	public function clearTagsCache() {
+		$credentials = $this->get_credentials();
+		$cache_key = 'zoho_tags_' . md5( serialize( $credentials ) );
+
+		delete_transient( $cache_key );
+		delete_transient( $cache_key . '_backup' );
+	}
+
+	/**
+	 * output any (possible) extra editor settings for this API
+	 *
+	 * @param array $params allow various different calls to this method
+	 */
+	public function get_extra_settings( $params = array(), $force = false ) {
+		$params['tags'] = $this->getTags( $force );
+
+		if ( ! is_array( $params['tags'] ) ) {
+			$params['tags'] = array();
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Render the extra editor settings HTML for this API.
+	 *
+	 * @param array $params Parameters to customize the rendered settings.
+	 */
+	public function render_extra_editor_settings( $params = array() ) {
+		$params['tags'] = $this->getTags();
+		if ( ! is_array( $params['tags'] ) ) {
+			$params['tags'] = array();
+		}
+		$this->output_controls_html( 'zoho/tags', $params );
+	}
+
+	/**
+	 * Create tags if needed (called from editor when page is saved)
+	 *
+	 * @param array $params
+	 * @return array 
+	 */
+	public function _create_tags_if_needed( $params ) {
+		$tag_names = isset( $params['tag_names'] ) ? $params['tag_names'] : array();
+
+		// Handle both array and comma-separated string.
+		if ( is_string( $tag_names ) ) {
+			$tag_names = explode( ',', $tag_names );
+			$tag_names = array_map( 'trim', $tag_names );
+		}
+
+		// Filter out empty values
+		$tag_names = array_filter( $tag_names );
+
+		if ( empty( $tag_names ) ) {
+			return array(
+				'success' => true,
+				'message' => __( 'No tags to create', 'thrive-dash' ),
+				'tags_created' => 0
+			);
+		}
+
+		try {
+			// Get all existing tags to check for duplicates
+			$existing_tags = $this->getTags( true ); // Force fresh fetch
+			$existing_tag_names = array();
+
+			foreach ( $existing_tags as $tag_id => $tag_name ) {
+				$existing_tag_names[] = strtolower( $tag_name );
+			}
+
+			// Filter out tags that already exist (case-insensitive comparison)
+			$new_tag_names = array();
+			foreach ( $tag_names as $tag_name ) {
+				$tag_name = trim( $tag_name );
+				if ( ! empty( $tag_name ) && ! in_array( strtolower( $tag_name ), $existing_tag_names, true ) ) {
+					$new_tag_names[] = $tag_name;
+				}
+			}
+
+			if ( empty( $new_tag_names ) ) {
+				return array(
+					'success' => true,
+					'message' => __( 'All tags already exist', 'thrive-dash' ),
+					'tags_created' => 0
+				);
+			}
+
+			// Create tags using Zoho API
+			$created_tags = array();
+			
+			foreach ( $new_tag_names as $tag_name ) {
+				$created_tag_name = $this->create_new_tag( $tag_name );
+				if ( $created_tag_name ) {
+					$created_tags[] = $tag_name;
+				}
+			}
+
+			return array(
+				'success' => true,
+				'message' => sprintf(
+					_n( '%d tag created successfully', '%d tags created successfully', count( $created_tags ), 'thrive-dash' ),
+					count( $created_tags )
+				),
+				'tags_created' => count( $created_tags )
+			);
+
+		} catch ( Exception $e ) {
+			return array(
+				'success' => false,
+				'message' => $e->getMessage()
+			);
+		}
 	}
 }

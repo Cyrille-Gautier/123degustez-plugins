@@ -27,6 +27,22 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 	}
 
 	/**
+	 * Has tags support
+	 *
+	 * @return bool
+	 */
+	public function has_tags() {
+		return true;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function can_create_tags_via_api() {
+		return true;
+	}
+
+	/**
 	 * output the setup form html
 	 *
 	 * @return void
@@ -44,7 +60,13 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 	 */
 	public function read_credentials() {
 		$connection = $this->post( 'connection' );
-		$version    = (string) ( isset( $connection['version'] ) ? $connection['version'] : '' );
+
+		// Validate connection data structure
+		if ( ! is_array( $connection ) ) {
+			return $this->error( __( 'Invalid connection data', 'thrive-dash' ) );
+		}
+
+		$version = (string) ( isset( $connection['version'] ) ? $connection['version'] : '' );
 
 		if ( empty( $connection['key'] ) ) {
 			return $this->error( __( 'You must provide a valid GetResponse key', 'thrive-dash' ) );
@@ -159,6 +181,232 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 	}
 
 	/**
+	 * Override get_api_data to include tags.
+	 *
+	 * @param array $params
+	 * @param bool  $force
+	 *
+	 * @return array
+	 */
+	public function get_api_data( $params = array(), $force = false ) {
+		if ( empty( $params ) ) {
+			$params = array();
+		}
+
+		$transient = 'tve_api_data_' . $this->get_key();
+		$data      = get_transient( $transient );
+
+		if ( false === $force && tve_dash_is_debug_on() ) {
+			$force = true;
+		}
+
+		if ( true === $force || false === $data ) {
+			$data = array(
+				'lists'          => $this->get_lists( false ),
+				'extra_settings' => $this->get_extra_settings( $params ),
+				'custom_fields'  => $this->get_custom_fields( $params ),
+				'tags'           => $this->get_tags( $force ),
+			);
+
+			set_transient( $transient, $data, MONTH_IN_SECONDS );
+		} else {
+			if ( ! is_array( $data ) ) {
+				$data = array();
+			}
+
+			// Always fetch tags separately since they have their own 15-minute cache
+			$data['tags'] = $this->get_tags( $force );
+		}
+
+		$data['api_custom_fields'] = $this->get_api_custom_fields( $params, $force );
+
+		return $data;
+	}
+
+	/**
+	 * Get all available tags formatted for the editor.
+	 *
+	 * @param bool $force Force refresh from API
+	 *
+	 * @return array
+	 */
+	public function get_tags( $force = false ) {
+		// Only V3 API supports tags
+		$credentials = $this->get_credentials();
+		$version     = empty( $credentials['version'] ) ? 2 : (int) $credentials['version'];
+
+		if ( $version !== 3 ) {
+			return array(); // V2 doesn't support tags
+		}
+
+		// Create a unique cache key for tags
+		$cache_key = 'getresponse_tags_' . $this->get_key();
+		$cached_tags = false;
+
+		// Try to get cached tags if not force refresh
+		if ( ! $force ) {
+			$cached_tags = get_transient( $cache_key );
+		}
+
+		if ( false !== $cached_tags && is_array( $cached_tags ) ) {
+			return $cached_tags;
+		}
+
+		$tags = array();
+
+		try {
+			/** @var Thrive_Dash_Api_GetResponseV3 $api */
+			$api = $this->get_api();
+
+			$api_tags = $api->getTags();
+
+			if ( ! empty( $api_tags ) && is_array( $api_tags ) ) {
+				foreach ( $api_tags as $tag ) {
+					if ( ! empty( $tag->tagId ) && ! empty( $tag->name ) ) {
+						$tags[] = array(
+							'id'       => $tag->tagId,
+							'text'     => $tag->name,
+							'selected' => false,
+						);
+					}
+				}
+			}
+
+			// Cache the tags for 15 minutes
+			if ( is_array( $tags ) && ! empty( $tags ) ) {
+				set_transient( $cache_key, $tags, 15 * MINUTE_IN_SECONDS );
+				// Store a backup cache that doesn't expire for fallback
+				set_transient( $cache_key . '_backup', $tags, YEAR_IN_SECONDS );
+			}
+		} catch ( Exception $e ) {
+			// If API call fails, try to use backup cache
+			$backup_cache = get_transient( $cache_key . '_backup' );
+			if ( false !== $backup_cache && is_array( $backup_cache ) ) {
+				return $backup_cache;
+			}
+		}
+
+		return $tags;
+	}
+
+	/**
+	 * Clear the tags cache.
+	 *
+	 * @return void
+	 */
+	public function clearTagsCache() {
+		$cache_key = 'getresponse_tags_' . $this->get_key();
+		delete_transient( $cache_key );
+		delete_transient( $cache_key . '_backup' );
+	}
+
+	/**
+	 * Create tags if they don't already exist.
+	 * Called from the editor when tags are added to avoid duplicates.
+	 *
+	 * @param array $params Array with 'tag_names' key containing tag names
+	 *
+	 * @return array Response with success status and created tags count
+	 */
+	public function _create_tags_if_needed( $params ) {
+		// Only V3 API supports tags
+		$credentials = $this->get_credentials();
+		$version     = empty( $credentials['version'] ) ? 2 : (int) $credentials['version'];
+
+		if ( $version !== 3 ) {
+			return array(
+				'success' => false,
+				'message' => __( 'GetResponse V3 API required for tag support', 'thrive-dash' )
+			);
+		}
+
+		$tag_names = isset( $params['tag_names'] ) ? $params['tag_names'] : array();
+
+		// Handle both array and comma-separated string
+		if ( is_string( $tag_names ) ) {
+			$tag_names = explode( ',', $tag_names );
+			$tag_names = array_map( 'trim', $tag_names );
+		}
+
+		// Filter out empty values
+		$tag_names = array_filter( $tag_names );
+
+		if ( empty( $tag_names ) ) {
+			return array(
+				'success' => true,
+				'message' => __( 'No tags to create', 'thrive-dash' ),
+				'tags_created' => 0
+			);
+		}
+
+		try {
+			/** @var Thrive_Dash_Api_GetResponseV3 $api */
+			$api = $this->get_api();
+
+			// Get all existing tags to check for duplicates
+			$existing_tags = $this->get_tags( true ); // Force fresh fetch
+			$existing_tag_names = array();
+
+			foreach ( $existing_tags as $tag ) {
+				$existing_tag_names[] = strtolower( $tag['text'] );
+			}
+
+			// Filter out tags that already exist (case-insensitive comparison)
+			$new_tag_names = array();
+			foreach ( $tag_names as $tag_name ) {
+				$tag_name = trim( $tag_name );
+				if ( ! empty( $tag_name ) && ! in_array( strtolower( $tag_name ), $existing_tag_names, true ) ) {
+					$new_tag_names[] = $tag_name;
+				}
+			}
+
+			if ( empty( $new_tag_names ) ) {
+				return array(
+					'success' => true,
+					'message' => __( 'All tags already exist', 'thrive-dash' ),
+					'tags_created' => 0
+				);
+			}
+
+			// Create tags one by one using GetResponse API
+			$created_tags = array();
+			foreach ( $new_tag_names as $tag_name ) {
+				try {
+					$created_tag = $api->createTag( array( 'name' => $tag_name ) );
+					if ( ! empty( $created_tag->tagId ) ) {
+						$created_tags[] = array(
+							'id' => $created_tag->tagId,
+							'text' => $created_tag->name
+						);
+					}
+				} catch ( Exception $e ) {
+					// Continue with next tag if one fails
+					continue;
+				}
+			}
+
+			// Clear cache so new tags appear immediately
+			$this->clearTagsCache();
+
+			return array(
+				'success' => true,
+				'message' => sprintf(
+					_n( '%d tag created successfully', '%d tags created successfully', count( $created_tags ), 'thrive-dash' ),
+					count( $created_tags )
+				),
+				'tags_created' => count( $created_tags ),
+				'tags' => $created_tags
+			);
+
+		} catch ( Exception $e ) {
+			return array(
+				'success' => false,
+				'message' => $e->getMessage()
+			);
+		}
+	}
+
+	/**
 	 * delete a contact from the list
 	 *
 	 * @param string $email
@@ -178,10 +426,9 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 				)
 			);
 
-			if ( ! empty( $contacts ) ) {
+			if ( ! empty( $contacts ) && is_array( $contacts ) ) {
 				foreach ( $contacts as $contact ) {
 					$api->deleteContact( $contact->contactId, array() );
-
 				}
 			}
 
@@ -241,39 +488,51 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 				$existing_custom_fields = ! empty( $params['customFieldValues'] ) ? $params['customFieldValues'] : array();
 				$mapped_custom_fields   = $this->buildMappedCustomFields( $arguments, $existing_custom_fields );
 
-				if ( ! empty( $mapped_custom_fields ) ) {
-					$params = array_merge( $params, $mapped_custom_fields );
+			if ( ! empty( $mapped_custom_fields ) ) {
+				$params = array_merge( $params, $mapped_custom_fields );
+			}
+
+				// Handle tags - include them in the params directly
+				$tag_key = $this->get_tags_key();
+				if ( ! empty( $arguments[ $tag_key ] ) ) {
+					$tag_ids = $this->process_tags( $arguments[ $tag_key ] );
+					// Convert from array of objects to simple array of tag IDs
+					$params['tags'] = array_map( function( $tag ) {
+						return $tag['tagId'];
+					}, $tag_ids );
 				}
 
 				try {
 					/**
 					 * this contact may be in other list but try to add it in the current on
 					 */
-					$api->addContact( $params );
+					$new_contact = $api->addContact( $params );
 
 					return true;
 				} catch ( Exception $e ) {
-				}
+					/**
+					 * we're talking about the same email but
+					 * it is the same contact in multiple list
+					 */
+					$contacts = $api->searchContacts(
+						array(
+							'query' => array(
+								'email' => $params['email'],
+							),
+						)
+					);
 
-				/**
-				 * we're talking about the same email but
-				 * it is the same contact in multiple list
-				 */
-				$contacts = $api->searchContacts(
-					array(
-						'query' => array(
-							'email' => $params['email'],
-						),
-					)
-				);
-
-				if ( ! empty( $contacts ) ) {
-					foreach ( $contacts as $contact ) {
-						/**
-						 * Update the subscriber only in current list
-						 */
-						if ( $contact->campaign->campaignId === $params['campaign']['campaignId'] ) {
-							$api->updateContact( $contact->contactId, $params );
+					if ( ! empty( $contacts ) && is_array( $contacts ) ) {
+						foreach ( $contacts as $contact ) {
+							/**
+							 * Update the subscriber only in current list
+							 */
+							if ( ! empty( $contact->campaign->campaignId ) &&
+							     $contact->campaign->campaignId === $params['campaign']['campaignId'] ) {
+								// Tags are already in $params, so updateContact will include them
+								$api->updateContact( $contact->contactId, $params );
+								// Removed break; to update all matching contacts
+							}
 						}
 					}
 				}
@@ -295,16 +554,33 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 	 */
 	public function buildMappedCustomFields( $args, $mapped_data = array() ) {
 
-		// Should be always base_64 encoded of a serialized array
-		if ( empty( $args['tve_mapping'] ) || ! tve_dash_is_bas64_encoded( $args['tve_mapping'] ) || ! is_serialized( base64_decode( $args['tve_mapping'] ) ) || ! is_array( $mapped_data ) ) {
+		// Validate tve_mapping exists and is properly encoded
+		if ( empty( $args['tve_mapping'] ) ) {
 			return array();
 		}
 
-		$form_data = thrive_safe_unserialize( base64_decode( $args['tve_mapping'] ) );
+		if ( ! tve_dash_is_bas64_encoded( $args['tve_mapping'] ) ) {
+			return array();
+		}
 
-		if ( is_array( $form_data ) ) {
+		$decoded = base64_decode( $args['tve_mapping'] );
+		if ( ! is_serialized( $decoded ) ) {
+			return array();
+		}
 
-			$mapped_fields = $this->get_mapped_field_ids();
+		$form_data = thrive_safe_unserialize( $decoded );
+
+		// Validate unserialized data is an array
+		if ( ! is_array( $form_data ) ) {
+			return array();
+		}
+
+		// Validate mapped_data parameter is an array
+		if ( ! is_array( $mapped_data ) ) {
+			return array();
+		}
+
+		$mapped_fields = $this->get_mapped_field_ids();
 
 			foreach ( $mapped_fields as $mapped_field_name ) {
 
@@ -318,7 +594,10 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 					// Pull form allowed data, sanitize it and build the custom fields array
 					foreach ( $cf_form_fields as $cf_form_name ) {
 
-						if ( empty( $form_data[ $cf_form_name ][ $this->_key ] ) ) {
+						// Validate nested array structure before access
+						if ( ! isset( $form_data[ $cf_form_name ] ) ||
+						     ! is_array( $form_data[ $cf_form_name ] ) ||
+						     empty( $form_data[ $cf_form_name ][ $this->_key ] ) ) {
 							continue;
 						}
 
@@ -335,7 +614,6 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 					}
 				}
 			}
-		}
 
 		return ! empty( $mapped_data ) ? array( 'customFieldValues' => $mapped_data ) : array();
 	}
@@ -377,7 +655,10 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 				$phone_field = $this->get_api()->setCustomField( $field_args );
 			}
 
-			if ( ! empty( $phone_field[0]->customFieldId ) ) {
+			// Validate phone_field structure before accessing
+			if ( isset( $phone_field[0] ) &&
+			     is_object( $phone_field[0] ) &&
+			     ! empty( $phone_field[0]->customFieldId ) ) {
 				$phone_value = str_replace( array( '-', '+', ' ' ), '', trim( $arguments['phone'] ) );
 
 				$params['customFieldValues'] = array(
@@ -396,10 +677,11 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 	 * Render extra html API setup form
 	 *
 	 * @param array $params
+	 * @param bool  $force  force refresh from API
 	 *
 	 * @return array
 	 */
-	public function get_extra_settings( $params = array() ) {
+	public function get_extra_settings( $params = array(), $force = false ) {
 
 		return $params;
 	}
@@ -569,6 +851,108 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 		}
 
 		return $prepared_fields;
+	}
+
+	/**
+	 * Process tags - convert comma-separated tag names to tag IDs array.
+	 *
+	 * PERFORMANCE OPTIMIZATION:
+	 * Previous implementation made 2-3 API calls per tag (N+1 problem).
+	 * With 10 tags, this resulted in 20-30 API calls.
+	 *
+	 * New implementation:
+	 * 1. Fetch ALL tags once at start (1 API call)
+	 * 2. Build in-memory lookup indexes (by ID and name)
+	 * 3. Lookup each requested tag in indexes (O(1) operations)
+	 * 4. Only make API calls to create NEW tags (unavoidable)
+	 *
+	 * Result: With 10 existing tags = 1 API call (vs 20-30 before)
+	 *         With 10 new tags = 11 API calls (vs 20-30 before)
+	 *         With 5 new + 5 existing = 6 API calls (vs 20-30 before)
+	 *
+	 * @param string $tags_input Comma-separated tag names or IDs
+	 *
+	 * @return array Array of tag objects with tagId
+	 */
+	protected function process_tags( $tags_input ) {
+		$tag_ids = array();
+
+		if ( empty( $tags_input ) ) {
+			return $tag_ids;
+		}
+
+		// Split and clean tag items
+		$tag_items = explode( ',', trim( $tags_input, ' ,' ) );
+		$tag_items = array_filter( array_map( 'trim', $tag_items ) );
+
+		if ( empty( $tag_items ) ) {
+			return $tag_ids;
+		}
+
+		try {
+			/** @var Thrive_Dash_Api_GetResponseV3 $api */
+			$api = $this->get_api();
+
+			// OPTIMIZATION: Fetch ALL tags ONCE at the start
+			$all_tags = $api->getTags();
+
+			// Build fast lookup indexes
+			$tags_by_id   = array();
+			$tags_by_name = array();
+
+			if ( ! empty( $all_tags ) && is_array( $all_tags ) ) {
+				foreach ( $all_tags as $tag ) {
+					if ( ! empty( $tag->tagId ) && ! empty( $tag->name ) ) {
+						// Index by ID for numeric lookups
+						$tags_by_id[ $tag->tagId ] = $tag;
+						// Index by lowercase name for case-insensitive matching
+						$tags_by_name[ strtolower( $tag->name ) ] = $tag;
+					}
+				}
+			}
+
+			// Collect tags that need to be created
+			$tags_to_create = array();
+
+			// Process each requested tag
+			foreach ( $tag_items as $tag_item ) {
+				$found = false;
+
+				// Check if it's an existing tag ID (numeric string)
+				if ( is_numeric( $tag_item ) && isset( $tags_by_id[ $tag_item ] ) ) {
+					$tag_ids[] = array( 'tagId' => $tag_item );
+					$found     = true;
+				}
+				// Check if it's an existing tag name (case-insensitive)
+				elseif ( isset( $tags_by_name[ strtolower( $tag_item ) ] ) ) {
+					$tag_ids[] = array( 'tagId' => $tags_by_name[ strtolower( $tag_item ) ]->tagId );
+					$found     = true;
+				}
+
+				// Collect tags that need creation
+				if ( ! $found ) {
+					$tags_to_create[] = $tag_item;
+				}
+			}
+
+			// Create new tags (one API call per new tag - unavoidable with GetResponse API)
+			foreach ( $tags_to_create as $tag_name ) {
+				try {
+					$new_tag = $api->createTag( array( 'name' => $tag_name ) );
+					if ( ! empty( $new_tag->tagId ) ) {
+						$tag_ids[] = array( 'tagId' => $new_tag->tagId );
+					}
+				} catch ( Exception $e ) {
+					// Continue with next tag if creation fails
+					continue;
+				}
+			}
+
+		} catch ( Exception $e ) {
+			// Silently handle errors - return whatever tags were successfully processed
+		}
+
+		return $tag_ids;
 	}
 }
 

@@ -690,7 +690,7 @@ class Thrive_Dash_Api_iContact {
 	 **/
 	public function getCustomFields() {
 		// Make the call and return the custom fields
-		return $this->makeCall( "/a/{$this->setAccountId()}/c/{$this->setClientFolderId()}/customfields", 'GET', null, 'customfields' );
+		return $this->makeCall( "/a/{$this->setAccountId()}/c/{$this->setClientFolderId()}/customfields?limit=200", 'GET', null, 'customfields' );
 	}
 
 	/**

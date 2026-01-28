@@ -140,8 +140,10 @@ class Thrive_Dash_List_Connection_Sendy extends Thrive_Dash_List_Connection_Abst
 	 * output any (possible) extra editor settings for this API
 	 *
 	 * @param array $params allow various different calls to this method
+	 * @param bool  $force  force refresh from API
 	 */
-	public function get_extra_settings( $params = array() ) {
+	public function get_extra_settings( $params = array(), $force = false ) {
+
 		return $params;
 	}
 

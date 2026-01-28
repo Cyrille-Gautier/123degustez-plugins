@@ -90,7 +90,10 @@ class Thrive_Dash_Api_KlickTipp {
 			throw new Thrive_Dash_Api_KlickTipp_Exception( 'API error: [empty response data]' );
 		}
 
-		if ( strpos( $response->data, 'A tag or SmartLink with the name' ) !== false ) {
+		if ( 
+			( stripos( $response->data, 'a tag or smartlink with the name' ) !== false )
+			|| ( stripos( $response->data, 'a tag or smart link' ) !== false )
+		) {
 			throw new Thrive_Dash_Api_KlickTipp_Exception( 'API error: ' . $response->data );
 		}
 

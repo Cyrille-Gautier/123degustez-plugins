@@ -11,8 +11,15 @@ class TD_DbMigration {
 	public static function migrate() {
 		global $wpdb;
 
+		// Check completion flag to prevent running on every page load
+		$migration_status = get_option( 'thrive_mail_notifications_migration_status' );
+		if ( $migration_status === 'completed' ) {
+			return;
+		}
+
 		$charsetCollate = $wpdb->get_charset_collate();
 		$table = $wpdb->prefix . static::$tableName;
+		$has_error = false;
 
 		if ( $wpdb->get_var("SHOW TABLES LIKE '$table'") != $table ) {
 			$sql = "CREATE TABLE $table (
@@ -39,18 +46,37 @@ class TD_DbMigration {
 				KEY ian_dismissed (dismissed)
 			) $charsetCollate;";
 			dbDelta($sql);
+			// Check if table was created successfully
+			if ( $wpdb->get_var("SHOW TABLES LIKE '$table'") != $table ) {
+				$has_error = true;
+			}
 		}
 
-        $index_exists = $wpdb->get_results("SHOW INDEX FROM $table WHERE Key_name = 'ian_slug'");
+		// Only drop index if it exists AND migration hasn't completed yet
+		if ( ! $has_error ) {
+			$index_exists = $wpdb->get_results("SHOW INDEX FROM $table WHERE Key_name = 'ian_slug'");
+			if ( $index_exists ) {
+				$result = $wpdb->query("ALTER TABLE $table DROP INDEX ian_slug");
+				if ( $result === false ) {
+					$has_error = true;
+				}
+			}
+		}
 
-        if ($index_exists) {
-            $wpdb->query("ALTER TABLE $table DROP INDEX ian_slug");
-        }
+		// Only modify level column if it's not already nullable
+		if ( ! $has_error ) {
+			$level_column = $wpdb->get_row("SHOW COLUMNS FROM $table WHERE Field = 'level'");
+			if ( $level_column && $level_column->Null === 'NO' ) {
+				$result = $wpdb->query("ALTER TABLE $table MODIFY COLUMN `level` text DEFAULT NULL");
+				if ( $result === false ) {
+					$has_error = true;
+				}
+			}
+		}
 
-		// Make level column nullable
-		$level_exists = $wpdb->get_results("SHOW COLUMNS FROM $table LIKE 'level'");
-		if ($level_exists) {
-			$wpdb->query("ALTER TABLE $table MODIFY COLUMN `level` text DEFAULT NULL");
+		// Set completion flag only after successful execution
+		if ( ! $has_error ) {
+			update_option( 'thrive_mail_notifications_migration_status', 'completed' );
 		}
 	}
 }

@@ -89,8 +89,16 @@ class Thrive_Dash_List_Connection_Mailster extends Thrive_Dash_List_Connection_A
 			: $mailster_instance->add( $args );
 
 		if ( null !== $subscriber_id ) {
-			$mailster_instance->assign_lists( $subscriber_id, $list_identifier );
-			$mailster_instance->add_custom_value( $subscriber_id, $this->_get_custom_fields_from_args( $arguments ) );
+			// Determine list-level status based on opt-in setting
+			// Single opt-in ('s' or not set) = true (confirmed/active)
+			// Double opt-in ('d') = false (pending confirmation)
+			$added = ! isset( $arguments['mailster_optin'] ) || 'd' !== $arguments['mailster_optin'];
+
+			$mailster_instance->assign_lists( $subscriber_id, $list_identifier, false, $added );
+
+			foreach ( $this->_get_custom_fields_from_args( $arguments ) as $key => $value ) {
+				$mailster_instance->add_custom_field( $subscriber_id, $key, (string) $value );
+			}
 
 			return true;
 		}

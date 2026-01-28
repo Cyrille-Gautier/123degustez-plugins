@@ -44,7 +44,7 @@ class TD_Webhooks_Sender {
         if ( $method !== 'get' ) {
             switch ( $format ) {
                 case 'json':
-                    $body = wp_json_encode( $payload );
+                    $body = TD_Webhooks_Templating::json_encode( $payload );
                     $header_map['content-type'] = 'application/json';
                     break;
                 case 'xml':
@@ -104,7 +104,7 @@ class TD_Webhooks_Sender {
             'url'     => $url,
             'method'  => $args['method'] ?? 'GET',
             'headers' => self::mask_array( (array) ( $args['headers'] ?? [] ) ),
-            'body'    => self::truncate( is_scalar( $args['body'] ?? '' ) ? (string) $args['body'] : wp_json_encode( $args['body'] ) ),
+            'body'    => self::truncate( is_scalar( $args['body'] ?? '' ) ? (string) $args['body'] : TD_Webhooks_Templating::json_encode( $args['body'] ) ),
         ];
     }
 
@@ -175,7 +175,7 @@ class TD_Webhooks_Sender {
                 $val = TD_Webhooks_Templating::resolve_placeholders( $val, $context );
             }
 
-            $out[ $key ] = is_scalar( $val ) ? (string) $val : wp_json_encode( $val );
+            $out[ $key ] = is_scalar( $val ) ? (string) $val : TD_Webhooks_Templating::json_encode( $val );
         }
 
         return $out;

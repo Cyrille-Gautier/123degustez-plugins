@@ -560,10 +560,11 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	 * output any (possible) extra editor settings for this API
 	 *
 	 * @param array $params allow various different calls to this method
+	 * @param bool  $force  force refresh from API
 	 *
 	 * @return array
 	 */
-	public function get_extra_settings( $params = [] ) {
+	public function get_extra_settings( $params = [], $force = false ) {
 		do_action( 'tvd_autoresponder_render_extra_editor_settings_' . $this->get_key() );
 
 		return [];
@@ -693,14 +694,14 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 			$data = get_transient( $transient );
 		}
 
-		if ( false === $force && tve_dash_is_debug_on() ) {
-			$force = true;
-		}
+		// if ( false === $force && tve_dash_is_debug_on() ) {
+		// 	$force = true;
+		// }
 
 		if ( true === $force || false === $data ) {
 			$data = array(
 				'lists'          => $this->get_lists( false ),
-				'extra_settings' => $this->get_extra_settings( $params ),
+				'extra_settings' => $this->get_extra_settings( $params, $force ),
 				'custom_fields'  => $this->get_custom_fields( $params ),
 			);
 			if ( $this->get_key() !== 'email' ) {
@@ -750,89 +751,6 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	}
 
 	/**
-	 * Get surname prepositions/particles from different cultures
-	 * 
-	 * This method provides a comprehensive list of surname prepositions used in different cultures
-	 * to properly split compound surnames like "Van Wielemaker", "de la Cruz", etc.
-	 * 
-	 * Developers can extend this list using the 'thrive_surname_prepositions' filter:
-	 * 
-	 * Example:
-	 * add_filter( 'thrive_surname_prepositions', function( $prepositions ) {
-	 *     $prepositions[] = 'custom_preposition';
-	 *     return $prepositions;
-	 * } );
-	 * 
-	 * @return array List of surname prepositions (lowercase)
-	 */
-	protected function get_surname_prepositions() {
-		$prepositions = array(
-			// Multiple cultures
-			'de', 'del',
-			// Dutch/Flemish
-			'van', 'van der', 'van den', 'van de', 'den', 'der',
-			// German/Austrian  
-			'von', 'zu', 'zur', 'zum',
-			// Spanish/Portuguese
-			'de la', 'de las', 'de los', 'da', 'do', 'dos', 'das',
-			// French
-			'du', 'des', 'le', 'la', 'les',
-			// Italian
-			'di', 'da', 'della', 'delle', 'dei', 'degli',
-			// Irish/Scottish
-			'mac', 'mc', 'o\'', 'o',
-			// Arabic
-			'al', 'el', 'ibn', 'bin',
-			// Other
-			'dela', 'dela cruz', 'st', 'saint'
-		);
-
-		/**
-		 * Filter surname prepositions to allow customization for different cultures
-		 * 
-		 * @param array $prepositions List of surname prepositions
-		 */
-		return apply_filters( 'thrive_surname_prepositions', $prepositions );
-	}
-
-	/**
-	 * Find the position where the surname starts based on prepositions
-	 * 
-	 * Searches for surname prepositions using regex with word boundaries to prevent false matches.
-	 * Uses PHP_INT_MAX as sentinel value for clean comparison logic.
-	 * 
-	 * @param string $full_name The full name string
-	 * @return int|false Position where surname starts, or false if no preposition found
-	 */
-	protected function find_surname_start_position( $full_name ) {
-		$prepositions = $this->get_surname_prepositions();
-		
-		// Use PHP_INT_MAX as sentinel - any valid position will be smaller
-		$best_position = PHP_INT_MAX;
-		
-		foreach ( $prepositions as $preposition ) {
-			// Use word boundaries to ensure we match complete words only.
-			// Replace spaces with \s+ to match multiple spaces.
-			$pattern = '/\b' . str_replace(' ', '\s+', preg_quote($preposition, '/')) . '\b/i';
-
-			// If no match, continue to the next preposition.
-			if ( ! preg_match( $pattern, $full_name, $matches, PREG_OFFSET_CAPTURE ) ) {
-				continue;
-			}
-
-			$position = $matches[0][1];
-
-			// Accept position if it's not at the beginning and is earlier than current best
-			if ( $position > 0 && $position < $best_position ) {
-				$best_position = $position;
-			}
-		}
-		
-		// Return the earliest position found, or false if no valid preposition was found
-		return $best_position === PHP_INT_MAX ? false : $best_position;
-	}
-
-	/**
 	 * Split a full name into first and last name parts, handling compound surnames
 	 * 
 	 * Uses an optimized string-based approach with regex and word boundaries to efficiently
@@ -845,43 +763,11 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	 * - Edge cases and special formatting
 	 * - Validation against false matches
 	 * 
-	 * We should extract this to a separate class if the logic gets any more complex.
-	 * 
 	 * @param string $full_name The full name to split
 	 * @return array Array with first name and last name
 	 */
 	protected function get_name_parts( $full_name ) {
-		if ( empty( $full_name ) ) {
-			return array( '', '' );
-		}
-
-		// Clean the name
-		$full_name = trim( preg_replace( '/\s+/', ' ', $full_name ) );
-		
-		// Handle single word names
-		if ( strpos( $full_name, ' ' ) === false ) {
-			return array(
-				sanitize_text_field( $full_name ),
-				'',
-			);
-		}
-
-		// Try to find a preposition-based split
-		$surname_start_pos = $this->find_surname_start_position( $full_name );
-		
-		if ( $surname_start_pos === false ) {
-			// Fallback to traditional approach (last word as surname)
-			$surname_start_pos = strrpos( $full_name, ' ' );
-		}
-
-		// Split based on preposition
-		$first_name = trim( substr( $full_name, 0, $surname_start_pos ) );
-		$last_name = trim( substr( $full_name, $surname_start_pos ) );
-
-		return array(
-			sanitize_text_field( $first_name ),
-			sanitize_text_field( $last_name ),
-		);
+		return \TVE\Dashboard\Utils\Name_Parser::parse( $full_name );
 	}
 
 	/**
@@ -1233,6 +1119,16 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	}
 
 	/**
+	 * Whether the integration supports creating tags via API on page save
+	 * (as opposed to auto-creating them on form submission)
+	 *
+	 * @return bool
+	 */
+	public function can_create_tags_via_api() {
+		return false;
+	}
+
+	/**
 	 * Whether the current integration can provide custom fields
 	 *
 	 * @return false
@@ -1366,7 +1262,9 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	 * @return array
 	 */
 	public function get_data_for_setup() {
-		return [];
+		return array(
+			'can_create_tags_via_api' => $this->can_create_tags_via_api(),
+		);
 	}
 
 	/**

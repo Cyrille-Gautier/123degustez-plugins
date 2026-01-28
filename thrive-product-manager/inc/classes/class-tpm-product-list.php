@@ -53,6 +53,7 @@ class TPM_Product_List {
 
 		if ( empty( $this->_products ) ) {
 			$this->_products = $this->_get_all_ttw_products();
+			$this->_products = is_array( $this->_products ) ? $this->_products : array();
 		}
 
 		foreach ( $this->_products as &$product ) {
@@ -80,8 +81,7 @@ class TPM_Product_List {
 			return array();
 		}
 
-		if ( Thrive_Product_Manager::CACHE_ENABLED && ( $products = tpm_get_transient( self::NAME ) ) !== false ) {
-
+		if ( Thrive_Product_Manager::CACHE_ENABLED && ( $products = tpm_get_transient( self::NAME ) ) !== false && is_array( $products ) ) {
 			return $products;
 		}
 

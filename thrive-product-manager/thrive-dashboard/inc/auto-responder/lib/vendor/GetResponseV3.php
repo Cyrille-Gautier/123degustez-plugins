@@ -447,5 +447,40 @@ class Thrive_Dash_Api_GetResponseV3 {
 
 		return $this->updateContact( $contact_id, $prepared_args );
 	}
-}
 
+	/**
+	 * Get all tags
+	 *
+	 * @param array $params Optional query parameters
+	 *
+	 * @return mixed
+	 */
+	public function getTags( $params = array() ) {
+		$default_params = array( 'perPage' => 1000 );
+		$params         = array_merge( $default_params, $params );
+
+		return $this->call( 'tags?' . $this->setParams( $params ) );
+	}
+
+	/**
+	 * Get single tag by ID
+	 *
+	 * @param string $tag_id
+	 *
+	 * @return mixed
+	 */
+	public function getTag( $tag_id ) {
+		return $this->call( 'tags/' . $tag_id );
+	}
+
+	/**
+	 * Create a new tag
+	 *
+	 * @param array $params
+	 *
+	 * @return mixed
+	 */
+	public function createTag( $params ) {
+		return $this->call( 'tags', 'POST', $params );
+	}
+}
