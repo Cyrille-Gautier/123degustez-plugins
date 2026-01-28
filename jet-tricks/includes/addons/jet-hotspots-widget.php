@@ -202,6 +202,18 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 				)
 			)
 		);
+				
+		$repeater->add_control(
+			'hotspot_show_on_init',
+			array(
+				'label'        => esc_html__( 'Show Tooltip on Init', 'jet-tricks' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-tricks' ),
+				'label_off'    => esc_html__( 'No', 'jet-tricks' ),
+				'return_value' => 'yes',
+				'default'      => 'no',				
+			)
+		);
 
 		$repeater->add_control(
 			'hotspot_url',
@@ -337,7 +349,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 		$this->add_control(
 			'tooltip_show_on_init',
 			array(
-				'label'        => esc_html__( 'Show On Init', 'jet-tricks' ),
+				'label'        => esc_html__( 'Show All Tooltips on Init', 'jet-tricks' ),
 				'type'         => Controls_Manager::SWITCHER,
 				'label_on'     => esc_html__( 'Yes', 'jet-tricks' ),
 				'label_off'    => esc_html__( 'No', 'jet-tricks' ),
@@ -1010,6 +1022,15 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 								break;
 						}
 
+						$show_on_init = ! empty( $hotspot['hotspot_show_on_init'] ) ? $hotspot['hotspot_show_on_init'] : 'no';
+						$show_on_init = apply_filters( 'jet-tricks/hotspots/show_on_init', $show_on_init, $hotspot, $index, $this );
+
+						if ( 'true' === $show_on_init || 'yes' === $show_on_init ) {
+							$show_on_init = 'yes';
+						} else {
+							$show_on_init = 'no';
+						}
+
 						$this->add_render_attribute( $hotspot_setting_key, array(
 							'id'                       => 'jet-hotspot-' . $id_int . $hotspot_count,
 							'class'                    => array(
@@ -1019,6 +1040,7 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 							'data-horizontal-position' => isset( $hotspot['horizontal_position']['size'] ) ? $hotspot['horizontal_position']['size'] :  $hotspot['horizontal_position'],
 							'data-vertical-position'   => isset( $hotspot['vertical_position']['size'] ) ? $hotspot['vertical_position']['size'] :  $hotspot['vertical_position'],
 							'data-tooltip-width'       => isset( $hotspot['hotspot_width']['size'] ) ? $hotspot['hotspot_width']['size'] . $hotspot['hotspot_width']['unit'] : '',
+							'data-show-on-init'        => $show_on_init,
 						) );
 
 						if ( $is_link ) {
@@ -1040,6 +1062,8 @@ class Jet_Hotspots_Widget extends Jet_Tricks_Base {
 						}
 
 						$icon_html = $this->__get_icon( 'hotspot_icon', $hotspot, '<span class="jet-hotspots__item-icon jet-tricks-icon">%s</span>' );
+
+						$icon_html = apply_filters( 'jet-tricks/hotspots/icon_html', $icon_html, $hotspot, $this );
 
 						$text_html = '';
 

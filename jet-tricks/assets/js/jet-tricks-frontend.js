@@ -99,7 +99,9 @@
 
 					var excludeWidgets = [
 						'jet-woo-product-gallery-slider.default',
-						'accordion.default' 
+						'accordion.default',
+						'jet-form-builder-form.default',
+						'nav-menu.default'
 					];
 
 					var $this  = $( this ),
@@ -530,6 +532,8 @@
 				autoHide               = settings['autoHide'] || false,
 				autoHideTime           = settings['autoHideTime'] && 0 != settings['autoHideTime']['size'] ? settings['autoHideTime']['size'] : 5,
 				hideOutsideClick       = settings['hideOutsideClick'] || false,
+				heightControlType      = settings['heightControlType'] || 'height',
+				wordCount              = settings['wordCount'] || 20,
 				autoHideTrigger,
 				activeBreakpoints      = elementor.config.responsive.activeBreakpoints,
 				initialLoaded          = false;
@@ -544,21 +548,52 @@
 				}
 			}
 
+			function calculateHeightByWordCount() {
+				
+				var text = $contentInner.text().trim();
+				if (!text) {
+					return 0; 
+				}
+
+				var words = text.split(/\s+/);
+				var wordsToShow = Math.min(getDeviceWordCount(), words.length);
+				var visibleText = words.slice(0, wordsToShow).join(' ');
+				
+								
+				var $tempElement = $contentInner.clone();
+				$tempElement
+					.css({
+						position: 'absolute',
+						visibility: 'hidden',
+						height: 'auto',
+						overflow: 'visible'
+					})
+					.text(visibleText);
+				
+				$contentInner.after($tempElement);
+				var height = $tempElement.outerHeight();
+				
+				$tempElement.remove();
+				
+				return height; 
+			}
+
 			maskBreakpointsHeights['desktop']    = [];
 			maskBreakpointsHeights['widescreen'] = [];
 
-			maskBreakpointsHeights['desktop']['maskHeight'] = '' != settings['mask_height']['size'] ? settings['mask_height']['size'] : 50;
+			maskBreakpointsHeights['desktop']['maskHeight'] = (settings['mask_height'] && settings['mask_height']['size'] && '' != settings['mask_height']['size']) ? settings['mask_height']['size'] : 50;
 
 			prevBreakpoint = 'desktop';
 
 			Object.keys(  activeBreakpoints ).reverse().forEach(  function( breakpointName ) {
 
 				if ( 'widescreen' === breakpointName ) {
-					maskBreakpointsHeights['widescreen']['maskHeight'] = '' != settings['mask_height_widescreen']['size'] ? settings['mask_height_widescreen']['size'] : maskBreakpointsHeights['desktop']['maskHeight'];
+					maskBreakpointsHeights['widescreen']['maskHeight'] = (settings['mask_height_widescreen'] && settings['mask_height_widescreen']['size'] && '' != settings['mask_height_widescreen']['size']) ? settings['mask_height_widescreen']['size'] : maskBreakpointsHeights['desktop']['maskHeight'];
 				} else {
 					maskBreakpointsHeights[breakpointName] = [];
 
-					maskBreakpointsHeights[breakpointName]['maskHeight'] = '' != settings['mask_height_' + breakpointName]['size'] ? settings['mask_height_' + breakpointName]['size'] : maskBreakpointsHeights[prevBreakpoint]['maskHeight'];
+					var breakpointSetting = settings['mask_height_' + breakpointName];
+					maskBreakpointsHeights[breakpointName]['maskHeight'] = (breakpointSetting && breakpointSetting['size'] && '' != breakpointSetting['size']) ? breakpointSetting['size'] : maskBreakpointsHeights[prevBreakpoint]['maskHeight'];
 
 					prevBreakpoint = breakpointName;
 				}
@@ -723,6 +758,10 @@
 			} );
 
 			function getDeviceHeight() {
+				if (heightControlType === 'word_count') {
+					return calculateHeightByWordCount();
+				}
+
 				let device = elementorFrontend.getCurrentDeviceMode();
 				let heightSettings;
 
@@ -758,6 +797,28 @@
 						return heightSettings.size;
 				}
 			}
+
+			function getDeviceWordCount() {
+				let device = elementorFrontend.getCurrentDeviceMode();
+				let value;
+
+				switch ( device ) {
+					case 'mobile':
+						value = settings.word_count_mobile;
+						break;
+					case 'tablet':
+						value = settings.word_count_tablet;
+						break;
+					default:
+						value = settings.word_count;
+				}
+
+				if ( value !== null && value !== undefined ) {
+					return parseInt( value, 10 );
+				}
+
+				return 20;
+			}
 		},
 
 		widgetHotspots: function( $scope ) {
@@ -776,6 +837,7 @@
 					horizontal     = $this.data( 'horizontal-position' ),
 					vertical       = $this.data( 'vertical-position' ),
 					tooltipWidth   = $this.data( 'tooltip-width' ) || null,
+					showOnInit     = $this.data( 'show-on-init' ),
 					itemSelector   = $this[0],
 					options        = {};
 
@@ -823,8 +885,8 @@
 				if ( 'manual' === settings['tooltipTrigger'] && itemSelector._tippy ) {
 					itemSelector._tippy.show();
 				}
-
-				if ( settings['tooltipShowOnInit'] && itemSelector._tippy ) {
+			
+				if ( ( showOnInit === 'yes' || settings['tooltipShowOnInit'] ) && itemSelector._tippy ) {
 					itemSelector._tippy.show();
 				}
 

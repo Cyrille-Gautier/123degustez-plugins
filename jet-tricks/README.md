@@ -4,6 +4,13 @@ Enjoy adding animation on the fly without coding skills
 
 # ChangeLog
 
+## 1.5.9
+* Added: per-hotspot `Show Tooltip on Init` option;
+* Added: `jet-tricks/hotspots/show_on_init` hook to filter tooltip visibility on init for each hotspot;
+* Added: `jet-tricks/hotspots/icon_html` hook to filter hotspot icon HTML output;
+* Added: `Word Count` option for controlling visible content height in Unfold widget;
+* Fixed: prevent double initialization of JetForm inside tabs.
+
 ## 1.5.8
 * Added: `Follow Cursor` control for Tooltip [Crocoblock/suggestions#2276](https://github.com/Crocoblock/suggestions/issues/2276);
 * Fixed: Particles not initializing with Elementor Element Cache enabled;

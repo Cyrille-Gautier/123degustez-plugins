@@ -158,6 +158,19 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 			)
 		);
 
+		$this->add_control(
+			'height_control_type',
+			array(
+				'label'   => esc_html__( 'Height Type', 'jet-tricks' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'height',
+				'options' => array(
+					'height'     => esc_html__( 'Fixed Height', 'jet-tricks' ),
+					'word_count' => esc_html__( 'Word Count', 'jet-tricks' ),
+				),
+			)
+		);
+
 		$this->add_responsive_control(
 			'mask_height',
 			array(
@@ -191,6 +204,27 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				),
 				'render_type'        => 'template',
 				'frontend_available' => true,
+				'condition' => array(
+					'height_control_type' => 'height',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'word_count',
+			array(
+				'label'      => esc_html__( 'Number of Words to Show', 'jet-tricks' ),
+				'type'       => Controls_Manager::NUMBER,
+				'description' => esc_html__( 'Works correctly only with "Editor" content type', 'jet-tricks' ),
+				'min'        => 1,
+				'max'        => 1000,
+				'step'       => 1,
+				'default'    => 20,
+				'render_type' => 'template',
+				'frontend_available' => true,
+				'condition' => array(
+					'height_control_type' => 'word_count',
+				),
 			)
 		);
 
@@ -1139,6 +1173,8 @@ class Jet_Unfold_Widget extends Jet_Tricks_Base {
 				'unit' => $settings['mask_height']['unit'] ?? '',
 			),
 			'separatorHeight'  => $settings['separator_height'] ?? '',
+			'heightControlType' => $settings['height_control_type'] ?? 'height',
+			'wordCount'        => $settings['word_count'] ?? 20,
 			'unfoldDuration'   => $settings['unfold_duration'] ?? '',
 			'foldDuration'     => $settings['fold_duration'] ?? '',
 			'unfoldEasing'     => $settings['unfold_easing'] ?? '',
