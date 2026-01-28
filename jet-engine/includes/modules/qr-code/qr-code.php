@@ -151,7 +151,11 @@ if ( ! class_exists( 'Jet_Engine_Module_QR_Code' ) ) {
 						break;
 
 					case 'term_id':
-						$args[0] = get_term_link( $args[0] );
+						$args[0] = get_term_link( absint( $args[0] ) );
+
+						if ( is_wp_error( $args[0] ) ) {
+							$args[0] = esc_html__( 'Invalid term.', 'jet-engine' );
+						}
 						break;
 				}
 

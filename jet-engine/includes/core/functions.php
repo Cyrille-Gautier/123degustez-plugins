@@ -356,7 +356,7 @@ function jet_get_pretty_post_link( $value ) {
 		$result  = sprintf( '<a href="%1$s">%2$s</a>', get_permalink( $post_id ), get_the_title( $post_id ) );
 	}
 
-	return $result;
+	return wp_kses_post( $result );
 
 }
 
@@ -410,53 +410,52 @@ function jet_get_term_name( $value ) {
 }
 
 /**
- * Returns link to term by ID
+ * Returns link(s) to term(s) by ID(s)
  *
- * @return [type] [description]
+ * Supports:
+ * - integer term ID
+ * - string term ID
+ * - array of term IDs
+ *
+ * @param mixed $value Term ID(s)
+ * @return string HTML with term link(s)
  */
 function jet_get_pretty_term_link( $value ) {
 
 	if ( empty( $value ) ) {
-		return;
+		return '';
 	}
 
 	$result = '';
+	$term_ids = [];
 
+	// Normalize input to array of integers
 	if ( is_array( $value ) ) {
+		$term_ids = array_map( 'intval', $value );
+	} elseif ( is_numeric( $value ) ) {
+		$term_ids = [ (int) $value ];
+	} elseif ( is_string( $value ) ) {
+		$term_ids = [ (int) $value ]; // для SQL або строкових ID
+	}
 
-		$delimiter = '';
+	// Build links for valid term IDs
+	$delimiter = '';
 
-		foreach ( $value as $term_id ) {
+	foreach ( $term_ids as $term_id ) {
+		$term = get_term( $term_id );
 
-			$term = get_term( $term_id );
-
-			if ( $term ) {
-				$result .= sprintf(
-					'%3$s<a href="%1$s">%2$s</a>',
-					get_term_link( $term_id ),
-					$term->name,
-					$delimiter
-				);
-
-				$delimiter = ', ';
-
-			}
-
+		if ( $term && ! is_wp_error( $term ) ) {
+			$result .= sprintf(
+				'%3$s<a href="%1$s">%2$s</a>',
+				get_term_link( $term ),
+				esc_html( $term->name ),
+				$delimiter
+			);
+			$delimiter = ', ';
 		}
-
-	} else {
-
-		$term_id = $value;
-		$term    = get_term( $term_id );
-
-		if ( $term ) {
-			$result = sprintf( '<a href="%1$s">%2$s</a>', get_term_link( $term_id ), $term->name );
-		}
-
 	}
 
 	return $result;
-
 }
 
 /**

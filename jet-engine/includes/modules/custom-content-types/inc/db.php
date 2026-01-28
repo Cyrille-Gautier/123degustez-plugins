@@ -29,6 +29,8 @@ class DB extends \Jet_Engine_Base_DB {
 	 */
 	public $adjust_fields_map = array();
 
+	public $last_query = '';
+
 	/**
 	 * Constructor for the class
 	 */
@@ -422,6 +424,8 @@ class DB extends \Jet_Engine_Base_DB {
 
 		$query = apply_filters( 'jet-engine/custom-content-types/sql-query-parts', $query, $table, $args, $this );
 		$query = implode( '', $query );
+
+		$this->last_query = $query;
 
 		$raw = self::wpdb()->get_results( $query, $this->get_format_flag() );
 

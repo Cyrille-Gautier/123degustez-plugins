@@ -306,8 +306,8 @@ if ( ! class_exists( 'Jet_Engine_Listings_Post_Type' ) ) {
 			$args = array(
 				'labels' => array(
 					'name'               => esc_html__( 'Listing Items/Components', 'jet-engine' ),
-					'singular_name'      => esc_html__( 'Listing Item/Components', 'jet-engine' ),
-					'add_new'            => esc_html__( 'Add New Listing Item', 'jet-engine' ),
+					'singular_name'      => esc_html__( 'Item/Component', 'jet-engine' ),
+					'add_new'            => esc_html__( 'Add New Item', 'jet-engine' ),
 					'add_new_item'       => esc_html__( 'Add New Item', 'jet-engine' ),
 					'edit_item'          => esc_html__( 'Edit Item', 'jet-engine' ),
 					'new_item'           => esc_html__( 'Add New Item', 'jet-engine' ),
@@ -341,6 +341,12 @@ if ( ! class_exists( 'Jet_Engine_Listings_Post_Type' ) ) {
 				apply_filters( 'jet-engine/templates/post-type/args', $args )
 			);
 
+			add_filter( 'block_editor_settings_all', function( $settings, $context ) {
+				if ( $context->post && $context->post->post_type === $this->slug() ) {
+					$settings['supportsTemplateMode'] = false;
+				}
+				return $settings;
+			}, 10, 2 );
 		}
 
 		/**

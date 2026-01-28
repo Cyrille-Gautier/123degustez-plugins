@@ -22,6 +22,7 @@ if ( ! class_exists( 'Jet_Engine_Frontend' ) ) {
 		protected $listing_id = null;
 		protected $processed_listing_id = null;
 		protected $did_scripts = false;
+		private   $listing_assets_loaded = [];
 
 		/**
 		 * Constructor for the class
@@ -80,8 +81,14 @@ if ( ! class_exists( 'Jet_Engine_Frontend' ) ) {
 
 			wp_enqueue_script(
 				'jet-engine-frontend',
-				jet_engine()->plugin_url( 'assets/js/frontend.js' ),
-				array( 'jquery', 'jet-plugins' ),
+				jet_engine()->plugin_url( 'assets/js/frontend/frontend.js' ),
+				array_merge(
+					array( 'jquery', 'jet-plugins' ),
+					apply_filters(
+						'jet-engine/listings/frontend-scripts/dependencies',
+						array()
+					)
+				),
 				jet_engine()->get_version(),
 				true
 			);
@@ -296,6 +303,17 @@ if ( ! class_exists( 'Jet_Engine_Frontend' ) ) {
 		 * @param  object|null $object
 		 */
 		public function ensure_listing_item_assets( $listing_id, $object = null ) {
+			/**
+			 * prevent loading assets multiple times for the same listing
+			 * 
+			 * @see https://github.com/Crocoblock/issues-tracker/issues/18476
+			 */
+			if ( isset( $this->listing_assets_loaded[ $listing_id ] ) ) {
+				return;
+			}
+
+			$this->listing_assets_loaded[ $listing_id ] = true;
+
 			if ( ! ( defined('REST_REQUEST') && REST_REQUEST ) && ! wp_doing_ajax() ) {
 				add_action(
 					'jet-engine/ensure-assets/slider',

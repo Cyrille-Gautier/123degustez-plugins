@@ -54,6 +54,7 @@ class Manager {
 		add_action( 'jet-engine/query-builder/queries/register', array( $this, 'register_query' ) );
 		add_action( 'jet-engine/maps-listing/geosearch/init', array( $this, 'init_geosearch_query' ) );
 		add_action( 'init', array( $this, 'init_repeater_query_source' ) );
+		add_filter( 'jet-engine/query-builder/mcp/get-converter/' . $this->slug, array( $this, 'get_mcp_converter' ) );
 	}
 
 	public function init_geosearch_query() {
@@ -68,7 +69,7 @@ class Manager {
 	 * Register editor componenet for the query builder
 	 *
 	 * @param  [type] $manager [description]
-	 * @return [type]          [description]
+	 * @return [type]		   [description]
 	 */
 	public function register_editor_component( $manager ) {
 		require_once Module::instance()->module_path( 'query-builder/editor.php' );
@@ -79,7 +80,7 @@ class Manager {
 	 * Register query class
 	 *
 	 * @param  [type] $manager [description]
-	 * @return [type]          [description]
+	 * @return [type]		   [description]
 	 */
 	public function register_query( $manager ) {
 
@@ -94,6 +95,15 @@ class Manager {
 	public function init_repeater_query_source() {
 		require_once Module::instance()->module_path( 'query-builder/repeater-query.php' );
 		new Repeater_Query();
+	}
+
+
+	public function get_mcp_converter( $converter ) {
+		if ( $converter ) {
+			return $converter;
+		}
+		require_once Module::instance()->module_path( 'query-builder/mcp/converters/custom-content-type.php' );
+		return new \Jet_Engine\Modules\Custom_Content_Types\Query_Builder\MCP\Converters\Custom_Content_Type();
 	}
 
 }

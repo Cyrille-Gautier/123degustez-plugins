@@ -93,65 +93,22 @@ class Calendar extends Listing_Grid {
 
 		$this->start_jet_control_group( 'section_general' );
 
-		$this->register_jet_control(
-			'lisitng_id',
+		$this->register_general_calendar_controls(
 			[
-				'tab'         => 'content',
-				'label'       => esc_html__( 'Listing', 'jet-engine' ),
-				'type'        => 'select',
-				'options'     => jet_engine()->listings->get_listings_for_options(),
-				'inline'      => true,
-				'clearable'   => false,
-				'searchable'  => true,
-				'pasteStyles' => false,
-			]
-		);
-
-		$module = jet_engine()->modules->get_module( 'calendar' );
-
-		$this->register_jet_control(
-			'group_by',
-			[
-				'tab'     => 'content',
-				'label'   => esc_html__( 'Group posts by', 'jet-engine' ),
-				'type'    => 'select',
-				'options' => $module->get_calendar_group_keys(),
-				'default' => 'post_date',
-			]
-		);
-
-		$this->register_jet_control(
-			'group_by_key',
-			[
-				'tab'         => 'content',
-				'label'       => esc_html__( 'Meta field name', 'jet-engine' ),
-				'type'        => 'text',
-				'description' => esc_html__( 'This field must contain date to group posts by. Works only if "Save as timestamp" option for meta field is active', 'jet-engine' ),
-				'required'    => [ 'group_by', '=', 'meta_date' ],
-			]
-		);
-
-		$this->register_jet_control(
-			'allow_multiday',
-			[
-				'tab'      => 'content',
-				'label'    => esc_html__( 'Allow multi-day events', 'jet-engine' ),
-				'type'     => 'checkbox',
-				'default'  => false,
-				'required' => [ 'group_by', '=', 'meta_date' ],
-			]
-		);
-
-		$this->register_jet_control(
-			'end_date_key',
-			[
-				'tab'         => 'content',
-				'label'       => esc_html__( 'End date field name', 'jet-engine' ),
-				'type'        => 'text',
-				'description' => esc_html__( 'This field must contain date when events ends. Works only if "Save as timestamp" option for meta field is active', 'jet-engine' ),
-				'required'    => [
-					[ 'group_by', '=', 'meta_date' ],
-					[ 'allow_multiday', '=', true ],
+				'end_date_key' => [
+					'before_controls' => [
+						'allow_multiday' => [
+							'tab'      => 'content',
+							'label'    => esc_html__( 'Allow multi-day events', 'jet-engine' ),
+							'type'     => 'checkbox',
+							'default'  => false,
+							'required' => [ 'group_by', '=', 'meta_date' ],
+						],
+					],
+					'required' => [
+						[ 'group_by', '=', 'meta_date' ],
+						[ 'allow_multiday', '=', true ],
+					],
 				],
 			]
 		);
@@ -203,15 +160,25 @@ class Calendar extends Listing_Grid {
 			]
 		);
 
+		$month_placeholder = esc_html__( 'Current Month', 'jet-engine' );
+
+		$month_options = array_merge(
+			array(
+				'' => $month_placeholder,
+			),
+			$this->get_months()
+		);
+
 		$this->register_jet_control(
 			'start_from_month',
 			[
-				'tab'      => 'content',
-				'label'    => esc_html__( 'Start from month', 'jet-engine' ),
-				'type'     => 'select',
-				'options'  => $this->get_months(),
-				'default'  => date( 'F' ),
-				'required' => [ 'custom_start_from', '=', true ],
+				'tab'         => 'content',
+				'label'       => esc_html__( 'Start from month', 'jet-engine' ),
+				'type'        => 'select',
+				'options'     => $month_options,
+				'default'     => '',
+				'placeholder' => $month_placeholder,
+				'required'    => [ 'custom_start_from', '=', true ],
 			]
 		);
 
@@ -1332,5 +1299,185 @@ class Calendar extends Listing_Grid {
 			'November'  => esc_html__( 'November', 'jet-engine' ),
 			'December'  => esc_html__( 'December', 'jet-engine' ),
 		);
+	}
+
+	protected function register_general_calendar_controls( array $overrides = [] ) {
+
+		$module = jet_engine()->modules->get_module( 'calendar' );
+
+		$controls = [
+			'lisitng_id' => [
+				'tab'         => 'content',
+				'label'       => esc_html__( 'Listing', 'jet-engine' ),
+				'type'        => 'select',
+				'options'     => jet_engine()->listings->get_listings_for_options(),
+				'inline'      => true,
+				'clearable'   => false,
+				'searchable'  => true,
+				'pasteStyles' => false,
+			],
+			'group_by' => [
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Group posts by', 'jet-engine' ),
+				'type'    => 'select',
+				'options' => $module->get_calendar_group_keys(),
+				'default' => 'post_date',
+			],
+			'group_by_key' => [
+				'tab'         => 'content',
+				'label'       => esc_html__( 'Meta field name', 'jet-engine' ),
+				'type'        => 'text',
+				'description' => esc_html__( 'This field must contain date to group posts by. Works only if "Save as timestamp" option for meta field is active', 'jet-engine' ),
+				'required'    => [ 'group_by', '=', 'meta_date' ],
+			],
+			'end_date_key' => [
+				'tab'         => 'content',
+				'label'       => esc_html__( 'End date field name', 'jet-engine' ),
+				'type'        => 'text',
+				'description' => esc_html__( 'This field must contain date when event ends. Works only if "Save as timestamp" option for meta field is active', 'jet-engine' ),
+				'required'    => [ 'group_by', '=', 'meta_date' ],
+			],
+			'use_custom_post_types' => [
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Use custom post types', 'jet-engine' ),
+				'type'    => 'checkbox',
+				'default' => false,
+			],
+			'custom_post_types' => [
+				'tab'      => 'content',
+				'label'    => esc_html__( 'Post types', 'jet-engine' ),
+				'type'     => 'select',
+				'multiple' => true,
+				'options'  => jet_engine()->listings->get_post_types_for_options(),
+				'required' => [ 'use_custom_post_types', '=', true ],
+			],
+			'week_days_format' => [
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Week days format', 'jet-engine' ),
+				'type'    => 'select',
+				'options' => [
+					'full'    => esc_html__( 'Full', 'jet-engine' ),
+					'short'   => esc_html__( 'Short', 'jet-engine' ),
+					'initial' => esc_html__( 'Initial letter', 'jet-engine' ),
+				],
+				'default' => 'short',
+			],
+			'custom_start_from' => [
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Start from custom month', 'jet-engine' ),
+				'type'    => 'checkbox',
+				'default' => false,
+			],
+			'start_from_month' => [
+				'tab'      => 'content',
+				'label'    => esc_html__( 'Start from month', 'jet-engine' ),
+				'type'     => 'select',
+				'options'  => $this->get_months(),
+				'default'  => date( 'F' ),
+				'required' => [ 'custom_start_from', '=', true ],
+			],
+			'start_from_year' => [
+				'tab'      => 'content',
+				'label'    => esc_html__( 'Start from year', 'jet-engine' ),
+				'type'     => 'text',
+				'default'  => date( 'Y' ),
+				'required' => [ 'custom_start_from', '=', true ],
+			],
+			'show_posts_nearby_months' => [
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Show posts from the nearby months', 'jet-engine' ),
+				'type'    => 'checkbox',
+				'default' => true,
+			],
+			'hide_past_events' => [
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Hide past events', 'jet-engine' ),
+				'type'    => 'checkbox',
+				'default' => false,
+			],
+			'allow_date_select' => [
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Allow date select', 'jet-engine' ),
+				'type'    => 'checkbox',
+				'default' => false,
+			],
+			'start_year_select' => [
+				'tab'         => 'content',
+				'label'       => esc_html__( 'Min select year', 'jet-engine' ),
+				'type'        => 'text',
+				'default'     => '1970',
+				'description' => esc_html__( 'Will be set to current year if "Hide past events" option enabled', 'jet-engine' ),
+				'required'    => [ 'allow_date_select', '=', true ],
+			],
+			'end_year_select' => [
+				'tab'         => 'content',
+				'label'       => esc_html__( 'Max select year', 'jet-engine' ),
+				'type'        => 'text',
+				'default'     => '2038',
+				'description' => esc_html__( 'You may use JetEngine macros in min/max select year. Also, you may use strings like \'+3years\', \'-1year\', \'this year\' to set year value relative to the curent year.', 'jet-engine' ),
+				'required'    => [ 'allow_date_select', '=', true ],
+			],
+			'cache_enabled' => [
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Cache Calendar', 'jet-engine' ),
+				'type'    => 'checkbox',
+				'default' => false,
+			],
+			'cache_timeout' => [
+				'tab'         => 'content',
+				'label'       => esc_html__( 'Cache Timeout', 'jet-engine' ),
+				'description' => esc_html__( 'Cache timeout in seconds. Set -1 for unlimited.', 'jet-engine' ),
+				'type'        => 'number',
+				'min'         => -1,
+				'max'         => 86400,
+				'default'     => 60,
+				'required'    => [ 'cache_enabled', '=', true ],
+			],
+			'max_cache' => [
+				'tab'         => 'content',
+				'label'       => esc_html__( 'Maximum Cache Size', 'jet-engine' ),
+				'description' => esc_html__( 'Maximum cache size (months). If number of cached month exceeds this number - the oldest month will be deleted from cache.', 'jet-engine' ),
+				'type'        => 'number',
+				'min'         => 1,
+				'max'         => 120,
+				'default'     => 12,
+				'required'    => [ 'cache_enabled', '=', true ],
+			],
+		];
+
+		foreach ( $controls as $control_id => $control_args ) {
+			$before_controls = [];
+			$after_controls  = [];
+
+			if ( isset( $overrides[ $control_id ] ) ) {
+				if ( false === $overrides[ $control_id ] ) {
+					continue;
+				}
+
+				$control_override = $overrides[ $control_id ];
+
+				if ( isset( $control_override['before_controls'] ) ) {
+					$before_controls = $control_override['before_controls'];
+					unset( $control_override['before_controls'] );
+				}
+
+				if ( isset( $control_override['after_controls'] ) ) {
+					$after_controls = $control_override['after_controls'];
+					unset( $control_override['after_controls'] );
+				}
+
+				$control_args = array_merge( $control_args, $control_override );
+			}
+
+			foreach ( $before_controls as $before_id => $before_args ) {
+				$this->register_jet_control( $before_id, $before_args );
+			}
+
+			$this->register_jet_control( $control_id, $control_args );
+
+			foreach ( $after_controls as $after_id => $after_args ) {
+				$this->register_jet_control( $after_id, $after_args );
+			}
+		}
 	}
 }

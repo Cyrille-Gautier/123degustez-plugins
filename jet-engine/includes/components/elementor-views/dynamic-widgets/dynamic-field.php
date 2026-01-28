@@ -528,7 +528,7 @@ class Jet_Listing_Dynamic_Field_Widget extends \Jet_Listing_Dynamic_Widget {
 	 * @return [type] [description]
 	 */
 	public function dom_default_styles() {
-		
+
 		if ( $this->prevent_wrap() ) {
 			return;
 		}

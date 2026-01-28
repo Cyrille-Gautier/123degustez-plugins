@@ -344,10 +344,6 @@ class Dynamic_Link extends Base {
 						'property' => 'color',
 						'selector' => $this->css_selector( '__icon' ),
 					],
-					[
-						'property' => 'fill',
-						'selector' => $this->css_selector( '__icon :is(svg)' ) . ', ' . $this->css_selector( '__icon :is(path)' ),
-					],
 				],
 			]
 		);

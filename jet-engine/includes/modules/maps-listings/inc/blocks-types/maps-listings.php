@@ -173,6 +173,14 @@ class Maps_Listing_Blocks_Views_Type extends \Jet_Engine_Blocks_Views_Type_Base 
 				'type'    => 'boolean',
 				'default' => true,
 			),
+			'is_custom_marker_cluster_images' => array(
+				'type'    => 'boolean',
+				'default' => false,
+			),
+			'marker_cluster_images' => array(
+				'type'    => 'array',
+				'default' => array(),
+			),
 			'user_location_enabled' => array(
 				'type'    => 'boolean',
 				'default' => false,
@@ -562,10 +570,11 @@ class Maps_Listing_Blocks_Views_Type extends \Jet_Engine_Blocks_Views_Type_Base 
 
 		$this->controls_manager->add_responsive_control(
 			array(
-				'id'    => 'marker_border_radius',
-				'label' => __( 'Border Radius', 'jet-engine' ),
-				'type'  => 'dimensions',
-				'units' => array( 'px', '%' ),
+				'id'        => 'marker_border_radius',
+				'label'     => __( 'Border Radius', 'jet-engine' ),
+				'type'      => 'dimensions',
+				'is_legacy' => true,
+				'units'     => array( 'px', '%' ),
 				'css_selector'  => array(
 					'{{WRAPPER}} .jet-map-marker-wrap' => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
 				),
@@ -633,6 +642,36 @@ class Maps_Listing_Blocks_Views_Type extends \Jet_Engine_Blocks_Views_Type_Base 
 				),
 			)
 		);
+
+		$provider = Module::instance()->providers->get_active_map_provider();
+
+		switch ( $provider->get_id() ) {
+			case 'leaflet';
+			case 'google':
+				$this->controls_manager->add_control(
+					array(
+						'id'           => 'marker_cluster_typography',
+						'label'        => __( 'Marker Cluster Typography', 'jet-engine' ),
+						'type'         => 'typography',
+						'separator'    => 'before',
+						'css_selector' => array(
+							'{{WRAPPER}} .cluster span, {{WRAPPER}} .marker-cluster span' => 'font-family: {{FAMILY}}; font-weight: {{WEIGHT}}; text-transform: {{TRANSFORM}}; font-style: {{STYLE}}; font-size: {{SIZE}}{{S_UNIT}};',
+						),
+					)
+				);
+		
+				$this->controls_manager->add_control(
+					array(
+						'id'    => 'marker_cluster_text_color',
+						'label' => __( 'Marker Cluster Text Color', 'jet-engine' ),
+						'type'  => 'color-picker',
+						'css_selector' => array(
+							'{{WRAPPER}} .cluster span, {{WRAPPER}} .marker-cluster span' => 'color: {{VALUE}}',
+						),
+					)
+				);
+				break;
+		}
 
 		$this->controls_manager->end_section();
 

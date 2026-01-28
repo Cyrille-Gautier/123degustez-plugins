@@ -222,7 +222,12 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Render' ) ) {
 				$parsed = $inline_wp_css . $parsed;
 			}
 
-			return $parsed;
+			// Remove unwanted <p> and <br> tags around shortcodes.
+			// In core WordPress, `shortcode_unautop()` runs on `the_content`
+			// *before* `do_shortcode()`. JetEngine skips this step, so shortcodes
+			// inside blocks get wrapped with <p>. Adding it here restores the
+			// native WP pipeline: do_blocks() → shortcode_unautop() → do_shortcode().
+			return shortcode_unautop( $parsed );
 
 		}
 

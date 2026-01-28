@@ -1618,11 +1618,21 @@ if ( ! class_exists( 'Jet_Engine_Render_Listing_Grid' ) ) {
 
 			$list_item_tag = $this->sanitize_wrapper_tag( 'list_item_tag' );
 
+			$per_page = $this->query_vars['request']['posts_per_page'] ?? 0;
+			$page     = $this->query_vars['page'] ?? 1;
+			$offset   = ( $page - 1 ) * $per_page;
+
+			$item_index = 1;
+			
 			foreach ( $query as $post_obj ) {
 
 				if ( empty( $post_obj ) ) {
 					continue;
 				}
+
+				jet_engine()->listings->data->set_listing_item_index( $item_index + $offset );
+
+				$item_index++;
 
 				jet_engine()->listings->data->set_queried_object( $post_obj, $wp_query );
 

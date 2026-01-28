@@ -19,6 +19,10 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views' ) ) {
 		public $render;
 		public $block_types;
 		public $dynamic_content;
+		/**
+		 * @var \Crocoblock\Blocks_Style\Manager
+		 */
+		public $style_manager;
 
 		/**
 		 * Constructor for the class
@@ -58,6 +62,16 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views' ) ) {
 			new \Jet_Engine\Blocks_Views\Components\Register();
 			new \Jet_Engine\Blocks_Views\Content_Setter();
 			new \Jet_Engine\Blocks_Views\Core_Styles();
+
+			$module_data = jet_engine()->framework->get_included_module_data( 'style-manager.php' );
+
+			//Enable styles migrator in any of plugins when all be ready
+			//\Crocoblock\Blocks_Style\Manager::$requires_migration = true;
+
+			$this->style_manager = new \Crocoblock\Blocks_Style\Manager( array(
+				'path' => $module_data['path'],
+				'url'  => $module_data['url'],
+			) );
 		}
 
 		/**

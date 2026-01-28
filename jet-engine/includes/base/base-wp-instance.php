@@ -50,6 +50,8 @@ if ( ! class_exists( 'Jet_Engine_Base_WP_Intance' ) ) {
 
 		/**
 		 * Data manger instance
+		 * 
+		 * @var \Jet_Engine_Meta_Boxes_Data
 		 */
 		public $data = null;
 

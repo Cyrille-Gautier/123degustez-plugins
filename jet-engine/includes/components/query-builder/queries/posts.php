@@ -116,59 +116,64 @@ class Posts_Query extends Base_Query {
 			$raw = $args['orderby'];
 			$args['orderby'] = array();
 
-			foreach ( $raw as $query_row ) {
+			if ( count( $raw ) === 1 && ! empty( $raw[0]['orderby'] ) && $raw[0]['orderby'] === 'relevance' ) {
+				$args['orderby'] = 'relevance';
+				$args['order']   = ( ! empty( $raw[0]['order'] ) && $raw[0]['order'] === 'ASC' ) ? 'ASC' : 'DESC';
+			} else {
+				foreach ( $raw as $query_row ) {
 
-				if ( empty( $query_row ) ) {
-					continue;
-				}
-
-				if ( empty( $query_row['orderby'] ) ) {
-					continue;
-				}
-
-				$order = isset( $query_row['order'] ) ? $query_row['order'] : '';
-
-				if ( 'meta_clause' !== $query_row['orderby'] && isset( $args['orderby'][ $query_row['orderby'] ] ) ) {
-					continue;
-				}
-
-				switch ( $query_row['orderby'] ) {
-					case 'meta_clause':
-
-						$clause_name = ! empty( $query_row['order_meta_clause'] ) ? $query_row['order_meta_clause'] : false;
-
-						if ( $clause_name && isset( $args['orderby'][ $clause_name ] ) ) {
+					if ( empty( $query_row ) ) {
+						continue;
+					}
+	
+					if ( empty( $query_row['orderby'] ) ) {
+						continue;
+					}
+	
+					$order = isset( $query_row['order'] ) ? $query_row['order'] : '';
+	
+					if ( 'meta_clause' !== $query_row['orderby'] && isset( $args['orderby'][ $query_row['orderby'] ] ) ) {
+						continue;
+					}
+	
+					switch ( $query_row['orderby'] ) {
+						case 'meta_clause':
+	
+							$clause_name = ! empty( $query_row['order_meta_clause'] ) ? $query_row['order_meta_clause'] : false;
+	
+							if ( $clause_name && isset( $args['orderby'][ $clause_name ] ) ) {
+								break;
+							}
+	
+							if ( $clause_name ) {
+								$args['orderby'][ $clause_name ] = $order;
+							}
+	
 							break;
-						}
-
-						if ( $clause_name ) {
-							$args['orderby'][ $clause_name ] = $order;
-						}
-
-						break;
-
-					case 'meta_value_num':
-					case 'meta_value':
-						$args['orderby'][ $query_row['orderby'] ] = $order;
-
-						if ( isset( $query_row['meta_key'] ) ) {
-							$args['meta_key'] = $query_row['meta_key'];
-						}
-
-						break;
-
-					case 'rand':
-
-						$rand = sprintf( 'RAND(%s)', $this->get_random_seed() );
-						$args['orderby'][ $rand ] = $order;
-
-						break;
-
-					default:
-						$args['orderby'][ $query_row['orderby'] ] = $order;
-						break;
+	
+						case 'meta_value_num':
+						case 'meta_value':
+							$args['orderby'][ $query_row['orderby'] ] = $order;
+	
+							if ( isset( $query_row['meta_key'] ) ) {
+								$args['meta_key'] = $query_row['meta_key'];
+							}
+	
+							break;
+	
+						case 'rand':
+	
+							$rand = sprintf( 'RAND(%s)', $this->get_random_seed() );
+							$args['orderby'][ $rand ] = $order;
+	
+							break;
+	
+						default:
+							$args['orderby'][ $query_row['orderby'] ] = $order;
+							break;
+					}
+	
 				}
-
 			}
 
 		} elseif ( isset( $args['orderby'] ) ) {
@@ -526,5 +531,4 @@ class Posts_Query extends Base_Query {
 
 		return $result;
 	}
-
 }

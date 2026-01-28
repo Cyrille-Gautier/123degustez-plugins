@@ -28,6 +28,26 @@ class Sources {
 	}
 
 	/**
+	 * Get realtions sources as array of objects with format {value:...,label:...}
+	 *
+	 * @return array
+	 */
+	public function get_sources_for_js() {
+
+		$sources = $this->get_sources();
+		$result  = array();
+
+		foreach ( $sources as $key => $label ) {
+			$result[] = array(
+				'value' => $key,
+				'label' => $label,
+			);
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Get object ID by source
 	 *
 	 * @param  string $source [description]
@@ -92,7 +112,7 @@ class Sources {
 				break;
 
 			default:
-			
+
 				$object_id = apply_filters( 'jet-engine/relations/object-id-by-source/' . $source, false, $var );
 				break;
 		}

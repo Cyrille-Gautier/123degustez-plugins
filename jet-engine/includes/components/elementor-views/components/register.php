@@ -47,8 +47,16 @@ class Register {
 			);
 		}
 
-		add_action( 'jet-engine/component/before-content', [ $this, 'register_css_selectors_update' ] );
-		add_action( 'jet-engine/component/after-content', [ $this, 'unregister_css_selectors_update' ] );
+		add_action(
+			'jet-engine/component/before-content',
+			[ $this, 'register_css_selectors_update' ]
+		);
+
+		add_action(
+			'jet-engine/component/after-content',
+			[ $this, 'unregister_css_selectors_update' ],
+			99999
+		);
 
 		add_action(
 			'jet-engine/elementor-views/components/current-widget',
@@ -94,17 +102,81 @@ class Register {
 	 * @return string|null
 	 */
 	public function apply_unique_css_id() {
-		return $this->current_widget ? $this->current_widget->get_jet_instance_id() : null;
+
+		$current_widget = $this->current_widget;
+
+		if ( ! $current_widget && $this->current_component ) {
+
+			$stack_index = jet_engine()->listings->components->stack->get_component_stack_index(
+				$this->current_component
+			);
+
+			if ( false !== $stack_index ) {
+
+				$stack_meta = jet_engine()->listings->components->stack->get_stack_meta(
+					$stack_index,
+					'current_widget'
+				);
+
+				if ( $stack_meta ) {
+					$current_widget = $stack_meta;
+				}
+			}
+		}
+		return $current_widget ? $current_widget->get_jet_instance_id() : null;
 	}
 
-	public function apply_component_selector( $selector ) {
-		if ( ! $this->current_widget && ! $this->current_component ) {
+	/**
+	 * Apply component selector for dynamic CSS
+	 *
+	 * @param string $selector
+	 * @param int    $data_id
+	 * @param int    $rendered_id
+	 * @return string
+	 */
+	public function apply_component_selector( $selector, $data_id, $rendered_id ) {
+
+		/**
+		 * Prevent applying selector if we're not in the context of the current component
+		 * @see https://github.com/Crocoblock/issues-tracker/issues/17873
+		 */
+		if (
+			$this->current_component
+			&& (int) $rendered_id !== (int) $this->current_component->get_id() )
+		{
 			return $selector;
-		} elseif ( ! $this->current_widget && $this->current_component ) {
+		}
+
+		$current_widget = $this->current_widget;
+
+		// Try to set $current_widget from stack if not set already
+		// This case is actual when component contains another component
+		if ( ! $current_widget && $this->current_component ) {
+
+			$stack_index = jet_engine()->listings->components->stack->get_component_stack_index(
+				$this->current_component
+			);
+
+			if ( false !== $stack_index ) {
+
+				$stack_meta = jet_engine()->listings->components->stack->get_stack_meta(
+					$stack_index,
+					'current_widget'
+				);
+
+				if ( $stack_meta ) {
+					$current_widget = $stack_meta;
+				}
+			}
+		}
+
+		if ( ! $current_widget && ! $this->current_component ) {
+			return $selector;
+		} elseif ( ! $current_widget && $this->current_component ) {
 			return '.jet-listing-grid--' . $this->current_component->get_id();
 		}
 
-		return $this->current_widget->apply_component_selector( $selector );
+		return $current_widget->apply_component_selector( $selector );
 	}
 
 	/**
@@ -117,6 +189,16 @@ class Register {
 
 		$this->current_component = $component;
 
+		$stack_index = jet_engine()->listings->components->stack->get_component_stack_index( $component );
+
+		if ( false !== $stack_index && $this->current_widget ) {
+			jet_engine()->listings->components->stack->set_stack_meta(
+				$stack_index,
+				'current_widget',
+				$this->current_widget
+			);
+		}
+
 		add_filter(
 			'jet-engine/elementor-views/dynamic-tags/dynamic-css-unique-id',
 			[ $this, 'apply_unique_css_id' ]
@@ -124,7 +206,7 @@ class Register {
 
 		add_filter(
 			'jet-engine/elementor-views/dynamic-css/unique-listing-selector',
-			[ $this, 'apply_component_selector' ]
+			[ $this, 'apply_component_selector' ], 0, 3
 		);
 
 	}
@@ -137,17 +219,24 @@ class Register {
 	 */
 	public function unregister_css_selectors_update( $component ) {
 
-		$this->current_component = null;
+		$stack_index = jet_engine()->listings->components->stack->get_component_stack_index( $component );
 
-		remove_filter(
-			'jet-engine/elementor-views/dynamic-tags/dynamic-css-unique-id',
-			[ $this, 'apply_unique_css_id' ]
-		);
+		if ( 0 === $stack_index ) {
 
-		remove_filter(
-			'jet-engine/elementor-views/dynamic-css/unique-listing-selector',
-			[ $this, 'apply_component_selector' ]
-		);
+			$this->current_component = null;
+
+			remove_filter(
+				'jet-engine/elementor-views/dynamic-tags/dynamic-css-unique-id',
+				[ $this, 'apply_unique_css_id' ]
+			);
+
+			remove_filter(
+				'jet-engine/elementor-views/dynamic-css/unique-listing-selector',
+				[ $this, 'apply_component_selector' ], 0, 3
+			);
+		} else {
+			$this->current_component = jet_engine()->listings->components->stack->get_parent( $stack_index );
+		}
 	}
 
 	/**

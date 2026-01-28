@@ -8,6 +8,7 @@ module.exports = {
 		'jet-form-builder-editor': './jet-form-builder-editor.js',
 		'jet-form-builder-public': './jet-form-builder-public.js',
 		'advanced-date-field': './advanced-date-field.js',
+		'blocks-views': './blocks-views.js',
 	},
 	output: {
 		path: path.resolve( __dirname, 'js' ),

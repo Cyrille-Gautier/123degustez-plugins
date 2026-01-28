@@ -142,7 +142,10 @@ class Jet_Engine_Objects_Stack {
 		 * stack was decreased icorrectly.
 		 */
 		$this->stack = array_values( array_merge( array(), $this->stack ) );
-		$this->in_stack = false;
+
+		if ( empty( $this->stack ) ) {
+			$this->in_stack = false;
+		}
 	}
 
 	/**

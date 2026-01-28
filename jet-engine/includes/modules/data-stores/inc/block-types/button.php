@@ -213,7 +213,9 @@ class Button extends \Jet_Engine_Blocks_Views_Type_Base {
 				'label' => __( 'Icon Color', 'jet-engine' ),
 				'type'  => 'color-picker',
 				'css_selector' => array(
-					'{{WRAPPER}} .jet-data-store-link__icon' => 'fill: {{VALUE}}; color: {{VALUE}};',
+					'{{WRAPPER}} .jet-data-store-link__icon' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .jet-data-store-link__icon svg' => 'fill: {{VALUE}};',
+					'{{WRAPPER}} .jet-data-store-link__icon path' => 'fill: {{VALUE}};',
 				),
 			)
 		);
@@ -259,6 +261,7 @@ class Button extends \Jet_Engine_Blocks_Views_Type_Base {
 				'css_selector' => array(
 					'{{WRAPPER}} .jet-data-store-link:hover .jet-data-store-link__icon' => 'color: {{VALUE}};',
 					'{{WRAPPER}} .jet-data-store-link:hover .jet-data-store-link__icon svg' => 'fill: {{VALUE}};',
+					'{{WRAPPER}} .jet-data-store-link:hover .jet-data-store-link__icon path' => 'fill: {{VALUE}};',
 				),
 			)
 		);
@@ -315,6 +318,7 @@ class Button extends \Jet_Engine_Blocks_Views_Type_Base {
 				'css_selector' => array(
 					'{{WRAPPER}} .jet-data-store-link.in-store:not(:hover) .jet-data-store-link__icon' => 'color: {{VALUE}};',
 					'{{WRAPPER}} .jet-data-store-link.in-store:not(:hover) .jet-data-store-link__icon svg' => 'fill: {{VALUE}};',
+					'{{WRAPPER}} .jet-data-store-link.in-store:not(:hover) .jet-data-store-link__icon path' => 'fill: {{VALUE}};',
 				),
 			)
 		);
@@ -364,6 +368,7 @@ class Button extends \Jet_Engine_Blocks_Views_Type_Base {
 				'label'     => __( 'Border Radius', 'jet-engine' ),
 				'type'      => 'dimensions',
 				'units'     => array( 'px', '%' ),
+				'is_legacy' => true,
 				'separator' => 'before',
 				'css_selector' => array(
 					'{{WRAPPER}} .jet-data-store-link' => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',

@@ -657,6 +657,7 @@ class Maps_Listings extends Listing_Grid {
 			[
 				'label'    => esc_html__( 'Field value', 'jet-engine' ),
 				'type'     => 'text',
+				'description' => esc_html__( 'You may use shortcodes/macros here.', 'jet-engine' ),
 				'required' => [ 'apply_type', '=', 'meta_field' ],
 			]
 		);
@@ -701,6 +702,63 @@ class Maps_Listings extends Listing_Grid {
 				'default' => true,
 			]
 		);
+
+		$provider_id = Module::instance()->settings->get( 'map_provider' );
+
+		switch ( $provider_id ) {
+			case 'google':
+			case 'leaflet':
+				$this->register_jet_control(
+					'is_custom_marker_cluster_images',
+					[
+						'tab'      => 'content',
+						'label'    => esc_html__( 'Set Custom Cluster Images', 'jet-engine' ),
+						'type'     => 'checkbox',
+						'default'  => false,
+						'required' => [ 'marker_clustering', '=', true ],
+					]
+				);
+
+				$marker_cluster_images = new Repeater();
+
+				$marker_cluster_images->add_control(
+					'cluster_image',
+					[
+						'label'          => esc_html__( 'Cluster Image', 'jet-engine' ),
+						'type'           => 'image',
+						'hasDynamicData' => false,
+						'description'    => esc_html__( 'Image size selection is ignored. Image size will be selected automatically depending on the cluster icon width (300x300 if width is set to 0)', 'jet-engine' ),
+					]
+				);
+
+				$marker_cluster_images->add_control(
+					'cluster_width',
+					[
+						'label'       => esc_html__( 'Cluster Icon Width', 'jet-engine' ),
+						'type'        => 'number',
+						'min'         => 0,
+						'max'         => 1000,
+					]
+				);
+
+				$this->register_jet_control(
+					'marker_cluster_images',
+					[
+						'tab'         => 'content',
+						'label'       => esc_html__( 'Custom Cluster Images', 'jet-engine' ),
+						'type'        => 'repeater',
+						'placeholder' => esc_html__( 'Cluster', 'jet-engine' ),
+						'fields'      => $marker_cluster_images->get_controls(),
+						'required'    => [
+							[ 'marker_clustering', '=', true ],
+							[ 'is_custom_marker_cluster_images', '=', true ]
+						],
+						'description' => esc_html__( 'The first image is used when a marker cluster contains 0-9 markers, the second for 10-99 markers, and so on. If no image is provided for a given range, the last available image is used instead.', 'jet-engine' ),
+					]
+				);
+
+				break;
+		}
 
 		$this->register_jet_control(
 			'cluster_max_zoom',
@@ -973,6 +1031,58 @@ class Maps_Listings extends Listing_Grid {
 			]
 		);
 
+		$this->register_jet_control(
+			'marker_cluster_separator',
+			[
+				'tab'   => 'style',
+				'type'  => 'separator',
+				'label' => esc_html__( 'Marker Cluster', 'jet-engine' ),
+				'required' => [
+					[ 'marker_clustering', '=', true ],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'marker_cluster_typography',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Typography', 'jet-engine' ),
+				'type'  => 'typography',
+				'css'   => [
+					[
+						'property' => 'typography',
+						'selector' => '.cluster span, .marker-cluster span',
+					],
+				],
+				'required' => [
+					[ 'marker_clustering', '=', true ],
+				],
+				'exclude' => [
+					'font-weight',
+					'text-transform',
+					'font-variation-settings',
+					'text-shadow',
+					'text-align',
+					'line-height',
+					'text-decoration',
+					'text-wrap',
+					'letter-spacing',
+					'white-space',
+				],
+			]
+		);
+// 'exclude' => [
+      //   'font-family',
+      //   'font-weight',
+      //   'text-align',
+      //   'text-transform',
+      //   'font-size',
+      //   'line-height',
+      //   'letter-spacing',
+      //   'color',
+      //   'text-shadow',
+      // ],
 		$this->end_jet_control_group();
 
 		$this->start_jet_control_group( 'section_user_location_style' );

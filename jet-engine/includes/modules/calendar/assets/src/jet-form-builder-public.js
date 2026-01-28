@@ -40,7 +40,7 @@ function JetEngineAdvancedDate() {
 
 		if ( ! this.listenFormPageChange ) {
 			jQuery( window).on( 'jet-form-builder/switch-page', () => {
-				this.initDateField();
+				// this.initDateField();
 			} );
 			this.listenFormPageChange = true;
 		}

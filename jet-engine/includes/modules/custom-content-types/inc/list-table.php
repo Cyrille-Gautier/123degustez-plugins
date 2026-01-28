@@ -7,6 +7,9 @@ if ( ! class_exists( '\WP_List_Table' ) ) {
 
 class List_Table extends \WP_List_Table {
 
+	/**
+	 * @var Factory
+	 */
 	private $factory;
 	private $per_page;
 
@@ -63,9 +66,9 @@ class List_Table extends \WP_List_Table {
 
 		switch ( $data['_cb'] ) {
 
-			case 'date_i18n':
+			case 'jet_engine_date':
 				$format = ! empty( $data['date_format'] ) ? $data['date_format'] : get_option( 'date_format' );
-				$value  = date_i18n( $format, $value );
+				$value  = jet_engine_date( $format, $value );
 
 				break;
 
@@ -112,7 +115,7 @@ class List_Table extends \WP_List_Table {
 			$value = $value . $data['suffix'];
 		}
 
-		return $value;
+		return wp_kses_post( $value );
 	}
 
 	public function convert_array( $value = null, $glue = false ) {
@@ -247,11 +250,11 @@ class List_Table extends \WP_List_Table {
 				if ( ! empty( $data['is_timestamp'] ) && \Jet_Engine_Tools::is_valid_timestamp( $value ) ) {
 					switch ( $data['type'] ) {
 						case 'date':
-							$value = date( 'Y-m-d', $value );
+							$value = jet_engine_date( 'Y-m-d', $value );
 							break;
 
 						case 'datetime-local':
-							$value = date( 'Y-m-d\TH:i', $value );
+							$value = jet_engine_date( 'Y-m-d\TH:i', $value );
 							break;
 					}
 				}
@@ -417,15 +420,13 @@ class List_Table extends \WP_List_Table {
 			$ids = array( $ids );
 		}
 
-		foreach ( $ids as $id ) {
+		$item_handler = $this->factory->get_item_handler();
 
-			$item = $this->factory->db->get_item( $id );
+		foreach ( $ids as $id ) {
 
 			switch ( $this->current_action() ) {
 				case 'delete':
-					$this->factory->db->delete( array( '_ID' => $id ) );
-
-					do_action( 'jet-engine/custom-content-types/delete-item/' . $this->factory->get_arg( 'slug' ), $id, $item );
+					$item_handler->raw_delete_item( $id );
 					break;
 
 				case 'switch_to_draft':

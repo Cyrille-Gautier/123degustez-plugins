@@ -524,12 +524,12 @@ class Maps_Listings_Widget extends \Elementor\Jet_Listing_Grid_Widget {
 				'description' => __( 'Depending on the icon, this option may or may not have an effect on the icon color', 'jet-engine' ),
 				'type'        => Controls_Manager::SELECT,
 				'label_block' => true,
-				'default'     => 'apply-fill',
+				'default'     => 'keep',
 				'options'     => array(
+					'keep'                    => __( 'Keep SVG colors', 'jet-engine' ),
 					'apply-fill'              => __( 'Fill', 'jet-engine' ),
 					'apply-stroke_unset-fill' => __( 'Stroke', 'jet-engine' ),
 					'apply-fill_apply-stroke' => __( 'Both', 'jet-engine' ),
-					'keep'                    => __( 'Keep SVG colors', 'jet-engine' ),
 				),
 				'condition'   => array(
 					'marker_type' => 'icon',
@@ -616,6 +616,7 @@ class Maps_Listings_Widget extends \Elementor\Jet_Listing_Grid_Widget {
 				'type'        => Controls_Manager::TEXT,
 				'default'     => '',
 				'label_block' => true,
+				'description' => __( 'You may use shortcodes/macros here.', 'jet-engine' ),
 				'condition'   => array(
 					'apply_type' => 'meta_field',
 				),
@@ -671,6 +672,102 @@ class Maps_Listings_Widget extends \Elementor\Jet_Listing_Grid_Widget {
 				'separator'    => 'before',
 			)
 		);
+
+		$this->add_control(
+			'is_custom_marker_cluster_images',
+			array(
+				'label'        => __( 'Set Custom Cluster Images', 'jet-engine' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'return_value' => 'true',
+				'default'      => 'no',
+				'condition'   => array(
+					'marker_clustering' => 'true',
+				),
+			)
+		);
+
+		$provider_id = Module::instance()->settings->get( 'map_provider' );
+
+		switch ( $provider_id ) {
+			case 'google':
+			case 'leaflet':
+				$marker_cluster_images = new Repeater();
+
+				$marker_cluster_images->add_control(
+					'cluster_image',
+					array(
+						'label'     => esc_html__( 'Cluster Image', 'jet-engine' ),
+						'type'      => Controls_Manager::MEDIA,
+					)
+				);
+
+				$marker_cluster_images->add_control(
+					'cluster_width',
+					array(
+						'label'       => esc_html__( 'Width', 'jet-engine' ),
+						'description' => esc_html__( 'Cluster width', 'jet-engine' ),
+						'type'        => Controls_Manager::NUMBER,
+						'min'         => 0,
+						'max'         => 1000,
+						'default'     => 0,
+					)
+				);
+
+				// $marker_cluster_images->add_group_control(
+				// 	Group_Control_Typography::get_type(),
+				// 	array(
+				// 		'name'     => 'cluster_typography',
+				// 		'selector' => '{{WRAPPER}} {{CURRENT_ITEM}}.cluster span',
+				// 		'exclude'  => array(
+				// 			'line_height',
+				// 			'transform',
+				// 			'letter_spacing',
+				// 			'word_spacing',
+				// 			'text_decoration',
+				// 		)
+				// 	)
+				// );
+
+				// $marker_cluster_images->add_control(
+				// 	'cluster_text_color',
+				// 	array(
+				// 		'label'  => __( 'Cluster Text Color', 'jet-engine' ),
+				// 		'type'   => Controls_Manager::COLOR,
+				// 		'selectors' => array(
+				// 			'{{WRAPPER}} {{CURRENT_ITEM}}.cluster span' => 'color: {{VALUE}}',
+				// 		),
+				// 	)
+				// );
+
+				$this->add_control(
+					'marker_cluster_images',
+					array(
+						'type'    => Controls_Manager::REPEATER,
+						'label'   => esc_html__( 'Custom Cluster Images', 'jet-engine' ),
+						'fields'  => $marker_cluster_images->get_controls(),
+						'default' => array(),
+						'condition'   => array(
+							'marker_clustering' => 'true',
+							'is_custom_marker_cluster_images' => 'true',
+						),
+					)
+				);
+
+				
+				$this->add_control(
+					'marker_cluster_images_description',
+					array(
+						'type'  => Controls_Manager::RAW_HTML,
+						'raw'   => esc_html__( 'The first image is used when a marker cluster contains 0-9 markers, the second for 10-99 markers, and so on. If no image is provided for a given range, the last available image is used instead.', 'jet-engine' ),
+						'condition'   => array(
+							'marker_clustering' => 'true',
+							'is_custom_marker_cluster_images' => 'true',
+						),
+					),
+				);
+
+				break;
+		}
 
 		$this->add_control(
 			'cluster_max_zoom',
@@ -1189,6 +1286,44 @@ class Maps_Listings_Widget extends \Elementor\Jet_Listing_Grid_Widget {
 				),
 			)
 		);
+
+		switch ( $provider_id ) {
+			case 'google':
+			case 'leaflet':
+				$this->add_group_control(
+					Group_Control_Typography::get_type(),
+					array(
+						'name'     => 'marker_cluster_typography',
+						'label'  => __( 'Marker Cluster Typography', 'jet-engine' ),
+						'selector' => '{{WRAPPER}} .cluster span, {{WRAPPER}} .marker-cluster span',
+						'exclude'  => array(
+							'line_height',
+							'text_transform',
+							'letter_spacing',
+							'word_spacing',
+							'text_decoration',
+						),
+						'condition'   => array(
+							'marker_clustering' => 'true',
+						),
+					)
+				);
+		
+				$this->add_control(
+					'marker_cluster_text_color',
+					array(
+						'label'  => __( 'Marker Cluster Text Color', 'jet-engine' ),
+						'type'   => 'color',
+						'selectors' => array(
+							'{{WRAPPER}} .cluster span, {{WRAPPER}} .marker-cluster span' => 'color: {{VALUE}}',
+						),
+						'condition'   => array(
+							'marker_clustering' => 'true',
+						),
+					)
+				);
+				break;
+		}
 
 		$this->end_controls_section();
 

@@ -15,6 +15,10 @@ class Query {
 			array( $this, 'add_front_store_query_args' ), 10, 4
 		);
 
+		add_filter( 'jet-engine/listing/container-atts',
+			array( $this, 'add_store_data_attr' ), 10, 3
+		);
+
 		add_action(
 			'jet-engine/query-builder/query/after-query-setup',
 			array( $this, 'setup_front_store_prop' )
@@ -25,6 +29,10 @@ class Query {
 			'jet-engine/query-builder/listings/on-load-more-props-setup',
 			array( $this, 'uset_front_store_post_in' )
 		);
+
+		// Initialize separate query type
+		require jet_engine()->modules->modules_path( 'data-stores/inc/query-builder/manager.php' );
+		Query_Builder\Manager::instance();
 	}
 
 	/**
@@ -207,6 +215,49 @@ class Query {
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Add front stores support for the Data Store query type
+	 */
+	public function add_store_data_attr( $atts, $settings, $widget ) {
+
+		if ( ! empty( $widget->listing_query_id ) ) {
+			$query = \Jet_Engine\Query_Builder\Manager::instance()->get_query_by_id( $widget->listing_query_id );
+
+			if (
+				$query
+				&& ! empty( $query->final_query['post__in'] )
+				&& is_string( $query->final_query['post__in'] )
+				&& false !== strpos( $query->final_query['post__in'], 'is-front' )
+			) {
+
+				$store_data = explode( ',', $query->final_query['post__in'] );
+				$store      = isset( $store_data[2] ) ? $store_data[2] : false;
+
+				if ( ! $store ) {
+					return $atts;
+				}
+
+				$store_instance = Module::instance()->stores->get_store( $store );
+
+				if ( ! $store_instance ) {
+					return $atts;
+				}
+
+				$widget->query_vars['request']['post__in'] = $store_data;
+
+				add_filter(
+					'jet-engine/listing/grid/add-query-data',
+					array( $this, 'add_query_data_trigger' )
+				);
+
+				$atts[] = 'data-is-store-listing="' . $store . '"';
+				$atts[] = 'data-store-type="' . $store_instance->get_type()->type_id() . '"';
+			}
+		}
+
+		return $atts;
 	}
 
 	public function setup_front_store_prop( $query ) {

@@ -64,10 +64,16 @@ abstract class Base extends Base_Provider {
 	 */
 	public function make_request( $request_url ) {
 
+		$headers = array(
+			'accept-language' => get_bloginfo( 'language' ),
+		);
+
+		if ( ! empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
+			$headers['User-Agent'] = $_SERVER['HTTP_USER_AGENT'];
+		}
+
 		$response = wp_remote_get( $request_url, array(
-			'headers' => array(
-				'accept-language' => get_bloginfo( 'language' ),
-			)
+			'headers' => $headers,
 		) );
 
 		$json = wp_remote_retrieve_body( $response );

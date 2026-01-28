@@ -211,6 +211,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Image' ) ) {
 					),
 					'css_selector' => array(
 						$this->css_selector() => 'justify-content: {{VALUE}};',
+						$this->css_selector( '.jet-listing-dynamic-image' ) => 'justify-content: {{VALUE}};',
 						$this->css_selector( '.jet-listing-dynamic-image__figure' ) => 'align-items: {{VALUE}};',
 					),
 				)
@@ -250,7 +251,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Image' ) ) {
 					'separator'    => 'before',
 					'css_selector' => array(
 						$this->css_selector( ' a' )   => 'width: {{VALUE}}{{UNIT}};',
-						$this->css_selector( ' img' ) => 'width: {{VALUE}}{{UNIT}};',
+						$this->css_selector( ' .jet-listing-dynamic-image__img' ) => 'width: {{VALUE}}{{UNIT}};',
 					),
 				)
 			);
@@ -370,6 +371,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Image' ) ) {
 					'label'      => __( 'Border Radius', 'jet-engine' ),
 					'type'         => 'dimensions',
 					'separator'    => 'before',
+					'is_legacy'    => true,
 					'css_selector' => array(
 						$this->css_selector( ' img' ) => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
 					),

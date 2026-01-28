@@ -1,4 +1,4 @@
-//Unused - import './plugins/sidebar';
+import './plugins/sidebar';
 
 // Dynamic Content
 import './dynamic-content';

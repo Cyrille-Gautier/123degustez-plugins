@@ -476,6 +476,10 @@ if ( ! class_exists( 'Jet_Engine_Elementor_Views' ) ) {
 				$class = sprintf( 'Elementor\Jet_Listing_%s_Widget', $class );
 			}
 
+			if ( ! file_exists( $file ) ) {
+				return;
+			}
+
 			require_once $file;
 
 			if ( class_exists( $class ) ) {

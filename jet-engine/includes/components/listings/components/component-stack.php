@@ -15,6 +15,8 @@ class Stack {
 	 */
 	private $stack = array();
 
+	private $stack_meta = array();
+
 	/**
 	 * Returns current stack
 	 *
@@ -58,10 +60,42 @@ class Stack {
 	}
 
 	/**
+	 * Returns index of the component in the stack
+	 *
+	 * @param  Component $component Component instance to find in the stack
+	 * @return int|null             Index of the component in the stack or null if not found
+	 */
+	public function get_component_stack_index( $component ) {
+		return array_search( $component, $this->stack, true );
+	}
+
+	/**
+	 * Returns parent component of the current one or of the component at the specified index
+	 *
+	 * @param  int|null $for_index Index of the component to get parent for;
+	 *                             if not set, get parent for the current component
+	 * @return Component|null      Parent component instance or null if no parent
+	 */
+	public function get_parent( $for_index = null ) {
+
+		$index = $for_index;
+
+		if ( null === $index ) {
+			$index = count( $this->stack ) - 1;
+		}
+
+		if ( $index > 0 && isset( $this->stack[ $index - 1 ] ) ) {
+			return $this->stack[ $index - 1 ];
+		}
+
+		return null;
+	}
+
+	/**
 	 * Add component to the stack
 	 *
 	 * @param  Component $component Component instance to add to the stack
-	 * 
+	 *
 	 * @return bool                 True if component was added, false if already in stack
 	 */
 	public function increase_stack( $component ) {
@@ -82,4 +116,34 @@ class Stack {
 		array_pop( $this->stack );
 	}
 
+	/**
+	 * Set stack-level specific meta value
+	 *
+	 * @param  int    $index Index of the stack level
+	 * @param  string $key   Meta key
+	 * @return mixed         Meta value
+	 */
+	public function set_stack_meta( $index, $key, $value ) {
+
+		if ( ! isset( $this->stack_meta[ $index ] ) ) {
+			$this->stack_meta[ $index ] = array();
+		}
+
+		$this->stack_meta[ $index ][ $key ] = $value;
+	}
+
+	/**
+	 * Get stack-level specific meta value
+	 *
+	 * @param  int    $index Index of the stack level
+	 * @param  string $key   Meta key
+	 * @return mixed         Meta value or null if not set
+	 */
+	public function get_stack_meta( $index, $key ) {
+		if ( isset( $this->stack_meta[ $index ] ) && isset( $this->stack_meta[ $index ][ $key ] ) ) {
+			return $this->stack_meta[ $index ][ $key ];
+		}
+
+		return null;
+	}
 }

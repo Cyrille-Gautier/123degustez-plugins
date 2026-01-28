@@ -58,6 +58,7 @@ class Location_Distance extends \Jet_Smart_Filters_Block_Base {
 						'unit'  => '%'
 					)
 				),
+				'cut_units'    => true,
 				'css_selector' => array(
 					'{{WRAPPER}} .jsf-location-distance__location' => 'flex-basis: {{VALUE}}%;',
 				),
@@ -172,6 +173,7 @@ class Location_Distance extends \Jet_Smart_Filters_Block_Base {
 						),
 					),
 				),
+				'cut_units'    => true,
 				'css_selector' => array(
 					'{{WRAPPER}} .jsf-location-distance__location-icon' => 'opacity: {{VALUE}}%;',
 				),
@@ -204,6 +206,7 @@ class Location_Distance extends \Jet_Smart_Filters_Block_Base {
 						),
 					),
 				),
+				'cut_units'    => true,
 				'css_selector' => array(
 					'{{WRAPPER}} .jsf-location-distance__location-control:hover .jsf-location-distance__location-icon' => 'opacity: {{VALUE}}%;',
 				),

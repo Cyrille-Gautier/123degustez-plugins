@@ -11,7 +11,6 @@
 		],
 		props: [ 'value', 'dynamic-value' ],
 		data: function() {
-			console.log( window.jet_query_component_jet_form_builder_query.forms );
 			return {
 				formsList: window.jet_query_component_jet_form_builder_query.forms,
 				operators: window.JetEngineQueryConfig.operators_list,

@@ -42,6 +42,9 @@ class Relation {
 	protected $control_context = null;
 	protected $query_order = array();
 
+	/**
+	 * @var Storage\DB
+	 */
 	public $db;
 	/**
 	 * @var Storage\DB
@@ -88,7 +91,7 @@ class Relation {
 	}
 
 	public function init_public_rest_api() {
-		
+
 
 		$get  = $this->get_args( 'rest_get_enabled' );
 		$edit = $this->get_args( 'rest_post_enabled' );
@@ -128,6 +131,52 @@ class Relation {
 
 		return true;
 
+	}
+
+	/**
+	 * Return object type class instance for specific relation side
+	 *
+	 * @param string $object
+	 * @return false|object
+	 */
+	public function get_object_type_for( $object = 'child_object' ) {
+
+		$object = $this->get_args( $object );
+
+		if ( ! $object ) {
+			return false;
+		}
+
+		$object_data = jet_engine()->relations->types_helper->type_parts_by_name( $object );
+
+		if ( ! $object_data ) {
+			return false;
+		}
+
+		return jet_engine()->relations->types_helper->get_instances( $object_data[0] );
+	}
+
+	/**
+	 * Return object name for specific relation side
+	 *
+	 * @param string $object
+	 * @return string|false
+	 */
+	public function get_object_name_for( $object = 'child_object' ) {
+
+		$object = $this->get_args( $object );
+
+		if ( ! $object ) {
+			return false;
+		}
+
+		$object_data = jet_engine()->relations->types_helper->type_parts_by_name( $object );
+
+		if ( ! $object_data ) {
+			return false;
+		}
+
+		return $object_data[1];
 	}
 
 	/**
@@ -426,7 +475,7 @@ class Relation {
 				}
 
 				if ( ! empty( $field_data['options_callback'] )
-					&& is_callable( $field_data['options_callback'] ) 
+					&& is_callable( $field_data['options_callback'] )
 				) {
 
 					$field_data['options'] = \Jet_Engine_Tools::get_options_from_callback(
@@ -803,8 +852,7 @@ class Relation {
 		}
 
 		$this->delete_rows( $parent_object, $child_object, true );
-		$this->db->reset_cache();
-		$this->meta_db->reset_cache();
+		$this->reset_db_cache();
 
 	}
 
@@ -841,8 +889,9 @@ class Relation {
 
 		do_action( 'jet-engine/relation/delete/after', $parent_object, $child_object, $clear_meta, $this );
 
-		$this->db->reset_cache();
-		$this->meta_db->reset_cache();
+		$this->flush_cache( $parent_object, $child_object );
+
+		$this->reset_db_cache();
 
 	}
 
@@ -885,8 +934,7 @@ class Relation {
 			}
 		}
 
-		$this->db->reset_cache();
-		$this->meta_db->reset_cache();
+		$this->reset_db_cache();
 
 	}
 
@@ -932,8 +980,8 @@ class Relation {
 
 		do_action( 'jet-engine/relation/update-all-meta/after', $parent_object, $child_object, $new_meta, $this );
 
-		$this->db->reset_cache();
-		$this->meta_db->reset_cache();
+		$this->flush_cache( $parent_object, $child_object );
+		$this->reset_db_cache();
 
 	}
 
@@ -990,13 +1038,13 @@ class Relation {
 					if ( $field['type'] === 'select' && empty( $field['is_multiple'] ) ) {
 						break;
 					}
-	
+
 					$option_values = array_column( $with_options[ $field[ 'name' ] ], 'value' );
 
 					$value = array_intersect( $value, $option_values );
 					$value = array_unique( $value );
 					$value = array_values( $value );
-					
+
 					break;
 
 			}
@@ -1042,7 +1090,7 @@ class Relation {
 					},
 					ARRAY_A
 				);
-				
+
 				$option_values = array_column( $with_options[ $field[ 'name' ] ], 'value' );
 
 				$input = array_intersect( $input, $option_values );
@@ -1084,16 +1132,9 @@ class Relation {
 			$this->meta_db->insert( $query );
 		}
 
-		$cache_key   = $this->get_cache_key( $parent_object, $child_object );
-		$p_cache_key = $this->get_cache_key( '0', $child_object );
-		$c_cache_key = $this->get_cache_key( $parent_object, '0' );
+		$this->flush_cache( $parent_object, $child_object );
 
-		wp_cache_delete( $cache_key, $this->rel_cache_group );
-		wp_cache_delete( $p_cache_key, $this->rel_cache_group );
-		wp_cache_delete( $c_cache_key, $this->rel_cache_group );
-
-		$this->db->reset_cache();
-		$this->meta_db->reset_cache();
+		$this->reset_db_cache();
 
 	}
 
@@ -1127,16 +1168,9 @@ class Relation {
 			'meta_key'         => $meta_key,
 		) );
 
-		$cache_key   = $this->get_cache_key( $parent_object, $child_object );
-		$p_cache_key = $this->get_cache_key( '0', $child_object );
-		$c_cache_key = $this->get_cache_key( $parent_object, '0' );
+		$this->flush_cache( $parent_object, $child_object );
 
-		wp_cache_delete( $cache_key, $this->rel_cache_group );
-		wp_cache_delete( $p_cache_key, $this->rel_cache_group );
-		wp_cache_delete( $c_cache_key, $this->rel_cache_group );
-
-		$this->db->reset_cache();
-		$this->meta_db->reset_cache();
+		$this->reset_db_cache();
 
 	}
 
@@ -1238,7 +1272,7 @@ class Relation {
 		if ( $suffix ) {
 			switch ( $suffix ) {
 				case 'child':
-					
+
 					$child_id      = $current_object_id;
 					$parent_object = jet_engine()->listings->objects_stack->get_parent_object_from_stack();
 
@@ -1247,9 +1281,9 @@ class Relation {
 					}
 
 					break;
-				
+
 				case 'parent':
-					
+
 					$parent_id      = $current_object_id;
 					$child_object = jet_engine()->listings->objects_stack->get_parent_object_from_stack();
 
@@ -1431,17 +1465,10 @@ class Relation {
 
 		do_action( 'jet-engine/relation/update/after', $parent_object, $child_object, $item_id, $this );
 
-		$this->db->reset_cache();
-		$this->meta_db->reset_cache();
+		$this->reset_db_cache();
 		$this->reset_update_context();
 
-		$cache_key   = $this->get_cache_key( $parent_object, $child_object );
-		$p_cache_key = $this->get_cache_key( '0', $child_object );
-		$c_cache_key = $this->get_cache_key( $parent_object, '0' );
-
-		wp_cache_delete( $cache_key, $this->rel_cache_group );
-		wp_cache_delete( $p_cache_key, $this->rel_cache_group );
-		wp_cache_delete( $c_cache_key, $this->rel_cache_group );
+		$this->flush_cache( $parent_object, $child_object );
 
 		if ( ! empty( $item_id ) && is_array( $item_id ) ) {
 			return $item_id;
@@ -1451,6 +1478,21 @@ class Relation {
 			return false;
 		}
 
+	}
+
+	public function flush_cache( $parent_object, $child_object ) {
+		$cache_key   = $this->get_cache_key( $parent_object, $child_object );
+		$p_cache_key = $this->get_cache_key( '0', $child_object );
+		$c_cache_key = $this->get_cache_key( $parent_object, '0' );
+
+		wp_cache_delete( $cache_key, $this->rel_cache_group );
+		wp_cache_delete( $p_cache_key, $this->rel_cache_group );
+		wp_cache_delete( $c_cache_key, $this->rel_cache_group );
+	}
+
+	public function reset_db_cache() {
+		$this->db->reset_cache();
+		$this->meta_db->reset_cache();
 	}
 
 	/**

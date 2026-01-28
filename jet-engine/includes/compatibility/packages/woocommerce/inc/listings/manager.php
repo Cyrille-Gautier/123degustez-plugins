@@ -291,7 +291,7 @@ class Manager {
 		}
 
 		$product = $this->maybe_convert_object_to_wc_product( $product );
-		
+
 		// If product is not found - abort early
 		if ( ! $product || ! is_a( $product, 'WC_Product' ) ) {
 			return $result;
@@ -404,7 +404,7 @@ class Manager {
 
 		return sprintf(
 			'<a href="%1$s" class="%6$s__link" aria-label="%3$s" %5$s>%4$s%2$s</a>',
-			$url,
+			esc_url( $url ),
 			$label,
 			wp_strip_all_tags( $label ),
 			$icon,
@@ -501,13 +501,13 @@ class Manager {
 			$quantity_input_replacement = '__woocommerce_quantity_input__' . microtime( true );
 
 			$format = '<form action="%1$s" class="cart" method="post" enctype="multipart/form-data">';
-			
+
 			$quantity_input_html = woocommerce_quantity_input( [
 				'min_value'   => apply_filters( 'woocommerce_quantity_input_min', $product->get_min_purchase_quantity(), $product ),
 				'max_value'   => apply_filters( 'woocommerce_quantity_input_max', $product->get_max_purchase_quantity(), $product ),
 				'input_value' => esc_attr( $args['quantity'] ?? $product->get_min_purchase_quantity() ),
 			], $product, false );
-			
+
 			$format .= $quantity_input_replacement;
 			$format .= '<button type="submit" data-quantity="%2$s" class="%3$s alt" %4$s >%5$s %6$s</button>';
 			$format .= '</form>';

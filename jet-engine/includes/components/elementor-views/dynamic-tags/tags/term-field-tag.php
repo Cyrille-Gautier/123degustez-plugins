@@ -139,7 +139,7 @@ class Jet_Engine_Term_Field_Tag extends Elementor\Core\DynamicTags\Tag {
 
 			case 'term_url':
 
-				$term_url = get_term_link( $term->term_id, $tax );
+				$term_url = get_term_link( absint( $term->term_id ), $tax );
 
 				if ( is_wp_error( $term_url ) ) {
 					$term_url = '';

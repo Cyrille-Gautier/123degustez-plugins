@@ -348,7 +348,6 @@ class Query {
 		}
 
 		return $result;
-
 	}
 
 	/**
@@ -511,10 +510,10 @@ class Query {
 
 		// JetSmartFilters (Reload / Pagination)
 		} elseif ( $this->is_filters_request() ) {
-			if ( ! empty( $_REQUEST['pagenum'] ) ) {
-				$page = absint( $_REQUEST['pagenum'] );
-			} else {
+			if ( jet_smart_filters()->query->is_ajax_filter() ) {
 				$page = isset( $_REQUEST['paged'] ) ? absint( $_REQUEST['paged'] ) : 1;
+			} else {
+				$page = isset( $_REQUEST['pagenum'] ) ? absint( $_REQUEST['pagenum'] ) : 1;
 			}
 		}
 

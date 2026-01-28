@@ -73,6 +73,9 @@ if ( ! class_exists( 'Jet_Engine_CPT_Tax' ) ) {
 
 			parent::__construct();
 
+			require_once $this->component_path( 'mcp/controller.php' );
+			new \Jet_Engine\Taxonomies\MCP\Controller();
+
 			$this->register_built_in_modifications();
 			add_action( 'jet-engine/meta-boxes/register-instances', array( $this, 'init_meta_boxes' ) );
 			add_action( 'current_screen', array( $this, 'init_edit_links' ) );

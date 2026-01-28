@@ -20,6 +20,9 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Base' ) ) {
 		protected $namespace = 'jet-engine/';
 
 		public $block_manager    = null;
+		/**
+		 * @var \Crocoblock\Blocks_Style\Proxy
+		 */
 		public $controls_manager = null;
 		public $block_data       = null;
 		public $_root            = [];
@@ -28,13 +31,12 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Base' ) ) {
 
 			$attributes = $this->get_attributes();
 
+			$this->set_style_manager_instance();
+			$this->add_style_manager_options();
+
 			if ( $this->has_style_manager() ) {
 
-				$this->set_style_manager_instance();
-				$this->add_style_manager_options();
 				do_action( 'jet-engine/blocks-views/' . $this->get_name() . '/add-extra-style-options', $this );
-
-				//add_action( 'enqueue_block_editor_assets', array( $this, 'add_style_manager_options' ), -1 );
 
 				if ( $this->prevent_wrap() ) {
 					add_filter(
@@ -42,7 +44,6 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Base' ) ) {
 						'__return_true'
 					);
 				}
-
 			}
 
 			/**
@@ -77,7 +78,6 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Base' ) ) {
 			}
 
 			register_block_type( $block, $args );
-
 		}
 
 		/**
@@ -167,7 +167,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Base' ) ) {
 		 */
 		public function is_edit_mode() {
 			// phpcs:disable
-			return ( isset( $_GET['context'] ) && 'edit' === $_GET['context'] && isset( $_GET['attributes'] ) && $_GET['_locale'] );
+			return ( isset( $_GET['context'] ) && 'edit' === $_GET['context'] && ! empty( $_GET['_locale'] ) );
 			// phpcs:enable
 		}
 
@@ -186,12 +186,16 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Base' ) ) {
 		 *
 		 * @return boolean
 		 */
-		public function set_style_manager_instance(){
+		public function set_style_manager_instance() {
 
-			$name = $this->get_block_name();
+			jet_engine()->blocks_views->style_manager->register_block_support(
+				$this->get_block_name()
+			);
 
-			$this->block_manager    = \JET_SM\Gutenberg\Block_Manager::get_instance();
-			$this->controls_manager = new \JET_SM\Gutenberg\Controls_Manager( $name );
+			$proxy = jet_engine()->blocks_views->style_manager->get_proxy( $this->get_block_name() );
+
+			$this->block_manager    = $proxy;
+			$this->controls_manager = $proxy;
 		}
 
 		public function css_selector( $el = '' ) {

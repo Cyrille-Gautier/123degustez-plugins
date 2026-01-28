@@ -295,6 +295,8 @@ class Form_Query extends \Jet_Engine\Query_Builder\Queries\SQL_Query {
 
 	}
 
+	public function before_preview_body() {}
+
 	/**
 	 * Array of arguments where string should be exploded into array
 	 *

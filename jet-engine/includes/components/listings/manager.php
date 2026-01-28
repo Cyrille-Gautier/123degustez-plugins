@@ -142,6 +142,7 @@ if ( ! class_exists( 'Jet_Engine_Listings' ) ) {
 			require jet_engine()->plugin_path( 'includes/components/listings/preview.php' );
 			require jet_engine()->plugin_path( 'includes/classes/url-shemes-manager.php' );
 			require jet_engine()->plugin_path( 'includes/components/listings/components/manager.php' );
+			require jet_engine()->plugin_path( 'includes/components/listings/mcp/controller.php' );
 
 			$this->post_type     = new Jet_Engine_Listings_Post_Type();
 			$this->components    = new \Jet_Engine\Listings\Components\Manager();
@@ -152,6 +153,7 @@ if ( ! class_exists( 'Jet_Engine_Listings' ) ) {
 			$this->did_posts     = new Jet_Engine_Did_Posts_Watcher();
 			$this->objects_stack = new Jet_Engine_Objects_Stack();
 			$this->legacy        = new Jet_Engine_Listings_Legacy();
+			new \Jet_Engine\Listings\MCP\Controller();
 
 			// Ensure backward compatibility
 			jet_engine()->post_type = $this->post_type;
@@ -179,7 +181,7 @@ if ( ! class_exists( 'Jet_Engine_Listings' ) ) {
 			if ( ! isset( \Jet_Engine\Query_Builder\Manager::instance()->frontend_editor ) ) {
 				return;
 			}
-	
+
 			\Jet_Engine\Query_Builder\Manager::instance()->frontend_editor->render_edit_buttons( $render );
 		}
 
@@ -456,9 +458,8 @@ if ( ! class_exists( 'Jet_Engine_Listings' ) ) {
 					}
 
 					if ( ! class_exists( $dep_renderer['class_name'] ) ) {
-						require $dep_renderer['path'];
+						require_once $dep_renderer['path'];
 					}
-
 				}
 			}
 

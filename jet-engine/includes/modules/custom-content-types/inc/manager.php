@@ -8,6 +8,8 @@ if ( ! defined( 'WPINC' ) ) {
 
 /**
  * Define Manager class
+ * 
+ * @property Data $data
  */
 class Manager extends \Jet_Engine_Base_WP_Intance {
 

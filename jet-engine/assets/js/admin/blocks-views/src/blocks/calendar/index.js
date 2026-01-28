@@ -1,4 +1,5 @@
 import JetEngineRepeater from "components/repeater-control.js";
+import ServerSideRender from "components/server-side-render.js";
 import { isIdUnique } from "common/functions";
 
 import {
@@ -33,16 +34,13 @@ const {
 	SVG
 } = wp.components;
 
-const {
-	serverSideRender: ServerSideRender
-} = wp;
-
 if ( -1 !== window.JetEngineListingData.activeModules.indexOf( 'calendar' ) ) {
 	const GIcon = <SVG width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg"><Path d="M58.207 4.01185C58.6523 3.54777 58.875 2.9921 58.875 2.34483C58.875 1.69756 58.6523 1.14799 58.207 0.696121C57.7734 0.23204 57.2461 0 56.625 0C56.0039 0 55.4707 0.23204 55.0254 0.696121C54.5918 1.14799 54.375 1.69756 54.375 2.34483C54.375 2.9921 54.5918 3.54777 55.0254 4.01185C55.4707 4.46372 56.0039 4.68966 56.625 4.68966C57.2461 4.68966 57.7734 4.46372 58.207 4.01185Z" fill="currentColor"/><Path d="M58.875 6.44828C59.1914 6.44828 59.4551 6.5643 59.666 6.79634C59.8887 7.02838 60 7.30927 60 7.63901C60 7.95654 59.8887 8.22521 59.666 8.44504L57.9785 10.2037C57.873 10.3258 57.75 10.4174 57.6094 10.4784C57.4688 10.5273 57.3281 10.5517 57.1875 10.5517C57.0469 10.5517 56.9062 10.5273 56.7656 10.4784C56.625 10.4174 56.502 10.3258 56.3965 10.2037L53.5312 7.23599L51.668 9.15948L54.9727 11.3211C55.1016 11.4066 55.207 11.5165 55.2891 11.6509C55.3828 11.773 55.4473 11.9134 55.4824 12.0722C55.5059 12.2188 55.5 12.3714 55.4648 12.5302C55.4414 12.6889 55.3887 12.8355 55.3066 12.9698L53.0566 16.4871C52.9512 16.6458 52.8105 16.768 52.6348 16.8534C52.4707 16.9511 52.3008 17 52.125 17C52.0195 17 51.9141 16.9817 51.8086 16.945C51.7031 16.9206 51.5977 16.8718 51.4922 16.7985C51.2344 16.6275 51.0762 16.3833 51.0176 16.0657C50.959 15.7482 51.0176 15.4551 51.1934 15.1864L52.793 12.6584L50.4727 11.1562C50.1797 10.9608 49.9395 10.7166 49.752 10.4235C49.5762 10.1182 49.4707 9.78843 49.4355 9.43427C49.4004 9.0801 49.4355 8.73815 49.541 8.40841C49.6582 8.06645 49.8398 7.76724 50.0859 7.51078L51.9316 5.56897L50.4375 4.01185L48.9785 5.51401C48.7676 5.74605 48.5039 5.86207 48.1875 5.86207C47.8711 5.86207 47.6074 5.74605 47.3965 5.51401C47.1738 5.28197 47.0625 5.00718 47.0625 4.68966C47.0625 4.35991 47.1738 4.08513 47.3965 3.8653L49.6465 1.52047C49.8574 1.28843 50.1211 1.17241 50.4375 1.17241C50.7539 1.17241 51.0176 1.28843 51.2285 1.52047L57.1875 7.71228L58.084 6.79634C58.2949 6.5643 58.5586 6.44828 58.875 6.44828Z" fill="currentColor"/><Path d="M46.043 11.7241L47.1504 10.5517C47.373 10.3197 47.6367 10.2037 47.9414 10.2037C48.2578 10.2037 48.5273 10.3197 48.75 10.5517C48.9727 10.7838 49.084 11.0647 49.084 11.3944C49.084 11.7119 48.9727 11.9867 48.75 12.2188L47.291 13.7209C47.1855 13.8308 47.0625 13.9163 46.9219 13.9774C46.793 14.0384 46.6523 14.069 46.5 14.069H43.125C42.8086 14.069 42.5391 13.9591 42.3164 13.7392C42.1055 13.5072 42 13.2263 42 12.8966C42 12.5668 42.1055 12.292 42.3164 12.0722C42.5391 11.8402 42.8086 11.7241 43.125 11.7241H46.043Z" fill="currentColor"/><Path fillRule="evenodd" clipRule="evenodd" d="M11 15C10.4477 15 10 15.4477 10 16V18H4C1.79086 18 0 19.7909 0 22V56C0 58.2091 1.79086 60 4 60H38C40.2091 60 42 58.2091 42 56V22C42 19.7909 40.2091 18 38 18H32V16C32 15.4477 31.5523 15 31 15C30.4477 15 30 15.4477 30 16V18H12V16C12 15.4477 11.5523 15 11 15ZM30 22V20H12V22C12 22.5523 11.5523 23 11 23C10.4477 23 10 22.5523 10 22V20H4C2.89543 20 2 20.8954 2 22V30H40V22C40 20.8954 39.1046 20 38 20H32V22C32 22.5523 31.5523 23 31 23C30.4477 23 30 22.5523 30 22ZM40 56V32H2V56C2 57.1046 2.89543 58 4 58H38C39.1046 58 40 57.1046 40 56Z" fill="currentColor"/></SVG>;
-	
+
 	const blockAttributes = window.JetEngineListingData.atts.listingCalendar;
 
 	registerBlockType( 'jet-engine/listing-calendar', {
+		apiVersion: '3',
 		title: __( 'Dynamic Calendar' ),
 		icon: GIcon,
 		category: 'jet-engine',
@@ -180,7 +178,7 @@ if ( -1 !== window.JetEngineListingData.activeModules.indexOf( 'calendar' ) ) {
 									<TextControl
 										type="text"
 										label={ __( 'End date field name' ) }
-										help={ __( 'This field must contain date when events ends. Works only if "Save as timestamp" option for meta field is active' ) }
+										help={ __( 'This field must contain date when event ends. Works only if "Save as timestamp" option for meta field is active' ) }
 										value={ attributes.end_date_key }
 										onChange={ newValue => {
 											props.setAttributes( { end_date_key: newValue } );
@@ -237,6 +235,10 @@ if ( -1 !== window.JetEngineListingData.activeModules.indexOf( 'calendar' ) ) {
 										label={ __( 'Start from month' ) }
 										value={ attributes.start_from_month }
 										options={ [
+											{
+												value: '',
+												label: __( 'Current Month' ),
+											},
 											{
 												value: 'January',
 												label: __( 'January' ),
@@ -350,7 +352,7 @@ if ( -1 !== window.JetEngineListingData.activeModules.indexOf( 'calendar' ) ) {
 										props.setAttributes( { cache_enabled: ! attributes.cache_enabled } );
 									} }
 								/>
-								{ attributes.cache_enabled && 
+								{ attributes.cache_enabled &&
 								<TextControl
 									type="number"
 									label={ __( 'Cache Timeout' ) }
@@ -362,7 +364,7 @@ if ( -1 !== window.JetEngineListingData.activeModules.indexOf( 'calendar' ) ) {
 										props.setAttributes( { cache_timeout: newValue } );
 									} }
 								/> }
-								{ attributes.cache_enabled && 
+								{ attributes.cache_enabled &&
 								<TextControl
 									type="number"
 									label={ __( 'Maximum Cache Size' ) }

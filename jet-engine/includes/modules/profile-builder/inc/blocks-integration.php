@@ -42,7 +42,7 @@ class Blocks_Integration extends Base_Integration {
 		wp_enqueue_script(
 			'jet-engine-profile-blocks',
 			jet_engine()->plugin_url( 'includes/modules/profile-builder/inc/assets/js/blocks.js' ),
-			array( 'wp-components', 'wp-element', 'wp-blocks', 'wp-block-editor', 'lodash' ),
+			array( 'wp-components', 'wp-element', 'wp-blocks', 'wp-block-editor', 'lodash', 'jet-engine-blocks-views' ),
 			jet_engine()->get_version(),
 			true
 		);

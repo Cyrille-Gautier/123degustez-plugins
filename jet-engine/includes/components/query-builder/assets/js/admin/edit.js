@@ -23,6 +23,7 @@
 			updatingPreview: false,
 			previewCount: 0,
 			previewBody: null,
+			previewSqlQueries: null,
 			isCopied: false,
 			queryArgToDelete: -1,
 			errors: {
@@ -253,6 +254,7 @@
 
 					if ( response.success ) {
 						self.previewCount = response.count;
+						self.previewSqlQueries  = response.sql_preview;
 						self.previewBody  = response.data;
 					}
 

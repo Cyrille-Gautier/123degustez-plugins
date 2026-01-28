@@ -13,6 +13,17 @@
 
 			window.elementorFrontend.hooks.addAction( 'frontend/element_ready/jet-listing-grid.default', JetEngineElementorPreview.loadHandles );
 
+			window.elementorFrontend.hooks.addAction( 'frontend/element_ready/widget', function( $scope ) {
+				const widgetType = $scope.data( 'widget_type' );
+
+				if ( widgetType && widgetType.includes( 'jet-engine-component' ) ) {
+					$scope.find( '.elementor-invisible' ).each( function() {
+						$( this ).removeClass( 'elementor-invisible' );
+					} );
+				}
+			} );
+
+
 			$( document ).on( 'jet-engine/listing-grid/after-lazy-load', JetEngineElementorPreview.loadHandlesOnLazyLoad );
 
 			window.elementorFrontend.on( 'components:init', function () {

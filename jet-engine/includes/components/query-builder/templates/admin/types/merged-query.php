@@ -72,7 +72,11 @@
 							size="fullwidth"
 							:value="query.queries[ index ].query_id"
 							@input="setFieldProp( mergeQuery._id, 'query_id', $event, query.queries )"
-						></cx-vui-select>
+						>
+							<a v-if="query.queries[ index ].query_id" target="_blank" :href="'<?php echo admin_url( 'admin.php?page=jet-engine-query&query_action=edit&id=' ); ?>' + query.queries[ index ].query_id"><?php
+								_e( 'Edit selected query', 'jet-engine' );
+							?>
+						</cx-vui-select>
 					</cx-vui-repeater-item>
 				</cx-vui-repeater>
 			</div>

@@ -7,8 +7,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Jet_Engine_Elementor_Dynamic_CSS extends Elementor\Core\DynamicTags\Dynamic_CSS {
 
+	/**
+	 * Object ID to get dynamic data from.
+	 * @var int
+	 */
 	private $post_id;
+
+	/**
+	 * Rendered object ID (listing item or component).
+	 * @var int
+	 */
 	private $_post_id_for_data;
+
+	/**
+	 * Listing unique selector.
+	 * @var string
+	 */
 	protected $listing_selector;
 
 	public function __construct( $post_id, $post_id_for_data ) {
@@ -36,7 +50,12 @@ class Jet_Engine_Elementor_Dynamic_CSS extends Elementor\Core\DynamicTags\Dynami
 	 * @return [type] [description]
 	 */
 	public function get_listing_unique_selector() {
-		return apply_filters( 'jet-engine/elementor-views/dynamic-css/unique-listing-selector', $this->listing_selector );
+		return apply_filters(
+			'jet-engine/elementor-views/dynamic-css/unique-listing-selector',
+			$this->listing_selector,
+			$this->post_id,
+			$this->get_post_id_for_data()
+		);
 	}
 
 	/**

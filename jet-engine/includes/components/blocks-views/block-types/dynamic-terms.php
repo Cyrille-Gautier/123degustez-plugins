@@ -310,6 +310,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Terms' ) ) {
 					'label'        => __( 'Border Radius', 'jet-engine' ),
 					'type'         => 'dimensions',
 					'units'        => array( 'px', '%' ),
+					'is_legacy'    => true,
 					'separator'    => 'before',
 					'css_selector' => array(
 						$this->css_selector( '__link' ) => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',

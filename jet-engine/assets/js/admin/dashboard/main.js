@@ -18,6 +18,7 @@
 			toUpdate: dashboardConfig.modules_to_update,
 			componentsList: dashboardConfig.components_list,
 			isLicenseActive: dashboardConfig.is_license_active,
+			mcpTools: dashboardConfig.mcp_tools,
 			activeTab: 'modules',
 			shortcode: {
 				component: '',

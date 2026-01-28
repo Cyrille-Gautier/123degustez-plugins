@@ -89,6 +89,9 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes' ) ) {
 
 			jet_engine_datetime()->convert_meta_fields_dates();
 
+			require_once $this->component_path( 'mcp/controller.php' );
+			new \Jet_Engine\Meta_Boxes\MCP\Controller();
+
 		}
 
 		/**
@@ -528,38 +531,56 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes' ) ) {
 
 			foreach ( $this->meta_fields as $object => $fields ) {
 
-				$group_label = false;
-				$group_for   = $for;
+				$group_args = apply_filters(
+					'jet-engine/meta-boxes/fields-for-select/group-args',
+					array(
+						'group_label' => '',
+						'group_for'   => $for,
+					),
+					$object,
+					$for,
+					$this
+				);
 
-				if ( isset( $post_types[ $object ] ) ) {
+				$group_label = $group_args['group_label'] ?? '';
+				$group_for   = $group_args['group_for'] ?? '';
 
-					if ( ! in_array( $for, array( 'all', 'posts' ) ) ) {
-						continue;
+				//if $group_label is false after the filter that means field group should be skipped
+				if ( $group_label === false ) {
+					continue;
+				}
+
+				if ( ! $group_label ) {
+					if ( isset( $post_types[ $object ] ) ) {
+
+						if ( ! in_array( $for, array( 'all', 'posts' ) ) ) {
+							continue;
+						}
+	
+						$group_label = $post_types[ $object ]->labels->name;
+	
+						$group_for = 'post';
+	
+					} elseif ( isset( $taxonomies[ $object ] ) ) {
+	
+						if ( ! in_array( $for, array( 'all', 'taxonomies' ) ) ) {
+							continue;
+						}
+	
+						$group_label = $taxonomies[ $object ]->labels->name;
+	
+						$group_for = 'taxonomy';
+	
+					} else {
+	
+						if ( ! in_array( $for, array( 'all', 'user' ) ) ) {
+							continue;
+						}
+	
+						$group_label = $object;
+
+						$group_for = 'user';
 					}
-
-					$group_label = $post_types[ $object ]->labels->name;
-
-					$group_for = 'post';
-
-				} elseif ( isset( $taxonomies[ $object ] ) ) {
-
-					if ( ! in_array( $for, array( 'all', 'taxonomies' ) ) ) {
-						continue;
-					}
-
-					$group_label = $taxonomies[ $object ]->labels->name;
-
-					$group_for = 'taxonomy';
-
-				} else {
-
-					if ( ! in_array( $for, array( 'all', 'user' ) ) ) {
-						continue;
-					}
-
-					$group_label = $object;
-
-					$group_for = 'user';
 				}
 
 				if ( ! $group_label ) {
@@ -704,7 +725,8 @@ if ( ! class_exists( 'Jet_Engine_Meta_Boxes' ) ) {
 			if ( 'elementor' === $where ) {
 				$result = array( '' => esc_html__( 'Select...', 'jet-engine' ) ) + $result;
 			}
-
+// echo '<pre>';
+// var_dump( $result )->e();
 			return $result;
 		}
 

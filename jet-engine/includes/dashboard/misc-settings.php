@@ -36,7 +36,7 @@ if ( ! class_exists( 'Jet_Engine_Misc_Settings' ) ) {
 
 		public function print_template() {
 			?>
-			
+
 			<cx-vui-tabs-panel
 				name="misc_options"
 				label="<?php _e( 'Advanced', 'jet-engine' ); ?>"
@@ -46,10 +46,10 @@ if ( ! class_exists( 'Jet_Engine_Misc_Settings' ) ) {
 					<p><?php
 						_e( '', 'jet-engine' );
 					?></p>
-					
+
 					<cx-vui-switcher
-						label="<?php _e( 'Disable legacy User Meta processing', 'jet-engine' ); ?>"
-						description="<?php _e( 'By default, if the meta key is a JetEngine User Meta key, the value will be taken from the current user, or from the listing object, if it is a user. To always get the meta from the object by context, enable this option.', 'jet-engine' ); ?>"
+						label="<?php _e( 'Disable legacy User Props / Meta processing', 'jet-engine' ); ?>"
+						description="<?php _e( 'By default, if the prop/meta key is a JetEngine User Prop/Meta key, the value will be taken from the current user, or from the listing object, if it is a user. To always get the prop/meta from the object by context, enable this option.', 'jet-engine' ); ?>"
 						:wrapper-css="[ 'equalwidth' ]"
 						@input="updateMiscSettings( $event, 'disable_legacy_user_meta' )"
 						:value="miscSettings.disable_legacy_user_meta"
@@ -68,13 +68,61 @@ if ( ! class_exists( 'Jet_Engine_Misc_Settings' ) ) {
 						@input="updateMiscSettings( $event, 'force_ltr' )"
 						:value="miscSettings.force_ltr"
 					></cx-vui-switcher>
+					<cx-vui-switcher
+						label="<?php _e( 'Prefix relation controls with the relation ID and name', 'jet-engine' ); ?>"
+						description="<?php _e( 'Simplifies debugging of relation-related issues', 'jet-engine' ); ?>"
+						:wrapper-css="[ 'equalwidth' ]"
+						@input="updateMiscSettings( $event, 'enable_relation_control_prefix' )"
+						:value="miscSettings.enable_relation_control_prefix"
+					></cx-vui-switcher>
 					<span
 						class="cx-vui-inline-notice cx-vui-inline-notice--error cx-vui-component"
 						v-if="reloadAfterSave"
 					><?php _e( 'The page will be reloaded in a few seconds.', 'jet-engine' ); ?></span>
 				</div>
 			</cx-vui-tabs-panel>
-			
+			<cx-vui-tabs-panel
+				name="mcp_server"
+				label="<?php _e( 'MCP Server', 'jet-engine' ); ?>"
+				key="mcp_server"
+			>
+				<div class="jet-engine-misc">
+					<cx-vui-switcher
+						label="<?php _e( 'Enable MCP Server', 'jet-engine' ); ?>"
+						description="<?php _e( 'Allows external AI applications to connect to your website and receive some context from it or perform some actions.', 'jet-engine' ); ?>"
+						:wrapper-css="[ 'equalwidth', 'collpase-sides' ]"
+						@input="updateMiscSettings( $event, 'enable_mcp_server' )"
+						:value="miscSettings.enable_mcp_server"
+					></cx-vui-switcher>
+					<cx-vui-component-wrapper
+						label="<?php _e( 'MCP Server URL:', 'jet-engine' ); ?>"
+						:wrapper-css="[ 'collpase-sides' ]"
+						description="<code style='display:block;margin: 10px 0 0 0;'><?php echo esc_url( home_url( '/' ) ); ?>wp-json/jet-engine/v1/mcp/</code>"
+						v-if="miscSettings.enable_mcp_server"
+					></cx-vui-component-wrapper>
+					<cx-vui-component-wrapper
+						label="<?php _e( 'Important:', 'jet-engine' ); ?>"
+						:wrapper-css="[ 'collpase-sides' ]"
+						description="<?php _e( 'The MCP server requires authentication to operate. By default, you can authenticate using WordPress <a href=\'https://make.wordpress.org/core/2020/11/05/application-passwords-integration-guide/\' target=\'_blank\'>Application Passwords</a>. Detailed instructions depend on the final application in which you plan to use this server.', 'jet-engine' ); ?>"
+						v-if="miscSettings.enable_mcp_server"
+					></cx-vui-component-wrapper>
+					<div
+						v-if="miscSettings.enable_mcp_server"
+					>
+						<div class="cx-vui-component__label">
+							<?php _e( 'Exposed Tools List:', 'jet-engine' ); ?>
+						</div>
+						<div
+							v-for="( tool ) in mcpTools"
+							:key="tool.name"
+							style="margin-top: 10px;"
+						>
+							<strong>{{ tool.label }}</strong><br/>{{ tool.description }}
+						</div>
+					</div>
+				</div>
+			</cx-vui-tabs-panel>
+
 			<?php
 		}
 
@@ -133,8 +181,12 @@ if ( ! class_exists( 'Jet_Engine_Misc_Settings' ) ) {
 		}
 
 		public function get_settings( $setting = null, $settings = false ) {
+
 			if ( ! is_array( $this->misc_settings ) ) {
-				$this->misc_settings = get_option( $this->misc_key, array() );
+				$this->misc_settings = apply_filters(
+					'jet-engine/misc-settings/get-settings',
+					get_option( $this->misc_key, array() )
+				);
 			}
 
 			if ( ! is_array( $this->misc_settings ) ) {
@@ -162,6 +214,8 @@ if ( ! class_exists( 'Jet_Engine_Misc_Settings' ) ) {
 				'dev_settings',
 				'force_ltr',
 				'disable_frontend_query_editor',
+				'enable_relation_control_prefix',
+				'enable_mcp_server',
 			);
 		}
 
@@ -182,7 +236,7 @@ if ( ! class_exists( 'Jet_Engine_Misc_Settings' ) ) {
 			if ( empty( $settings ) ) {
 				wp_send_json_error( array( 'message' => __( 'Empty settings', 'jet-engine' ) ) );
 			}
-			
+
 			$boolean_keys = $this->get_boolean_keys();
 			$reload_keys  = $this->get_reload_keys();
 
@@ -195,7 +249,7 @@ if ( ! class_exists( 'Jet_Engine_Misc_Settings' ) ) {
 			}
 
 			$reload = false;
-			
+
 			foreach ( $settings as $key => $value ) {
 				if ( in_array( $key, $boolean_keys ) ) {
 					$settings[ $key ] = filter_var( $value, FILTER_VALIDATE_BOOLEAN );

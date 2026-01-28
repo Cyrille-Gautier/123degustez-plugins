@@ -12,6 +12,7 @@
 			relationsTypes: JetEngineCPTListConfig.relations_types,
 			showDeleteDialog: false,
 			deletedItem: {},
+			isIDCopied: false,
 		},
 		mounted: function() {
 
@@ -39,6 +40,27 @@
 			} );
 		},
 		methods: {
+			copyID: function( itemID ) {
+				if ( window.navigator.clipboard ) {
+
+					let copiedTimeout = false;
+
+					window.navigator.clipboard.writeText( itemID ).then( () => {
+
+						this.isIDCopied = itemID;
+
+						if ( copiedTimeout ) {
+							clearTimeout( copiedTimeout );
+						}
+
+						copiedTimeout = setTimeout( () => {
+							this.isIDCopied = false;
+						}, 1500 );
+
+					} );
+
+				}
+			},
 			copyItem: function( item ) {
 
 				if ( !item ) {

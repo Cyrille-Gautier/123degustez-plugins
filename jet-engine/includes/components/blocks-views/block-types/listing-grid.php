@@ -414,6 +414,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Grid' ) ) {
 					'type'       => 'toggle',
 					'label'      => esc_html__( 'Correct first/last row gap', 'jet-engine' ),
 					'help'       => esc_html__( 'Correct first/last row Ensure that the first and last rows do not have unnecessary gap on top/bottom.', 'jet-engine' ),
+					'is_legacy'  => true,
 					'return_value' => array(
 						'true'  => 'true',
 						'false' => 'false',
@@ -828,7 +829,6 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Grid' ) ) {
 			$render->after_listing_grid();
 
 			return $result;
-
 		}
 
 	}

@@ -477,6 +477,18 @@ class Data extends \Jet_Engine_Base_Data {
 			$db->adjust_fields_to_schema();
 		}
 
+		if ( ! DB::custom_table_exists( $item['slug'] ) ) {
+			$this->parent->add_notice(
+				'error',
+				esc_html__( 'Couldn\'t create a DB table. Please, check the field names for MySQL reserved words.', 'jet-engine' )
+			);
+		} elseif ( ! $db->has_columns_by_schema() ) {
+			$this->parent->add_notice(
+				'error',
+				esc_html__( 'Couldn\'t update a DB table. Please, check the field names for MySQL reserved words.', 'jet-engine' )
+			);
+		}
+
 	}
 
 	/**

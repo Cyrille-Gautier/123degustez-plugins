@@ -99,7 +99,22 @@ class Terms extends Base {
 		}
 
 		$haversine = $this->haversine_term( $geo_query );
-		$new_sql   = " AND ( geo_query_lat.meta_key = %s AND geo_query_lng.meta_key = %s AND " . $haversine . " <= %f )";
+
+		if ( $this->must_apply_bounds( $geo_query ) ) {
+			$bounds = $this->get_bounds( $geo_query );
+
+			$new_sql = " AND ( geo_query_lat.meta_key = %s AND geo_query_lng.meta_key = %s ) AND ";
+			$new_sql .= "( geo_query_lat.meta_value BETWEEN {$bounds['south']} AND {$bounds['north']}";
+
+			//if map includes 180deg meridian and western bound is greater than eastern
+			if ( $bounds['west'] >= $bounds['east'] ) {
+				$new_sql .= " AND ( geo_query_lng.meta_value >= {$bounds['west']} OR geo_query_lng.meta_value <= {$bounds['east']} ) )";
+			} else {
+				$new_sql .= " AND geo_query_lng.meta_value BETWEEN {$bounds['west']} AND {$bounds['east']} )";
+			}
+		} else {
+			$new_sql   = " AND ( geo_query_lat.meta_key = %s AND geo_query_lng.meta_key = %s AND " . $haversine . " <= %f )";
+		}
 		
 		$clauses['where'] .= $wpdb->prepare( $new_sql, $lat_field, $lng_field, $distance );
 

@@ -26,6 +26,8 @@
 				slug: false,
 			},
 			errorNotices: [],
+			tableNotice: false,
+			reservedColumnNames: JetEngineCCTConfig.reserved_column_names ?? [],
 		},
 		created: function() {
 
@@ -46,6 +48,8 @@
 					method: 'get',
 					path: JetEngineCCTConfig.api_path_get + JetEngineCCTConfig.item_id,
 				} ).then( function( response ) {
+
+					self.tableNotice = response.table_notice ?? false;
 
 					if ( response.success && response.data ) {
 
@@ -195,6 +199,21 @@
 			},
 		},
 		methods: {
+			validateField( field ) {
+				if ( ! field.name ) {
+					return;
+				}
+
+				if ( this.reservedColumnNames.includes( field.name.toUpperCase() ) ) {
+					throw new Error( JetEngineCCTConfig.field_errors['sql_reserved'].replace( '%s', field.name ) );
+				}
+
+				for ( const serviceField of JetEngineCCTConfig.service_fields  ) {
+					if ( serviceField.name.toUpperCase() === field.name.toUpperCase() ) {
+						throw new Error( JetEngineCCTConfig.field_errors['jet_engine_reserved'].replace( '%s', field.name ) );
+					}
+				}
+			},
 			isAllowedForAdminCols: function( field ) {
 
 				if ( ! field.name ) {
@@ -314,6 +333,8 @@
 						meta_fields: self.metaFields,
 					}
 				} ).then( function( response ) {
+
+					self.tableNotice = response.table_notice ?? false;
 
 					if ( response.success ) {
 						if ( JetEngineCCTConfig.redirect ) {

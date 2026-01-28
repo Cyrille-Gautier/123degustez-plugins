@@ -1,10 +1,10 @@
 const {
-	Disabled
-} = wp.components;
+	ServerSideRender
+} = window.JetEngineBlocksComponents;
 
 const {
-	serverSideRender: ServerSideRender
-} = wp;
+	Disabled
+} = wp.components;
 
 const Edit = function( props ) {
 

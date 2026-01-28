@@ -176,18 +176,6 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Link' ) ) {
 
 			$this->controls_manager->add_control(
 				array(
-					'id'           => 'link_border_color',
-					'label'        => __( 'Border Color', 'jet-engine' ),
-					'type'         => 'color-picker',
-					'separator'    => 'before',
-					'css_selector' => array(
-						$this->css_selector( ' .jet-listing-dynamic-link__link' ) => 'border-color: {{VALUE}};',
-					),
-				)
-			);
-
-			$this->controls_manager->add_control(
-				array(
 					'id'           => 'link_bg_hover',
 					'label'        => esc_html__( 'Background Color on Hover', 'jet-engine' ),
 					'type'         => 'color-picker',
@@ -219,18 +207,6 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Link' ) ) {
 					'css_selector' => array(
 						$this->css_selector( ' .jet-listing-dynamic-link__link:hover .jet-listing-dynamic-link__icon' ) => 'color: {{VALUE}}',
 						$this->css_selector( ' .jet-listing-dynamic-link__link:hover .jet-listing-dynamic-link__icon svg path' ) => 'fill: {{VALUE}}',
-					),
-				)
-			);
-
-			$this->controls_manager->add_control(
-				array(
-					'id'           => 'link_hover_border_color',
-					'label'        => __( 'Border Color on Hover', 'jet-engine' ),
-					'type'         => 'color-picker',
-					'separator'    => 'before',
-					'css_selector' => array(
-						$this->css_selector( ' .jet-listing-dynamic-link__link:hover' ) => 'border-color: {{VALUE}};',
 					),
 				)
 			);
@@ -304,12 +280,38 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Link' ) ) {
 				)
 			);
 
+			$this->controls_manager->add_control(
+				array(
+					'id'           => 'link_border_color',
+					'label'        => __( 'Border Color', 'jet-engine' ),
+					'type'         => 'color-picker',
+					'separator'    => 'before',
+					'is_legacy'    => true,
+					'css_selector' => array(
+						$this->css_selector( ' .jet-listing-dynamic-link__link' ) => 'border-color: {{VALUE}};',
+					),
+				)
+			);
+
+			$this->controls_manager->add_control(
+				array(
+					'id'           => 'link_hover_border_color',
+					'label'        => __( 'Border Color on Hover', 'jet-engine' ),
+					'type'         => 'color-picker',
+					'separator'    => 'before',
+					'css_selector' => array(
+						$this->css_selector( ' .jet-listing-dynamic-link__link:hover' ) => 'border-color: {{VALUE}};',
+					),
+				)
+			);
+
 			$this->controls_manager->add_responsive_control(
 				array(
 					'id'           => 'link_border_radius',
 					'label'        => __( 'Border Radius', 'jet-engine' ),
 					'type'         => 'dimensions',
 					'separator'    => 'before',
+					'is_legacy'    => true,
 					'css_selector' => array(
 						$this->css_selector( ' .jet-listing-dynamic-link__link' ) => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
 					),
@@ -330,7 +332,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Link' ) ) {
 							'label' => esc_html__( 'Before Label', 'jet-engine' ),
 							'icon'  => 'dashicons-editor-outdent',
 						),
-						'2' => array(
+						'3' => array(
 							'label' => esc_html__( 'After Label', 'jet-engine' ),
 							'icon'  => 'dashicons-editor-indent',
 						),

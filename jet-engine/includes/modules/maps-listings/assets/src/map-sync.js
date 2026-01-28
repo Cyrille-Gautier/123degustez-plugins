@@ -26,6 +26,7 @@ const Icon = <SVG version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" he
 
 registerBlockType( 'jet-smart-filters/map-sync', {
 	title: __( 'Map Sync' ),
+	apiVersion: 3,
 	icon: Icon,
 	category: 'jet-smart-filters',
 	supports: {

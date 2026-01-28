@@ -36,6 +36,10 @@
 					:wrapper-css="[ 'equalwidth' ]"
 				>
 					<div><code>{{ prefix }}{{ generalSettings.slug }}</code></div>
+					<div
+						v-if="!!tableNotice"
+						style="color: red; margin-top: 5px;"
+					>{{ tableNotice }}</div>
 				</cx-vui-component-wrapper>
 				<cx-vui-switcher
 					label="<?php _e( 'Has Single Page', 'jet-engine' ); ?>"
@@ -354,7 +358,7 @@
 				<code style="display:block; width: 100%; font-size:12px;">{{ restBase }}{{ generalSettings.slug }}/?cct_author_id=1&_orderby=_ID&_order=desc&_ordertype=integer</code>
 			</div>
 		</cx-vui-popup>
-		<jet-meta-fields v-model="metaFields" :hide-options="[ 'show_in_rest', 'revision_support', 'repeater_save_separate' ]" slug-delimiter="_"></jet-meta-fields>
+		<jet-meta-fields v-model="metaFields" :hide-options="[ 'show_in_rest', 'revision_support', 'repeater_save_separate' ]" slug-delimiter="_" :field-validation-callback="validateField"></jet-meta-fields>
 		<cx-vui-collapse
 			:collapsed="false"
 		>

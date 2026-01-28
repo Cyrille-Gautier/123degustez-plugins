@@ -15,6 +15,9 @@ if ( ! class_exists( 'Jet_Engine_Listings_Macros' ) ) {
 	 */
 	class Jet_Engine_Listings_Macros {
 
+		/**
+		 * @var \Crocoblock\Macros_Handler
+		 */
 		public $handler = null;
 		private $initialized = false;
 

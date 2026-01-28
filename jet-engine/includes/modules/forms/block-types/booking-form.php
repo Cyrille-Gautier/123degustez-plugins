@@ -437,6 +437,7 @@ class Booking_Form extends \Jet_Engine_Blocks_Views_Type_Base {
 				'type'      => 'dimensions',
 				'units'     => array( 'px', '%' ),
 				'separator' => 'before',
+				'is_legacy'    => true,
 				'css_selector' => array(
 					$this->css_selector( ' .jet-form__field:not(.checkradio-field):not(.range-field)' ) => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
 				),

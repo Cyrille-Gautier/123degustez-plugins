@@ -8,6 +8,11 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 	public $current_query = null;
 
 	/**
+	 * @var null|\Jet_Engine\Modules\Custom_Content_Types\Factory
+	 */
+	public $content_type = null;
+
+	/**
 	 * Returns queries items
 	 *
 	 * @return [type] [description]
@@ -27,6 +32,8 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 		if ( ! $content_type ) {
 			return $result;
 		}
+
+		$this->content_type = $content_type;
 
 		$order  = ! empty( $this->final_query['order'] ) ? $this->final_query['order'] : array();
 		$args   = ! empty( $this->final_query['args'] ) ? $this->final_query['args'] : array();
@@ -525,6 +532,28 @@ class CCT_Query extends \Jet_Engine\Query_Builder\Queries\Base_Query {
 
 		return $args;
 
+	}
+
+	/**
+	 * Describe current query to use in MCP tool parameters
+	 *
+	 * @return array
+	 */
+	public static function mcp_description() {
+		return array(
+			'type'        => 'object',
+			'description' => __( 'Custom Content Type query arguments. Includes CCT slug/name, fields in the same format as meta_query for WP_Query, limit and order args', 'jet-engine' ),
+		);
+	}
+
+	public function _debug_info() {
+		if ( ! is_object( $this->content_type ) ) {
+			return array();
+		}
+
+		return array(
+			'last_query' => $this->content_type->db->last_query,
+		);
 	}
 
 }

@@ -230,6 +230,16 @@ class Dynamic_Repeater extends Base {
 		);
 
 		$this->register_jet_control(
+			'dynamic_field_fallback',
+			[
+				'tab'      => 'content',
+				'label'    => esc_html__( 'Fallback', 'jet-engine' ),
+				'type'     => 'text',
+				'required' => [ 'hide_if_empty', '!=', true ],
+			]
+		);
+
+		$this->register_jet_control(
 			'object_context',
 			[
 				'tab'     => 'content',

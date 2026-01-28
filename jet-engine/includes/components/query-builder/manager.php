@@ -110,8 +110,16 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 		add_filter( 'jet-engine/listings/dynamic-repeater/pre-get-saved', array( $this, 'inject_query_to_dynamic_repeater' ), 10, 2 );
 		add_filter( 'jet-engine/blocks-views/editor-data', array( $this, 'add_block_editor_source' ) );
 
+		require_once jet_engine()->plugin_path( 'includes/components/query-builder/mcp/controller.php' );
+		new MCP\Controller();
 	}
 
+	/**
+	 * Add block editor source for JetEngine Query.
+	 *
+	 * @param array $config The block editor config.
+	 * @return array The modified block editor config.
+	 */
 	public function add_block_editor_source( $config ) {
 		$config['repeaterFields'][] = array(
 			'label' => esc_html__( 'JetEngine Query' ),
@@ -270,6 +278,7 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 		require $this->component_path( 'query-gateway/manager.php' );
 		require $this->component_path( 'helpers/posts-per-page-manager.php' );
 		require $this->component_path( 'traits/query-count.php' );
+		require $this->component_path( 'traits/query-calculations.php' );
 		require_once $this->component_path( 'frontend-editor.php' );
 
 		$this->editor   = new Query_Editor();
@@ -299,7 +308,10 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 
 	public function register_dynamic_tags( $dynamic_tags, $tags_module ) {
 		require_once $this->component_path( 'dynamic-tags/query-count.php' );
+		require_once $this->component_path( 'dynamic-tags/query-calculations.php' );
+
 		$tags_module->register_tag( $dynamic_tags, new Dynamic_Tags\Query_Count_Tag() );
+		$tags_module->register_tag( $dynamic_tags, new Dynamic_Tags\Query_Calculations_Tag() );
 	}
 
 	public function register_visibility_conditions( $manager ) {
@@ -313,9 +325,11 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 	public function register_macros() {
 
 		require_once $this->component_path( 'macros/query-count.php' );
+		require_once $this->component_path( 'macros/query-calculations.php' );
 		require_once $this->component_path( 'macros/query-results.php' );
 
 		new Macros\Query_Count_Macro();
+		new Macros\Query_Calculations_Macro();
 		new Macros\Query_Results_Macro();
 
 	}
@@ -400,6 +414,13 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 		}
 	}
 
+	/**
+	 * Get query by ID
+	 *
+	 * @param int $id Query id
+	 *
+	 * @return Queries\Base_Query
+	 */
 	public function get_query_by_id( $id = null ) {
 
 		if ( ! $id ) {

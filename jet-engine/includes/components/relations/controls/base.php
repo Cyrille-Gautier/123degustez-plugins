@@ -254,11 +254,9 @@ class Base {
 
 		$label = $this->get_label( $key );
 
-		if ( $label ) {
-			return $label;
-		} else {
-			$args = $this->get_args();
-			return jet_engine()->relations->types_helper->get_relation_label( 
+		if ( ! $label ) {
+			$args  = $this->get_args();
+			$label = jet_engine()->relations->types_helper->get_relation_label( 
 				$this->relation, 
 				$args['object_type'], 
 				$args['object_name'],
@@ -267,6 +265,20 @@ class Base {
 			);
 		}
 
+		$add_debug_info = jet_engine()->misc_settings->get_settings( 'enable_relation_control_prefix' );
+
+		if ( $add_debug_info ) {
+			$labels = $this->relation->get_args( 'labels', array() );
+
+			$label = sprintf(
+				'%s - %s (%s)',
+				$label,
+				$labels['name'],
+				$this->relation->get_id()
+			);
+		}
+
+		return $label;
 	}
 
 	/**

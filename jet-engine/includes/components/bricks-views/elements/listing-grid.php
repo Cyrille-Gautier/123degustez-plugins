@@ -587,7 +587,7 @@ class Listing_Grid extends Base {
 				'label'    => esc_html__( 'Autoplay Speed', 'jet-engine' ),
 				'type'     => 'number',
 				'min'      => 0,
-				'max'      => 10000,
+				'max'      => 100000,
 				'default'  => 5000,
 				'required' => [
 					[ 'carousel_enabled', '=', true ],

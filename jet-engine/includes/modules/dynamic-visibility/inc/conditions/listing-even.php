@@ -21,6 +21,17 @@ class Listing_Even extends Base {
 		return __( 'Is even item', 'jet-engine' );
 	}
 
+	public function get_custom_controls() {
+		return array(
+			'adjust_for_pagination' => array(
+				'label'       => __( 'Adjust for pagination', 'jet-engine' ),
+				'description' => __( 'Enable if you need to adjust for pagination or Load More.', 'jet-engine' ),
+				'type'        => 'switcher',
+				'default'     => '',
+			),
+		);
+	}
+
 	/**
 	 * Returns group for current operator
 	 *
@@ -47,7 +58,14 @@ class Listing_Even extends Base {
 
 	}
 
-	public function get_item_index() {
+	public function get_item_index( $args = array() ) {
+		$adjust_for_pagination = ! empty( $args['adjust_for_pagination'] ) ? $args['adjust_for_pagination'] : false;
+		$adjust_for_pagination = filter_var( $adjust_for_pagination, FILTER_VALIDATE_BOOLEAN );
+
+		if ( $adjust_for_pagination ) {
+			return jet_engine()->listings->data->get_listing_item_index();
+		}
+		
 		$index = jet_engine()->listings->data->get_index();
 		$index++;
 		return $index;
@@ -59,7 +77,7 @@ class Listing_Even extends Base {
 	 * @return [type] [description]
 	 */
 	public function check_index( $args ) {
-		$index = $this->get_item_index();
+		$index = $this->get_item_index( $args['condition_settings'] ?? array() );
 		return ( 0 === ( $index % 2 ) ) ? true : false;
 	}
 

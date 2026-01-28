@@ -227,7 +227,7 @@
 						>
 							<div class="jet-ai-builder-card__meta-text">
 								<?php
-									_e( 'Register custom meta storage (beta). This feature will improve performance and reduce DB size. But at the moment it has Beta status.', 'jet-engine' );
+									_e( 'Register custom meta storage. This feature will improve performance and reduce DB size. But at the moment it has Beta status.', 'jet-engine' );
 								?>
 								<a href="https://crocoblock.com/knowledge-base/jetengine/how-to-create-custom-meta-storage-for-cpt/" target="_blank"><?php
 									_e( 'Read more about custom meta storage', 'jet-engine' );

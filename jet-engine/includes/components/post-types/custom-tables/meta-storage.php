@@ -6,6 +6,9 @@ namespace Jet_Engine\CPT\Custom_Tables;
  */
 class Meta_Storage {
 
+	/**
+	 * @var DB
+	 */
 	public $db;
 	public $object_type;
 	public $object_slug;
@@ -334,6 +337,15 @@ class Meta_Storage {
 
 		if ( ! empty( $custom_data['object_ID'] ) ) {
 			unset( $custom_data['object_ID'] );
+		}
+
+		if ( apply_filters( 'jet-engine/custom-meta-tables/storage/merged-meta-as-arrays', true, $object_id, $meta_type, $this ) ) {
+			$custom_data = array_map(
+				function( $value ) {
+					return [ $value ];
+				},
+				$custom_data
+			);
 		}
 
 		return array_merge( $meta_cache, $custom_data );

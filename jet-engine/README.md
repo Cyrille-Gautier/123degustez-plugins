@@ -1,5 +1,101 @@
 # ChangeLog
 
+## 3.8.3
+* ADD: Option Pages. `Automatically load options` control to allow enable/disable options autoloading;
+* UPD: Performance. Split listings-related front-end JS to modules and minify enqueued files;
+* UPD: Blocks Views. Change JetEngine blocks API version to v3 (for improved compatibility with future WP updates);
+* UPD: JetPopup Compatibility. Listing popup and Repeater Queries;
+* UPD: Query Builder. Better support for column aliases in SQL queries;
+* UPD: Bricks + Query Builder. Slider and Accordion elements now supports Query Builder;
+* UPD: https://github.com/Crocoblock/suggestions/issues/8146;
+* FIX: Relations. Issue with listing behvaior, when there is no related items to display;
+* FIX: Security. Better DB values escaping before printing in some cases.
+
+## 3.8.2.1
+* FIX: Escaped refresh cache URL in Workflows UI for better security.
+
+## 3.8.2
+* UPD: https://github.com/Crocoblock/suggestions/issues/1150;
+* FIX: Blocks Views. Ensure numeric type for autoplay and animation speed controls in Listing Grid block;
+* FIX: CCT. Ensure CCT-related single posts are properly deleted during bulk deletion;
+* FIX: Map Listings. Issue with custom map markers fill color;
+* FIX: Bricks Views. Ensure Listing styles correctly enqueued in Bricks popups;
+* FIX: Components. Issue with motion effects on component widgets in Elementor preview.
+
+## 3.8.1.2
+* FIX: Map Listings. More preceise check for permission in get map marker info Rest API endpoint
+
+## 3.8.1.1
+* FIX: missing Block editor script dependency
+
+## 3.8.1
+* ADD: Query Builder. Allow to review all executed SQL in query preview window for any query type;
+* UPD: https://github.com/Crocoblock/suggestions/issues/8151;
+* FIX: CCT. Improve content type current object retrieval in JFB preset;
+* FIX: Query Builder. Incorrect results for Merged Query type in nested Listings;
+* FIX: Query Builder. Correctly process dynamic CSS with Query Gateway feature;
+* FIX: CCT. Date saves incorrectly with use-wp-date and timezone;
+* FIX: Map Listings + CCT. Map Synch filter with CCT geo query;
+* FIX: Issue with macros context in some cases;
+* FIX: Custom Meta Storage. Admin Column sorting doesn't work with custom meta storage;
+* FIX: Advanced Date Field. Issue with Advanced date field and multistep JFB forms;
+* FIX: Map Listings. Improve permissions check for get-marker-info Rest API endpoint.
+
+## 3.8.0
+* ADD: Dynamic Calendar. Multi-day Calendar Widget/Block/Element;
+* ADD: Query Builder. Relations Query type;
+* ADD: Query Builder. Data Store Query type;
+* ADD: Query Builder. Query Calculations dynamic tag;
+* ADD: Blocks Editor. New styles manager UI;
+* ADD: MCP server with JetEngine-specific tools;
+* ADD: Command Center. Agentic UI to use the same tools inside you website admin;
+* ADD: Compatibility with Angie - agentic AI plugin from Elementor.
+
+## 3.7.10.1
+* FIX: relation filter not working in some cases;
+* FIX: error if JetSmartFilters not installed.
+
+## 3.7.10
+* ADD: Map Listings. Allow to use shortcodes and macros in marker conditions;
+* ADD: Dynamic Repeater Widget/Block/Element. Fallback option;
+* UPD: CCT. Improve error notices on CCT creation, when CCT contains SQL reserved words as column names;
+* UPD: https://github.com/Crocoblock/suggestions/issues/8283;
+* FIX: Map Listings. Location & Distance filter not working on redirect with Lazy Load;
+* FIX: CCT + Relations. Relation filters on CCT not merging properly;
+* FIX: Query Builder. Fatal error in Cast to WP_Term SQL;
+* FIX: Dynamic Calendar. Ensure long-term events correctly dispalyed;
+* FIX: Dynamic Field. Gallery Slider callback problem in some cases.
+
+## 3.7.9.1
+* FIX: unable to setup new SQL Query
+
+## 3.7.9
+* UPD: https://github.com/Crocoblock/suggestions/issues/8242;
+* FIX: Map Listings. Unable to open popup from cluster on Leaflet maps;
+* FIX: Listing Injections + Bricks. Problem with injections setup UI;
+* FIX: https://github.com/Crocoblock/suggestions/issues/8188;
+* FIX: https://github.com/Crocoblock/suggestions/issues/8224;
+* FIX: Bricks. Listing Grid Slider breaks inside Nestable Tabs;
+* FIX: Issue with listing objects stack increase/decrease;
+* FIX: Issue with filters pagination and incorrect listing content in some cases;
+* FIX: Option pages. Allow menu name translation;
+* FIX: Woo + JSF. Add to cart URL broken after filtering;
+* FIX: Advanced Date Field. Allow to make end date required. Phase 1;
+* FIX: Components. Issue with dynamic styles for listings inside components;
+* DEPRECATE: Google Maps. OpenStreet geocoding provider. Autocomplete requests not allowed according provider policy.
+
+## 3.7.8
+* UPD: Relations. More precise clearing object cache on relations update;
+* FIX: Map Listings. Critical error if address is not found by OpenStreetMap;
+* FIX: Custom Meta Storage. Correctly copy values from custom meta storage on post duplication;
+* FIX: Dynamic Calenadr. Prevent 'Hide past events' option from hiding events which already started but not yet finished;
+* FIX: https://github.com/Crocoblock/suggestions/issues/8278;
+* FIX: Remove unwanted `<p>` and `<br>` tags around shortcodes in blocks listings;
+* FIX: CCT. Do not CAST numeric fields in queries since they are already stored as numbers in the DB;
+* FIX: Dynamic Visibility. Condition Is odd item / Is even item doesn't work with Load More;
+* FIX: Components. Correctly render background images from component props for different cases;
+* FIX: Ensure HTML attributes properly escaped in some places where it was missed.
+
 ## 3.7.7
 * ADD: Map Listings. Add pin for geolocation of the current user;
 * FIX: Custom Meta Storage. Random order breaks the ordering;

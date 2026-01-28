@@ -38,7 +38,7 @@ abstract class Base {
   * @param string                         $item_id     Item ID.
   * @param string                         $object_name Object name (post/user/etc.).
   * @param \Jet_Engine\Relations\Relation $relation    Relation instance.
-  * 
+  *
   * @return string The title of the specified item.
   */
  abstract public function get_type_item_title( $item_id, $object_name, $relation );
@@ -48,9 +48,9 @@ abstract class Base {
 	 *
 	 * @param string   $item_id     Item ID.
 	 * @param string   $object_name Object name (post/user/etc.).
-	 * 
+	 *
 	 * @param \Jet_Engine\Relations\Relation $relation Relation instance.
-	 * 
+	 *
 	 * @return string Item edit link.
 	 */
 	abstract public function get_type_item_edit_url( $item_id, $object_name, $relation );
@@ -63,6 +63,16 @@ abstract class Base {
 	 * @return [type]          [description]
 	 */
 	abstract public function get_type_item_view_url( $item_id, $object_name, $relation );
+
+	/**
+	 * Returns query type for current relation type.
+	 * Used for match relations query type with appropriate query builder query type.
+	 *
+	 * @return string
+	 */
+	public function get_query_type() {
+		return $this->get_name();
+	}
 
 	/**
 	 * Delete given item.
@@ -136,13 +146,74 @@ abstract class Base {
 		return $final_args;
 	}
 
+	public function filtered_arg( $object_name = '' ) {
+		return '';
+	}
+
+	/**
+	 * Ensure the \Jet_Engine\Relations\Types\Type_Query class is loaded.
+	 *
+	 * @return void
+	 */
+	public function ensure_type_query_classs() {
+		if ( ! class_exists( '\Jet_Engine\Relations\Types\Type_Query' ) ) {
+			require_once jet_engine()->relations->component_path( 'types/type-query.php' );
+		}
+	}
+
+	/**
+	 * Perform a query for the current type by given arguments.
+	 *
+	 * The arguments array should contain `related_items_ids` key which holds
+	 * actual IDs of related items. Arguments should be formatted according
+	 * to the current type logic.
+	 *
+	 * @param array                            $args        Query arguments.
+	 * @param string                           $object_name Object name (post type/user/etc.).
+	 * @param \Jet_Engine\Relations\Relation $relation    Relation instance.
+	 *
+	 * @return array
+	 */
+	abstract public function query( $args, $object_name, $relation );
+
 	/**
 	 * Return JetSmartFilters-prepared query arguments array of given ids for given object type
 	 *
 	 * @return array()
 	 */
 	public function filtered_query_args( $ids = array(), $object_name = '' ) {
-		return array();
+		$arg = $this->filtered_arg( $object_name );
+
+		if ( empty( $arg ) ) {
+			return array();
+		}
+
+		return array( $arg => $ids );
+	}
+
+	/**
+	 * Return JetSmartFilters-prepared query arguments array of given ids for given object type
+	 *
+	 * @return array()
+	 */
+	public function merge_filtered_query_args( $args = array(), $new_args = array(), $object_name = '' ) {
+		$arg = $this->filtered_arg( $object_name );
+
+		if ( empty( $arg ) ) {
+			return $args;
+		}
+
+		if ( ! empty( $args[ $arg ] ) && ! empty( $new_args[ $arg ] ) ) {
+			$args[ $arg ] = array_intersect( $args[ $arg ], $new_args[ $arg ] );
+		} elseif ( ! empty( $new_args[ $arg ] ) ) {
+			$args[ $arg ] = $new_args[ $arg ];
+		}
+
+		if ( empty( $args[ $arg ] ) ) {
+			$args[ $arg ] = array( PHP_INT_MAX );
+		}
+
+		return $args;
 	}
 
 	/**

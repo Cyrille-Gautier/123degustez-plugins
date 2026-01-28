@@ -185,6 +185,16 @@ class Base {
 		return $R * acos( cos( deg2rad( $lat ) ) * cos( deg2rad( $lat2 ) ) * cos( deg2rad( $lng2 ) - deg2rad( $lng ) ) + sin( deg2rad( $lat ) ) * sin( deg2rad( $lat2 ) ) );
 	}
 
+	public function get_bounds( $geo_query ) {
+		$bounds = $geo_query['bounds'];
+
+		foreach ( $bounds as $key => $value ) {
+			$bounds[ $key ] = is_scalar( $value ) ? floatval( $value ) : 0;
+		}
+
+		return $bounds;
+	}
+
 	/**
 	 * Determines if the geographical bounds should be applied to the query.
 	 *

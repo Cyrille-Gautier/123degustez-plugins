@@ -11,7 +11,7 @@ if ( ! defined( 'WPINC' ) ) {
 class Base extends \Bricks\Element {
 
 	use \Jet_Engine\Modules\Performance\Traits\Prevent_Wrap;
-	
+
 	// Element properties
 	public $category     = 'general'; // Use predefined element category 'general'
 	public $name         = ''; // Make sure to prefix your elements
@@ -33,7 +33,7 @@ class Base extends \Bricks\Element {
 	/**
 	 * Register new control group
 	 * You can't add elements into new groups without registering these groups before
-	 * 
+	 *
 	 * @param  [type] $name [description]
 	 * @param  array  $data [description]
 	 * @return [type]       [description]
@@ -48,7 +48,7 @@ class Base extends \Bricks\Element {
 	 * @return [type]        [description]
 	 */
 	public function start_jet_control_group( $group ) {
-		
+
 		$data = isset( $this->control_groups[ $group ] ) ? $this->control_groups[ $group ] : [];
 		$this->current_jet_tab = isset( $data['tab'] ) ? $data['tab'] : 'content';
 
@@ -67,7 +67,7 @@ class Base extends \Bricks\Element {
 
 	/**
 	 * Wrapper to register control
-	 * 
+	 *
 	 * @param  [type] $name [description]
 	 * @param  array  $data [description]
 	 * @return [type]       [description]
@@ -90,7 +90,7 @@ class Base extends \Bricks\Element {
 		if ( ! $setting ) {
 			return $this->settings;
 		}
-		
+
 		$value = null;
 
 		if ( isset( $this->settings[ $setting ] ) ) {
@@ -120,7 +120,7 @@ class Base extends \Bricks\Element {
 		} else {
 			return false;
 		}
-		
+
 	}
 
 	public function is_requested_element() {
@@ -160,8 +160,8 @@ class Base extends \Bricks\Element {
 			$settings['_element_id'] = $this->get_jet_el_id();
 			$settings = array_merge( $settings, $add_settings );
 
-			$this->jet_element_render_instance = jet_engine()->listings->get_render_instance( 
-				$this->jet_element_render, 
+			$this->jet_element_render_instance = jet_engine()->listings->get_render_instance(
+				$this->jet_element_render,
 				$this->parse_jet_render_attributes( $settings )
 			);
 

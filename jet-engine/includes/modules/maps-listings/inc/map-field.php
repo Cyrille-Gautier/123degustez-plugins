@@ -103,10 +103,14 @@ class Map_Field {
 			$args['description'] .= $this->get_field_description( $field_prefix );
 		}
 
+		$provider_id      = Module::instance()->settings->get( 'geocode_provider' );
+		$geocode_provider = Module::instance()->providers->get_providers( 'geocode', $provider_id );
+
 		$field_settings = array(
 			'height'       => ! empty( $field['map_height'] ) ? $field['map_height'] : '300',
 			'format'       => $value_format,
 			'field_prefix' => $field_prefix,
+			'provider_notice' => $geocode_provider->get_map_field_notice(),
 		);
 
 		$args['extra_attr'] = array(
@@ -215,6 +219,13 @@ class Map_Field {
 				<div class="jet-engine-map-field__search-loader"></div>
 				<ul class="jet-engine-map-field__search-list"></ul>
 			</div>
+			<# if ( data.providerNotice ) { #>
+			<div class="jet-engine-map-field__provider_notice">
+				<p>
+					<strong>Note: </strong>{{{data.providerNotice}}}
+				</p>
+			</div>
+			<# } #>
 			<div class="jet-engine-map-field__frame" style="height:{{{data.height}}}px"></div>
 			<# if ( data.isRepeater ) { #>
 			<div class="jet-engine-map-field__description">

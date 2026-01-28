@@ -106,7 +106,14 @@
 									style="color: darkred; font-size: 1.1em; display: block !important;"
 									v-if="isShowMultipleMetaOrderNotice( order._id )"
 								>
-								You selected order by <b>meta value</b> in multiple order clauses. <b>Only the first clause will work.</b> If you need to order by multiple meta values, follow <a href="https://crocoblock.com/knowledge-base/jetengine/how-to-set-up-order-offset-query-by-two-meta-fields/">this tutorial</a>
+								<b>NOTE:</b> You selected order by <b>meta value</b> in multiple order clauses. <b>Only the first clause will work.</b> If you need to order by multiple meta values, follow <a href="https://crocoblock.com/knowledge-base/jetengine/how-to-set-up-order-offset-query-by-two-meta-fields/">this tutorial</a>
+								</div>
+								<div
+									class="cx-vui-component"
+									style="color: darkred; font-size: 1.1em; display: block !important;"
+									v-if="query.orderby[ index ].orderby === 'relevance' && query.orderby?.length > 1"
+								>
+								<b>NOTE:</b> Order by search terms relevance works only if there is no more than one order clause.<br/> Please, remove other order clauses if you need to order by search terms relevance.
 								</div>
 								<cx-vui-input
 									label="<?php _e( 'Meta key', 'jet-engine' ); ?>"
@@ -274,19 +281,19 @@
 									:options-list="[
 										{
 											value: 'term_id',
-											label: '<?php _e( 'Term ID', 'jet-engine' ); ?>',
+											label: '<?php echo esc_js( __( 'Term ID', 'jet-engine' ) ); ?>',
 										},
 										{
 											value: 'name',
-											label: '<?php _e( 'Name', 'jet-engine' ); ?>',
+											label: '<?php echo esc_js( __( 'Name', 'jet-engine' ) ); ?>',
 										},
 										{
 											value: 'slug',
-											label: '<?php _e( 'Slug', 'jet-engine' ); ?>',
+											label: '<?php echo esc_js( __( 'Slug', 'jet-engine' ) ); ?>',
 										},
 										{
 											value: 'term_taxonomy_id',
-											label: '<?php _e( 'Term taxonomy ID', 'jet-engine' ); ?>',
+											label: '<?php echo esc_js( __( 'Term taxonomy ID', 'jet-engine' ) ); ?>',
 										},
 									]"
 									size="fullwidth"

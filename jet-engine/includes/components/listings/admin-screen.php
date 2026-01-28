@@ -75,14 +75,14 @@ class Jet_Engine_Listing_Admin_Screen {
 			array(
 				'listing_items' => sprintf(
 					'<a href="%1$s" %3$s>%2$s <span class="count">(%4$s)</span></a>',
-					add_query_arg( [ 'entry_type' => 'listing' ], $base_url ),
+					add_query_arg( [ 'entry_type' => 'listing' ], esc_url( $base_url ) ),
 					esc_html__( 'Listing Items', 'jet-engine' ),
 					( ! empty( $_GET['entry_type'] ) && 'listing' === $_GET['entry_type'] ) ? 'class="current" aria-current="page"' : '',
 					isset( $counts['listing'] ) ? $counts['listing']->posts_count : 0
 				),
 			),
 			$counts,
-			$base_url
+			esc_url( $base_url )
 		), $views );
 		// phpcs:enable
 

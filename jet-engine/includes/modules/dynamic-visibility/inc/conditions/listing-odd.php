@@ -12,6 +12,17 @@ class Listing_Odd extends Listing_Even {
 		return 'listing-odd';
 	}
 
+	public function get_custom_controls() {
+		return array(
+			'adjust_for_pagination' => array(
+				'label'       => __( 'Adjust for pagination', 'jet-engine' ),
+				'description' => __( 'Enable if you need to adjust for pagination or Load More.', 'jet-engine' ),
+				'type'        => 'switcher',
+				'default'     => '',
+			),
+		);
+	}
+
 	/**
 	 * Returns condition name
 	 *
@@ -27,7 +38,7 @@ class Listing_Odd extends Listing_Even {
 	 * @return [type] [description]
 	 */
 	public function check_index( $args ) {
-		$index = $this->get_item_index();
+		$index = $this->get_item_index( $args['condition_settings'] ?? array() );
 		return ( 0 !== ( $index % 2 ) ) ? true : false;
 	}
 

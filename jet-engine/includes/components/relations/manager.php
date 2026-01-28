@@ -133,7 +133,7 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 		require_once $this->component_path( 'dynamic-tags/related-siblings.php' );
 		require_once $this->component_path( 'dynamic-tags/related-items-count.php' );
 		require_once $this->component_path( 'dynamic-tags/related-item-meta.php' );
-		
+
 		$tags_module->register_tag( $dynamic_tags, new Dynamic_Tags\Related_Items() );
 		$tags_module->register_tag( $dynamic_tags, new Dynamic_Tags\Related_Siblings() );
 		$tags_module->register_tag( $dynamic_tags, new Dynamic_Tags\Related_Items_Count() );
@@ -285,6 +285,17 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 		return jet_engine()->plugin_path( 'includes/components/relations/' . $path_inside_component );
 	}
 
+
+	/**
+	 * Return URL to file inside component
+	 *
+	 * @param  [type] $path_inside_component [description]
+	 * @return [type]                        [description]
+	 */
+	public function component_url( $path_inside_component ) {
+		return jet_engine()->plugin_url( 'includes/components/relations/' . $path_inside_component );
+	}
+
 	/**
 	 * Init data instance
 	 *
@@ -297,12 +308,15 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 		require_once $this->component_path( 'sources.php' );
 		require_once $this->component_path( 'mix-type-helper.php' );
 		require_once $this->component_path( 'storage/manager.php' );
+		require_once $this->component_path( 'query-builder/manager.php' );
+		require_once $this->component_path( 'traits/related-items-by-args.php' );
 
 		$this->types_helper = new Types_Helper();
 		$this->sources      = new Sources();
 		$this->storage      = new Storage\Manager();
 		$this->data         = new Data( $this );
 
+		Query_Builder\Manager::instance();
 	}
 
 	/**
@@ -406,9 +420,9 @@ class Manager extends \Jet_Engine_Base_WP_Intance {
 			$this->register_legacy_relations( $legacy_relations );
 		}
 
-		add_action( 'jet-engine/relation/update/after', array( $this, 'flush_cache' ), 10, 0 );
-		add_action( 'jet-engine/relation/delete/after', array( $this, 'flush_cache' ), 10, 0 );
-		add_action( 'jet-engine/relation/update-all-meta/after', array( $this, 'flush_cache' ), 10, 0 );
+		// add_action( 'jet-engine/relation/update/after', array( $this, 'flush_cache' ), 10, 0 );
+		// add_action( 'jet-engine/relation/delete/after', array( $this, 'flush_cache' ), 10, 0 );
+		// add_action( 'jet-engine/relation/update-all-meta/after', array( $this, 'flush_cache' ), 10, 0 );
 
 	}
 

@@ -19,6 +19,9 @@ class Query_Editor {
 		add_action( 'jet-engine/rest-api/init-endpoints', array( $this, 'register_query_types' ) );
 
 		add_action( 'jet-engine/query-builder/editor/before-enqueue-scripts', array( $this, 'enqueue_editor_components' ) );
+
+		// Fall back to extra-call for register types
+		add_action( 'jet-engine/query-builder/editor/types', array( $this, 'register_query_types' ) );
 	}
 
 	/**
@@ -48,7 +51,6 @@ class Query_Editor {
 		$this->register_type( new Query_Editor\Merged_Query() );
 
 		do_action( 'jet-engine/query-builder/query-editor/register', $this );
-
 	}
 
 	/**

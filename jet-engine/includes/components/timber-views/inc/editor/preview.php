@@ -37,9 +37,15 @@ class Preview {
 			] );
 		}
 
-		if ( empty( $_POST['id'] ) || ! current_user_can( 'edit_post', $_POST['id'] ) ) {
+		if ( empty( $_POST['id'] ) ) {
 			wp_send_json_error( [
-				'message' => __( 'You do not have access to given post', 'jet-engine' ),
+				'message' => __( 'Incomplete request', 'jet-engine' ),
+			] );
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( [
+				'message' => __( 'You do not have permission to perform this action', 'jet-engine' ),
 			] );
 		}
 

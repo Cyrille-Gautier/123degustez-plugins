@@ -56,7 +56,7 @@ class Field_Parser extends Field_Data_Parser implements Multiple_Parsers {
 		}
 
 		$date_parts = array(
-			$raw_value['date'],
+			! empty( $raw_value['date'] ) ? $raw_value['date'] : '',
 			! empty( $raw_value['time'] ) ? $raw_value['time'] : '00:00:00',
 		);
 
@@ -79,7 +79,11 @@ class Field_Parser extends Field_Data_Parser implements Multiple_Parsers {
 		$rrule_parser->set_name( $this->name . '__rrule' );
 		$rrule_parser->set_value( $recurring_dates->generate_rrule() );
 
-		if ( $is_reccuring && ! empty( $raw_value['date'] ) ) {
+		$has_empty_end = $this->has_empty_required_dates( $raw_value );
+
+		if ( $has_empty_end ) {
+			$new_value = '';
+		} elseif ( $is_reccuring && ! empty( $raw_value['date'] ) ) {
 			// Set recurrency dates into the new value
 			$new_value = $recurring_dates->with_end_dates( $recurring_dates->with_start_date(
 				$recurring_dates->generate( true )
@@ -94,6 +98,55 @@ class Field_Parser extends Field_Data_Parser implements Multiple_Parsers {
 		yield $this;
 		yield $config_parser;
 		yield $rrule_parser;
+	}
+
+	/**
+	 * Validate required date fields.
+	 *
+	 * Rules:
+	 * - If `required` is false → skip validation.
+	 * - If `required` is true → check that `date` is not empty.
+	 * - If both `required` and `end_date_required` are true → also check `end_date`.
+	 *
+	 * Works for both manual (multiple dates) and single date modes.
+	 *
+	 * @param array $raw_value Raw input data.
+	 * @return bool True if required fields are empty (invalid), false otherwise.
+	 */
+	public function has_empty_required_dates( $raw_value ) {
+		$required          = ! empty( $this->settings['required'] );
+		$end_date_required = ! empty( $this->settings['end_date_required'] );
+
+		// field is not required at all
+		if ( ! $required ) {
+			return false;
+		}
+
+		// field required, need validation
+		if ( ! empty( $raw_value['dates'] ) && is_array( $raw_value['dates'] ) ) {
+			foreach ( $raw_value['dates'] as $date_item ) {
+				// Check "date"
+				if ( empty( $date_item['date'] ) ) {
+					return true;
+				}
+
+				// Check "end_date" only if end_date_required = true
+				if ( $end_date_required && ! empty( $date_item['is_end_date'] ) && empty( $date_item['end_date'] ) ) {
+					return true;
+				}
+			}
+		} else {
+			// Single date mode
+			if ( empty( $raw_value['date'] ) ) {
+				return true;
+			}
+
+			if ( $end_date_required && ! empty( $raw_value['is_end_date'] ) && empty( $raw_value['end_date'] ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

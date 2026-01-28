@@ -10,6 +10,8 @@ namespace Jet_Engine\Relations\Macros;
  */
 class Get_Related_Items extends \Jet_Engine_Base_Macros {
 
+	use \Jet_Engine\Relations\Traits\Related_Items_By_Args;
+
 	/**
 	 * Returns macros tag
 	 *
@@ -35,48 +37,20 @@ class Get_Related_Items extends \Jet_Engine_Base_Macros {
 	 */
 	public function macros_callback( $args = array() ) {
 
-		$rel_id          = isset( $args['rel_id'] ) ? $args['rel_id'] : false;
-		$rel_object      = isset( $args['rel_object'] ) ? $args['rel_object'] : 'child_object';
-		$rel_object_from = isset( $args['rel_object_from'] ) ? $args['rel_object_from'] : 'current_object';
-		$rel_object_var  = isset( $args['rel_object_var'] ) ? $args['rel_object_var'] : '';
-
-		if ( ! $rel_id ) {
-			return;
+		$related_ids = $this->get_related_items( $args );
+		
+		if ( apply_filters( 'jet-engine/relations/macros/get-related/empty-if-no-object', false ) && ! is_array( $related_ids ) ) {
+			return '';
 		}
 
-		$relation = jet_engine()->relations->get_active_relations( $rel_id );
+		$related_ids = ! empty( $related_ids ) ? $related_ids : array( PHP_INT_MAX );	
 
-		if ( ! $relation ) {
-			return;
-		}
-
-		$object_id = false;
-
-		if ( $rel_object_from ) {
-
-			$object_id = jet_engine()->relations->sources->get_id_by_source( $rel_object_from, $rel_object_var );
-
-			if ( ! $object_id ) {
-				return false;
-			}
-
-		}
-
-		$related_ids = array();
-
-		switch ( $rel_object ) {
-			case 'parent_object':
-				$related_ids = $relation->get_parents( $object_id, 'ids' );
-				break;
-
-			default:
-				$related_ids = $relation->get_children( $object_id, 'ids' );
-				break;
-		}
-
-		$related_ids = ! empty( $related_ids ) ? $related_ids : array( PHP_INT_MAX );
-
-		do_action( 'jet-engine/relations/macros/get-related', $relation, $related_ids, $this );
+		do_action(
+			'jet-engine/relations/macros/get-related',
+			$this->get_relation( $args ),
+			$related_ids,
+			$this
+		);
 
 		return implode( ',', $related_ids );
 

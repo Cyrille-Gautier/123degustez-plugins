@@ -51,7 +51,8 @@ abstract class Base_Query {
 	}
 
 	/**
-	 * Returns query type for 3rd party integrations. For any internal usage take property directly
+	 * Returns query type for 3rd party integrations.
+	 * For any internal usage take property directly
 	 *
 	 * @return string
 	 */
@@ -339,11 +340,13 @@ abstract class Base_Query {
 		$this->final_query['_query_type']       = $this->query_type;
 		$this->final_query['queried_object_id'] = jet_engine()->listings->data->get_current_object_id();
 
-		jet_engine()->admin_bar->register_item( $this->get_instance_id(), array(
-			'title'        => $this->get_instance_name(),
-			'sub_title'    => __( 'Query', 'jet-engine' ),
-			'href'         => admin_url( 'admin.php?page=jet-engine-query&query_action=edit&id=' . $this->id ),
-		) );
+		if ( ! empty( $this->id ) ) {
+			jet_engine()->admin_bar->register_item( $this->get_instance_id(), array(
+				'title'        => $this->get_instance_name(),
+				'sub_title'    => __( 'Query', 'jet-engine' ),
+				'href'         => admin_url( 'admin.php?page=jet-engine-query&query_action=edit&id=' . $this->id ),
+			) );
+		}
 
 		/**
 		 * Before get query items
@@ -471,7 +474,7 @@ abstract class Base_Query {
 					}
 				}
 			}
-			
+
 			return $result;
 		} else {
 			$result = $val;
@@ -651,7 +654,9 @@ abstract class Base_Query {
 		return apply_filters( 'jet-engine/query-builder/query/debug-info', $this->_debug_info(), $this );
 	}
 
-	public function _debug_info() {}
+	public function _debug_info() {
+		return array();
+	}
 
 	public function get_start_item_index_on_page() {
 
@@ -679,5 +684,4 @@ abstract class Base_Query {
 
 		return ( $page - 1 ) * $per_page + $items_page_count;
 	}
-
 }

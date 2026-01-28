@@ -74,13 +74,42 @@ class Product_Field_Tag extends \Elementor\Core\DynamicTags\Tag {
 			return;
 		}
 
+		add_filter( 'woocommerce_product_add_to_cart_url', [ $this, 'maybe_fix_add_to_cart_url' ], 10, 2 );
+
 		$result = jet_engine()->listings->data->get_prop( $field, $product );
+
+		remove_filter( 'woocommerce_product_add_to_cart_url', [ $this, 'maybe_fix_add_to_cart_url' ] );
 
 		if ( ! $result ) {
 			return;
 		}
 
 		echo $result; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	function maybe_fix_add_to_cart_url( $url, $product ) {
+		// Avoid running if URL is already good.
+		if ( ! function_exists( 'jet_smart_filters' ) || ! jet_smart_filters()->query->is_ajax_filter() ) {
+			return $url;
+		}
+
+		if (
+			! str_contains( $url, 'admin-ajax.php' )
+			&& ! str_contains( $url, 'jsf_ajax=1' )
+		) {
+			return $url;
+		}
+
+		// Detect real frontend context URL.
+		$current_url = '';
+
+		// Fallback to referer
+		if ( ! empty( $_SERVER['HTTP_REFERER'] ) ) {
+			$current_url = esc_url_raw( $_SERVER['HTTP_REFERER'] );
+		}
+
+		// Add to cart param
+		return add_query_arg( 'add-to-cart', $product->get_id(), $current_url );
 	}
 
 }

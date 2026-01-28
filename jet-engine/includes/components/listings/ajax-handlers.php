@@ -449,6 +449,11 @@ if ( ! class_exists( 'Jet_Engine_Listings_Ajax_Handlers' ) ) {
 			$render_instance->view = $view_type;
 			$render_instance->listing_id = $listing_id;
 
+			if ( isset( $render_instance->query_vars ) ) {
+				$render_instance->query_vars['request']['posts_per_page'] = $query['posts_per_page'] ?? 3;
+				$render_instance->query_vars['page'] = $page;
+			}
+
 			$render_instance->posts_loop(
 				$posts,
 				$widget_settings,

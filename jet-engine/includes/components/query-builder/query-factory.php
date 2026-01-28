@@ -20,6 +20,11 @@ class Query_Factory {
 
 		$id   = absint( $data['id'] );
 		$args = maybe_unserialize( $data['args'] );
+
+		if ( ! is_array( $args ) || empty( $args['query_type'] ) ) {
+			return;
+		}
+
 		$type = $args['query_type'];
 
 		if ( ! empty( $data['labels'] ) ) {
@@ -59,6 +64,11 @@ class Query_Factory {
 
 	}
 
+	/**
+	 * Get query instance
+	 *
+	 * @return false|Base_Query
+	 */
 	public function get_query() {
 
 		$class = $this->get_query_class( $this->type );
@@ -66,12 +76,30 @@ class Query_Factory {
 		if ( $class && class_exists( $class ) ) {
 			$query = new $class( $this->config );
 			$query->maybe_register_rest_api_endpoint();
-			
+
 			return $query;
 		}
 
 		return false;
 
+	}
+
+	/**
+	 * Get default query types
+	 *
+	 * @return array
+	 */
+	public static function get_default_query_types() {
+		return array(
+			'sql'              => __NAMESPACE__ . '\Queries\SQL_Query',
+			'posts'            => __NAMESPACE__ . '\Queries\Posts_Query',
+			'terms'            => __NAMESPACE__ . '\Queries\Terms_Query',
+			'users'            => __NAMESPACE__ . '\Queries\Users_Query',
+			'comments'         => __NAMESPACE__ . '\Queries\Comments_Query',
+			'repeater'         => __NAMESPACE__ . '\Queries\Repeater_Query',
+			'current-wp-query' => __NAMESPACE__ . '\Queries\Current_WP_Query',
+			'merged-query'     => __NAMESPACE__ . '\Queries\Merged_Query',
+		);
 	}
 
 	public static function ensure_queries() {
@@ -92,27 +120,22 @@ class Query_Factory {
 			require_once Manager::instance()->component_path( 'queries/current-wp-query.php' );
 			require_once Manager::instance()->component_path( 'queries/merged-query.php' );
 
-			$defaults = array(
-				'sql'              => __NAMESPACE__ . '\Queries\SQL_Query',
-				'posts'            => __NAMESPACE__ . '\Queries\Posts_Query',
-				'terms'            => __NAMESPACE__ . '\Queries\Terms_Query',
-				'users'            => __NAMESPACE__ . '\Queries\Users_Query',
-				'comments'         => __NAMESPACE__ . '\Queries\Comments_Query',
-				'repeater'         => __NAMESPACE__ . '\Queries\Repeater_Query',
-				'current-wp-query' => __NAMESPACE__ . '\Queries\Current_WP_Query',
-				'merged-query'     => __NAMESPACE__ . '\Queries\Merged_Query',
-			);
-
-			foreach ( $defaults as $type => $class ) {
+			foreach ( self::get_default_query_types() as $type => $class ) {
 				self::register_query( $type, $class );
 			}
 
 			do_action( 'jet-engine/query-builder/queries/register', get_called_class() );
-
 		}
 
 	}
 
+	/**
+	 * Register a new query type.
+	 *
+	 * @param  string $type
+	 * @param  string $class
+	 * @return void
+	 */
 	public static function register_query( $type, $class ) {
 		self::$_queries[ $type ] = $class;
 	}
@@ -123,8 +146,16 @@ class Query_Factory {
 	 * @param  [type] $type [description]
 	 * @return [type]       [description]
 	 */
-	public function get_query_class( $type ) {
+	public static function get_query_class( $type ) {
 		return isset( self::$_queries[ $type ] ) ? self::$_queries[ $type ] : false;
 	}
 
+	/**
+	 * Returns all registered query types
+	 *
+	 * @return array
+	 */
+	public static function get_query_types() {
+		return array_keys( self::$_queries );
+	}
 }

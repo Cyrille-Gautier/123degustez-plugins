@@ -204,6 +204,8 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Field' ) ) {
 					'label'        => __( 'Icon Horizontal Gap', 'jet-engine' ),
 					'type'         => 'range',
 					'separator'    => 'before',
+					'min'          => -50,
+					'max'          => 50,
 					'css_selector' => array(
 						'body:not(.rtl) ' . $this->css_selector( ' .jet-listing-dynamic-field__icon' ) => 'margin-right: {{VALUE}}px;',
 						'body.rtl ' . $this->css_selector( ' .jet-listing-dynamic-field__icon' ) => 'margin-left: {{VALUE}}px;',
@@ -216,6 +218,8 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Field' ) ) {
 					'id'           => 'icon_gap',
 					'label'        => __( 'Icon Vertical Gap', 'jet-engine' ),
 					'type'         => 'range',
+					'min'          => -50,
+					'max'          => 50,
 					'css_selector' => array(
 						$this->css_selector( ' .jet-listing-dynamic-field__icon' ) => 'margin-top: {{VALUE}}px;',
 					),
@@ -331,6 +335,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Field' ) ) {
 					'label'        => __( 'Border Radius', 'jet-engine' ),
 					'type'         => 'dimensions',
 					'separator'    => 'before',
+					'is_legacy'    => true,
 					'css_selector' => array(
 						$this->css_selector( '.jet-listing-dynamic-field__content' ) => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
 					),
@@ -344,7 +349,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Field' ) ) {
 		 * @return [type] [description]
 		 */
 		public function dom_default_styles() {
-			
+
 			if ( $this->prevent_wrap() ) {
 				return;
 			}
@@ -400,8 +405,11 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Field' ) ) {
 							'icon'  => ! is_rtl() ? 'dashicons-editor-alignright' : 'dashicons-editor-alignleft',
 						),
 					),
-					'css_selector'  => array(
+					'legacy_css_selector'  => array(
 						$this->css_selector() => 'justify-content: {{VALUE}};',
+					),
+					'css_selector'  => array(
+						$this->css_selector( ' .jet-listing-dynamic-field.display-inline' ) => 'justify-content: {{VALUE}};',
 					),
 					'condition' => array(
 						'field_display' => 'inline',
@@ -499,6 +507,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Field' ) ) {
 					'label'        => __( 'Border Radius', 'jet-engine' ),
 					'type'         => 'dimensions',
 					'separator'    => 'before',
+					'is_legacy'    => true,
 					'css_selector' => array(
 						$this->css_selector( '.display-multiline' ) => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
 						$this->css_selector( '.display-inline .jet-listing-dynamic-field__inline-wrap' ) => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',

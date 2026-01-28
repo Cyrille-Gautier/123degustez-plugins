@@ -48,6 +48,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 			'multiple_marker_types'      => false,
 			'multiple_markers'           => array(),
 			'marker_clustering'          => 'true',
+			'is_custom_marker_cluster_images' => false,
 			'popup_pin'                  => false,
 			'popup_preloader'            => false,
 			'custom_query'               => false,
@@ -134,7 +135,6 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 					} else {
 						$address = Module::instance()->lat_lng->get_address_from_fields_group( $post, $fields );
 					}
-
 				}
 
 				if ( ! $address && $add_lat_lng && $lat_lng_address ) {
@@ -238,7 +238,6 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 			}
 
 			jet_engine()->listings->data->set_current_object( $initial_object );
-
 		}
 
 		$result = apply_filters( 'jet-engine/maps-listing/map-markers', $result );
@@ -248,7 +247,6 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 		} else {
 			return $result;
 		}
-
 	}
 
 	public function set_source( $obj, $settings ) {
@@ -297,11 +295,12 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 						$query = \Jet_Engine\Query_Builder\Manager::instance()->get_query_by_id( $this->listing_query_id );
 
 						if ( $query ) {
-							$source = str_replace( '-', '_', $query->query_type );
+							$source = str_replace( '-', '_', $query->get_query_type() );
 						}
 					}
 
 					$source = apply_filters( 'jet-engine/maps-listing/source', $source, $obj );
+					break;
 			}
 		}
 
@@ -319,7 +318,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 		if ( $conditional_marker ) {
 			return $conditional_marker;
 		}
-		
+
 		$type = ! empty( $settings['marker_type'] ) ? $settings['marker_type'] : 'image';
 
 		switch ( $type ) {
@@ -341,7 +340,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 		if ( empty( $image ) ) {
 			return false;
 		}
-		
+
 		if ( is_array( $image ) && isset( $image['id'] ) ) {
 			$image = $image['id'];
 		}
@@ -411,7 +410,8 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 					if ( $field ) {
 
 						$field_value = ! empty( $marker['field_value'] ) ? $marker['field_value'] : false;
-
+						$field_value = jet_engine()->listings->macros->do_macros( $field_value );
+						$field_value = do_shortcode( $field_value );
 
 						if ( $this->source ) {
 							$source      = Module::instance()->sources->get_source( $this->source );
@@ -560,6 +560,22 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 		return $color;
 	}
 
+	public function get_image_url( $image ) {
+		$url = '';
+
+		if ( ! $image ) {
+			return false;
+		} elseif ( is_array( $image ) && empty( $image['url'] ) ) {
+			return false;
+		} elseif ( is_array( $image ) ) {
+			$url = $image['url'];
+		} else {
+			$url = $image;
+		}
+
+		return $url;
+	}
+
 	/**
 	 * Returns marker data
 	 *
@@ -628,7 +644,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 					return false;
 				} else {
 					$icon_style = '';
-					
+
 					if ( empty( $settings['marker_custom_class'] ) || ! is_string( $settings['marker_custom_class'] ) ) {
 						$icon_class = 'jet-map-marker';
 					} else {
@@ -688,7 +704,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 						$atts['style'] = $icon_style;
 					}
 
-					$icon_html      = \Jet_Engine_Tools::render_icon( $icon, $icon_class, $atts, $image_size, true );
+					$icon_html      = \Jet_Engine_Tools::render_icon( $icon, $icon_class, $atts, $image_size );
 					$result['html'] = $icon_html;
 					return $result;
 				}
@@ -799,7 +815,54 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 		$provider = Module::instance()->providers->get_active_map_provider();
 		$settings = $provider->prepare_render_settings( $settings );
 
-		$marker_clustering = isset( $settings['marker_clustering'] ) ? filter_var( $settings['marker_clustering'], FILTER_VALIDATE_BOOLEAN ) : true;
+		$marker_clustering             = isset( $settings['marker_clustering'] ) ? filter_var( $settings['marker_clustering'], FILTER_VALIDATE_BOOLEAN ) : true;
+		$custom_cluster_images         = array();
+		$custom_cluster_images_enabled = isset( $settings['is_custom_marker_cluster_images'] ) ? filter_var( $settings['is_custom_marker_cluster_images'], FILTER_VALIDATE_BOOLEAN ) : false;
+
+		switch ( $provider->get_id() ) {
+			case 'google':
+			case 'leaflet':
+				if ( ! $custom_cluster_images_enabled || empty( $settings['marker_cluster_images'] ) || ! is_array( $settings['marker_cluster_images'] ) ) {
+					break;
+				}
+
+				$custom_clusters = array_values( $settings['marker_cluster_images'] );
+
+				foreach ( $custom_clusters as $i => $item ) {
+					$width = ! empty( $item['cluster_width'] ) ? $item['cluster_width'] : 0;
+
+					if ( ! empty( $item['cluster_image']['id'] ) ) {
+						$image_id = $item['cluster_image']['id'];
+					} elseif ( is_numeric( $item['cluster_image'] ?? '' ) ) {
+						$image_id = $item['cluster_image'];
+					} else {
+						$image_url = $this->get_image_url( $item['cluster_image'] ?? false );
+						$image_id = attachment_url_to_postid( $image_url );
+					}
+
+					if ( $image_id ) {
+						$crop_width = ! empty( $width ) ? $width : 300;
+						$image_url = wp_get_attachment_image_url( $image_id, array( $crop_width, $crop_width ) );
+					}
+					
+					if ( ! $image_url ) {
+						continue;
+					}
+
+					$custom_cluster = array(
+						'url'             => $image_url,
+						'width'           => $width,
+					);
+
+					// if ( ! empty( $item['_id'] ) && is_scalar( $item['_id'] ) ) {
+					// 	$custom_cluster['classes'][] = 'elementor-repeater-item-' . $item['_id'];
+					// }
+
+					$custom_cluster_images[] = $custom_cluster;
+				}
+				
+				break;
+		}
 
 		jet_engine()->frontend->set_listing( absint( $settings['lisitng_id'] ) );
 
@@ -869,6 +932,7 @@ class Render extends \Jet_Engine_Render_Listing_Grid {
 			'popupPreloader'   => $popup_preloader,
 			'querySeparator'   => ! empty( $permalink_structure ) ? '?' : '&',
 			'markerClustering' => $marker_clustering,
+			'customClusterImg' => $marker_clustering ? $custom_cluster_images : [],
 			'clusterMaxZoom'   => ! empty( $settings['cluster_max_zoom'] ) ? absint( $settings['cluster_max_zoom'] ) : '',
 			'clusterRadius'    => ! empty( $settings['cluster_radius'] ) ? absint( $settings['cluster_radius'] ) : '',
 			'popupOpenOn'      => ! empty( $settings['popup_open_on'] ) ? $settings['popup_open_on'] : 'click',

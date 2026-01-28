@@ -150,7 +150,6 @@ class Posts extends Base {
 		}
 
 		return wp_trash_post( $item_id );
-
 	}
 
 	/**
@@ -168,7 +167,6 @@ class Posts extends Base {
 				'type'  => 'text',
 			),
 		), $object_name, $relation );
-
 	}
 
 	/**
@@ -210,6 +208,80 @@ class Posts extends Base {
 	}
 
 	/**
+	 * Query posts of given post type by provided arguments.
+	 *
+	 * @param array                            $args        Query arguments.
+	 * @param string                           $object_name Post type name.
+	 * @param \Jet_Engine\Relations\Relation $relation    Relation instance.
+	 *
+	 * @return object
+	 */
+	public function query( $args, $object_name, $relation ) {
+
+		$this->ensure_type_query_classs();
+
+		if ( ! post_type_exists( $object_name ) ) {
+			return new Type_Query();
+		}
+
+		$ids = isset( $args['related_items_ids'] ) ? $args['related_items_ids'] : array();
+
+		if ( empty( $ids ) ) {
+			return new Type_Query();
+		}
+
+		// adjust the rest of the known arguments according WP_Query format.
+		if ( ! empty( $args['max_items'] ) ) {
+			$args['posts_per_page'] = absint( $args['max_items'] );
+		}
+
+		if ( ! empty( $args['page'] ) ) {
+			$args['paged'] = absint( $args['page'] );
+		}
+
+		if ( ! empty( $args['include'] ) ) {
+			$ids = array_intersect( $ids, (array) $args['include'] );
+		}
+
+		if ( ! empty( $args['exclude'] ) ) {
+			$ids = array_diff( $ids, (array) $args['exclude'] );
+			unset( $args['exclude'] );
+		}
+
+		if ( empty( $ids ) ) {
+			return new Type_Query();
+		}
+
+		$query_args = wp_parse_args(
+			$args,
+			array(
+				'post_type'      => $object_name,
+				'post_status'    => 'any',
+				'posts_per_page' => -1,
+			)
+		);
+
+		$query_args['post__in'] = $ids;
+		unset( $query_args['related_items_ids'] );
+
+		if ( empty( $query_args['orderby'] ) ) {
+			$query_args['orderby'] = 'post__in';
+		}
+
+		$query = new \WP_Query( $query_args );
+
+		$query_args['_query_type'] = $this->get_query_type();
+
+		return apply_filters(
+			'jet-engine/relations/types/posts/query',
+			new Type_Query( $query->posts, (int) $query->found_posts, $query_args ),
+			$query,
+			$object_name,
+			$relation
+		);
+	}
+
+	/**
 	 * Returns object of current type by item ID of this object
 	 *
 	 * @return [type] [description]
@@ -241,13 +313,8 @@ class Posts extends Base {
 
 	}
 
-	/**
-	 * Return JetSmartFilters-prepared query arguments array of given ids for given object type
-	 *
-	 * @return array()
-	 */
-	public function filtered_query_args( $ids = array(), $object_name = '' ) {
-		return array( 'post__in' => $ids );
+	public function filtered_arg( $object_name = '' ) {
+		return 'post__in';
 	}
 
 	/**

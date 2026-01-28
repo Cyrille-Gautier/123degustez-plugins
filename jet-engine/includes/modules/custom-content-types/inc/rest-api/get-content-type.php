@@ -54,9 +54,22 @@ class Get_Content_Type extends \Jet_Engine_Base_API_Endpoint {
 
 		}
 
+		$table_exists = \Jet_Engine\Modules\Custom_Content_Types\DB::custom_table_exists( $content_type['slug'] );
+		$type_object  = \Jet_Engine\Modules\Custom_Content_Types\Module::instance()->manager->get_content_types( $content_type['slug'] );
+		$schema_valid = $type_object->db->has_columns_by_schema();
+
+		$table_notice = false;
+
+		if ( ! $table_exists ) {
+			$table_notice = esc_html__( 'DB table does not exist. Please, check the field names for MySQL reserved words and update this CCT.', 'jet-engine' );
+		} elseif( ! $schema_valid ) {
+			$table_notice = esc_html__( 'DB schema does not correspond to CCT settings. Please, check the field names for MySQL reserved words and update this CCT.', 'jet-engine' );
+		}
+
 		return rest_ensure_response( array(
-			'success' => true,
-			'data'    => $content_type,
+			'success'      => true,
+			'data'         => $content_type,
+			'table_notice' => $table_notice,
 		) );
 
 	}

@@ -196,6 +196,11 @@ class Module {
 	 */
 	public function get_action_url( $specific_post_id = null, $event = null, $params = array() ) {
 		$object = jet_engine()->listings->data->get_current_object();
+
+		if ( ! is_object( $object ) ) {
+			return '';
+		}
+
 		$class  = get_class( $object );
 		$event  = ! empty( $event ) ? $event : 'click';
 

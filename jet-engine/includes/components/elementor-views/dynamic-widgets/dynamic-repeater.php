@@ -235,6 +235,19 @@ class Jet_Listing_Dynamic_Repeater_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'dynamic_field_fallback',
+			array(
+				'label'       => __( 'Fallback', 'jet-engine' ),
+				'type'        => Controls_Manager::TEXT,
+				'label_block' => true,
+				'default'     => '',
+				'condition'   => array(
+					'hide_if_empty!' => 'yes',
+				),
+			)
+		);
+
+		$this->add_control(
 			'object_context',
 			array(
 				'label'     => __( 'Context', 'jet-engine' ),

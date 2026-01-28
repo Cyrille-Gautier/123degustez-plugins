@@ -38,6 +38,12 @@ class Listing_Is_Number extends Listing_Even {
 				'type'        => 'switcher',
 				'default'     => '',
 			),
+			'adjust_for_pagination' => array(
+				'label'       => __( 'Adjust for pagination', 'jet-engine' ),
+				'description' => __( 'Enable if you need to adjust for pagination or Load More.', 'jet-engine' ),
+				'type'        => 'switcher',
+				'default'     => '',
+			),
 		);
 	}
 
@@ -51,7 +57,7 @@ class Listing_Is_Number extends Listing_Even {
 		$args = ! empty( $args['condition_settings'] ) ? $args['condition_settings'] : array();
 		$item_number = isset( $args['item_number'] ) ? absint( $args['item_number'] ) : false;
 		$each = isset( $args['each_item_number'] ) ? filter_var( $args['each_item_number'], FILTER_VALIDATE_BOOLEAN ) : false;
-		$index = $this->get_item_index();
+		$index = $this->get_item_index( $args );
 
 		if ( ! $item_number ) {
 			return false;

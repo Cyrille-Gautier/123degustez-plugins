@@ -17,6 +17,14 @@ abstract class Base_Provider {
 	}
 
 	/**
+	 * Returns some important information that should be shown in Map Field
+	 * @return string
+	 */
+	public function get_map_field_notice() {
+		return '';
+	}
+
+	/**
 	 * Provider-specific settings fields template
 	 *
 	 * @return [type] [description]

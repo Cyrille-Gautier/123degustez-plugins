@@ -404,6 +404,12 @@ class Jet_Engine_Base_DB {
 
 	}
 
+	public function has_columns_by_schema() {
+		$existing_columns = array_keys( $this->get_columns_list() );
+		$schema_columns   = array_keys( $this->schema );
+		return empty( array_diff( $existing_columns, $schema_columns ) ) && empty( array_diff( $schema_columns, $existing_columns ) );
+	}
+
 	/**
 	 * Check if we can transfer data into new columns before removing
 	 *
@@ -696,20 +702,8 @@ class Jet_Engine_Base_DB {
 		$format          = '`%1$s` %3$s %2$s';
 		$array_operators = array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' );
 
-		switch ( $type ) {
-			case 'integer':
-			case 'float':
-				$format = 'CAST( `%1$s` AS DECIMAL ) %3$s %2$s';
-				break;
-
-			default:
-
-				if ( false !== strpos( $type, 'DECIMAL' ) ) {
-					$format = 'CAST( `%1$s` AS ' . $type . ' ) %3$s %2$s';
-				}
-
-				break;
-
+		if ( false !== strpos( $type, 'DECIMAL' ) ) {
+			$format = 'CAST( `%1$s` AS ' . $type . ' ) %3$s %2$s';
 		}
 
 		if ( 'EXISTS' === $operator ) {
@@ -814,14 +808,6 @@ class Jet_Engine_Base_DB {
 				}
 
 				switch ( $type ) {
-					case 'integer':
-					case 'float':
-					case 'timestamp':
-					case 'NUMERIC':
-					case 'DECIMAL':
-					case 'TIMESTAMP':
-						$orderby = sprintf( 'CAST( %s AS DECIMAL )', $orderby );
-						break;
 					case 'date':
 						$orderby = sprintf( 'CAST( %s AS DATE )', $orderby );
 						break;

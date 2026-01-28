@@ -162,7 +162,21 @@ class Preset {
 
 		if ( 'current_post' === $from ) {
 
-			$item = $content_type->db->get_queried_item();
+			if ( jet_engine()->listings ) {
+				$current_object = jet_engine()->listings->data->get_current_object();
+
+				if ( $current_object && isset( $current_object->_ID ) && isset( $current_object->cct_slug ) && $current_object->cct_slug === $slug ) {
+					if ( is_object( $current_object ) ) {
+						$item = ( array ) $current_object;
+					} else {
+						$item = $current_object;
+					}
+				}
+			}
+
+			if ( ! $item ) {
+				$item = $content_type->db->get_queried_item();
+			}
 
 			if ( ! $item ) {
 				$post_id = get_the_ID();

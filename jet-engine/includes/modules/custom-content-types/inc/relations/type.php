@@ -19,6 +19,16 @@ class Type extends \Jet_Engine\Relations\Types\Base {
 	}
 
 	/**
+	 * Returns query type for current relation type.
+	 * Used for match relations query type with appropriate query builder query type.
+	 *
+	 * @return string
+	 */
+	public function get_query_type() {
+		return \Jet_Engine\Modules\Custom_Content_Types\Query_Builder\Manager::instance()->slug;
+	}
+
+	/**
 	 * Returns type label
 	 * @return [type] [description]
 	 */
@@ -289,7 +299,101 @@ class Type extends \Jet_Engine\Relations\Types\Base {
 		}
 
 		return ( isset( $object->cct_slug ) && $object->cct_slug === $object_name ) ? true : false;
+	}
 
+	/**
+	 * Query posts of given post type by provided arguments.
+	 *
+	 * @param array                            $args        Query arguments.
+	 * @param string                           $object_name Post type name.
+	 * @param \Jet_Engine\Relations\Relation $relation    Relation instance.
+	 *
+	 * @return object
+	 */
+	public function query( $args, $object_name, $relation ) {
+
+		$this->ensure_type_query_classs();
+
+		$ids = isset( $args['related_items_ids'] ) ? $args['related_items_ids'] : array();
+
+		if ( empty( $ids ) ) {
+			return new \Jet_Engine\Relations\Types\Type_Query();
+		}
+
+		$content_type = Module::instance()->manager->get_content_types( $object_name );
+
+		if ( ! $content_type ) {
+			return new \Jet_Engine\Relations\Types\Type_Query();
+		}
+
+		unset( $args['related_items_ids'] );
+
+		$query = new \Jet_Engine\Modules\Custom_Content_Types\Query_Builder\CCT_Query( [
+			'type' => \Jet_Engine\Modules\Custom_Content_Types\Query_Builder\Manager::instance()->slug,
+			'query' => [
+				'order' => [ [
+					'orderby' => 'preserve_ids',
+					'order'   => 'ASC',
+				] ]
+			],
+			'dynamic_query' => []
+		] );
+
+		$query->setup_query();
+
+		$query->set_filtered_prop( 'content_type', $object_name );
+
+		$query->set_filtered_prop(
+			'meta_query',
+			[ [
+				'key' => '_ID',
+				'compare' => 'IN',
+				'value' => $ids,
+				'type' => 'NUMERIC',
+			] ]
+		);
+
+		if ( ! empty( $args['max_items'] ) ) {
+			$query->set_filtered_prop( 'number', absint( $args['max_items'] ) );
+			unset( $args['max_items'] );
+		}
+
+		$skip_args = array(
+			'content_type',
+			'max_items',
+			'items_to_get',
+			'relation',
+			'rel_id',
+			'rel_object',
+			'rel_object_from',
+			'_query_type',
+			'queried_object_id',
+			'jet_smart_filters',
+			'suppress_filters',
+		);
+
+		foreach ( $args as $arg_key => $arg_value ) {
+
+			if ( in_array( $arg_key, $skip_args, true ) ) {
+				continue;
+			}
+
+			$query->set_filtered_prop( $arg_key, $arg_value );
+		}
+
+		$items = $query->_get_items(); // Call internal function to avoid overlaps with some query hooks
+
+		return apply_filters(
+			'jet-engine/relations/types/posts/query',
+			new \Jet_Engine\Relations\Types\Type_Query(
+				$items, // Call internal function to avoid overlaps with some query hooks
+				count( $items ),
+				$query->final_query
+			),
+			$query,
+			$object_name,
+			$relation
+		);
 	}
 
 	/**
@@ -307,6 +411,34 @@ class Type extends \Jet_Engine\Relations\Types\Base {
 		);
 	}
 
+	public function merge_filtered_query_args( $args = array(), $new_args = array(), $object_name = ''  ) {
+		$args = array_merge_recursive( $args, $new_args );
+		$ids  = array();
+
+		foreach ( $args['meta_query'] ?? array() as $i => $arg ) {
+			if ( empty( $arg['key'] ) || empty( $arg['compare'] ) ) {
+				continue;
+			}
+
+			if ( $arg['key'] === '_ID' && $arg['compare'] === 'IN' && is_array( $arg['value'] ?? '' ) ) {
+				$ids[] = $arg['value'];
+				unset( $args['meta_query'][ $i ] );
+			}
+		}
+
+		if ( empty( $ids ) ) {
+			return $args;
+		}
+
+		$args['meta_query'][] = array(
+			'key'     => '_ID',
+			'compare' => 'IN',
+			'value'   => count( $ids ) < 2 ? $ids[0] : array_intersect( ...$ids ),
+		);
+
+		return $args;
+	}
+
 	/**
 	 * Register appropriate cleanup hook for current type items.
 	 * This hook should be called on deletion of item of current type and call clean up method from relation
@@ -321,7 +453,5 @@ class Type extends \Jet_Engine\Relations\Types\Base {
 		add_action( 'jet-engine/custom-content-types/delete-item/' . $object_name, function( $item_id, $item ) use ( $callback, $type_name ) {
 			call_user_func( $callback, $type_name, $item_id );
 		}, 10, 2 );
-
 	}
-
 }

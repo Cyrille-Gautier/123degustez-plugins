@@ -108,10 +108,11 @@ class Check_Mark extends \Jet_Engine_Blocks_Views_Type_Base {
 
 		$this->controls_manager->add_responsive_control(
 			array(
-				'id'    => 'check_mark_border_radius',
-				'label' => esc_html__( 'Border Radius', 'jet-engine' ),
-				'type'  => 'dimensions',
-				'units' => array( 'px', '%' ),
+				'id'           => 'check_mark_border_radius',
+				'label'        => esc_html__( 'Border Radius', 'jet-engine' ),
+				'type'         => 'dimensions',
+				'is_legacy'    => true,
+				'units'        => array( 'px', '%' ),
 				'css_selector' => array(
 					$this->css_selector( array( '--default', '--checked' ) ) => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
 				),

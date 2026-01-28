@@ -79,6 +79,13 @@ if ( ! class_exists( 'Jet_Engine_Relations_Page_List' ) ) {
 
 			$ui->enqueue_assets();
 
+			wp_enqueue_style(
+				'jet-engine-relations',
+				jet_engine()->plugin_url( 'includes/components/relations/assets/css/relations.css' ),
+				array(),
+				jet_engine()->get_version()
+			);
+
 			wp_register_script(
 				'jet-engine-cpt-delete-dialog',
 				jet_engine()->plugin_url( 'includes/components/relations/assets/js/delete-dialog.js' ),

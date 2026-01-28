@@ -3,7 +3,7 @@
  * Plugin Name: JetEngine
  * Plugin URI:  https://crocoblock.com/plugins/jetengine/
  * Description: The ultimate solution for managing custom post types, taxonomies and meta boxes.
- * Version:     3.7.7
+ * Version:     3.8.3
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-engine
@@ -63,7 +63,7 @@ if ( ! class_exists( 'Jet_Engine' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '3.7.7';
+		private $version = '3.8.3';
 
 		/**
 		 * Holder for base plugin path
@@ -166,11 +166,45 @@ if ( ! class_exists( 'Jet_Engine' ) ) {
 			// Jet Dashboard Init
 			add_action( 'init', array( $this, 'jet_dashboard_init' ), -999 );
 
+			// Initialize the MCP tools
+			do_action( 'qm/start', 'croco-mcp-base' );
+			require $this->plugin_path( 'includes/core/mcp-tools/registry.php' );
+			Jet_Engine\MCP_Tools\Registry::instance()->init();
+			do_action( 'qm/stop', 'croco-mcp-base' );
+
 			// Register activation and deactivation hook.
 			register_activation_hook( __FILE__, array( $this, 'activation' ) );
 			register_deactivation_hook( __FILE__, array( $this, 'deactivation' ) );
 
+			$this->maybe_inject_theme_json( $this->plugin_path() );
+		}
 
+		/**
+		 * Maybe inject theme.json compatibility file
+		 *
+		 * @param string $base_path Path to the pugin base dir.
+		 * @return void
+		 */
+		public function maybe_inject_theme_json( $base_path = '' ) {
+
+			if (
+				! defined( 'CRCOBLOCK_STYLES_MANAGER_INJECT_THEME_JSON' )
+				|| true !== CRCOBLOCK_STYLES_MANAGER_INJECT_THEME_JSON
+			) {
+				return;
+			}
+
+			add_filter( 'theme_file_path', function( $path, $file ) use ( $base_path ) {
+
+				if (
+					'theme.json' === $file
+					&& ! is_readable( $path )
+				) {
+					$path = $base_path . 'templates/theme-compat/theme.json';
+				}
+
+				return $path;
+			}, 10, 2 );
 		}
 
 		/**
@@ -231,9 +265,10 @@ if ( ! class_exists( 'Jet_Engine' ) ) {
 					$this->plugin_path( 'framework/workflows/workflows.php' ),
 					$this->plugin_path( 'framework/macros/macros-handler.php' ),
 					$this->plugin_path( 'framework/macros/base-macros.php' ),
+					$this->plugin_path( 'framework/blocks-style-manager/style-manager.php' ),
+					$this->plugin_path( 'framework/agent-ui/agent-ui.php' ),
 				)
 			);
-
 		}
 
 		/**
@@ -316,6 +351,9 @@ if ( ! class_exists( 'Jet_Engine' ) ) {
 			// Register plugin-related shortcodes
 			require $this->plugin_path( 'includes/classes/shortcodes.php' );
 			$this->shortcodes = new Jet_Engine_Shortcodes();
+
+			// Initialize Agent UI
+			Crocoblock\Agent_UI\Module::instance();
 
 			if ( wp_doing_ajax() ) {
 

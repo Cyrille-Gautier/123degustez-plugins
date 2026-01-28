@@ -95,12 +95,16 @@ class Blocks_Integration {
 			);
 		}
 
+		$provider = Module::instance()->providers->get_active_map_provider();
+		$provider_id = $provider->get_id();
+
 		$config['atts']['mapsListing'] = jet_engine()->blocks_views->block_types->get_block_atts( 'maps-listing' );
 
 		$config['mapsListingConfig'] = array(
 			'markerTypes'      => $marker_types_for_js,
 			'markerLabelTypes' => $marker_label_types_for_js,
 			'providerControls' => $this->get_provider_controls(),
+			'providerId'       => $provider_id,
 		);
 
 		return $config;

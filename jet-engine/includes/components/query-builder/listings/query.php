@@ -75,6 +75,7 @@ class Query {
 		$widget->query_vars['page']    = $query->get_current_items_page();
 		$widget->query_vars['pages']   = $query->get_items_pages_count();
 		$widget->query_vars['request'] = $request;
+		$widget->query_vars['request']['posts_per_page'] = $query->get_items_per_page();
 
 		// Added for correctly setup and reset global $post in nested listings.
 		if ( 'posts' === $query->query_type ) {

@@ -96,6 +96,7 @@
 				fieldPrefix: this.fieldSettings.field_prefix,
 				isRepeater:  this.isRepeaterField,
 				valueFormat: this.fieldSettings.format,
+				providerNotice: this.fieldSettings.provider_notice,
 			};
 
 			this.$container.append( fieldTemplate( templateData ) );

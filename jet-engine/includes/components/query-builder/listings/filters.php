@@ -14,7 +14,7 @@ class Filters {
 	/**
 	 * Private filters request checker.
 	 * Used as separate method to filters its result later in single place in the code
-	 * 
+	 *
 	 * @return boolean [description]
 	 */
 	private function _is_filters_request( $query = null ) {
@@ -48,7 +48,7 @@ class Filters {
 		if ( ! empty( $request['jet-smart-filters'] ) ) {
 			$request['jsf'] = str_replace( '/', ':', $request['jet-smart-filters'] );
 		}
-		
+
 		if ( ! empty( $request['jsf'] ) ) {
 
 			// Ensure separator one more time
@@ -59,18 +59,23 @@ class Filters {
 			$query_id = isset( $jsf_data[1] ) ? $jsf_data[1] : null;
 
 			return $this->is_current_provider_query( $query, $query_id, $provider );
-			
+
 		}
 
 		return false;
 
 	}
-	
+
 	public function is_current_provider_query( $query, $query_id, $provider ) {
-		
+
 		$allowed_providers = apply_filters(
 			'jet-engine/query-builder/filters/allowed-providers',
-			array( 'jet-engine', 'jet-engine-maps', 'jet-engine-calendar' )
+			array(
+				'jet-engine',
+				'jet-engine-maps',
+				'jet-engine-calendar',
+				'jet-engine-multiday-calendar'
+			)
 		);
 
 		if ( $query_id && 'default' !== $query_id && $query && $query->query_id ) {
@@ -80,7 +85,7 @@ class Filters {
 		}
 
 		return in_array( $provider, $allowed_providers );
-		
+
 	}
 
 	/**
@@ -229,6 +234,10 @@ class Filters {
 				$provider = 'jet-engine-calendar';
 				break;
 
+			case 'jet-listing-multiday-calendar':
+				$provider = 'jet-engine-multiday-calendar';
+				break;
+
 			default:
 				$provider = apply_filters( 'jet-engine/query-builder/filter-provider', 'jet-engine', $widget, $query, $settings, $query_manager );
 				break;
@@ -244,7 +253,7 @@ class Filters {
 				'query_type'    => $query->get_query_type(),
 				'query_id'      => $query->id,
 				'query_meta'    => $query->get_query_meta(),
-			), $provider, $query_id ),
+			), $provider, $query_id, $query ),
 			$query_id
 		);
 

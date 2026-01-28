@@ -8,6 +8,8 @@ if ( ! defined( 'WPINC' ) ) {
 
 class Terms extends Base {
 
+	private $filter_key = 'include';
+
 	/**
 	 * Returns type name
 	 * @return [type] [description]
@@ -172,17 +174,111 @@ class Terms extends Base {
 			return false;
 		}
 
-		do_action( 'jet-engine/relations/types/terms/on-create', $term['term_id'], $data, $object_name, $term );
+				do_action( 'jet-engine/relations/types/terms/on-create', $term['term_id'], $data, $object_name, $term );
 
-		return $term['term_id'];
+				return $term['term_id'];
 
+		}
+
+	/**
+		* Query terms of given taxonomy by provided arguments.
+		*
+		* @param array                            $args        Query arguments.
+		* @param string                           $object_name Taxonomy slug.
+		* @param \Jet_Engine\Relations\Relation $relation    Relation instance.
+		*
+		* @return array
+		*/
+	public function query( $args, $object_name, $relation ) {
+
+		$this->ensure_type_query_classs();
+
+		if ( ! taxonomy_exists( $object_name ) ) {
+			return new Type_Query();
+		}
+
+		$ids = isset( $args['related_items_ids'] ) ? $args['related_items_ids'] : array();
+
+		// adjust the rest of the known arguments according WP_Term_Query format.
+		if ( ! empty( $args['orderby'] ) && 'ID' === $args['orderby'] ) {
+			$args['orderby'] = 'term_id';
+		}
+
+		if ( ! empty( $args['orderby'] ) && 'title' === $args['orderby'] ) {
+			$args['orderby'] = 'name';
+		}
+
+		if ( ! empty( $args['max_items'] ) ) {
+
+			$args['number'] = absint( $args['max_items'] );
+
+			if ( ! empty( $args['page'] ) ) {
+				$args['offset'] = ( absint( $args['page'] ) - 1 ) * $args['number'];
+			} elseif ( ! empty( $args['offset'] ) ) {
+				$args['offset'] = absint( $args['offset'] );
+			}
+		}
+
+		if ( ! empty( $args['exclude'] ) && is_array( $args['exclude'] ) ) {
+			$ids = array_diff( $ids, $args['exclude'] );
+			unset( $args['exclude'] );
+		}
+
+		if ( ! empty( $args['include'] ) && is_array( $args['include'] ) ) {
+			$ids = array_intersect( $ids, $args['include'] );
+		}
+
+		if ( empty( $ids ) ) {
+			return new Type_Query();
+		}
+
+		$query_args = wp_parse_args(
+			$args,
+			array(
+				'taxonomy'   => $object_name,
+				'hide_empty' => false,
+			)
+		);
+
+		if ( empty( $ids ) ) {
+			return new Type_Query();
+		}
+
+		$query_args['include'] = $ids;
+		unset( $query_args['related_items_ids'] );
+
+		if ( empty( $query_args['orderby'] ) ) {
+			$query_args['orderby'] = 'include';
+		}
+
+		$term_query = new \WP_Term_Query( $query_args );
+
+		$query_args['_query_type'] = $this->get_query_type();
+
+		if ( is_wp_error( $term_query ) ) {
+			$terms = array();
+		} else {
+			$terms = $term_query->get_terms();
+		}
+
+		return apply_filters(
+			'jet-engine/relations/types/terms/query',
+			new Type_Query(
+				$terms,
+				count( $terms ),
+				$query_args
+			),
+			$term_query,
+			$object_name,
+			$relation
+		);
 	}
 
 	/**
 	 * Returns object of current type by item ID of this object
 	 *
 	 * @return [type] [description]
-	 */
+	*/
 	public function get_object_by_id( $item_id, $object_name ) {
 		return get_term( $item_id, $object_name );
 	}
@@ -210,13 +306,8 @@ class Terms extends Base {
 
 	}
 
-	/**
-	 * Return JetSmartFilters-prepared query arguments array of given ids for given object type
-	 *
-	 * @return array()
-	 */
-	public function filtered_query_args( $ids = array(), $object_name = '' ) {
-		return array( 'include' => $ids );
+	public function filtered_arg( $object_name = '' ) {
+		return 'include';
 	}
 
 	/**

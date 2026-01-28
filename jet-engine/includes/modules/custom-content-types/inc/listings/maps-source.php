@@ -71,7 +71,7 @@ class CCT_Maps_Source extends \Jet_Engine\Modules\Maps_Listings\Source\Base {
 
 	/**
 	 * Returns coordinates data based on multiple fields (support preloaded values and map control)
-	 * 
+	 *
 	 * @param  [type]
 	 * @param  string
 	 * @param  [type]
@@ -89,7 +89,7 @@ class CCT_Maps_Source extends \Jet_Engine\Modules\Maps_Listings\Source\Base {
 
 		// Try to get legacy preloaded data and update it
 		if ( ! $location_hash ) {
-			
+
 			$legacy_data = $this->get_field_value( $obj, $this->lat_lng->meta_key );
 
 			if ( ! empty( $legacy_data ) ) {
@@ -97,7 +97,7 @@ class CCT_Maps_Source extends \Jet_Engine\Modules\Maps_Listings\Source\Base {
 				$this->update_field_value( $obj, $field_name, $legacy_data );
 				$this->delete_field_value( $obj, $this->lat_lng->meta_key );
 			}
-			
+
 		}
 
 		if ( ! $location_hash ) {
@@ -111,7 +111,7 @@ class CCT_Maps_Source extends \Jet_Engine\Modules\Maps_Listings\Source\Base {
 				'lng' => $this->get_field_value( $obj, $field_name . '_lng' ),
 			),
 		);
-		
+
 	}
 
 	public function update_field_value( $obj, $field, $value ) {
@@ -144,7 +144,7 @@ class CCT_Maps_Source extends \Jet_Engine\Modules\Maps_Listings\Source\Base {
 			$content_type->db->insert_table_columns( array( $lng_col => 'text' ) );
 		}
 
-		$content_type->db->update( array( 
+		$content_type->db->update( array(
 			$hash_col => $value['key'],
 			$lat_col  => $value['coord']['lat'],
 			$lng_col  => $value['coord']['lng'],
@@ -188,7 +188,7 @@ class CCT_Maps_Source extends \Jet_Engine\Modules\Maps_Listings\Source\Base {
 
 				$this->lat_lng->set_current_source( $this->get_id() );
 				$address = $this->lat_lng->get_address_from_fields_group( $cct_item, $fields );
-				
+
 
 				if ( ! $address ) {
 					return;
@@ -198,7 +198,7 @@ class CCT_Maps_Source extends \Jet_Engine\Modules\Maps_Listings\Source\Base {
 				$coord = $this->lat_lng->get( $cct_item, $address );
 
 				if ( $coord ) {
-					
+
 					$field = implode( '+', $fields );
 
 					// write this data into appropriate service columns for current field

@@ -27,15 +27,10 @@ class Geosearch_Query extends Base {
 
 		$geo_query = $query->final_query['geo_query'];
 		
-		$fields = explode( ',', $geo_query['raw_field'] );
-
-		if ( 2 === count( $fields ) ) {
-			$lat_field = trim( $fields[0] );
-			$lng_field = trim( $fields[1] );
-		} else {
-			$lat_field = str_replace( '+', '_', $geo_query['raw_field'] ) . '_lat';
-			$lng_field = str_replace( '+', '_', $geo_query['raw_field'] ) . '_lng';
-		}
+		list(
+			'lat_field' => $lat_field,
+			'lng_field' => $lng_field
+		) = $this->get_lat_lng_fields( $geo_query );
 
 		if ( ! $lat_field || ! $lng_field ) {
 			return $items;
@@ -130,11 +125,48 @@ class Geosearch_Query extends Base {
 		$distance = floatval( $distance );
 
 		$haversine = $this->haversine_term( $geo_query );
-		
-		$query['where'] .= $wpdb->prepare( " AND $haversine <= %f", $distance );
+
+		if ( $this->must_apply_bounds( $geo_query ) ) {
+			$bounds = $this->get_bounds( $geo_query );
+
+			list(
+				'lat_field' => $lat_field,
+				'lng_field' => $lng_field
+			) = $this->get_lat_lng_fields( $geo_query );
+
+			$new_sql = $wpdb->prepare( " AND ( %i BETWEEN {$bounds['south']} AND {$bounds['north']}", $lat_field );
+
+			//if map includes 180deg meridian and western bound is greater than eastern
+			if ( $bounds['west'] >= $bounds['east'] ) {
+				$new_sql .= $wpdb->prepare( " AND ( %i >= {$bounds['west']} OR %i <= {$bounds['east']} ) )", $lng_field );
+			} else {
+				$new_sql .= $wpdb->prepare( " AND %i BETWEEN {$bounds['west']} AND {$bounds['east']} )", $lng_field );
+			}
+
+			$query['where'] .= $new_sql;
+		} else {
+			$query['where'] .= $wpdb->prepare( " AND $haversine <= %f", $distance );
+		}
 
 		return $query;
 
+	}
+
+	public function get_lat_lng_fields( $geo_query ) {
+		$fields = explode( ',', $geo_query['raw_field'] );
+
+		if ( 2 === count( $fields ) ) {
+			$lat_field = trim( $fields[0] );
+			$lng_field = trim( $fields[1] );
+		} else {
+			$lat_field = str_replace( '+', '_', $geo_query['raw_field'] ) . '_lat';
+			$lng_field = str_replace( '+', '_', $geo_query['raw_field'] ) . '_lng';
+		}
+
+		return array(
+			'lat_field' => $lat_field,
+			'lng_field' => $lng_field,
+		);
 	}
 
 	public function haversine_term( $geo_query ) {
@@ -152,15 +184,7 @@ class Geosearch_Query extends Base {
 			$radius = 6371;
 		}
 		
-		$fields = explode( ',', $geo_query['raw_field'] );
-
-		if ( 2 === count( $fields ) ) {
-			$lat_field = trim( $fields[0] );
-			$lng_field = trim( $fields[1] );
-		} else {
-			$lat_field = str_replace( '+', '_', $geo_query['raw_field'] ) . '_lat';
-			$lng_field = str_replace( '+', '_', $geo_query['raw_field'] ) . '_lng';
-		}
+		$fields = $this->get_lat_lng_fields( $geo_query );
 
 		$lat = 0;
 		$lng = 0;
@@ -174,11 +198,11 @@ class Geosearch_Query extends Base {
 		}
 		
 		$haversine  = "( " . $radius . " * ";
-		$haversine .=     "acos( cos( radians(%f) ) * cos( radians( " . $lat_field . " ) ) * ";
-		$haversine .=     "cos( radians( " . $lng_field . " ) - radians(%f) ) + ";
-		$haversine .=     "sin( radians(%f) ) * sin( radians( " . $lat_field . " ) ) ) ";
+		$haversine .=     "acos( cos( radians(%f) ) * cos( radians( %i ) ) * ";
+		$haversine .=     "cos( radians( %i ) - radians(%f) ) + ";
+		$haversine .=     "sin( radians(%f) ) * sin( radians( %i ) ) ) ";
 		$haversine .= ")";
-		$haversine  = $wpdb->prepare( $haversine, array( $lat, $lng, $lat ) );
+		$haversine  = $wpdb->prepare( $haversine, array( $lat, $fields['lat_field'], $fields['lng_field'], $lng, $lat, $fields['lat_field'] ) );
 		
 		return $haversine;
 	}

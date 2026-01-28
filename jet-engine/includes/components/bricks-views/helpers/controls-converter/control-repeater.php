@@ -11,6 +11,10 @@ class Control_Repeater extends Base {
 			$args['fields'] = $this->parse_callback_argument_repeater_fields( $args['fields'] );
 		}
 
+		if ( array_key_exists( 'default', $args ) && empty( $args['default'] ) ) {
+			unset( $args['default'] );
+		}
+
 		if ( array_key_exists( 'condition', $args ) ) {
 			$required = $this->parse_callback_argument_condition( $args['condition'] );
 			unset( $args['condition'] );

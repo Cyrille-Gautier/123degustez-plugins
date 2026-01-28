@@ -79,6 +79,12 @@ if ( ! class_exists( 'Jet_Engine_Options_Page_Factory' ) ) {
 		 */
 		public function __construct( $page ) {
 
+			if ( ! empty( $page['labels'] ) ) {
+				foreach ( $page['labels'] as $key => $value ) {
+					$page['labels'][ $key ] = apply_filters( 'jet-engine/compatibility/translate-string', $value );
+				}
+			}
+
 			$this->page = $page;
 			$this->slug = $page['slug'];
 
@@ -227,6 +233,7 @@ if ( ! class_exists( 'Jet_Engine_Options_Page_Factory' ) ) {
 				$current = get_option( $this->slug, array() );
 			}
 
+			$autoload = $this->page['autoload_option'];
 			$fields = $this->get_prepared_fields();
 
 			if ( ! empty( $fields ) ) {
@@ -251,13 +258,13 @@ if ( ! class_exists( 'Jet_Engine_Options_Page_Factory' ) ) {
 					if ( 'default' === $this->storage_type ) {
 						$current[ $key ] = $value;
 					} elseif ( 'separate' === $this->storage_type ) {
-						update_option( $this->get_separate_option_name( $key ), $value );
+						update_option( $this->get_separate_option_name( $key ), $value, $autoload );
 					}
 				}
 			}
 
 			if ( 'default' === $this->storage_type && isset( $current ) ) {
-				update_option( $this->slug, $current );
+				update_option( $this->slug, $current, $autoload );
 			}
 
 			/**

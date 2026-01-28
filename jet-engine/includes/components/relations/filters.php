@@ -533,28 +533,7 @@ class Filters {
 
 		$new_args = jet_engine()->relations->types_helper->filtered_query_args( $object, $rel_ids );
 
-		$props_found = false;
-
-		foreach ( array( 'post__in', 'include' ) as $key ) {
-			if ( ! empty( $args[ $key ] ) && ! empty( $new_args[ $key ] ) && ! $is_inner ) {
-				$props_found = true;
-
-				$args[ $key ] = array_intersect( $args[ $key ], $new_args[ $key ] );
-	
-				// Not found items.
-				if ( empty( $args[ $key ] ) ) {
-					$args[ $key ] = array( PHP_INT_MAX );
-				}
-			}
-		}
-
-		if ( $props_found ) {
-			$result = $args;
-		} else {
-			$result = array_merge_recursive( $args, $new_args );
-		}
-
-		return $result;
+		return jet_engine()->relations->types_helper->merge_filtered_query_args( $args, $object, $new_args );
 
 	}
 

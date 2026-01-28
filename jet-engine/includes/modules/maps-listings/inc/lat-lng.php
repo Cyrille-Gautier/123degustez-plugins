@@ -22,7 +22,7 @@ class Lat_Lng {
 		if ( ! is_numeric( $this->error_timeout ) || $this->error_timeout < 300 ) {
 			$this->error_timeout = 300;
 		}
-		
+
 		add_action( 'init', array( $this, 'hook_preload' ) );
 	}
 
@@ -44,7 +44,7 @@ class Lat_Lng {
 
 	/**
 	 * Get error prefix
-	 * 
+	 *
 	 * @return string Error prefix
 	 */
 	public function get_error_prefix() {
@@ -240,7 +240,7 @@ class Lat_Lng {
 
 	/**
 	 * Get geocode provider
-	 * 
+	 *
 	 * @return Geocode_Providers\Base|false
 	 */
 	public function get_geocode_provider() {
@@ -373,9 +373,9 @@ class Lat_Lng {
 
 	/**
 	 * Make array of invalid values, signifying empty result or provider API error
-	 * 
+	 *
 	 * @param array $type 'empty' or 'api_error'
-	 * 
+	 *
 	 * @return array{lat: string, lng: string}
 	 */
 	public function make_error_coordinates_array( $type = '', $timestamp = false ) {
@@ -480,7 +480,7 @@ class Lat_Lng {
 				$retry = $geocode_provider->get_id() !== $parts[1]
 					       || ( \Jet_Engine_Tools::is_valid_timestamp( $parts[2] ?? '' ) && time() - $parts[2] > $this->error_timeout );
 				$retry_type = 'api_error';
-				
+
 				if ( $retry ) {
 					$last_request = time();
 				} else {
@@ -497,7 +497,7 @@ class Lat_Lng {
 
 		if ( ! $coord ) {
 			$this->add_failure( $post, $location );
-				
+
 			if ( $geocode_provider && ! empty( $geocode_provider->get_error( 'geocode' ) ) || $retry_type === 'api_error' ) {
 				$coord = $this->make_error_coordinates_array( 'api_error', $last_request );
 			} else {
@@ -539,7 +539,7 @@ class Lat_Lng {
 	public function update_address_coord_field( $post, $field_name, $location_hash, $coord ) {
 
 		$field_name = apply_filters( 'jet-engine/maps-listing/preload/field-name', $field_name, $post );
-		
+
 		$value = array(
 			'key'   => $location_hash,
 			'coord' => $coord,

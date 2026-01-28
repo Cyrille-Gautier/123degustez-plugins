@@ -28,22 +28,31 @@ class Dynamic_Field extends Base {
 
 	// Set builder control groups
 	public function set_control_groups() {
-
 		$this->register_general_group();
 		$this->register_field_group();
 		$this->register_icon_group();
 		$this->register_misc_group();
-
 	}
 
 	// Set builder controls
 	public function set_controls() {
-
 		$this->register_general_controls();
 		$this->register_field_controls();
 		$this->register_icon_controls();
 		$this->register_misc_controls();
 
+		if (
+			isset( $this->controls['_typography'] ) &&
+			isset( $this->controls['_typography']['css'][0] )
+		) {
+			$this->controls['_typography']['css'][0]['selector'] = $this->css_selector( '__content' );
+		} else {
+			_doing_it_wrong(
+				__METHOD__,
+				esc_html__( 'Bricks typography control structure has changed. Selector override failed.', 'jet-engine' ),
+				'3.7.10'
+			);
+		}
 	}
 
 	public function register_general_group() {
@@ -57,7 +66,6 @@ class Dynamic_Field extends Base {
 	}
 
 	public function register_general_controls() {
-
 		$this->start_jet_control_group( 'section_general' );
 
 		$this->register_jet_control(
@@ -367,7 +375,6 @@ class Dynamic_Field extends Base {
 		);
 
 		$this->end_jet_control_group();
-
 	}
 
 	/**
@@ -375,7 +382,6 @@ class Dynamic_Field extends Base {
 	 * @return [type] [description]
 	 */
 	public function register_field_group() {
-
 		if ( $this->prevent_wrap() ) {
 			return;
 		}
@@ -387,7 +393,6 @@ class Dynamic_Field extends Base {
 				'tab'   => 'style',
 			]
 		);
-
 	}
 
 	/**
@@ -395,7 +400,6 @@ class Dynamic_Field extends Base {
 	 * @return [type] [description]
 	 */
 	public function register_field_controls() {
-
 		if ( $this->prevent_wrap() ) {
 			return;
 		}
@@ -437,11 +441,9 @@ class Dynamic_Field extends Base {
 		);
 
 		$this->end_jet_control_group();
-
 	}
 
 	public function register_icon_group() {
-
 		$this->register_jet_control_group(
 			'section_icon_style',
 			[
@@ -450,11 +452,9 @@ class Dynamic_Field extends Base {
 				'required' => [ 'selected_field_icon', '!=', '' ],
 			]
 		);
-
 	}
 
 	public function register_icon_controls() {
-
 		$this->start_jet_control_group( 'section_icon_style' );
 
 		if ( ! $this->prevent_wrap() ) {
@@ -485,10 +485,6 @@ class Dynamic_Field extends Base {
 					[
 						'property' => 'color',
 						'selector' => $this->css_selector( '__icon' ),
-					],
-					[
-						'property' => 'fill',
-						'selector' => $this->css_selector( '__icon :is(svg)' ) . ', ' . $this->css_selector( '__icon :is(path)' ),
 					],
 				],
 			]
@@ -530,11 +526,9 @@ class Dynamic_Field extends Base {
 		}
 
 		$this->end_jet_control_group();
-
 	}
 
 	public function register_misc_group() {
-
 		$this->register_jet_control_group(
 			'section_misc_style',
 			[
@@ -543,42 +537,25 @@ class Dynamic_Field extends Base {
 				'required' => [ 'filter_callback', '=', ['jet_engine_img_gallery_slider', 'jet_engine_img_gallery_grid'] ],
 			]
 		);
-
 	}
 
 	public function register_misc_controls() {
-
 		$this->start_jet_control_group( 'section_misc_style' );
 
 		do_action( 'jet-engine/bricks-views/dynamic-field/misc-style-controls', $this );
 
 		$this->end_jet_control_group();
-
 	}
 
 	// Enqueue element styles and scripts
 	public function enqueue_scripts() {
-
 		wp_enqueue_style( 'jet-engine-frontend' );
 
 		do_action( 'jet-engine/bricks-views/dynamic-field/assets', $this );
-
-	}
-
-	/**
-	 * Fixed an issue #(2307) with Bricks Theme styles and headings in a dynamic field.
-	 */
-	public function set_controls_before() {
-		parent::set_controls_before();
-
-		if ( empty( $this->css_selector ) ) {
-			$this->controls['_typography']['css'][0]['selector'] = '&, .jet-listing-dynamic-field__content';
-		}
 	}
 
 	// Render element HTML
 	public function render() {
-
 		parent::render();
 
 		$this->enqueue_scripts();
@@ -594,9 +571,13 @@ class Dynamic_Field extends Base {
 			);
 		}
 
+		add_filter( 'jet-engine/listing/dynamic-field/render-attributes', [ $this, 'add_render_attributes' ] );
+
 		ob_start();
 		$render->render_content();
 		$content = ob_get_clean();
+
+		remove_filter( 'jet-engine/listing/dynamic-field/render-attributes', [ $this, 'add_render_attributes' ] );
 
 		if ( empty( $content ) ) {
 			return;
@@ -611,7 +592,6 @@ class Dynamic_Field extends Base {
 	}
 
 	public function parse_jet_render_attributes( $attrs = [] ) {
-
 		$attrs['selected_field_icon']    = isset( $attrs['selected_field_icon'] ) ? Element::render_icon( $attrs['selected_field_icon'] ) : null;
 		$attrs['related_list_is_linked'] = $attrs['related_list_is_linked'] ?? false;
 		$attrs['prevent_wrap']           = true;
@@ -629,12 +609,21 @@ class Dynamic_Field extends Base {
 	 * @return array
 	 */
 	public function get_meta_fields_for_post_type() {
-
 		if ( jet_engine()->meta_boxes ) {
 			return jet_engine()->meta_boxes->get_fields_for_select( 'plain' );
 		} else {
 			return array();
 		}
+	}
 
+	public function add_render_attributes( $atts ) {
+		// Run the filter to get data-query-loop-index attribute (@since 1.11)
+		$attributes = apply_filters( 'bricks/element/render_attributes', $this->attributes, 'field-content', $this );
+
+		if ( isset( $attributes['field-content']['data-query-loop-index'] ) ) {
+			$atts['data-query-loop-index'] = $attributes['field-content']['data-query-loop-index'];
+		}
+
+		return $atts;
 	}
 }

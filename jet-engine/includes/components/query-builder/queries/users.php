@@ -181,6 +181,25 @@ class Users_Query extends Base_Query {
 				$this->final_query['search_columns'] = array( 'user_login', 'user_nicename', 'user_email' );
 				break;
 
+			case 'include':
+
+				if ( ! empty( $this->final_query['include'] ) ) {
+
+					$this->final_query['include'] = array_intersect(
+						$this->final_query['include'],
+						$value
+					);
+
+					if ( empty( $this->final_query['include'] ) ) {
+						$this->final_query['include'] = array( PHP_INT_MAX );
+					}
+
+				} else {
+					$this->final_query['include'] = $value;
+				}
+
+				break;
+
 			default:
 				$this->merge_default_props( $prop, $value );
 				break;

@@ -45,7 +45,7 @@
 					v-model="updatePosts"
 				></cx-vui-switcher>
 				<cx-vui-switcher
-					label="<?php _e( 'Custom Meta Storage (Beta)', 'jet-engine' ); ?>"
+					label="<?php _e( 'Custom Meta Storage', 'jet-engine' ); ?>"
 					description="<?php _e( 'Store meta fields added below in the custom DB table instead of default `postmeta` table.', 'jet-engine' ); ?>"
 					:wrapper-css="[ 'equalwidth' ]"
 					v-model="generalSettings.custom_storage"

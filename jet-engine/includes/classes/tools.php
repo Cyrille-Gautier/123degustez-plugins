@@ -354,13 +354,13 @@ class Jet_Engine_Tools {
 	 *
 	 * @return [type] [description]
 	 */
-	public static function render_icon( $icon = null, $icon_class = '', $custom_atts = array(), $image_size = 'full', $force_custom_atts = false ) {
+	public static function render_icon( $icon = null, $icon_class = '', $custom_atts = array(), $image_size = 'full' ) {
 
 		$pre_render_icon = apply_filters( 'jet-engine/tools/pre-render-icon', false, array(
 			'icon'        => $icon,
 			'icon_class'  => $icon_class,
 			'custom_atts' => $custom_atts,
-			'image_size'  =>$image_size,
+			'image_size'  => $image_size,
 		) );
 
 		if ( $pre_render_icon ) {
@@ -428,14 +428,8 @@ class Jet_Engine_Tools {
 
 			ob_start();
 
-			$custom_atts = '';
-
-			if ( $force_custom_atts ) {
-				$custom_atts = $custom_atts_string;
-			}
-
 			// Custom attributes already escaped in $custom_atts_string with esc_attr() in the loop above.
-			echo '<div class="' . esc_attr( $icon_class ) . '"' . $custom_atts . '>'; // phpcs:ignore
+			echo '<div class="' . esc_attr( $icon_class ) . '"' . $custom_atts_string . '>'; // phpcs:ignore
 			echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo '</div>';
 
@@ -443,7 +437,11 @@ class Jet_Engine_Tools {
 		}
 		// Bricks font icon with array value
 		elseif ( is_array( $icon ) && isset( $icon['library'] ) && isset( $icon['icon'] ) ) {
-			return sprintf( '<div class="%1$s"><i class="%2$s"></i></div>', $icon_class, $icon['icon'] );
+			return sprintf(
+				'<div class="%1$s"><i class="%2$s"></i></div>',
+				esc_attr( $icon_class ),
+				esc_attr( $icon['icon'] )
+			);
 		}
 
 		if ( empty( $icon['value'] ) ) {

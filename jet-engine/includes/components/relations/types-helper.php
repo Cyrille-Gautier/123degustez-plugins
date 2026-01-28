@@ -456,6 +456,19 @@ class Types_Helper {
 
 	}
 
+	public function merge_filtered_query_args( $args = array(), $type = '', $new_args = array() ) {
+
+		$type_data     = $this->type_parts_by_name( $type );
+		$type_instance = $this->get_instances( $type_data[0] );
+
+		if ( ! $type_instance ) {
+			return $args;
+		} else {
+			return $type_instance->merge_filtered_query_args( $args, $new_args, $type_data[1] );
+		}
+
+	}
+
 	/**
 	 * register callback to clean relations data on removing items of selected type
 	 *

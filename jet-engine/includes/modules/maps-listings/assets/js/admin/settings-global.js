@@ -64,6 +64,15 @@
 				} );
 			},
 			handlePopupOk: function() {
+				let customSource  = '';
+
+				this.currentPopupFields = this.currentPopupFields.map( ( item ) => {
+					if ( ! customSource && false !== customSource ) {
+						customSource = item.match( /^_custom::(.+)::/ )?.[1] ?? false;
+					}
+					
+					return customSource ? item.replace( /^_custom::.+?::/, '' ) : item;
+				} );
 
 				if ( this.currentPopupFields.length ) {
 
@@ -80,6 +89,10 @@
 				let newFields = this.getPopupValue();
 
 				if ( newFields ) {
+
+					if ( customSource ) {
+						newFields = `_custom::${customSource}::${newFields}`;
+					}
 
 					var preloadMeta = this.settings.preload_meta;
 

@@ -27,11 +27,29 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Editor' ) ) {
 				return;
 			}
 
-			add_action( 'enqueue_block_editor_assets', array( $this, 'blocks_assets' ), -1 );
+			add_action( 'enqueue_block_assets', array( $this, 'blocks_assets' ), -1 );
 
 			require_once jet_engine()->plugin_path( 'includes/components/blocks-views/editor-meta-boxes.php' );
 			new Jet_Engine_Blocks_Views_Editor_Meta_Boxes();
 
+			// Add body class for blocks views editor.
+			add_filter( 'admin_body_class', array( $this, 'add_editor_body_class' ) );
+		}
+
+		/**
+		 * Add body class for blocks views editor
+		 *
+		 * @param string $classes
+		 *
+		 * @return string
+		 */
+		public function add_editor_body_class( $classes ) {
+
+			if ( jet_engine()->post_type->slug() === get_post_type() ) {
+				$classes .= ' jet-engine-blocks-views-editor';
+			}
+
+			return $classes;
 		}
 
 		/**
@@ -275,7 +293,15 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Editor' ) ) {
 			wp_enqueue_script(
 				'jet-engine-blocks-views',
 				jet_engine()->plugin_url( 'assets/js/admin/blocks-views/blocks.js' ),
-				array( 'wp-components', 'wp-element', 'wp-blocks', 'wp-block-editor', 'lodash' ),
+				array(
+					'wp-plugins',
+					'wp-components',
+					'wp-element',
+					'wp-blocks',
+					'wp-block-editor',
+					'lodash',
+					'wp-edit-post',
+				),
 				jet_engine()->get_version(),
 				true
 			);
@@ -373,7 +399,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Editor' ) ) {
 					'shortcodes_generator' => admin_url( 'admin.php?page=jet-engine#shortcode_generator' ),
 					'macros_generator'     => admin_url( 'admin.php?page=jet-engine#macros_generator' ),
 				),
-				'isJetEnginePostType'   => 'jet-engine' === get_post_type(),
+				'isJetEnginePostType'   => jet_engine()->post_type->slug() === get_post_type(),
 				'settings'              => $settings,
 				'object_id'             => $current_object_id,
 				'fieldSources'          => $sources,
@@ -438,7 +464,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Editor' ) ) {
 		 */
 		public function get_current_object() {
 
-			if ( 'jet-engine' !== get_post_type() ) {
+			if ( jet_engine()->post_type->slug() !== get_post_type() ) {
 				return get_the_ID();
 			}
 

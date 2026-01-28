@@ -25,6 +25,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.jet-engine-icon-multiday-calendar:before {
+  content: "\e919";
+}
 .jet-engine-icon-items-number-switcher:before {
   content: "\e917";
 }
@@ -97,6 +100,7 @@
 .jet-engine-icon-profile-content:before {
   content: "\e910";
 }
+
 
 .category-jetsmartfilters .bricks-add-element .element-icon {
   font-size: 26px;

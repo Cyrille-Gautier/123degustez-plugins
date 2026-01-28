@@ -42,6 +42,8 @@ class Data {
 
 				if ( ! empty( $data['macros'] ) ) {
 
+					$initial_context = jet_engine()->listings->macros->get_macros_context();
+
 					jet_engine()->listings->macros->set_macros_context( $object_context );
 
 					if ( 'jet_engine_field_name' === $data['macros'] ) {
@@ -49,6 +51,8 @@ class Data {
 					}
 
 					$result = jet_engine()->listings->macros->call_macros_func( $data['macros'], $data );
+
+					jet_engine()->listings->macros->set_macros_context( $initial_context );
 
 				}
 

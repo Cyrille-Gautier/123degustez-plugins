@@ -30,6 +30,7 @@ if ( ! class_exists( 'CX_Control_Wysiwyg' ) ) {
 			'cols'        => '20',
 			'label'       => '',
 			'class'       => '',
+			'wpautop'     => true,
 		);
 
 		/**
@@ -46,7 +47,9 @@ if ( ! class_exists( 'CX_Control_Wysiwyg' ) ) {
 			if ( $is_first ) {
 				$editor_id = 'cx_wysiwyg';
 
-				$settings = _WP_Editors::parse_settings( $editor_id, array() );
+				$settings = _WP_Editors::parse_settings( $editor_id, array(
+					'wpautop' => isset( $this->settings['wpautop'] ) ? (bool) $this->settings['wpautop'] : true,
+				) );
 
 				_WP_Editors::editor_settings( $editor_id, $settings );
 

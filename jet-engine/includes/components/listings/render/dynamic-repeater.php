@@ -100,7 +100,23 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Repeater' ) ) {
 
 			global $post;
 
-			$fields        = $this->get_saved_fields( $settings );
+			$fields = $this->get_saved_fields( $settings );
+
+			if ( empty( $fields ) ) {
+
+				$hide_if_empty = filter_var( $settings['hide_if_empty'] ?? false, FILTER_VALIDATE_BOOLEAN );
+
+				if ( $hide_if_empty ) {
+					$this->show_field = false;
+				}
+
+				if ( $this->show_field && ! empty( $settings['dynamic_field_fallback'] ) ) {
+					echo $settings['dynamic_field_fallback'];
+				}
+
+				return;
+			}
+
 			$raw_format    = isset( $settings['dynamic_field_format'] ) ? $settings['dynamic_field_format'] : '';
 			$format        = isset( $settings['dynamic_field_format'] ) ? wp_kses_post( $settings['dynamic_field_format'] ) : false;
 			$delimiter     = isset( $settings['items_delimiter'] ) ? wp_kses_post( $settings['items_delimiter'] ) : false;
@@ -113,15 +129,6 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Repeater' ) ) {
 			$counter_after = ! empty( $settings['dynamic_field_counter_after'] ) ? wp_kses_post( $settings['dynamic_field_counter_after'] ) : false;
 			$leading_zero  = ! empty( $settings['dynamic_field_leading_zero'] ) ? $settings['dynamic_field_leading_zero'] : false;
 			$counter_pos   = ! empty( $settings['dynamic_field_counter_position'] ) ? $settings['dynamic_field_counter_position'] : 'at-left';
-
-			if ( empty( $fields ) ) {
-
-				if ( ! empty( $settings['hide_if_empty'] ) ) {
-					$this->show_field = false;
-				}
-
-				return;
-			}
 
 			$base_class = $this->get_name();
 
@@ -226,13 +233,17 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Repeater' ) ) {
 					$item_content
 				);
 
+				add_filter( 'wp_kses_allowed_html', [ $this, 'allow_iframe_for_kses' ], 10, 2 );
+
 				$item_content = wp_kses_post( $item_content );
+
+				remove_filter( 'wp_kses_allowed_html', [ $this, 'allow_iframe_for_kses' ] );
 
 				if ( $delimiter && ! $is_first ) {
 					printf(
 						'<div class="%1$s__delimiter">%2$s</div>',
 						esc_attr( $base_class ),
-						esc_attr( $delimiter )
+						$delimiter // phpcs:ignore (escaped above with wp_kses_post)
 					);
 				}
 
@@ -324,6 +335,32 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Repeater' ) ) {
 				echo $content; // phpcs:ignore
 			}
 
+		}
+
+		/**
+		 * Allow iframe temporarily for wp_kses_post()
+		 *
+		 * @param array  $tags
+		 * @param string $context
+		 * @return array
+		 */
+		function allow_iframe_for_kses( $tags, $context ) {
+
+			if ( 'post' === $context ) {
+				$tags['iframe'] = [
+					'src'             => true,
+					'width'           => true,
+					'height'          => true,
+					'frameborder'     => true,
+					'allow'           => true,
+					'allowfullscreen' => true,
+					'title'           => true,
+					'referrerpolicy'  => true,
+					'loading'         => true,
+				];
+			}
+
+			return $tags;
 		}
 
 	}

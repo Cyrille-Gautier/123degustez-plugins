@@ -13,6 +13,7 @@ const {
 
 const {
 	TextControl,
+	ToolbarItem,
 	ToggleControl,
 	SelectControl,
 	PanelBody,
@@ -74,7 +75,18 @@ function AdvancedDateFieldEdit( props ) {
 		<ToolBarFields
 			key={ uniqKey( 'ToolBarFields' ) }
 			{ ...props }
-		/>,
+		>
+			<ToggleControl
+				checked={ attributes.required && attributes.end_date_required }
+				onChange={ ( value ) => {
+					setAttributes( { end_date_required: value } );
+				} }
+				label={ __( 'End Date is Required' ) }
+				disabled={ ! attributes.required }
+				__nextHasNoMarginBottom
+			/>
+			<div></div>
+		</ToolBarFields>,
 		isSelected && <>
 			<InspectorControls
 				key={ uniqKey( 'InspectorControls' ) }

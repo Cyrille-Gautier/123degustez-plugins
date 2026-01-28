@@ -30,16 +30,32 @@ class Merged_Query extends Base_Query {
 		return ! empty( $this->final_query['base_query_type'] ) ? $this->final_query['base_query_type'] : 'posts';
 	}
 
+	public function get_query_hash( $key = null ) {
+
+		$this->setup_query();
+
+		$prefix = 'jet_query_';
+
+		if ( $key ) {
+			$prefix .= $key . '_';
+		}
+
+		$hashes = [];
+
+		foreach ( $this->get_queries_stack() as $query ) {
+			$hashes[] = $query->get_query_hash( $key );
+		}
+
+		return $prefix . md5( implode( '.', $hashes ) );
+
+	}
+
 	/**
 	 * Returns queries items
 	 *
 	 * @return [type] [description]
 	 */
 	public function _get_items() {
-
-		if ( null !== $this->merged_items ) {
-			return $this->merged_items;
-		}
 
 		$this->merged_items = [];
 		$queries_stack      = $this->get_queries_stack();
@@ -51,7 +67,6 @@ class Merged_Query extends Base_Query {
 		$current_count = 0;
 
 		foreach ( $queries_stack as $query ) {
-
 
 			if ( ! empty( $exclude_ids ) ) {
 				$this->exclude_ids( $query, $exclude_ids );
@@ -255,7 +270,7 @@ class Merged_Query extends Base_Query {
 	/**
 	 * Return stack of queries to get data from
 	 * 
-	 * @return [type] [description]
+	 * @return Base_Query[] [description]
 	 */
 	public function get_queries_stack() {
 		

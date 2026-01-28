@@ -152,7 +152,7 @@ class Manager {
 				foreach ( $order_list as $clause ) {
 					if ( ! empty( $clause['custom_key'] ) && ! empty( $clause['replacement'] ) ) {
 						$r = $clause['replacement'];
-						$o = $clause['order'];
+						$o = strtoupper( trim( $clause['order'] ) );
 						
 						$clauses['orderby'] = str_replace(
 							"$r $o",

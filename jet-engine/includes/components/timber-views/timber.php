@@ -262,7 +262,7 @@ class Package {
 			'block', 'passthru', 'exec', 'eval', 'system', 'shell_exec', 'proc_open',
 			'popen', 'assert', 'file_put_contents', 'file_get_contents', 'unlink',
 			'fopen', 'fwrite', 'call_user_func', 'call_user_func_array',
-			'create_function'
+			'create_function', 'reduce', 'constant'
 		];
 
 		foreach ( $dangerous_functions as $func ) {

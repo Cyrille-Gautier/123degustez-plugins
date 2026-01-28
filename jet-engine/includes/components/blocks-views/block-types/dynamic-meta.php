@@ -343,7 +343,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Meta' ) ) {
 					'type'         => 'color-picker',
 					'separator'    => 'before',
 					'css_selector' => array(
-						$this->css_selector( '__item-val:hover' ) => 'border-color: {{VALUE}};',
+						$this->css_selector( '__item:hover' ) => 'border-color: {{VALUE}} !important;',
 					),
 				)
 			);
@@ -397,6 +397,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Meta' ) ) {
 					'type'         => 'dimensions',
 					'units'        => array( 'px', '%' ),
 					'separator'    => 'before',
+					'is_legacy'    => true,
 					'css_selector' => array(
 						$this->css_selector( '__item' ) => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
 					),
@@ -603,6 +604,7 @@ if ( ! class_exists( 'Jet_Engine_Blocks_Views_Type_Dynamic_Meta' ) ) {
 					'type'         => 'dimensions',
 					'units'        => array( 'px', '%' ),
 					'separator'    => 'before',
+					'is_legacy'    => true,
 					'css_selector' => array(
 						$this->css_selector( '__item-val' ) => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
 					),

@@ -30,7 +30,7 @@ class OpenStreetMap extends Base {
 	 * @return mixed
 	 */
 	public function build_autocomplete_api_url( $query = '' ) {
-		return $this->build_api_url( $query );
+		return false;
 	}
 
 	/**
@@ -51,7 +51,7 @@ class OpenStreetMap extends Base {
 	 */
 	public function extract_coordinates_from_response_data( $data = array() ) {
 
-		if ( count( $data ) === 1 && isset( $data['message'] ) ) {
+		if ( is_array( $data ) && count( $data ) === 1 && isset( $data['message'] ) ) {
 			$this->save_error( $data, 'geocode' );
 			return false;
 		}
@@ -75,22 +75,15 @@ class OpenStreetMap extends Base {
 	 * @return array|false
 	 */
 	public function extract_autocomplete_data_from_response_data( $data = array() ) {
+		return false;
+	}
 
-		if ( empty( $data ) ) {
-			return false;
-		}
-
-		$result = array();
-
-		foreach ( $data as $prediction ) {
-			$result[] = array(
-				'address' => $prediction['display_name'],
-				'lat'     => $prediction['lat'],
-				'lng'     => $prediction['lon'],
-			);
-		}
-
-		return $result;
+	/**
+	 * Returns some important information that should be shown in Map Field
+	 * @return string
+	 */
+	public function get_map_field_notice() {
+		return esc_html( 'The OpenStreetMap provider does not support address autocomplete. You may set a location with a marker, or enter coordinates in \'lat, lng\' format ( e.g. \'46.967412120070094, 31.980971638597303\') into the search field and select the point from the dropdown.', 'jet-engine' );
 	}
 
 	/**
@@ -123,7 +116,7 @@ class OpenStreetMap extends Base {
 		>
 			<cx-vui-component-wrapper
 				label="<?php _e( 'Note:', 'jet-engine' ); ?>"
-				description="<?php _e( 'Be aware that this service runs on donated servers and has a very limited capacity. So please avoid heavy uses (an absolute maximum of 1 request per second).', 'jet-engine' ); ?>"
+				description="<?php _e( 'Be aware that this service runs on donated servers and has a very limited capacity. Please avoid heavy usage (an absolute maximum of 1 request per second). Autocomplete requests are forbidden, so Map Field supports only coordinates mode or picking address on the map, and the Location & Distance filter will not work.', 'jet-engine' ); ?>"
 			></cx-vui-component-wrapper>
 		</template>
 		<?php

@@ -327,6 +327,7 @@
 
 .jet-engine-query-suggestions {
 	position: relative;
+	z-index: 1;
 	&__list {
 		position: absolute;
 		left: 0;
@@ -357,6 +358,8 @@
 }
 
 .jet-engine-query-preview {
+	display: flex;
+	flex-direction: column;
 	width: 430px;
 	position: fixed;
 	right: 10px;
@@ -364,6 +367,7 @@
 	border: 1px solid #007cba;
 	box-shadow: 0 5px 10px rgba(0,0,0,.4);
 	background: #fff;
+	height: calc( 100vh - 55px );
 	body.rtl & {
 		left: 10px;
 		right: auto;
@@ -378,9 +382,12 @@
 			font-size: 12px;
 		}
 	}
+	&__settings {
+		flex: 0 0 auto;
+	}
 	&__body {
+		flex: 1 1 auto;
 		min-height: 10vh;
-		max-height: 50vh;
 		box-shadow: 0 5px 10px rgba(0,0,0,.1) inset;
 		padding: 12px;
 		overflow: auto;
@@ -391,6 +398,50 @@
 	&__items {
 		pre {
 			white-space: pre-wrap;
+		}
+	}
+}
+
+.jet-engine-query-preview__collapse.cx-vui-collapse {
+
+	border-bottom: none;
+
+	.cx-vui-collapse__heading {
+		position: relative;
+		display: flex;
+		align-items: baseline;
+		justify-content: flex-start;
+		cursor: pointer;
+		gap: 4px;
+		padding: 4px 0;
+	}
+
+	.cx-vui-collapse__heading-icon {
+		order: 2;
+		font-weight: bold;
+		line-height: 18px;
+		font-size: 15px;
+		width: auto;
+		height: auto;
+		&:before {
+			content: '[-]';
+		}
+	}
+
+	&.cx-vui-collapse--collapsed .cx-vui-collapse__heading-icon:before {
+		content: '[+]';
+	}
+
+	.cx-vui-collapse__content {
+		padding: 10px 15px;
+		font-size: 13px;
+		background: #eaeaea;
+		pre {
+			white-space: pre-wrap;
+			overflow-wrap: break-word;
+			margin: 0;
+			font-family: 'Courier New', Courier, monospace;
+			color: #000;
 		}
 	}
 }
@@ -691,7 +742,7 @@
 .jet-engine-real-query-id {
 	display: flex;
 	gap: 4px;
-	align-items: end;
+	align-items: flex-end;
 	color: #7B7E81;
 	padding: 5px 0 0 0;
 	&__label {
@@ -721,7 +772,24 @@
 		}
 	}
 }
-.CodeMirror-wrap {
-    border: 1px solid #ececec;
-    border-radius: 4px;
+
+.CodeMirror {
+	resize: vertical;
+	min-height: 50px;
+
+	&-wrap {
+		border: 1px solid #ececec;
+    	border-radius: 4px;
+	}
+}
+
+div.cx-vui-component {
+	&--in-row {
+		column-gap: 10px;
+		align-items: center;
+
+		.cx-vui-component__control {
+			flex: 1 0;
+		}
+	}
 }

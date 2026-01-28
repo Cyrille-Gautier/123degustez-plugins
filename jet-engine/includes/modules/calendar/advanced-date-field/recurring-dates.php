@@ -109,64 +109,70 @@ class Jet_Engine_Advanced_Date_Recurring_Dates {
 	 * @return array
 	 */
 	public function extract_manual_dates() {
-
 		$result = [];
 
-		if ( ! empty( $this->data['dates'] ) ) {
-			foreach ( $this->data['dates'] as $date ) {
+		// If multiple dates exist
+		$dates_to_process = ! empty( $this->data['dates'] ) ? $this->data['dates'] : [];
 
-				$full_date = $date['date'];
+		// If single date exists, append to array for uniform processing
+		if ( ! empty( $this->data['date'] ) ) {
+			$single_date        = $this->data;
+			$dates_to_process[] = $single_date;
+		}
 
-				if ( ! empty( $date['time'] ) ) {
-					$full_date .= ' ' . $date['time'];
-				}
-
-				$full_date = strtotime( $full_date );
-
-				if ( ! empty( $date['is_end_date'] ) ) {
-
-					$full_end_date = $date['end_date'];
-
-					if ( ! empty( $date['end_time'] ) ) {
-						$full_end_date .= ' ' . $date['end_time'];
-					}
-
-					$result[] = [
-						'start' => $this->prepare_date_for_result( $full_date ),
-						'end'   => $this->prepare_date_for_result( strtotime( $full_end_date ) ),
-					];
-				} else {
-					$result[] = $this->prepare_date_for_result( $full_date );
-				}
-			}
-		} elseif ( ! empty( $this->data['date'] ) ) {
-
-			$full_date = $this->data['date'];
-
-			if ( ! empty( $this->data['time'] ) ) {
-				$full_date .= ' ' . $this->data['time'];
-			}
-
-			$full_date = strtotime( $full_date );
-
-			if ( ! empty( $this->data['is_end_date'] ) ) {
-
-				$full_end_date = $this->data['end_date'];
-
-				if ( ! empty( $this->data['end_time'] ) ) {
-					$full_end_date .= ' ' . $this->data['end_time'];
-				}
-
-				$result[] = [
-					'start' => $this->prepare_date_for_result( $full_date ),
-					'end'   => $this->prepare_date_for_result( strtotime( $full_end_date ) ),
-				];
-			} else {
-				$result[] = $this->prepare_date_for_result( $full_date );
+		foreach ( $dates_to_process as $date ) {
+			$prepared = $this->build_date_result( $date );
+			if ( $prepared !== null ) {
+				$result[] = $prepared;
 			}
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Build a date result from field data
+	 *
+	 * Returns:
+	 * - ['start' => ..., 'end' => ...] if end date exists
+	 * - timestamp if single date
+	 * - null if start date missing
+	 *
+	 * @param array $date
+	 * @return array|int|null
+	 */
+	public function build_date_result( $date ) {
+		// Skip if no start date is provided.
+		if ( empty( $date['date'] ) ) {
+			return null;
+		}
+
+		$full_date = $date['date'];
+
+		if ( ! empty( $date['time'] ) ) {
+			$full_date .= ' ' . $date['time'];
+		}
+
+		$full_date = strtotime( $full_date );
+
+		// Handle case when end date is enabled.
+		if ( ! empty( $date['is_end_date'] ) ) {
+			$full_end_date = $date['end_date'];
+
+			if ( ! empty( $date['end_time'] ) ) {
+				$full_end_date .= ' ' . $date['end_time'];
+			}
+
+			$full_end_date = strtotime( $full_end_date );
+
+			return [
+				'start' => $this->prepare_date_for_result( $full_date ),
+				'end'   => $this->prepare_date_for_result( $full_end_date ),
+			];
+		}
+
+		// Single date
+		return $this->prepare_date_for_result( $full_date );
 	}
 
 	/**

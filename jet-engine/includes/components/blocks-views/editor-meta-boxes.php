@@ -124,7 +124,14 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 					// repeater settings store only to `_elementor_page_settings` without `listing_` prefix
 					$el_settings_to_store[ $store_key ] = $value;
 				} else {
-					$el_settings_to_store[ 'listing_' . $store_key ] = $value;
+					// link settings
+					if ( isset( $keep_newlines[ $key ] ) ) {
+						$store = sanitize_textarea_field( $_POST[ $key ] );
+					} else {
+						$store = sanitize_text_field( $_POST[ $key ] );
+					}
+
+					$el_settings_to_store[ 'listing_' . $store_key ] = $store;
 				}
 			}
 		}
@@ -166,11 +173,11 @@ class Jet_Engine_Blocks_Views_Editor_Meta_Boxes {
 		}
 
 		if ( jet_engine()->listings->components->is_component( $post->ID ) ) {
-			$settings_label = __( 'Component Settings', 'jet-engine' );
+			$settings_label = __( 'Settings', 'jet-engine' );
 			$settings_cb = array( $this, 'render_component_settings_box' );
 			$css_label = __( 'Component CSS', 'jet-engine' );
 		} else {
-			$settings_label = __( 'Listing Settings', 'jet-engine' );
+			$settings_label = __( 'Settings', 'jet-engine' );
 			$settings_cb = array( $this, 'render_settings_box' );
 			$css_label = __( 'Listing CSS', 'jet-engine' );
 		}

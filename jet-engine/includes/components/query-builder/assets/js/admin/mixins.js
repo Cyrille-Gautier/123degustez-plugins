@@ -176,11 +176,6 @@ window.JetEngineQueryMetaField = {
 			this.$emit( 'input', this.currentField );
 		},
 		getDynamicValue: function() {
-
-			if ( undefined === this.dynamicQuery ) {
-				console.log( this );
-			}
-
 			return this.dynamicQuery.value;
 		},
 		setDynamicQueryProp: function( key, value ) {

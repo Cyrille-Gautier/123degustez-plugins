@@ -61,7 +61,37 @@
 				.on( 'click.JetEngine', '.jet-engine-listing-overlay-wrap:not([data-url*="event=hover"])', JetEngine.handleListingItemClick )
 				.on( 'jet-filter-content-rendered', JetEngine.filtersCompatibility )
 				.on( 'click.JetEngine', '.jet-container[data-url]', JetEngine.handleContainerURL )
+				.on( 'click.JetEngine', '.jet-md-calendar__event', JetEngine.openCalendarEvent )
+				.on( 'click.JetEngine', '.jet-md-calendar__event-overlay, .jet-md-calendar__event-close', JetEngine.closeCalendarEvents )
 				.on( 'change.JetEngine', '.jet-listing-dynamic-link .qty', JetEngine.handleProductQuantityChange );
+		},
+
+		closeCalendarEvents: function ( event ) {
+
+			if ( event ) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
+
+			$( '.jet-md-calendar__event-content' ).removeClass( 'is-active' );
+		},
+
+		openCalendarEvent: function ( event ) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			var $event = $( event.currentTarget );
+			var eventId = $event.data( 'object-id' );
+
+			var $eventContent = $event.closest( '.jet-calendar' ).find( `.jet-md-calendar__event-content[data-object-id="${eventId}"]` );
+
+			if ( ! $eventContent.length ) {
+				return;
+			}
+
+			JetEngine.closeCalendarEvents();
+
+			$eventContent.addClass( 'is-active' );
 		},
 
 		handleProductQuantityChange: function ( event ) {
@@ -188,6 +218,19 @@
 					callback: JetEngine.widgetDynamicField
 				}
 			] );
+
+			document.addEventListener('bricks/tabs/changed', (event) => {
+				const tabActivePane = event.detail?.activePane;
+
+				if (tabActivePane) {
+					const $content = jQuery(tabActivePane);
+
+					setTimeout(() => {
+						JetEngine.maybeReinitSlider(event, $content);
+						JetEngine.widgetDynamicField($content);
+					}, 50);
+				}
+			});
 		},
 
 		initFrontStores: function( $scope ) {
@@ -764,9 +807,45 @@
 			var $this = $( this );
 
 			if ( window.confirm( $this.data( 'delete-message' ) ) ) {
-				window.location = $this.attr( 'href' );
+				JetEngine.handleDeleteRedirect( $this.attr( 'href' ), this );
 			}
 
+		},
+
+		handleDeleteRedirect: function( url, baseElement ) {
+			if ( ! window.JetSmartFilters ) {
+				window.location = url;
+				return;
+			}
+
+			const filterGroups = window.JetSmartFilters.filterGroups;
+
+			for ( const groupName in filterGroups ) {
+				const filterGroup = filterGroups[ groupName ];
+
+				if ( filterGroup?.$provider && filterGroup.$provider.find( $( baseElement ) ) ) {
+					filterGroup.startAjaxLoading();
+
+					$.ajax({
+						url: url,
+						type: 'GET',
+					}).done(
+						function( response ) {
+							const redirectURL = new URLSearchParams( url ).get( 'redirect' ).replace(/\/+$/, '');
+							const currentURL  = ( window.location.origin + window.location.pathname ).replace(/\/+$/, '');
+
+							if ( redirectURL === currentURL ) {
+								filterGroup.currentQuery[ '_refresh_listing_' + Date.now() ] = Date.now();
+								filterGroup.apply();
+							} else {
+								filterGroup.doRedirect( 'ajax', redirectURL );
+							}
+						}
+					)
+					
+					return;
+				}
+			}
 		},
 
 		handleListingItemClick: function( event ) {
@@ -1593,6 +1672,7 @@
 
 								if ( $widget.length ) {
 									$widget.find( '.jet-listing-grid' ).first().removeClass( 'jet-listing-grid--lazy-load' );
+									$widget.find( '.jet-listing-grid' ).first().addClass( 'jet-listing-grid--lazy-load-completed' );
 								}
 
 								JetEngine.widgetListingGrid( $widget );
@@ -1889,6 +1969,10 @@
 			);
 
 			$sliderItems.slick( slickOptions );
+
+			if ( $sliderItems.closest( '.jet-listing-grid--lazy-load-completed' ).length ) {
+				$sliderItems.slick( 'refresh', true );
+			}
 
 			$sliderItems.off( 'init.JetEngine' );
 		},
@@ -2273,13 +2357,15 @@
 
 			var $this   = $( this ),
 				$calendar = $this.closest( '.jet-calendar' ),
-				$widget   = $this.closest( '.elementor-widget-jet-listing-calendar' ),
+				$widget   = $this.closest( '.elementor-widget' ),
 				widgetID  = $widget.closest( '.elementor-widget' ).data( 'id' ),
 				settings  = $calendar.data( 'settings' ),
 				post      = $calendar.data( 'post' ),
 				month     = $this.data( 'month' );
 
 			settings = JetEngine.ensureJSON( settings );
+
+			settings['renderer'] = $calendar.data( 'renderer' ) || '';
 
 			if ( this.classList.contains( 'nav-link-prev' ) ) {
 				settings['__switch_direction'] = -1;

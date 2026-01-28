@@ -1,6 +1,7 @@
 <?php
 namespace Jet_Engine\Modules\Custom_Content_Types\Data_Stores;
 
+use Jet_Engine\Modules\Custom_Content_Types\Query_Builder\CCT_Query;
 use Jet_Engine\Modules\Custom_Content_Types\Module;
 
 class Manager {
@@ -62,6 +63,109 @@ class Manager {
 			array( $this, 'ensure_store_item_count_on_save' ), 10, 3
 		);
 
+		add_filter(
+			'jet-engine/data-stores/query-builder/store-pre-query',
+			array( $this, 'handle_data_store_query_type' ), 10, 4
+		);
+
+	}
+
+	/**
+	 * Process Data Store query type for Query Builder and CCT store
+	 *
+	 * @param mixed $result Query result.
+	 * @param object $store Data Store instance.
+	 * @param array|false $current_store Current store items.
+	 * @param array $query_args Final query args.
+	 */
+	public function handle_data_store_query_type( $result, $store, $current_store, $query_args ) {
+
+		if ( ! $store ) {
+			return $result;
+		}
+
+		$is_cct      = $store->get_arg( 'is_cct' );
+		$related_cct = $store->get_arg( 'related_cct' );
+
+		if ( ! $is_cct || ! $related_cct ) {
+			return $result;
+		}
+
+		$content_type = Module::instance()->manager->get_content_types( $related_cct );
+
+		if ( ! $content_type ) {
+			return $result;
+		}
+
+		$result = new \Jet_Engine\Modules\Data_Stores\Query_Builder\Query_Result( array(), 0, array() );
+
+		if ( empty( $current_store ) ) {
+			return $result;
+		}
+
+		$max_items = isset( $query_args['max_items'] ) ? absint( $query_args['max_items'] ) : 0;
+		$cct_query_args = array(
+			'content_type' => $related_cct,
+			'status'       => 'publish',
+			'order' => array( array(
+				'orderby' => 'preserve_ids',
+				'order'   => 'ASC',
+			) ),
+			'args' => array(
+				array(
+					'field'    => '_ID',
+					'operator' => 'IN',
+					'value'    => $current_store,
+				),
+			),
+		);
+
+		if ( $max_items > 0 ) {
+			$cct_query_args['number'] = $max_items;
+		}
+
+		if ( ! empty( $query_args['paged'] ) ) {
+			$paged          = absint( $query_args['paged'] );
+			$cct_query_args['number'] = $max_items;
+			$cct_query_args['offset'] = ( $paged - 1 ) * $max_items;
+			unset( $query_args['paged'] );
+		}
+
+		$cct_query = new CCT_Query( array(
+			'query' => $cct_query_args,
+		) );
+
+		// Unset known query_args which are 100% not related to filters
+		$unset_args = array(
+			'store_slug',
+			'max_items',
+			'_query_type',
+			'queried_object_id',
+			'jet_smart_filters',
+			'suppress_filters',
+		);
+
+		foreach ( $unset_args as $arg ) {
+			if ( isset( $query_args[ $arg ] ) ) {
+				unset( $query_args[ $arg ] );
+			}
+		}
+
+		$cct_query->setup_query();
+
+		foreach ( $query_args as $key => $value ) {
+			$cct_query->set_filtered_prop( $key, $value );
+		}
+
+		$final_query = $cct_query->final_query;
+
+		$final_query['_query_type'] = \Jet_Engine\Modules\Custom_Content_Types\Query_Builder\Manager::instance()->slug;
+
+		return new \Jet_Engine\Modules\Data_Stores\Query_Builder\Query_Result(
+			$cct_query->get_items(),
+			(int) $cct_query->get_items_total_count(),
+			$final_query
+		);
 	}
 
 	public function add_blocks_data( $data ) {

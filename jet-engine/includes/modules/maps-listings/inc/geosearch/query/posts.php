@@ -104,7 +104,7 @@ class Posts extends Base {
 			
 			//if bounds empty or incomplete - don't limit by bounds
 			if ( $this->must_apply_bounds( $geo_query ) ) {
-				$bounds = $geo_query['bounds'];
+				$bounds = $this->get_bounds( $geo_query );
 
 				$new_sql .= "( geo_query_lat.meta_key = %s AND geo_query_lng.meta_key = %s ) AND ";
 				$new_sql .= "( geo_query_lat.meta_value BETWEEN {$bounds['south']} AND {$bounds['north']}";

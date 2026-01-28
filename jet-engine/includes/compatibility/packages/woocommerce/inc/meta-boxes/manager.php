@@ -60,6 +60,9 @@ class Manager {
 		add_action( 'jet-engine/meta-boxes/data/delete-metadata/woocommerce_product_data',      [ $this, 'delete_product_metadata' ] );
 		add_action( 'jet-engine/meta-boxes/data/delete-metadata/woocommerce_product_variation', [ $this, 'delete_product_variation_metadata' ] );
 
+		add_filter( 'jet-engine/meta-boxes/fields-for-select/group-args', [ $this, 'agjust_meta_group_args' ], 10, 4 );
+		add_filter( 'jet-engine/maps-listing/settings/fields', [ $this, 'modify_map_listings_settings' ] );
+
 	}
 
 	/**
@@ -417,6 +420,52 @@ class Manager {
 				'post_type' => 'product_variation',
 			]
 		);
+	}
+
+	public function modify_map_listings_settings( $fields ) {
+		
+		$product_fields = jet_engine()->meta_boxes->get_fields_for_select( 'text', 'blocks', 'product' );
+		$product_fields = wp_list_pluck( $product_fields, 'values', 'label' );
+
+		foreach ( $product_fields as $label => $options ) {
+			$product_fields[ $label ] = array_map( function ( $option ) {
+				$option['value'] = '_custom::posts::' . $option['value'];
+				return $option;
+			}, $product_fields[ $label ] );
+		}
+
+		return array_merge( $fields, $product_fields );
+	}
+
+	public function agjust_meta_group_args( $args, $object, $for, $manager ) {
+		$is_product = $this->is_product_meta_group( $object, $manager );
+		
+		if ( $is_product ) {
+			$args['group_label'] = false;
+		}
+		
+		if ( ! in_array( $for, array( 'all', 'product' ) ) ) {
+			return $args;
+		}
+		
+		if ( $is_product ) {
+			$args['group_label'] = $object;
+			$args['group_for']   = 'product';
+		}
+
+		return $args;
+	}
+
+	public function is_product_meta_group( $object, $manager ) {
+		if ( ! empty( $manager->get_fields_for_context( 'woocommerce_product_data', $object ) ) ) {
+			return true;
+		}
+
+		if ( ! empty( $manager->get_fields_for_context( 'woocommerce_product_variation', $object ) ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

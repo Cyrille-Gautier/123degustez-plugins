@@ -59,6 +59,10 @@ class Jet_Engine_Custom_Field_Tag extends Elementor\Core\DynamicTags\Tag {
 			return $value;
 		}
 
+		if ( empty( $value ) ) {
+			return;
+		}
+
 		echo wp_kses_post( $value );
 	}
 

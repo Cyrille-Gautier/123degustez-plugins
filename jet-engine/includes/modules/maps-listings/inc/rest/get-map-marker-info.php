@@ -33,6 +33,23 @@ class Get_Map_Marker_Info extends \Jet_Engine_Base_API_Endpoint {
 			) );
 		}
 
+		// For private listings or posts - also check user permissions.
+		$listing_status = get_post_status( $listing_id );
+		$post_status    = get_post_status( $post_id );
+
+		if ( in_array( $listing_status, array( 'private', 'draft', 'pending' ), true )
+			|| in_array( $post_status, array( 'private', 'draft', 'pending' ), true )
+		) {
+			if ( ! current_user_can( 'edit_post', $post_id )
+				|| ! current_user_can( 'edit_post', $listing_id )
+			) {
+				return rest_ensure_response( array(
+					'success' => false,
+					'html'    => __( 'You do not have permissions to view this content', 'jet-engine' ),
+				) );
+			}
+		}
+
 		if ( false !== strpos( $post_id, '-' ) ) {
 			$this->maybe_apply_jet_smart_filters( $params['jsf'] ?? '' );
 		}
@@ -153,7 +170,7 @@ class Get_Map_Marker_Info extends \Jet_Engine_Base_API_Endpoint {
 	/**
 	 * Check user access to current end-popint
 	 * This is public endpoint so it always accessible
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function permission_callback( $request ) {

@@ -19,7 +19,7 @@ class Manager {
 
 		add_action( 'jet-engine/elementor-views/widgets/register', array( $this, 'register_widgets' ), 20, 2 );
 
-		add_action( 'enqueue_block_editor_assets', array( $this, 'register_blocks_assets' ), 9 );
+		add_action( 'enqueue_block_assets', array( $this, 'register_blocks_assets' ), 9 );
 		add_action( 'init', array( $this, 'register_blocks_types' ), 999 );
 		add_action( 'jet-smart-filters/blocks/localized-data', array( $this, 'modify_filters_localized_data' ) );
 
@@ -98,7 +98,19 @@ class Manager {
 		if ( ! empty( $query['geo_query'] ) && is_string( $query['geo_query'] ) ) {
 
 			// Try to decode json string.
-			$_geo_query = json_decode( wp_unslash( $query['geo_query'] ), true );
+			$t = 0;
+
+			$_geo_query = $query['geo_query'];
+
+			while ( $t++ < 3 ) {
+				if ( preg_match( '/"\s*:\s*"/', $_geo_query ) ) {
+					break;
+				}
+				
+				$_geo_query = stripslashes( $_geo_query );
+			}
+
+			$_geo_query = json_decode( $_geo_query, true );
 
 			if ( ! empty( $_geo_query ) ) {
 				$query['geo_query'] = $_geo_query;
@@ -156,7 +168,7 @@ class Manager {
 		wp_enqueue_script(
 			'jet-maps-listings-geolocation-blocks',
 			jet_engine()->plugin_url( 'includes/modules/maps-listings/assets/js/admin/blocks.js' ),
-			array( 'wp-blocks','wp-editor', 'wp-components', 'wp-i18n' ),
+			array( 'jet-engine-blocks-views' ),
 			jet_engine()->get_version(),
 			true
 		);

@@ -12,7 +12,7 @@ abstract class Base_Store {
 	public function __construct() {
 
 		if ( $this->is_front_store() ) {
-			add_action( 'jet-engine/listings/frontend-scripts', array( $this, 'register_store_js_object' ) );
+			add_action( 'jet-engine/listings/frontend-scripts', array( $this, 'register_store_js_object' ), 100 );
 		}
 
 		//$this->on_init(); // moved to Factory class to prevent conflicts with cache plugins
@@ -134,7 +134,7 @@ abstract class Base_Store {
 			$this->js_get_store()
 		);
 
-		wp_add_inline_script( 'jet-engine-frontend', $data, 'before' );
+		wp_add_inline_script( 'jet-engine-data-stores', $data, 'before' );
 	}
 
 }

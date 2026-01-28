@@ -19,12 +19,15 @@ class Manager {
 
 	private $new_hooks = true;
 
+	private $current_widget = null;
+
 	public function __construct() {
 
 		add_action( 'jet-engine-query-gateway/control', array( $this, 'register_controls' ), 10, 2 );
 		add_action( 'jet-engine-query-gateway/do-item', array( $this, 'set_item_object' ) );
 		add_action( 'jet-engine-query-gateway/reset-item', array( $this, 'reset_item_object' ) );
 		add_filter( 'jet-engine-query-gateway/query', array( $this, 'query_items' ), 10, 3 );
+		add_filter( 'jet-tabs/widgets/template_content', array( $this, 'maybe_add_inline_styles' ), 10, 4 );
 
 		//remove version checks and old methods after a few updates of JetElements/JetTabs
 		if ( function_exists( 'jet_elements' ) && version_compare( jet_elements()->get_version(), '2.7.2', '<=' ) ) {
@@ -90,6 +93,31 @@ class Manager {
 		}
 
 		array_pop( $this->object_stack );
+	}
+
+	public function maybe_add_inline_styles( $content, $item, $css_id, $widget ) {
+		if ( empty( $item['_jet_engine_queried_object'] ) || empty( $item['item_template_id'] ) ) {
+			return $content;
+		}
+
+		$template_id = apply_filters( 'jet-tabs/widgets/template_id', $item['item_template_id'] );
+
+		$dcss = new \Jet_Engine_Elementor_Dynamic_CSS( $template_id, $template_id );
+		$dcss->set_listing_unique_selector(
+			sprintf(
+				'%s #%s',
+				$widget->get_unique_selector(),
+				$css_id
+			)
+		);
+
+		$css = $dcss->get_content();
+
+		if ( empty( $css ) ) {
+			return $content;
+		}
+
+		return sprintf( '<style>%s</style>', $css ) . $content;
 	}
 	
 	public function set_item_object( $item ) {
@@ -233,6 +261,8 @@ class Manager {
 	public function get_queried_items( $control_name, $widget ) {
 
 		$query_id = $widget->get_settings( 'jet_engine_query_id_' . $control_name );
+
+		$this->current_widget = $widget;
 
 		$items = array();
 

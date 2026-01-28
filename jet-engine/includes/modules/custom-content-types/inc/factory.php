@@ -13,6 +13,9 @@ class Factory {
 
 	public $args    = array();
 	public $fields  = array();
+	/**
+	 * @var DB
+	 */
 	public $db      = null;
 	public $page    = null;
 	public $type_id = null;
@@ -244,7 +247,7 @@ class Factory {
 	 *
 	 * @param  [type] $action_key   [description]
 	 * @param  array  $actions_list [description]
-	 * @return [type]               [description]
+	 * @return Item_Handler         [description]
 	 */
 	public function get_item_handler( $action_key = false, $actions_list = array() ) {
 
@@ -376,14 +379,14 @@ class Factory {
 			case 'date':
 				if ( ! empty( $data['is_timestamp'] ) ) {
 					$format = get_option( 'date_format' );
-					$value  = date_i18n( $format, $value );
+					$value  = jet_engine_date( $format, $value );
 				}
 				break;
 
 			case 'time':
 				if ( ! empty( $data['is_timestamp'] ) ) {
 					$format = get_option( 'time_format' );
-					$value  = date_i18n( $format, $value );
+					$value  = jet_engine_date( $format, $value );
 				}
 				break;
 
@@ -391,7 +394,7 @@ class Factory {
 			case 'datetime-local':
 				if ( ! empty( $data['is_timestamp'] ) ) {
 					$format = get_option( 'date_format' ) . ', ' . get_option( 'time_format' );
-					$value  = date_i18n( $format, $value );
+					$value  = jet_engine_date( $format, $value );
 				}
 				break;
 
@@ -712,14 +715,14 @@ class Factory {
 
 					case 'date':
 						if ( ! empty( $field['is_timestamp'] ) ) {
-							$column['_cb'] = 'date_i18n';
+							$column['_cb'] = 'jet_engine_date';
 							$column['date_format'] = get_option( 'date_format' );
 						}
 						break;
 
 					case 'time':
 						if ( ! empty( $field['is_timestamp'] ) ) {
-							$column['_cb'] = 'date_i18n';
+							$column['_cb'] = 'jet_engine_date';
 							$column['date_format'] = get_option( 'time_format' );
 						}
 						break;
@@ -727,7 +730,7 @@ class Factory {
 					case 'datetime':
 					case 'datetime-local':
 						if ( ! empty( $field['is_timestamp'] ) ) {
-							$column['_cb'] = 'date_i18n';
+							$column['_cb'] = 'jet_engine_date';
 							$column['date_format'] = get_option( 'date_format' ) . ', ' . get_option( 'time_format' );
 						}
 						break;
@@ -887,14 +890,14 @@ class Factory {
 
 			case 'date':
 				if ( ! empty( $field['is_timestamp'] ) && \Jet_Engine_Tools::is_valid_timestamp( $value ) ) {
-					$value = date( 'Y-m-d', $value );
+					$value = jet_engine_date( 'Y-m-d', $value );
 				}
 				break;
 
 			case 'datetime':
 			case 'datetime-local':
 				if ( ! empty( $field['is_timestamp'] ) && \Jet_Engine_Tools::is_valid_timestamp( $value ) ) {
-					$value = date( 'Y-m-d\TH:i', $value );
+					$value = jet_engine_date( 'Y-m-d\TH:i', $value );
 				}
 				break;
 

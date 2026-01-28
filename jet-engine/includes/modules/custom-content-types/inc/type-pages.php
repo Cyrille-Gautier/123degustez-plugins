@@ -249,6 +249,26 @@ class Type_Pages {
 	 */
 	public function render_list_page() {
 
+		$edit_cct_link = admin_url( 'admin.php?page=jet-engine-cct&cct_action=edit&id=' . $this->factory->type_id );
+
+		if ( ! \Jet_Engine\Modules\Custom_Content_Types\DB::custom_table_exists( $this->factory->get_arg( 'slug' ) ) ) {
+			?>
+				<div class="cct-heading">
+					<h2><?php echo $this->factory->get_arg( 'name' ); ?></h2>
+				</div>
+				<div style="margin-top: 20px; padding: 10px;background-color: white;font-size: 1.5em;">
+					CCT DB table is missing. Please go to the Content Type <a href="<?php echo $edit_cct_link; ?>">settings page</a> and try to update its settings.
+				</div>
+			<?php
+			return;
+		} elseif ( ! $this->factory->db->has_columns_by_schema() ) {
+			?>
+				<div style="margin-top: 20px; padding: 10px;background-color: white;font-size: 1.2em;">
+					DB column schema is invalid. Please go to the Content Type <a href="<?php echo $edit_cct_link; ?>">settings page</a> and try to update its settings.
+				</div>
+			<?php
+		}
+
 		?>
 		<div class="wrap">
 			<style type="text/css">

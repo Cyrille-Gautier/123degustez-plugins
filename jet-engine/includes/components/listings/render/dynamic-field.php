@@ -371,6 +371,12 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Field' ) ) {
 				return;
 			}
 
+			$use_kses = apply_filters( 'jet-engine/listings/dynamic-field/kses-output', false, $settings );
+
+			if ( $use_kses ) {
+				$result = wp_kses_post( $result );
+			}
+
 			echo $result; // phpcs:ignore
 		}
 
@@ -442,6 +448,18 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Field' ) ) {
 			$field_icon    = ! empty( $settings['field_icon'] ) ? esc_attr( $settings['field_icon'] ) : false;
 			$new_icon      = ! empty( $settings['selected_field_icon'] ) ? $settings['selected_field_icon'] : false;
 
+			$atts     = apply_filters( 'jet-engine/listing/dynamic-field/render-attributes', array() );
+			$atts_str = '';
+
+			if ( ! empty( $atts ) ) {
+				foreach ( $atts as $key => $value ) {
+					$atts_str .= sprintf(
+						' %1$s="%2$s"',
+						esc_attr( $key ),
+						esc_attr( $value ) );
+				}
+			}
+
 			ob_start();
 			$this->render_field_content( $settings );
 			$field_content = ob_get_clean();
@@ -470,7 +488,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Field' ) ) {
 
 				if ( ! $this->prevent_icon ) {
 
-					$new_icon_html = Jet_Engine_Tools::render_icon( $new_icon, $base_class . '__icon' );
+					$new_icon_html = Jet_Engine_Tools::render_icon( $new_icon, $base_class . '__icon', $atts );
 
 					if ( $new_icon_html ) {
 						// Escaped by \Jet_Engine_Tools::render_icon()
@@ -483,7 +501,7 @@ if ( ! class_exists( 'Jet_Engine_Render_Dynamic_Field' ) ) {
 
 				do_action( 'jet-engine/listing/dynamic-field/before-field', $this );
 
-				printf( '<%1$s class="%2$s__content">', $tag, $base_class ); // phpcs:ignore
+				printf( '<%1$s class="%2$s__content" %3$s>', $tag, $base_class, $atts_str ); // phpcs:ignore
 					echo $field_content; // phpcs:ignore
 				printf( '</%s>', $tag ); // phpcs:ignore
 

@@ -95,6 +95,8 @@ if ( ! class_exists( 'Jet_Engine_CPT' ) ) {
 			}, 20 );
 
 			require_once $this->component_path( 'custom-tables/manager.php' );
+			require_once jet_engine()->plugin_path( 'includes/components/post-types/mcp/controller.php' );
+			new \Jet_Engine\Post_Types\MCP\Controller();
 
 		}
 

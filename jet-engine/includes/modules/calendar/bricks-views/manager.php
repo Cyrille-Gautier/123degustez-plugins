@@ -20,17 +20,44 @@ class Manager {
 	 * Constructor for the class
 	 */
 	function __construct() {
+
 		add_action( 'jet-engine/bricks-views/init', array( $this, 'init' ), 10 );
-		add_filter( 'jet-engine/calendar/render/default-settings', array( $this, 'add_default_settings' ), 10, 2 );
-		add_filter( 'jet-engine/calendar/render/widget-settings', array( $this, 'add_widget_settings' ), 10, 2 );
+
+		add_filter(
+			'jet-engine/calendar/render/default-settings',
+			array( $this, 'add_default_settings' ), 10, 2
+		);
+
+		add_filter(
+			'jet-engine/calendar/render/widget-settings',
+			array( $this, 'add_widget_settings' ), 10, 2
+		);
+
+		add_filter(
+			'jet-smart-filters/bricks/allowed-providers',
+			array( $this, 'register_calendar_providers' ), 10, 1
+		);
 	}
 
 	public function init() {
 		add_action( 'jet-engine/bricks-views/register-elements', array( $this, 'register_elements' ), 11 );
 	}
 
+	/**
+	 * Register calendar as allowed providers for JSF in Bricks views
+	 *
+	 * @param array $providers
+	 *
+	 * @return array
+	 */
+	public function register_calendar_providers( $providers ) {
+		$providers['jet-engine-multiday-calendar'] = true;
+		return $providers;
+	}
+
 	public function register_elements() {
 		\Bricks\Elements::register_element( $this->module_path( 'calendar.php' ) );
+		\Bricks\Elements::register_element( $this->module_path( 'multiday-calendar.php' ) );
 	}
 
 	public function module_path( $relative_path = '' ) {
