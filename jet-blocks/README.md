@@ -4,6 +4,24 @@ Enjoy the easy-to-use widgets made for enriching headers & footers with content.
 
 # ChangeLog
 
+## 1.3.23
+* Added: “Full Width” option for the Login Form submit button.
+* Fixed: Nav Menu dropdown arrow toggle behavior when Elementor Page Transitions/Preloader are enabled.
+* Fixed: Prevented Sticky Header from breaking after filtering inside a popup.
+* Fixed: Dropdown arrow click no longer navigates when parent item is clickable.
+
+## 1.3.22
+* Fixed: Sticky Section “Stop at Parent End” option.
+* Fixed: Compatibility issue with JetEngine Listing (Twig templates).
+* Fixed: Hamburger Panel overlay issue when using Ally – Web Accessibility & Usability (Contrast mode).
+
+## 1.3.21
+* Fixed: Login Form “Stay on the current page” built a wrong URL on subdirectory.
+* Updated: Site Logo widget sizing — more consistent width/height handling and responsive behavior.
+* Updated: Reset Password Form text token — %x → %s to output the minimum length correctly.
+* Fixed: Sticky option conflict with Elementor caching — stabilized sticky behavior under cached assets.
+* Fixed: Auth Links logout redirect from CPT archive pages — now returns to the current archive URL instead of the first single post.
+
 ## 1.3.20.1
 * Fixed: PHPCS/WP Security Standards — minor issues.
 

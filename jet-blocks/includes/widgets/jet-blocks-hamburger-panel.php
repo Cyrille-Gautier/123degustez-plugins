@@ -725,6 +725,7 @@ class Jet_Blocks_Hamburger_Panel extends Jet_Blocks_Base {
 		}
 
 		$this->add_render_attribute( 'instance', array(
+			'id'    => 'jet-hamburger-panel-instance',
 			'class' => array(
 				'jet-hamburger-panel',
 				'jet-hamburger-panel-' . $position . '-position',

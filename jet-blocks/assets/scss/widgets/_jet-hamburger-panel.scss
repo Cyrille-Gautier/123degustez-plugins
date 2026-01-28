@@ -87,7 +87,7 @@
 		opacity: 0;
 		background-color: rgba( 0, 0, 0, 0.3 );
 		pointer-events: none;
-		transition: opacity 0.4s cubic-bezier(.6,.17,.45,.88),
+		transition: opacity 0.4s cubic-bezier(.6,.17,.45,.88);
 	}
 
 	&__content {

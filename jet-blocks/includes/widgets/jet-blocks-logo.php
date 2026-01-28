@@ -509,10 +509,8 @@ class Jet_Blocks_Logo extends Jet_Blocks_Base {
 		if ( isset( $settings['logo_image_from'] ) && 'from_site_logo' === $settings['logo_image_from'] ) {
 			$logo_id = get_theme_mod( 'custom_logo' );
 			if ( $logo_id ) {
-				$image_src = Group_Control_Image_Size::get_attachment_image_src( $logo_id, 'logo_image', $settings );
-				if ( ! empty( $settings['logo_image_2x']['id'] ) ) {
-					$retina_src = Group_Control_Image_Size::get_attachment_image_src( $settings['logo_image_2x']['id'], 'logo_image_2x', $settings );
-				}
+                $image_src = wp_get_attachment_image_url( $logo_id, 'full' );
+                $retina_src = '';
 			} elseif ( function_exists( 'get_custom_logo' ) ) {
 				$custom_logo_html = get_custom_logo();
 				if ( preg_match( '/<svg.*<\/svg>/is', $custom_logo_html, $m ) ) {

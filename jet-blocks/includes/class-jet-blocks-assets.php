@@ -85,10 +85,18 @@ if ( ! class_exists( 'Jet_Blocks_Assets' ) ) {
 
 			do_action( 'jet-blocks/frontend/before_enqueue_scripts' );
 
+            wp_register_script(
+                'jet-blocks-jsticky',
+                jet_blocks()->plugin_url( 'assets/js/lib/jsticky/jquery.jsticky' . $min_suffix . '.js' ),
+                array( 'jquery' ),
+                '1.1.0',
+                true
+            );
+
 			wp_enqueue_script(
 				'jet-blocks',
 				jet_blocks()->plugin_url( 'assets/js/jet-blocks' . $min_suffix . '.js' ),
-				array( 'jquery', 'elementor-frontend' ),
+				array( 'jquery', 'elementor-frontend', 'jet-blocks-jsticky' ),
 				jet_blocks()->get_version(),
 				true
 			);

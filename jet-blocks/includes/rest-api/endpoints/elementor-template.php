@@ -243,7 +243,14 @@ class Elementor_Template extends Base {
 		$template_id = $args['id'] ?? '';
 		$widget_id = $args['widget_id'] ?? '';
 		$received_signature = $args['signature'] ?? '';
-		
+		if ( empty( $widget_id ) || empty( $received_signature ) ) {
+			return true;
+		}
+
+		if ( ! $template_id || ! defined( 'NONCE_KEY' ) || ! NONCE_KEY ) {
+			return false;
+		}
+
 		$secret = defined( 'NONCE_KEY' ) ? NONCE_KEY : '';
 		$expected_signature = md5( $template_id . $widget_id . $secret );
 		

@@ -1394,7 +1394,9 @@ class Jet_Blocks_Auth_Links extends Jet_Blocks_Base {
 				break;
 
 			case 'left':
-				$redirect = get_permalink();
+				global $wp;
+				$base_url   = home_url( user_trailingslashit( $wp->request ) );
+				$redirect   = esc_url_raw( add_query_arg( wp_unslash( $_GET ), $base_url ) );
 				break;
 
 			case 'custom':

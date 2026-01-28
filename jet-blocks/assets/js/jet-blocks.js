@@ -251,6 +251,86 @@
 				currentDeviceIndex  = availableDevices.indexOf( currentDeviceMode ),
 				currentEventCheck   = ('ontouchend' in window ) ? 'touchend.jetNavMenu' : 'click.jetNavMenu';
 
+			if ( !window.JetBlocksNavPageTransitionGuard ) {
+				window.JetBlocksNavPageTransitionGuard = true;
+
+				var lastHandledTs = 0;
+
+				function toggleMenuItem( $menuItem ) {
+					if ( !$menuItem || !$menuItem.length ) return;
+
+					if ( $menuItem.hasClass( 'jet-nav-hover' ) ) {
+						$menuItem.removeClass( 'jet-nav-hover' );
+						$menuItem.children( '.jet-nav__sub' ).stop( true, true ).slideUp( 200 );
+
+						$menuItem.find( '.menu-item-has-children.jet-nav-hover' ).each( function() {
+							jQuery( this ).removeClass( 'jet-nav-hover' );
+							jQuery( this ).children( '.jet-nav__sub' ).stop( true, true ).slideUp( 200 );
+						} );
+					} else {
+						$menuItem.addClass( 'jet-nav-hover' );
+						$menuItem.children( '.jet-nav__sub' ).stop( true, true ).slideDown( 200 );
+					}
+				}
+
+				function stopEvent( e ) {
+					e.preventDefault();
+					e.stopPropagation();
+					if ( e.stopImmediatePropagation ) e.stopImmediatePropagation();
+				}
+
+				function captureHandler( e ) {
+					var ts = e.timeStamp || Date.now();
+					if ( ts - lastHandledTs < 250 ) return;
+
+					var t = e.target;
+					if ( !t || !t.closest ) return;
+
+					var navRoot = t.closest( '.jet-nav' );
+					if ( !navRoot ) return;
+
+					var arrow = t.closest( '.jet-nav-arrow' );
+					if ( arrow ) {
+						lastHandledTs = ts;
+						stopEvent( e );
+						toggleMenuItem( jQuery( arrow ).closest( '.menu-item' ) );
+						return;
+					}
+
+					var link = t.closest( '.menu-item > a' );
+					if ( !link ) return;
+
+					var $link     = jQuery( link );
+					var $menuItem = $link.closest( '.menu-item' );
+
+					if ( !$menuItem.hasClass( 'menu-item-has-children' ) ) {
+						return;
+					}
+
+					if ( jQuery( e.target ).closest( '.jet-nav-arrow' ).length ) return;
+
+					var href = ( link.getAttribute( 'href' ) || '' ).trim();
+
+					if ( !$menuItem.hasClass( 'jet-nav-hover' ) ) {
+						lastHandledTs = ts;
+						stopEvent( e );
+						toggleMenuItem( $menuItem );
+						return;
+					}
+
+					if ( !href || href === '#' || href.charAt(0) === '#' ) {
+						lastHandledTs = ts;
+						stopEvent( e );
+						toggleMenuItem( $menuItem );
+						return;
+					}
+
+				}
+
+				document.addEventListener( 'click', captureHandler, true );
+				document.addEventListener( 'touchend', captureHandler, true );
+			}
+
 			if ( '' != mobileLayoutDevice ) {
 				deviceStartIndex = availableDevices.indexOf( mobileLayoutDevice );
 			}
@@ -270,11 +350,18 @@
 				timeout: 200,
 				selector: '.menu-item-has-children'
 			});
+			$scope.find( '.jet-nav' )
+				.off( 'click.jetNavMenu touchend.jetNavMenu', '.jet-nav-arrow' )
+				.on( 'click.jetNavMenu touchend.jetNavMenu', '.jet-nav-arrow', touchEndItemArrow );
 
 			if ( -1 === excludeCheck ) {
 				$scope.find( '.jet-nav:not(.jet-nav--vertical-sub-bottom)' ).on( 'touchstart.jetNavMenu', '.menu-item > a', touchStartItem );
 				$scope.find( '.jet-nav:not(.jet-nav--vertical-sub-bottom)' ).on( 'touchend.jetNavMenu', '.menu-item > a', touchEndItem );
-				$scope.find( '.jet-nav' ).on( 'touchend.jetNavMenu', '.jet-nav-arrow', touchEndItemArrow );
+
+				if ( !( 'ontouchend' in window || 'ontouchstart' in window ) ) {
+					$scope.find( '.jet-nav:not(.jet-nav--vertical-sub-bottom)' )
+						.on( 'click.jetNavMenu', '.menu-item > a', clickItem );
+				}
 
 				if ( currentDeviceIndex >= deviceStartIndex ) {
 					$( '.jet-mobile-menu.jet-nav-wrap', $scope ).addClass( 'jet-mobile-menu-trigger-active' );
@@ -370,6 +457,7 @@
 			function touchEndItemArrow( event ) {
 				event.preventDefault();
 				event.stopPropagation();
+				event.stopImmediatePropagation();
 
 				var $menuItem = $( this ).closest( '.menu-item' );
 
@@ -388,6 +476,12 @@
 			}
 
 			function clickItem( event ) {
+				if ( $( event.target ).closest( '.jet-nav-arrow' ).length ) {
+					event.preventDefault();
+					event.stopPropagation();
+					event.stopImmediatePropagation();
+					return false;
+				}
 				var $currentTarget  = $( event.currentTarget ),
 					$menuItem       = $currentTarget.closest( '.menu-item' ),
 					$link       	= $currentTarget.closest( 'a' ),
@@ -456,6 +550,12 @@
 			$scope.find( '.jet-nav--vertical-sub-bottom' ).on( 'click.jetNavMenu', '.menu-item > a', verticalSubBottomHandler );
 
 			function verticalSubBottomHandler( event ) {
+				if ( $( event.target ).closest( '.jet-nav-arrow' ).length ) {
+					event.preventDefault();
+					event.stopPropagation();
+					event.stopImmediatePropagation();
+					return false;
+				}
 				var $currentTarget  = $( event.currentTarget ),
 					$menuItem       = $currentTarget.closest( '.menu-item' ),
 					$siblingsItems  = $menuItem.siblings( '.menu-item.menu-item-has-children' ),
@@ -750,6 +850,28 @@
 				}
 			}
 
+			function detachInstance() {
+				if ( editMode ) return;
+				if ( $instance && $instance.length ) {
+					$instance.detach();
+				}
+			}
+
+			function attachInstance() {
+				if ( editMode ) return;
+				if ( ! $instance || ! $instance.length || ! $panel.length ) return;
+
+				if ( $.contains( $panel[0], $instance[0] ) ) {
+					return;
+				}
+
+				$toggleButton.after( $instance );
+			}
+
+			if ( ! editMode && $instance.length && ! $panel.hasClass( 'open-state' ) ) {
+				detachInstance();
+			}
+
 			if ( 'ontouchend' in window || 'ontouchstart' in window ) {
 				$toggleButton.on( 'touchstart', function( event ) {
 					scrollOffset = $( window ).scrollTop();
@@ -770,6 +892,7 @@
 
 					if ( ! $panel.hasClass( 'open-state' ) ) {
 						timer = setTimeout( function() {
+							attachInstance();
 							fixElementorContainerZIndex( $( this ) );
 							$panel.addClass( 'open-state' );
 						}, 10 );
@@ -784,6 +907,7 @@
 						$html.removeClass( 'jet-hamburger-panel-visible' );
 						timer2 = setTimeout( function() {
 							fixElementorContainerZIndex( $( this ), false );
+							detachInstance();
 						}, 400 );
 					}
 				} );
@@ -796,6 +920,7 @@
 					}
 
 					if ( ! $panel.hasClass( 'open-state' ) ) {
+						attachInstance();
 						fixElementorContainerZIndex( $( this ) );
 						$panel.addClass( 'open-state' );
 						$html.addClass( 'jet-hamburger-panel-visible' );
@@ -809,6 +934,7 @@
 						$html.removeClass( 'jet-hamburger-panel-visible' );
 						timer = setTimeout( function() {
 							fixElementorContainerZIndex( $( this ), false );
+							detachInstance();
 						}, 400 );
 					}
 				} );
@@ -819,6 +945,7 @@
 							clearTimeout( timer );
 						}
 						if ( ! $panel.hasClass( 'open-state' ) ) {
+							attachInstance();
 							fixElementorContainerZIndex( $( this ) );
 							$panel.addClass( 'open-state' );
 							$html.addClass( 'jet-hamburger-panel-visible' );
@@ -832,6 +959,7 @@
 							$html.removeClass( 'jet-hamburger-panel-visible' );
 							timer = setTimeout( function() {
 								fixElementorContainerZIndex( $( this ), false );
+								detachInstance();
 							}, 400 );
 						}
 					}
@@ -844,6 +972,7 @@
 				}
 
 				if ( ! $panel.hasClass( 'open-state' ) ) {
+					attachInstance();
 					$panel.addClass( 'open-state' );
 					$html.addClass( 'jet-hamburger-panel-visible' );
 					JetBlocks.initAnimationsHandlers( $inner );
@@ -852,6 +981,7 @@
 					$html.removeClass( 'jet-hamburger-panel-visible' );
 					timer = setTimeout( function() {
 						fixElementorContainerZIndex( $( this ), false );
+						detachInstance();
 					}, 400 );
 				}
 			} );
@@ -872,6 +1002,10 @@
 				if ( ! $( event.target ).closest( '.jet-hamburger-panel__toggle' ).length ) {
 					$html.removeClass( 'jet-hamburger-panel-visible' );
 				}
+
+				setTimeout( function() {
+					detachInstance();
+				}, 400 );
 
 				event.stopPropagation();
 			} );
@@ -1068,6 +1202,98 @@
 					} );
 
 					$( window ).on( 'resize.JetStickySection orientationchange.JetStickySection', this.run.bind( this ) );
+
+					_this._popupOpen = false;
+					_this._lockedScrollTop = 0;
+					_this._lockTicking = false;
+					var popupTimer = null;
+
+					function detachAllSticky() {
+						jQuery( '.jet-sticky-section' ).each( function() {
+							var $s = jQuery( this );
+
+							$s.trigger( 'jetStickySection:detach' );
+							$s.removeClass( 'jet-sticky-section--stuck jet-sticky-transition-in jet-sticky-transition-out' )
+								.css( { position: '', top: '', left: '', width: '' } );
+						} );
+
+						jQuery( '.sticky-placeholder' ).remove();
+					}
+
+					function lockScroll() {
+						if ( ! _this._popupOpen || _this._lockTicking ) {
+							return;
+						}
+
+						_this._lockTicking = true;
+
+						requestAnimationFrame( function() {
+							_this._lockTicking = false;
+
+							if ( ! _this._popupOpen ) {
+								return;
+							}
+
+							if ( window.pageYOffset !== _this._lockedScrollTop ) {
+								window.scrollTo( 0, _this._lockedScrollTop );
+							}
+						} );
+					}
+
+					function openPopup() {
+						_this._popupOpen = true;
+						_this._lockedScrollTop = window.pageYOffset || jQuery( window ).scrollTop() || 0;
+
+						detachAllSticky();
+
+						jQuery( window )
+							.off( 'scroll.JetStickyPopupLock' )
+							.on( 'scroll.JetStickyPopupLock', lockScroll );
+					}
+
+					function closePopup() {
+						_this._popupOpen = false;
+
+						jQuery( window ).off( 'scroll.JetStickyPopupLock' );
+
+						window.scrollTo( 0, _this._lockedScrollTop );
+
+						_this.initWidescreen =
+							_this.initDesktop =
+							_this.initLaptop =
+							_this.initTabletExtra =
+							_this.initTablet =
+							_this.initMobileExtra =
+							_this.initMobile = false;
+
+						_this.run();
+
+						setTimeout( function() {
+							_this.run();
+							jQuery( window ).trigger( 'scroll' );
+						}, 50 );
+					}
+
+					function checkPopupState() {
+						var isOpen = document.body.classList.contains( 'jet-popup-prevent-scroll' );
+
+						if ( isOpen && ! _this._popupOpen ) {
+							openPopup();
+						}
+
+						if ( ! isOpen && _this._popupOpen ) {
+							closePopup();
+						}
+					}
+
+					checkPopupState();
+
+					var mo = new MutationObserver( function() {
+						clearTimeout( popupTimer );
+						popupTimer = setTimeout( checkPopupState, 50 );
+					} );
+
+					mo.observe( document.body, { attributes: true, attributeFilter: [ 'class' ] } );
 				},
 
 				getOffset: function(){
@@ -1081,6 +1307,8 @@
 				},
 
 				run: function() {
+					var self = this;
+
 					var currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 						transitionIn  = 'jet-sticky-transition-in',
 						transitionOut = 'jet-sticky-transition-out',
@@ -1090,6 +1318,12 @@
 						};
 
 					function initSticky ( section, options ) {
+						if ( self._popupOpen ) {
+							return;
+						}
+						if (typeof $.fn.jetStickySection !== 'function') {
+							return;
+						}
 						section.jetStickySection( options )
 							.on( 'jetStickySection:stick', function( event ) {
 								$( event.target ).addClass( transitionIn );
@@ -1172,7 +1406,12 @@
 							var stopAtParentEnd = 'yes' === settings['jet_sticky_section_stop_at_parent_end'];
 					
 							if ( stopAtParentEnd ) {
-								var parentSection = section.closest( '.elementor-section:not(.jet-sticky-section), .e-container:not(.jet-sticky-section), .e-con-inner:not(.jet-sticky-section)' );
+								var parentSection = section.closest(
+									'.elementor-section:not(.jet-sticky-section), ' +
+									'.e-con:not(.jet-sticky-section), ' +
+									'.e-container:not(.jet-sticky-section), ' +
+									'.e-con-inner:not(.jet-sticky-section)'
+								);
 								if ( parentSection.length ) {
 									var calculateStopper = function( reinit = false ) {
 										var parentHeight = parentSection.outerHeight( true );

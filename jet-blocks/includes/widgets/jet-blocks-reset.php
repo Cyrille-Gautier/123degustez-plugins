@@ -118,9 +118,9 @@ class Jet_Blocks_Reset extends Jet_Blocks_Base {
 			'reset_form_text',
 			array(
 				'label'       => esc_html__( 'Reset Password Form Text', 'jet-blocks' ),
-				'description' => esc_html__( 'Customise the new password form text. Allowed tags are: <a> with "href" and "title" attributes, <br>, <em>, <strong>, <p> with "style" attribute. Use the following code to show a minimum password length: %x', 'jet-blocks' ),
+				'description' => esc_html__( 'Customise the new password form text. Allowed tags are: <a> with "href" and "title" attributes, <br>, <em>, <strong>, <p> with "style" attribute. Use the following code to show a minimum password length: %s', 'jet-blocks' ),
 				'type'        => Controls_Manager::TEXTAREA,
-				'default'     => esc_html__( 'Please enter a new password. Minimum %x characters.', 'jet-blocks' ),
+				'default'     => esc_html__( 'Please enter a new password. Minimum %s characters.', 'jet-blocks' ),
 				'separator'   => 'before',
 			)
 		);

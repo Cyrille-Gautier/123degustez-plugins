@@ -540,6 +540,25 @@ class Jet_Blocks_Login extends Jet_Blocks_Base {
 			100
 		);
 
+		$this->__add_control(
+			'login_submit_full_width',
+			array(
+				'label'        => esc_html__( 'Full Width', 'jet-blocks' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-blocks' ),
+				'label_off'    => esc_html__( 'No', 'jet-blocks' ),
+				'return_value' => 'yes',
+				'default'      => '',
+				'separator'    => 'before',
+				'description'  => esc_html__( 'Note: Full width overrides the button alignment setting.', 'jet-blocks' ),
+				'selectors'    => array(
+					'{{WRAPPER}} .jet-login input[type="submit"]' => 'display:block; width:100%;',
+					'{{WRAPPER}} .jet-login .login-submit'        => 'text-align: initial;',
+				),
+			),
+			25
+		);
+
 		$this->__add_responsive_control(
 			'login_submit_alignment',
 			array(
@@ -767,17 +786,18 @@ class Jet_Blocks_Login extends Jet_Blocks_Base {
 
 		$this->__open_wrap();
 
-        $redirect_path = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore
-        $redirect_url  = esc_url_raw( site_url( $redirect_path ) );
+        global $wp;
+        $base_url     = home_url( $wp->request );
+        $redirect_url = esc_url_raw( add_query_arg( wp_unslash( $_GET ), $base_url ) ); // phpcs:ignore
 
 		switch ( $settings['login_redirect'] ) {
 
 			case 'home':
-                $redirect_url = esc_url_raw( home_url( '/' ) );
+                $redirect_url = esc_url( home_url( '/' ) ); // phpcs:ignore
 				break;
 
 			case 'custom':
-                $redirect_url = esc_url_raw( do_shortcode( $settings['login_redirect_url'] ) );
+                $redirect_url = esc_url( do_shortcode( $settings['login_redirect_url'] ) ); // phpcs:ignore
 				break;
 		}
 
