@@ -66,7 +66,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Color_Image_Filter' ) ) {
 				$_options[ $value ] = array(
 					'image' => $option['source_image'],
 					'color' => $option['source_color'],
-					'label' => $option['label'],
+					'label' => wp_kses_post( $option['label'] )
 				);
 
 			}

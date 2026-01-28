@@ -405,9 +405,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 
 					foreach ( $pairs as $pair ) {
 						$key_data = explode( ':', $pair, 2 );
+						$key      = str_replace( jet_smart_filters()->data->url_symbol['var_suffix'], '|', $key_data[0] ); // replace query var suffix separator
 						$value    = strpos( $key_data[1], ',' ) ? explode( ',', $key_data[1] ) : $key_data[1];
 
-						$_REQUEST[ '_' . $query_var . '_' . $key_data[0] ] = $value;
+						$_REQUEST[ '_' . $query_var . '_' . $key ] = $value;
 					}
 
 					break;
@@ -571,7 +572,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 												break;
 
 											case 'sales_number':
-												$data['orderby']  = 'meta_value_num';
+												$data['orderby']  = 'meta_value_num ID';
 												$data['meta_key'] = 'total_sales';
 
 												break;
@@ -642,7 +643,16 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 								break;
 
 							case 'plain_query':
-								$this->_query[ $this->clear_key( $key, $var ) ] = $value;
+								$key         = $this->clear_key( $key, $var );
+								$with_suffix = explode( '|', $key );
+
+								if ( isset( $with_suffix[1] ) ) {
+									$key    = $with_suffix[0];
+									$suffix = $this->process_suffix( $with_suffix[1] );
+									$value  = $this->apply_suffix( $suffix, $value );
+								}
+
+								$this->_query[$key] = $value;
 								break;
 
 							default:
@@ -940,7 +950,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 		}
 
 		/**
-		 * Preapre single meta query item
+		 * Prepare single meta query item
 		 */
 		public function prepare_meta_query_row( $value, $key, $additional_options = array() ) {
 
@@ -951,6 +961,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 
 			if ( is_array( $value ) ) {
 				$compare = 'IN';
+				$value = jet_smart_filters()->utils->stripslashes_deep( $value );
 			} else {
 				$value = stripslashes( $value );
 

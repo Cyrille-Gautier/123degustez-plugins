@@ -15,12 +15,25 @@ if ( ! class_exists( 'Jet_Smart_Filters_Blocks_Manager' ) ) {
 	 */
 	class Jet_Smart_Filters_Blocks_Manager {
 
-		protected $blocks_providers = null;
+		protected $available_providers = array();
+		protected $blocks_providers    = null;
+		public $style_manager = null;
 
 		/**
 		 * Constructor for the class
 		 */
 		function __construct() {
+
+			$module_data = jet_smart_filters()->framework->get_included_module_data( 'style-manager.php' );
+
+			$this->style_manager = new \Crocoblock\Blocks_Style\Manager( array(
+				'path' => $module_data['path'],
+				'url'  => $module_data['url'],
+			) );
+
+			// Rrequire early for 3rd party blocks compatibility
+			require jet_smart_filters()->plugin_path( 'includes/blocks/base.php' );
+
 			add_action( 'init', [ $this, 'init' ] );
 		}
 
@@ -30,7 +43,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Blocks_Manager' ) ) {
 		 */
 		public function init() {
 
-			$blocks_providers = $this->blocks_providers();
+			$this->available_providers = jet_smart_filters()->data->get_avaliable_providers();
+			$blocks_providers          = $this->blocks_providers();
 
 			if ( empty( $blocks_providers ) ) {
 				return;
@@ -40,7 +54,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Blocks_Manager' ) ) {
 
 			add_action( 'enqueue_block_editor_assets', [ $this, 'blocks_assets' ] );
 			add_filter( 'block_categories_all', [ $this, 'add_filters_category' ] );
-
 		}
 
 		/**
@@ -85,9 +98,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Blocks_Manager' ) ) {
 			$filter_types_data = [];
 
 			foreach ( array_keys( jet_smart_filters()->data->filter_types() ) as $filter_type ) {
-
 				$filter_types_data[$filter_type] = [ '0' => __( 'Select filter...', 'jet-smart-filters' ) ] + jet_smart_filters()->data->get_filters_by_type( $filter_type );
-
 			}
 
 			return $filter_types_data;
@@ -96,20 +107,26 @@ if ( ! class_exists( 'Jet_Smart_Filters_Blocks_Manager' ) ) {
 		public function blocks_providers() {
 
 			if ( null === $this->blocks_providers ) {
-
 				$blocks_providers = [];
 
-				if ( class_exists( 'Jet_Engine' ) ) {
+				if ( filter_var( $this->available_providers['Jet_Smart_Filters_Provider_Listing'] ?? null, FILTER_VALIDATE_BOOLEAN ) ) {
+					$blocks_providers['jsf-listing'] = __( 'JSF Listing', 'jet-smart-filters' );
+				}
+
+				if ( class_exists( 'Jet_Engine' ) && filter_var( $this->available_providers['Jet_Smart_Filters_Provider_Jet_Engine'] ?? null, FILTER_VALIDATE_BOOLEAN ) ) {
 					$blocks_providers['jet-engine'] = __( 'Listing Grid', 'jet-smart-filters' );
 				}
 
 				if ( class_exists( 'WooCommerce' ) ) {
-					$blocks_providers['woocommerce-shortcode'] = __( 'WooCommerce Shortcode', 'jet-smart-filters' );
-					$blocks_providers['default-woo-archive'] = __( 'Default WooCommerce Archive (Classic)', 'jet-smart-filters' );
+					if ( filter_var( $this->available_providers['Jet_Smart_Filters_Provider_WooCommerce_Shortcode'] ?? null, FILTER_VALIDATE_BOOLEAN ) ) {
+						$blocks_providers['woocommerce-shortcode'] = __( 'WooCommerce Shortcode', 'jet-smart-filters' );
+					}
+					if ( filter_var( $this->available_providers['Jet_Smart_Filters_Provider_WooCommerce_Archive_Default'] ?? null, FILTER_VALIDATE_BOOLEAN ) ) {
+						$blocks_providers['default-woo-archive'] = __( 'Default WooCommerce Archive (Classic)', 'jet-smart-filters' );
+					}
 				}
 
 				$this->blocks_providers = apply_filters( 'jet-smart-filters/blocks/allowed-providers', $blocks_providers );
-
 			}
 
 			return $this->blocks_providers;
@@ -151,7 +168,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Blocks_Manager' ) ) {
 
 			$types_dir = jet_smart_filters()->plugin_path( 'includes/blocks/' );
 
-			require $types_dir . 'base.php';
 			require $types_dir . 'checkboxes.php';
 			require $types_dir . 'select.php';
 			require $types_dir . 'range.php';

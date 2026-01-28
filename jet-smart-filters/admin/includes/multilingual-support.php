@@ -214,6 +214,91 @@ if ( ! class_exists( 'Jet_Smart_Filters_Admin_Multilingual_Support' ) ) {
 			}
 		}
 
+		// Converts filter term IDs to the target language
+		public function convert_term_ids_to_language( $data, $lang ) {
+			// If no taxonomy is defined, nothing to translate
+			if ( empty( $data['_source_taxonomy'] ) ) {
+				return $data;
+			}
+
+			$taxonomy = $data['_source_taxonomy'];
+
+			// List of fields that may contain term IDs
+			$fields_with_ids = [
+				'_data_exclude_include',
+				'_source_color_image_input',
+			];
+
+			foreach ( $fields_with_ids as $field ) {
+				if ( ! isset( $data[ $field ] ) || $data[ $field ] === '' ) {
+					continue;
+				}
+
+				// Normalize value to array for unified processing, but remember if it was originally array
+				$original_is_array = is_array( $data[ $field ] );
+				$values = $original_is_array ? $data[ $field ] : [ $data[ $field ] ];
+
+				$translated_values = [];
+
+				foreach ( $values as $key => $value ) {
+					// If value is an array (e.g. color-image item), try to translate 'selected_value' inside it
+					if ( is_array( $value ) ) {
+						if ( isset( $value['selected_value'] ) && is_numeric( $value['selected_value'] ) ) {
+							$translated_id = $this->translate_term_id( (int) $value['selected_value'], $taxonomy, $lang );
+
+							// if translation found, replace selected_value, otherwise keep original
+							if ( $translated_id ) {
+								$value['selected_value'] = $translated_id;
+							} else {
+								// keep as int for consistency
+								$value['selected_value'] = (int) $value['selected_value'];
+							}
+						}
+
+						// keep the whole item structure (label, id, source_color, etc.)
+						$translated_values[ $key ] = $value;
+						continue;
+					}
+
+					// If value is numeric scalar (term ID), translate it
+					if ( is_numeric( $value ) ) {
+						$translated_id = $this->translate_term_id( (int) $value, $taxonomy, $lang );
+
+						// push translated id or original numeric id if translation not found
+						$translated_values[ $key ] = $translated_id ? $translated_id : (int) $value;
+						continue;
+					}
+
+					// For any other type (string, empty, etc.) just keep original
+					$translated_values[ $key ] = $value;
+				}
+
+				// Restore original shape: scalar if originally scalar, array if originally array
+				if ( $original_is_array ) {
+					$data[ $field ] = $translated_values;
+				} else {
+					// single element — return the first translated value
+					$first = reset( $translated_values );
+					$data[ $field ] = $first;
+				}
+			}
+
+			return $data;
+		}
+
+		// Helper to translate a single term ID via WPML
+		private function translate_term_id( $term_id, $taxonomy, $lang ) {
+
+			if ( ! $term_id || ! $taxonomy || ! $lang ) {
+				return false;
+			}
+
+			// Use WPML filter to get object translation
+			$translated = apply_filters( 'wpml_object_id', (int) $term_id, $taxonomy, false, $lang );
+
+			return $translated ? (int) $translated : false;
+		}
+
 		// Endpoints
 		public function filter_add_translation_endpoint() {
 
@@ -243,6 +328,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Admin_Multilingual_Support' ) ) {
 					$language_code    = $args['language'];
 
 					$original_post_data = jet_smart_filters()->services->filter->get( $original_post_id );
+					$original_post_data = jet_smart_filters()->services->filter->multilingual->convert_term_ids_to_language( $original_post_data, $language_code );
 					$translated_post_id = jet_smart_filters()->services->filter->update( 'new', $original_post_data );
 
 					// get the language info of the original post

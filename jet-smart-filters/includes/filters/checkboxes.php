@@ -196,7 +196,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Checkboxes_Filter' ) ) {
 			}
 
 			$options = apply_filters( 'jet-smart-filters/filters/filter-options',
-				jet_smart_filters()->data->maybe_include_exclude_options( $use_exclude_include, $exclude_include_options, $options ),
+				jet_smart_filters()->data->maybe_include_exclude_options( $use_exclude_include, $exclude_include_options, $options, $by_parents ),
 				$filter_id,
 				$this
 			);

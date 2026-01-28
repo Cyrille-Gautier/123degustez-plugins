@@ -918,12 +918,19 @@ return array(
 				)
 			),
 		),
-		'_default_filter_value' => array(
+		/* '_default_filter_value' => array(
 			'type'       => 'text',
 			'title'      => __( 'Default Filter Value', 'jet-smart-filters' ),
 			'conditions' => array(
 				'_is_default_filter_value' => true
 			),
+		), */
+		'_default_filter_value' => array(
+			'type'       => 'advanced_input',
+			'title'      => __( 'Default Filter Value', 'jet-smart-filters' ),
+			'conditions' => array(
+				'_is_default_filter_value' => true
+			)
 		),
 		'_default_filter_value_info' => array(
 			'type'       => 'html',

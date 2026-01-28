@@ -25,7 +25,7 @@ if ( ! $image_alt ) {
 			class="jet-color-image-list__input"
 			name="<?php echo $query_var; ?>"
 			value="<?php echo $value; ?>"
-			data-label="<?php echo $label; ?>"
+			data-label="<?php echo htmlspecialchars( $label, ENT_QUOTES ); ?>"
 			<?php if ( ! empty( $data_attrs ) ) {
 				echo jet_smart_filters()->utils->generate_data_attrs( $data_attrs );
 			} ?>
@@ -52,7 +52,12 @@ if ( ! $image_alt ) {
 			<?php /* label */ if ( $show_label ) : ?>
 				<span class="jet-color-image-list__label"><?php echo $label; ?></span>
 			<?php endif; ?>
-			<?php do_action('jet-smart-filter/templates/counter', $args ); ?>
+			<?php
+				// print counter if not all option
+				if ( $value !== 'all' ) {
+					do_action('jet-smart-filter/templates/counter', $args );
+				}
+			?>
 		</div>
 	</label>
 </div>

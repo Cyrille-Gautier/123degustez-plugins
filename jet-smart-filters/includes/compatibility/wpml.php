@@ -79,22 +79,44 @@ class Jet_Smart_Filters_Compatibility_WPML {
 	public function wpml_wc_convert_currency( $args ) {
 
 		global $woocommerce_wpml;
+
 		$providers = strtok( $args['jet_smart_filters'], '/' );
 
-		if ( $woocommerce_wpml && $woocommerce_wpml->multi_currency && in_array( $providers, ['jet-woo-products-grid', 'jet-woo-products-list', 'epro-products', 'epro-archive-products', 'woocommerce-shortcode', 'woocommerce-archive'] ) ) {
-			if ( $currency !== wcml_get_woocommerce_currency_option() ) {
+		if (
+			$woocommerce_wpml
+			&& isset( $woocommerce_wpml->multi_currency )
+			&& in_array( $providers, [
+				'jet-woo-products-grid',
+				'jet-woo-products-list',
+				'epro-products',
+				'epro-archive-products',
+				'woocommerce-shortcode',
+				'woocommerce-archive'
+			], true )
+		) {
+			// default currency
+			$default_currency = wcml_get_woocommerce_currency_option();
+			// current currency
+			if ( method_exists( $woocommerce_wpml->multi_currency, 'get_client_currency' ) ) {
+				$currency = $woocommerce_wpml->multi_currency->get_client_currency();
+			} elseif ( method_exists( $woocommerce_wpml->multi_currency, 'get_current_currency' ) ) {
+				$currency = $woocommerce_wpml->multi_currency->get_current_currency();
+			} else {
+				$currency = wcml_get_woocommerce_currency_option();
+			}
+
+			if ( $currency !== $default_currency ) {
 				if ( ! empty( $args['meta_query'] ) && is_array( $args['meta_query'] ) ) {
-					for ( $i = 0; $i < count( $args['meta_query'] ); $i++ ) {
-						if ( $args['meta_query'][$i]['key'] === '_price' && ! empty( $args['meta_query'][$i]['value'] ) ) {
-							if ( is_array( $args['meta_query'][$i]['value'] ) ) {
-								$min_price_in_default_currency = $woocommerce_wpml->multi_currency->prices->unconvert_price_amount($args['meta_query'][$i]['value'][0]);
-								$max_price_in_default_currency = $woocommerce_wpml->multi_currency->prices->unconvert_price_amount($args['meta_query'][$i]['value'][1]);
+					foreach ( $args['meta_query'] as $i => $meta ) {
+						if ( isset( $meta['key'] ) && $meta['key'] === '_price' && ! empty( $meta['value'] ) ) {
+							if ( is_array( $meta['value'] ) ) {
+								$min_price = $woocommerce_wpml->multi_currency->prices->unconvert_price_amount( $meta['value'][0] );
+								$max_price = $woocommerce_wpml->multi_currency->prices->unconvert_price_amount( $meta['value'][1] );
 
-								$args['meta_query'][$i]['value'][0] = $min_price_in_default_currency;
-								$args['meta_query'][$i]['value'][1] = $max_price_in_default_currency;
+								$args['meta_query'][$i]['value'][0] = $min_price;
+								$args['meta_query'][$i]['value'][1] = $max_price;
 							}
-
-							$i = count( $args['meta_query'] );
+							break;
 						}
 					}
 				}
@@ -115,6 +137,7 @@ class Jet_Smart_Filters_Compatibility_WPML {
 
 	public function add_translatable_nodes( $nodes_to_translate ) {
 
+		// sorting widget
 		$nodes_to_translate[ 'jet-smart-filters-sorting' ] = array(
 			'conditions'        => array( 'widgetType' => 'jet-smart-filters-sorting' ),
 			'fields'            => array(
@@ -131,6 +154,133 @@ class Jet_Smart_Filters_Compatibility_WPML {
 				),
 			'integration-class' => 'WPML_Integration_Jet_Smart_Filters_Sorting',
 		);
+
+		// search widget
+		$nodes_to_translate['jet-smart-filters-search'] = [
+			'conditions' => [ 'widgetType' => 'jet-smart-filters-search' ],
+			'fields'     => [
+				[
+					'field'       => 'apply_button_text',
+					'type'        => esc_html__( 'JetSmartFilters: Search Apply Button Text', 'jet-smart-filters' ),
+					'editor_type' => 'LINE',
+				],
+			],
+		];
+
+		// apply button widget
+		$nodes_to_translate['jet-smart-filters-apply-button'] = [
+			'conditions' => [ 'widgetType' => 'jet-smart-filters-apply-button' ],
+			'fields'     => [
+				[
+					'field'       => 'apply_button_text',
+					'type'        => esc_html__( 'JetSmartFilters: Apply button text', 'jet-smart-filters' ),
+					'editor_type' => 'LINE',
+				],
+			],
+		];
+
+		// remove filters widget
+		$nodes_to_translate['jet-smart-filters-remove-filters'] = [
+			'conditions' => [ 'widgetType' => 'jet-smart-filters-remove-filters' ],
+			'fields'     => [
+				[
+					'field'       => 'remove_filters_text',
+					'type'        => esc_html__( 'Remove filters text', 'jet-smart-filters' ),
+					'editor_type' => 'LINE',
+				],
+			],
+		];
+
+		// pagination widget
+		$nodes_to_translate['jet-smart-filters-pagination'] = [
+			'conditions' => [ 'widgetType' => 'jet-smart-filters-pagination' ],
+			'fields'     => [
+				[
+					'field'       => 'prev_text',
+					'type'        => esc_html__( 'JetSmartFilters: Pagination Previous Text', 'jet-smart-filters' ),
+					'editor_type' => 'LINE',
+				],
+				[
+					'field'       => 'next_text',
+					'type'        => esc_html__( 'JetSmartFilters: Pagination Next Text', 'jet-smart-filters' ),
+					'editor_type' => 'LINE',
+				],
+				[
+					'field'       => 'load_more_text',
+					'type'        => esc_html__( 'JetSmartFilters: Pagination Load More Text', 'jet-smart-filters' ),
+					'editor_type' => 'LINE',
+				],
+			],
+		];
+
+		/*
+		 * Additional filter settings
+		*/
+		$filters_with_additional_settings = [
+			'jet-smart-filters-checkboxes',
+			'jet-smart-filters-check-range',
+			'jet-smart-filters-radio',
+			'jet-smart-filters-color-image'
+		];
+
+		$additional_settings_fields_to_add = [
+			[
+				'field'       => 'search_placeholder',
+				'type'        => esc_html__( 'JetSmartFilters: Search Placeholder', 'jet-smart-filters' ),
+				'editor_type' => 'LINE',
+			],
+			[
+				'field'       => 'more_text',
+				'type'        => esc_html__( 'JetSmartFilters: More Text', 'jet-smart-filters' ),
+				'editor_type' => 'LINE',
+			],
+			[
+				'field'       => 'less_text',
+				'type'        => esc_html__( 'JetSmartFilters: Less Text', 'jet-smart-filters' ),
+				'editor_type' => 'LINE',
+			],
+			[
+				'field'       => 'dropdown_placeholder',
+				'type'        => esc_html__( 'JetSmartFilters: Placeholder', 'jet-smart-filters' ),
+				'editor_type' => 'LINE',
+			],
+			[
+				'field'       => 'dropdown_n_selected_text',
+				'type'        => esc_html__( 'JetSmartFilters: Generic text', 'jet-smart-filters' ),
+				'editor_type' => 'LINE',
+			],
+			[
+				'field'       => 'dropdown_apply_button_text',
+				'type'        => esc_html__( 'JetSmartFilters: Apply button text', 'jet-smart-filters' ),
+				'editor_type' => 'LINE',
+			]
+		];
+
+		foreach ( $filters_with_additional_settings as $widget ) {
+			if ( ! isset( $nodes_to_translate[ $widget ] ) ) {
+				$nodes_to_translate[ $widget ] = [
+					'conditions' => [ 'widgetType' => $widget ],
+					'fields'     => [],
+				];
+			}
+
+			foreach ( $additional_settings_fields_to_add as $new_field ) {
+				$already_exists = false;
+
+				if ( isset( $nodes_to_translate[ $widget ]['fields'] ) ) {
+					foreach ( $nodes_to_translate[ $widget ]['fields'] as $existing_field ) {
+						if ( $existing_field['field'] === $new_field['field'] ) {
+							$already_exists = true;
+							break;
+						}
+					}
+				}
+
+				if ( ! $already_exists ) {
+					$nodes_to_translate[ $widget ]['fields'][] = $new_field;
+				}
+			}
+		}
 
 		return $nodes_to_translate;
 	}

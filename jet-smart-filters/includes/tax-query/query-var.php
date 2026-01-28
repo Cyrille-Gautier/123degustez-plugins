@@ -32,6 +32,51 @@ class Jet_Smart_Filters_Tax_Query_Var {
 		$filter_args['query_type'] = $this->type;
 		$filter_args['query_var']  = str_replace( $this->prefix, '', $filter_args['query_var'] );
 
+		// If the option "Taxonomy term name type in URL" in the plugin settings is set to "slug",
+		// parse the options and add the "url-value" attribute using the term slug.
+		// Option format:
+		// array(
+		//     'value'      => term_id,
+		//     'label'      => term_name,
+		//     'data_attrs' => [
+		//         'url-value' => term_slug,
+		//     ],
+		// )
+		if (
+			$this->type === 'tax_query'
+			&& jet_smart_filters()->settings->url_taxonomy_term_name === 'slug'
+			&& isset( $filter_args['options'] )
+		) {
+			$term_ids = array_keys( $filter_args['options'] );
+			$terms    = get_terms([
+				'taxonomy'   => $filter_args['query_var'],
+				'include'    => $term_ids,
+				'hide_empty' => false,
+			]);
+
+			if ( ! is_wp_error( $terms ) ) {
+				$slug_map = [];
+				foreach ( $terms as $term ) {
+					$slug_map[ $term->term_id ] = $term->slug;
+				}
+
+				$result = [];
+				foreach ( $filter_args['options'] as $id => $label ) {
+					$slug = isset( $slug_map[$id] ) ? $slug_map[$id] : '';
+
+					$result[] = [
+						'value' => $id,
+						'label' => $label,
+						'data_attrs' => [
+							'url-value' => $slug,
+						],
+					];
+				}
+
+				$filter_args['options'] = $result;
+			}
+		}
+
 		return $filter_args;
 	}
 

@@ -48,6 +48,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Admin' ) ) {
 			require_once jet_smart_filters()->plugin_path( 'admin/includes/dynamic-query/registration.php' );
 			new Jet_Smart_Filters_Admin_Dynamic_Query_Registration();
 
+			// Register default value data
+			require_once jet_smart_filters()->plugin_path( 'admin/includes/dynamic-default-value/registration.php' );
+			new Jet_Smart_Filters_Admin_Dynamic_Default_Value_Registration();
+
 			// Register and enqueue admin assets
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 

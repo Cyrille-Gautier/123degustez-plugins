@@ -211,6 +211,38 @@ class Jet_Smart_Filters_Base_Widget extends Widget_Base {
 			)
 		);
 
+		if ( $this->get_name() === 'jet-smart-filters-select' ) {
+			$this->add_responsive_control(
+				'content_position',
+				array(
+					'label'       => esc_html__( 'Label Position', 'jet-smart-filters' ),
+					'type'        => Controls_Manager::CHOOSE,
+					'toggle'      => false,
+					'label_block' => false,
+					'default'     => 'column',
+					'options'     => array(
+						'line' => array(
+							'title' => esc_html__( 'Line', 'jet-smart-filters' ),
+							'icon'  => 'eicon-ellipsis-h',
+						),
+						'column' => array(
+							'title' => esc_html__( 'Columns', 'jet-smart-filters' ),
+							'icon'  => 'eicon-menu-bar',
+						),
+					),
+					'selectors_dictionary' => array(
+						'line'   => 'display:flex;',
+						'column' => 'display:block;',
+					),
+					'selectors' => array(
+						'{{WRAPPER}} .jet-smart-filters-select' . $css_scheme['filter']                     => '{{VALUE}}',
+						'{{WRAPPER}} .jet-smart-filters-hierarchy' . $css_scheme['filter'] . ' .jet-select' => '{{VALUE}}',
+					),
+					'prefix_class' => 'jet-smart-filter-content-position-'
+				)
+			);
+		}
+
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
@@ -731,7 +763,7 @@ class Jet_Smart_Filters_Base_Widget extends Widget_Base {
 		$show_counter    = false;
 		$show_items_rule = 'show';
 
-		if ( $apply_indexer ){
+		if ( jet_smart_filters()->indexer->is_indexer_enabled && $apply_indexer ){
 			$indexer_class   = 'jet-filter-indexed';
 			$show_counter    = 'yes' === $settings['show_counter'] ? $settings['show_counter'] : false;
 			$show_items_rule = ! empty( $settings['show_items_rule'] ) ? $settings['show_items_rule'] : 'show';

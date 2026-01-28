@@ -152,5 +152,17 @@
 				:defaultUrl="data.url_aliases_example_default"
 			/>
 		</div>
+		<div
+			class="url-aliases-warning-text"
+			v-if="settings.use_url_aliases === 'true'"
+		>
+			<p>
+				For URL aliases to work correctly, both the Needle and Replacement values must be unique and must not appear elsewhere in the URL.
+			</p>
+			<p>
+				Additionally, the following characters are not allowed in either field:<br>
+				<code><</code>, <code>></code>, <code>#</code>, <code>%</code>, <code>{</code>, <code>}</code>, <code>`</code>, <code>'</code>, <code>\</code>, <code>|</code>, <code>^</code>
+			</p>
+		</div>
 	</div>
 </div>

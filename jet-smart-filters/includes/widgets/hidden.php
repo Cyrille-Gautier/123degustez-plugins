@@ -128,6 +128,17 @@ class Jet_Smart_Filters_Hidden_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'query_id_wc_shortcode_notice',
+			array(
+				'type' => Controls_Manager::RAW_HTML,
+				'raw'  => __( '<b>Query ID</b> for <b>WooCommerce Shortcode</b> must be specified as attribute class: [products class="query_id"]', 'jet-smart-filters' ),
+				'condition' => array(
+					'content_provider' => array( 'woocommerce-shortcode' ),
+				),
+			)
+		);
+
 		$this->end_controls_section();
 	}
 

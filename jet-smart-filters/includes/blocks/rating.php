@@ -74,7 +74,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Rating' ) ) {
 				],
 				'units' => [
 					[
-						'value' => 'px',
+						'value'     => 'px',
 						'intervals' => [
 							'step' => 1,
 							'min'  => 1,
@@ -99,7 +99,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Rating' ) ) {
 				],
 				'units' => [
 					[
-						'value' => 'px',
+						'value'     => 'px',
 						'intervals' => [
 							'step' => 1,
 							'min'  => 0,
@@ -276,6 +276,14 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Rating' ) ) {
 					]
 				]
 			);
+
+			$this->controls_manager->add_control([
+				'id'           => 'filter_apply_button_typography',
+				'type'         => 'typography',
+				'css_selector' => [
+					'{{WRAPPER}} ' . $this->css_scheme['apply-filters-button'] => 'font-family: {{FAMILY}}; font-weight: {{WEIGHT}}; text-transform: {{TRANSFORM}}; font-style: {{STYLE}}; text-decoration: {{DECORATION}}; line-height: {{LINEHEIGHT}}{{LH_UNIT}}; letter-spacing: {{LETTERSPACING}}{{LS_UNIT}}; font-size: {{SIZE}}{{S_UNIT}};'
+				]
+			]);
 
 			$this->controls_manager->start_tabs(
 				'style_controls',

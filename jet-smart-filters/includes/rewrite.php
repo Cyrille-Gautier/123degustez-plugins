@@ -94,8 +94,9 @@ if ( ! class_exists( 'Jet_Smart_Filters_Rewrite_Rules' ) ) {
 						$taxonomies   = get_object_taxonomies( $post_type_object->name, 'objects ' );
 
 						if ( $rewrite_slug ) {
-							$rewrites[$rewrite_slug . '/' . $this->pattern]         = 'index.php?post_type=' . $post_type . '&' . $this->query_var . '=$matches[1]';
-							$rewrites[$rewrite_slug . '/([^/]+)/' . $this->pattern] = 'index.php?' . $rewrite_slug . '=$matches[1]&' . $this->query_var . '=$matches[2]';
+							$rewrites[$rewrite_slug . '/' . $this->pattern]                 = 'index.php?post_type=' . $post_type . '&' . $this->query_var . '=$matches[1]';
+							$rewrites[$rewrite_slug . '/([^/]+)/' . $this->pattern]         = 'index.php?' . $rewrite_slug . '=$matches[1]&' . $this->query_var . '=$matches[2]';
+							$rewrites[$rewrite_slug . '/([^/]+)/([^/]+)/' . $this->pattern] = 'index.php?post_type=' . $post_type . '&name=$matches[2]&' . $this->query_var . '=$matches[3]';
 						}
 
 						foreach ( $taxonomies as $taxonomy ) {
@@ -127,6 +128,18 @@ if ( ! class_exists( 'Jet_Smart_Filters_Rewrite_Rules' ) ) {
 				$rewrites['product/([^/]*)/' . $this->pattern]                    = 'index.php?product=$matches[1]&' . $this->query_var . '=$matches[2]';
 				$rewrites[$shop_page_slug . '/([^/]*)/' . $this->pattern]         = 'index.php?product=$matches[1]&' . $this->query_var . '=$matches[2]';
 				$rewrites[$shop_page_slug . '/([^/]*)/([^/]*)/' . $this->pattern] = 'index.php?product_cat=$matches[1]&product=$matches[2]&' . $this->query_var . '=$matches[3]';
+
+				$attribute_taxonomies = wc_get_attribute_taxonomies();
+				if ( $attribute_taxonomies ) {
+					foreach ( $attribute_taxonomies as $attribute ) {
+						$taxonomy = wc_attribute_taxonomy_name( $attribute->attribute_name );
+						$slug     = $attribute->attribute_name; // e.g. "color"
+
+						// Create rewrite rule for URLs like /color/blue/jsf/...
+						$rewrites[$slug . '/([^/]+)/' . $this->pattern] =
+							'index.php?' . $taxonomy . '=$matches[1]&' . $this->query_var . '=$matches[2]';
+					}
+				}
 			}
 
 			$rewrites['([0-9]{4})/([0-9]{2})/([0-9]{2})/([^/]+)/' . $this->pattern] = 'index.php?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&name=$matches[4]&' . $this->query_var . '=$matches[5]';

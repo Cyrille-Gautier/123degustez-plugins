@@ -89,6 +89,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Date_Range_Filter' ) ) {
 				'accessibility_label'  => $this->get_accessibility_label( $filter_id )
 			);
 
+			if ( isset( $args['sm_id'] ) ) {
+				$result['sm_id'] = $args['sm_id'];
+			}
+
 			// available dates args in datepicker
 			$available_range = get_post_meta( $filter_id, '_date_available_range', true );
 

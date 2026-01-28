@@ -46,6 +46,41 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 		}
 
 		/**
+		 * Returns providers lists
+		 */
+		private $_providers_list = array();
+		public function get_providers_list() {
+
+			if ( $this->_providers_list ) {
+				return $this->_providers_list;
+			}
+
+			foreach ( glob( jet_smart_filters()->plugin_path( 'includes/providers/' ) . '*.php' ) as $file ) {
+				$data = get_file_data( $file, array( 'class'=>'Class', 'name' => 'Name', 'slug'=>'Slug' ) );
+
+				if ( $data['name'] ) {
+					$this->_providers_list[ $data['class'] ] = $data['name'];
+				}
+			}
+
+			return $this->_providers_list;
+		}
+
+		public function get_avaliable_providers() {
+
+			$result                    = array();
+			$saved_avaliable_providers = jet_smart_filters()->settings->get( 'avaliable_providers', array() );
+
+			foreach ( $this->get_providers_list() as $key => $value ) {
+				$result[$key] = isset( $saved_avaliable_providers[$key] )
+					? $saved_avaliable_providers[$key]
+					: 'true';
+			}
+
+			return $result;
+		}
+
+		/**
 		 * Get URL symbol
 		 */
 		public function get_url_symbol( $name ) {
@@ -77,36 +112,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 		}
 
 		/**
-		 * Returns post types list for options
-		 */
-		public function get_post_types_for_options() {
-
-			$args = array(
-				'public' => true,
-			);
-
-			$post_types = get_post_types( $args, 'objects', 'and' );
-			$post_types = wp_list_pluck( $post_types, 'label', 'name' );
-
-			if ( isset( $post_types[ jet_smart_filters()->post_type->slug() ] ) ) {
-				unset( $post_types[jet_smart_filters()->post_type->slug()] );
-			}
-
-			return $post_types;
-		}
-
-		/**
-		 * Get taxonomies list for options.
-		 */
-		public function get_taxonomies_for_options() {
-
-			$taxonomies         = get_taxonomies( array(), 'objects', 'and' );
-			$options_taxonomies = wp_list_pluck( $taxonomies, 'label', 'name' );
-
-			return $options_taxonomies;
-		}
-
-		/**
 		 * Get sitepath.
 		 */
 		public function get_sitepath() {
@@ -132,7 +137,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 			$baseurl        = preg_replace( '/\bjsf[\/|=].*/', '', $_SERVER['REQUEST_URI'], 1 );
 			$parsed_baseurl = wp_parse_url( $baseurl );
 
-			return rtrim( array_key_exists( 'path', $parsed_baseurl ) ? $parsed_baseurl['path'] : $baseurl, '/' ) . '/';
+			return apply_filters(
+				'jet-smart-filters/data/baseurl',
+				rtrim( array_key_exists( 'path', $parsed_baseurl ) ? $parsed_baseurl['path'] : $baseurl, '/' ) . '/'
+			);
 		}
 
 		/**
@@ -411,6 +419,297 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 		}
 
 		/**
+		 * Returns post types list for options
+		 */
+		public function get_post_types_for_options() {
+
+			$args = array(
+				'public' => true,
+			);
+
+			$post_types = get_post_types( $args, 'objects', 'and' );
+			$post_types = wp_list_pluck( $post_types, 'label', 'name' );
+
+			if ( isset( $post_types[ jet_smart_filters()->post_type->slug() ] ) ) {
+				unset( $post_types[jet_smart_filters()->post_type->slug()] );
+			}
+
+			return $post_types;
+		}
+
+		/**
+		 * Get posts order by list for options.
+		 */
+		public function get_posts_order_by_options() {
+
+			return array(
+				'ID'            => 'Order by post id',
+				'author'        => 'By author',
+				'title'         => 'By title',
+				'name'          => 'By post name (post slug)',
+				'type'          => 'By post type (available since version 4.0)',
+				'date'          => 'By date',
+				'modified'      => 'By last modified date',
+				'parent'        => 'By post/page parent id',
+				'comment_count' => 'By number of comments',
+			);
+		}
+
+		/**
+		 * Get taxonomies list for options.
+		 */
+		public function get_taxonomies_for_options() {
+
+			$taxonomies         = get_taxonomies( array(), 'objects', 'and' );
+			$options_taxonomies = wp_list_pluck( $taxonomies, 'label', 'name' );
+
+			return $options_taxonomies;
+		}
+
+		/**
+		 * Get grouped taxonomies list for options.
+		 */
+		public function get_grouped_taxonomies_options() {
+
+			$result     = array();
+			$taxonomies = get_taxonomies( array( 'public' => true ), 'objects' );
+
+			foreach ( $taxonomies as $taxonomy ) {
+
+				if ( empty( $taxonomy->object_type ) || ! is_array( $taxonomy->object_type ) ) {
+					continue;
+				}
+
+				foreach ( $taxonomy->object_type as $object ) {
+					if ( empty( $result[ $object ] ) ) {
+						$post_type = get_post_type_object( $object );
+
+						if ( ! $post_type ) {
+							continue;
+						}
+
+						$result[ $object ] = array(
+							'label'   => $post_type->labels->name,
+							'options' => array(),
+						);
+					}
+
+					$result[ $object ]['options'][$taxonomy->name] = $taxonomy->labels->name;
+				};
+			}
+
+			return $result;
+		}
+
+		/**
+		 * Get taxonomies list for options.
+		 */
+		public function get_taxonomy_term_field_for_options() {
+
+			return array(
+				'term_id'          => 'Term ID',
+				'name'             => 'Name',
+				'slug'             => 'Slug',
+				'term_taxonomy_id' => 'Term taxonomy ID',
+			);
+		}
+
+		/**
+		 * Get term compare operators for options.
+		 */
+		public function get_term_compare_operators_for_options() {
+
+			return array(
+				'IN'         => 'In',
+				'NOT IN'     => 'Not in',
+				'AND'        => 'And',
+				'EXISTS'     => 'Exists',
+				'NOT EXISTS' => 'Not exists',
+			);
+		}
+
+		/**
+		 * Get meta compare operators for options.
+		 */
+		public function get_meta_compare_operators_for_options() {
+
+			return array(
+				'='           => 'Equal (=)',
+				'!='          => 'Not equal (!=)',
+				'>'           => 'Greater than (>)',
+				'>='          => 'Greater or equal (>=)',
+				'<'           => 'Less than (<)',
+				'<='          => 'Less or equal (<=)',
+				'LIKE'        => 'Like',
+				'NOT LIKE'    => 'Not like',
+				'IN'          => 'In',
+				'NOT IN'      => 'Not in',
+				'BETWEEN'     => 'Between',
+				'NOT BETWEEN' => 'Not between',
+				'EXISTS'      => 'Exists',
+				'NOT EXISTS'  => 'Not exists',
+				'REGEXP'      => 'Regexp',
+				'NOT REGEXP'  => 'Not regexp'
+			);
+		}
+
+		/**
+		 * Get meta type for options.
+		 */
+		public function get_meta_type_for_options() {
+
+			return array(
+				'CHAR'      => 'Char',
+				'NUMERIC'   => 'Numeric',
+				'DATE'      => 'Date',
+				'DATETIME'  => 'Datetime',
+				'TIMESTAMP' => 'Timestamp',
+				'DECIMAL'   => 'Decimal',
+				'TIME'      => 'Time',
+				'BINARY'    => 'Binary',
+				'SIGNED'    => 'Signed',
+				'UNSIGNED'  => 'Unsigned'
+			);
+		}
+
+		/**
+		 * Get posts list for options.
+		 */
+		public function get_posts_for_options( $params = array(), $grouped_by_types = true ) {
+
+			$args = array_merge( array(
+				'posts_per_page' => -1,
+				'orderby'       => 'title',
+				'order'         => 'ASC',
+			), $params );
+
+			$post_types = $this->get_post_types_for_options();
+			
+			if ( ! empty( $args['post_type'] ) ) {
+				$post_types = array_intersect_key( $post_types, array_flip( (array) $args['post_type'] ));
+			} else {
+				$args['post_type'] = array_keys( $post_types );
+			}
+
+			function posts_where_search_by_title_filter( $where, $wp_query ) {
+
+				global $wpdb;
+
+				if ( $search_title = $wp_query->get( 's_by_title' ) ) {
+					$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_title LIKE %s", '%' . $wpdb->esc_like( $search_title ) . '%' );
+				}
+
+				return $where;
+			}
+
+			// Add a posts_where filter to search by title only
+			if ( ! empty( $args['s_by_title'] ) ) {
+				add_filter( 'posts_where', 'posts_where_search_by_title_filter', 10, 2 );
+			}
+			
+			$query = new WP_Query( $args );
+
+			// Remove filter after query execution
+			remove_filter( 'posts_where', 'posts_where_search_by_title_filter', 10 );
+
+			$results = [];
+
+			// Grouping the results
+			if ( $grouped_by_types ) {
+				// Fill in the structure with the names of the post types
+				foreach ( $post_types as $type => $type_label ) {
+					$results[$type] = [
+						'label' => $type_label,
+						'posts' => []
+					];
+				}
+				// Add the found posts to the appropriate groups
+				if ( ! empty( $query->posts ) ) {
+					foreach( $query->posts as $post ) {
+						$results[$post->post_type]['posts'][$post->ID] = $post->post_title;
+					}
+				}
+				// Remove empty groups (if there are no results in the record type)
+				$results = array_filter( $results, function( $type ) {
+					return ! empty( $type['posts'] );
+				});
+			} else {
+				// Add the found posts
+				if ( ! empty( $query->posts ) ) {
+					foreach( $query->posts as $post ) {
+						$results[$post->ID] = $post->post_title;
+					}
+				}
+			}
+
+			return $results;
+		}
+
+		/**
+		 * Get grouped terms list for options.
+		 */
+		public function get_grouped_terms_for_options( $params = array() ) {
+
+			$terms         = get_terms( $params );
+			$grouped_terms = [];
+
+			if ( empty( $terms ) && !is_wp_error( $terms ) ) {
+				return $grouped_terms;
+			}
+
+			// Grouping terms by taxonomies
+			foreach ( $terms as $term ) {
+				$taxonomy = $term->taxonomy;
+				$taxonomy_label = get_taxonomy( $taxonomy )->labels->singular_name;
+		
+				if ( ! isset( $grouped_terms[$taxonomy] ) ) {
+					$grouped_terms[$taxonomy] = [
+						'label' => $taxonomy_label,
+						'terms' => []
+					];
+				}
+		
+				$grouped_terms[$taxonomy]['terms'][$term->term_id] = $term->name;
+			}
+
+			return $grouped_terms;
+		}
+
+		/**
+		 * Get post stati list for options.
+		 */
+		public function get_post_stati_for_options() {
+
+			$post_stati = get_post_stati();
+			array_walk( $post_stati, function( &$value ) {
+				$value = ucfirst($value);
+			});
+
+			return $post_stati;
+		}
+
+		/**
+		 * Get post stati list for options.
+		 */
+		public function get_user_for_options( $params = array() ) {
+
+			$args = array_merge(
+				array(
+					'orderby' => 'display_name',
+					'order'   => 'ASC'
+				),
+				$params
+			);
+
+			$users = array();
+			foreach ( get_users( $args ) as $user ) {
+				$users[$user->ID] = $user->display_name;
+			}
+
+			return $users;
+		}
+
+		/**
 		 * Returns terms objects list
 		 */
 		public function get_terms_objects( $tax = null, $child_of_current = false, $custom_args = array() ) {
@@ -507,7 +806,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 		/**
 		 * Exclude or include items in options list
 		 */
-		public function maybe_include_exclude_options( $use_exclude_include, $exclude_include_options, $options ) {
+		public function maybe_include_exclude_options( $use_exclude_include, $exclude_include_options, $options, $is_grouped = false ) {
 
 			if ( empty( $exclude_include_options ) ){
 				return $options;
@@ -549,6 +848,13 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 
 						if ( in_array( $search_key, $exclude_include_options ) ){
 							unset( $options[ $key ] );
+						}
+
+						// If the parent element is excluded, preserve the hierarchy in its descendants
+						if ( $is_grouped && is_object( $value ) ) {
+							if ( in_array( $value->parent, $exclude_include_options ) ){
+								$value->parent = 0;
+							}
 						}
 					}
 					break;

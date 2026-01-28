@@ -134,7 +134,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_WooCommerce_Archive' ) ) {
 				'jet_smart_filters' => $this->get_id(),
 			);
 
-			if ( ! empty( $query->queried_object ) ) {
+			if ( ! empty( $query->queried_object ) && $query->queried_object instanceof WP_Term ) {
 				$default_query['taxonomy'] = $query->queried_object->taxonomy;
 				$default_query['term']     = $query->queried_object->slug;
 			}
@@ -363,7 +363,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_WooCommerce_Archive' ) ) {
 		 */
 		public function add_query_args( $query ) {
 
-			if ( ! $query->get( 'wc_query' ) ) {
+			if ( ! $query->is_main_query() || ! $query->get( 'wc_query' ) ) {
 				return;
 			}
 

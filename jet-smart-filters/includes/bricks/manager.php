@@ -40,6 +40,7 @@ class Manager {
 		add_action( 'init', [ $this, 'register_elements' ], 11 );
 		add_action( 'init', [ $this, 'add_control_to_elements' ], 40 );
 		add_action( 'init', [ $this, 'enqueue_styles_for_builder' ] );
+		add_action( 'init', [ $this, 'render_bricks_popup' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 9);
 		add_action( 'jet-smart-filters/render/ajax/before', [ $this, 'register_bricks_dynamic_data_on_ajax' ] );
 		add_action( 'init', array( $this, 'register_dynamic_tags' ), 90 );
@@ -77,6 +78,7 @@ class Manager {
 		require $this->component_path( 'elements/base-checkbox.php' );
 
 		$element_files = array(
+			jet_smart_filters()->plugin_path( 'includes/listing/views/bricks/listing.php' ),
 			$this->component_path( 'elements/active-filters.php' ),
 			$this->component_path( 'elements/active-tags.php' ),
 			$this->component_path( 'elements/alphabet.php' ),
@@ -128,6 +130,18 @@ class Manager {
 		);
 	}
 
+	/**
+	 * Bricks popup renders twice (fake render for JS + real render on wp_footer).
+	 * JetSmartFilters tracks a "filters_not_used" flag, which gets set during the fake render,
+	 * preventing styles from being printed during the real render.
+	 * Here we reset the flag before the real popup render to ensure styles are properly output.
+	 */
+	public function render_bricks_popup() {
+		require $this->component_path( 'bricks-popup-render.php' );
+
+		new Bricks_Popup_Render();
+	}
+
 	public function register_bricks_dynamic_data_on_ajax() {
 		if ( ! function_exists( 'jet_engine' ) ) {
 			// Backup if JetEngine is not installed
@@ -164,6 +178,7 @@ class Manager {
 			$provider_allowed = array_merge(
 				$provider_allowed,
 				[
+					'jsf-listing'         => true,
 					'jet-engine'          => true,
 					'jet-engine-maps'     => jet_engine()->modules->is_module_active( 'maps-listings' ),
 					'jet-engine-calendar' => jet_engine()->modules->is_module_active( 'calendar' ),

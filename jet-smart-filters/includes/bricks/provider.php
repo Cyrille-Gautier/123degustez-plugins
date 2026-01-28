@@ -312,19 +312,6 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 		// STEP: Render the element after styles are generated as data-query-loop-index might be inserted through hook in Assets class (@since 1.7.2)
 		$html = Frontend::render_data( $loop_elements );
 
-		/**
-		 * Fixes Bricks infinite scroll/load more after filtering by reinitializing loops
-		 *
-		 * Custom Marker to avoid HTML comment removal by plugins
-		 * - will be converted to HTML comment in the frontend
-		 *
-		 * @since 1.12.3 - Bricks
-		 */
-		if ( $is_default_object_type && $paged === 1 ) {
-			$template = "<template style='display:none' aria-hidden='true' data-brx-loop-start='$query_element_id'></template>";
-			$html     = $template . $html;
-		}
-
 		// Add popup HTML plus styles (@since 1.7.1)
 		$popups = Popups::$looping_popup_html;
 

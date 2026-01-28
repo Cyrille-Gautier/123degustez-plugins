@@ -17,13 +17,13 @@ $collapsible  = isset( $args['collapsible'] ) ? $args['collapsible'] : false;
 		<input
 			type="radio"
 			class="jet-radio-list__input"
-			name="<?php echo $query_var; ?>"
-			value="<?php echo $value; ?>"
-			data-label="<?php echo $label; ?>"
+			name="<?php echo esc_attr( $query_var ); ?>"
+			value="<?php echo esc_attr( $value ); ?>"
+			data-label="<?php echo htmlspecialchars( $label, ENT_QUOTES ); ?>"
 			<?php if ( ! empty( $data_attrs ) ) {
 				echo jet_smart_filters()->utils->generate_data_attrs( $data_attrs );
 			} ?>
-			aria-label="<?php echo $label; ?>"
+			aria-label="<?php echo esc_attr( $label ); ?>"
 			<?php echo $checked; ?>
 		>
 		<div class="jet-radio-list__button">

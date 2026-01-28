@@ -164,8 +164,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Instance' ) ) {
 				$atts['data-inputs-separators'] = $args['inputs_separators_enabled'];
 			}
 
-			if ( isset( $args['predefined_value'] ) ) {
+			if ( ! empty( $args['predefined_value'] ) ) {
 				$atts['data-predefined-value'] = $args['predefined_value'];
+			}
+
+			if ( isset( $args['sm_id'] ) ) {
+				$atts['data-sm-id'] = $args['sm_id'];
 			}
 
 			echo $this->get_atts_string( $atts );

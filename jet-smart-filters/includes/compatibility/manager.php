@@ -33,6 +33,11 @@ class Jet_Smart_Filters_Compatibility_Manager {
 			new Jet_Smart_Filters_Compatibility_JE();
 		}
 
+		if ( defined( 'WEGLOT_VERSION' ) ) {
+			require jet_smart_filters()->plugin_path( 'includes/compatibility/weglot.php' );
+			new Jet_Smart_Filters_Compatibility_Weglot();
+		}
+
 		if ( class_exists( 'RankMath' ) ) {
 			require jet_smart_filters()->plugin_path( 'includes/compatibility/rank-math-seo.php' );
 			new Jet_Smart_Filters_Compatibility_Rank_Math_SEO();

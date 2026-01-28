@@ -78,6 +78,9 @@ if ( ! class_exists( 'Jet_Smart_Filters_Widgets_Manager' ) ) {
 		 */
 		public function register_widgets( $widgets_manager ) {
 
+			// Register Listing
+			$this->register_widget( jet_smart_filters()->plugin_path( 'includes/listing/views/widgets/listing.php' ), $widgets_manager );
+
 			$filter_types = jet_smart_filters()->filter_types->get_filter_types();
 
 			require jet_smart_filters()->plugin_path( 'includes/widgets/base.php' );

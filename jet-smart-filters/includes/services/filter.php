@@ -6,8 +6,8 @@
 class Jet_Smart_Filters_Service_Filter {
 
 	public $serialized_data_keys;
+	public $multilingual;
 	private $_adata;
-	private $_multilingual;
 
 	/**
 	 * Constructor for the class
@@ -32,10 +32,10 @@ class Jet_Smart_Filters_Service_Filter {
 			}
 
 			if ( isset( jet_smart_filters()->admin->multilingual_support ) ) {
-				$this->_multilingual = jet_smart_filters()->admin->multilingual_support;
+				$this->multilingual = jet_smart_filters()->admin->multilingual_support;
 			} else {
 				require_once jet_smart_filters()->plugin_path( 'admin/includes/multilingual-support.php' );
-				$this->_multilingual = new Jet_Smart_Filters_Admin_Multilingual_Support();
+				$this->multilingual = new Jet_Smart_Filters_Admin_Multilingual_Support();
 			}
 		}, 9999 );
 	}
@@ -77,8 +77,8 @@ class Jet_Smart_Filters_Service_Filter {
 			}
 		}
 
-		if ( $this->_multilingual->is_Enabled ) {
-			$this->_multilingual->add_data_to_filter( $output_data );
+		if ( $this->multilingual->is_Enabled ) {
+			$this->multilingual->add_data_to_filter( $output_data );
 		}
 
 		return $output_data;

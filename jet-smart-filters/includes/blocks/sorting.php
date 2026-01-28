@@ -62,13 +62,21 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Sorting' ) ) {
 				],
 				'units' => [
 					[
+						'value'     => 'px',
+						'intervals' => [
+							'step' => 1,
+							'min'  => 0,
+							'max'  => 500
+						]
+					],
+					[
 						'value' => '%',
 						'intervals' => [
 							'step' => 1,
-							'min'  => 10,
-							'max'  => 100,
+							'min'  => 0,
+							'max'  => 100
 						]
-					],
+					]
 				],
 			]);
 
@@ -176,30 +184,25 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Sorting' ) ) {
 				'label'     => esc_html__( 'Alignment', 'jet-smart-filters' ),
 				'separator'    => 'before',
 				'options'   =>[
-					'left'    => [
+					'flex-start'=> [
 						'shortcut' => esc_html__( 'Left', 'jet-smart-filters' ),
 						'icon'  => 'dashicons-editor-alignleft',
 					],
-					'center'    => [
+					'center' => [
 						'shortcut' => esc_html__( 'Center', 'jet-smart-filters' ),
 						'icon'  => 'dashicons-editor-aligncenter',
 					],
-					'right'    => [
+					'flex-end' => [
 						'shortcut' => esc_html__( 'Right', 'jet-smart-filters' ),
 						'icon'  => 'dashicons-editor-alignright',
 					],
 				],
-				'return_value' => array(
-					'left'   => 'align-self: flex-start;',
-					'center' => 'align-self: center;',
-					'right'  => 'align-self: flex-end;',
-				),
 				'css_selector' => [
-					'{{WRAPPER}} ' . $this->css_scheme['label']  => '{{VALUE}}',
+					'{{WRAPPER}} ' . $this->css_scheme['label']  => 'align-self: {{VALUE}}',
 				],
 				'attributes' => [
 					'default' => [
-						'value' => 'left',
+						'value' => 'flex-start',
 					]
 				],
 			]);

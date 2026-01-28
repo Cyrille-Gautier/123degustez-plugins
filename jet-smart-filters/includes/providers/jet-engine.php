@@ -50,6 +50,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_Jet_Engine' ) ) {
 			$is_archive_template = isset( $settings['is_archive_template'] ) ? filter_var( $settings['is_archive_template'], FILTER_VALIDATE_BOOLEAN ) : false;
 
 			if ( $is_archive_template ) {
+				$args['is_archive_template'] = true;
+
 				jet_smart_filters()->query->set_props(
 					$this->get_id(),
 					array(
@@ -277,18 +279,34 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_Jet_Engine' ) ) {
 					$archive_query_vars = array_merge( $wp_query->query_vars, jet_smart_filters()->query->get_query_args() );
 					$archive_query_vars = $this->query_maybe_has_offset( $archive_query_vars );
 
+					if ( jet_smart_filters()->utils->is_wc_products_query( $wp_query ) ) {
+						$archive_query_vars['suppress_filters'] = true;
+					}
+
 					$wp_query = new WP_Query( $archive_query_vars );
 
 					return $archive_query_vars;
 				}
 			}
 
-			if ( jet_smart_filters()->query->is_ajax_filter() ) {
-				remove_filter( 'jet-engine/listing/grid/posts-query-args', array( $this, 'add_query_args' ), 10, 2 );
-			}
-
 			$query_args = jet_smart_filters()->utils->merge_query_args( $args, jet_smart_filters()->query->get_query_args() );
 			$query_args = $this->query_maybe_has_offset( $query_args );
+
+			if ( jet_smart_filters()->query->is_ajax_filter() ) {
+				remove_filter( 'jet-engine/listing/grid/posts-query-args', array( $this, 'add_query_args' ), 10, 2 );
+
+				if (
+					isset( $query_args['is_archive_template'] )
+					&&
+					isset( $query_args['meta_key'] ) && $query_args['meta_key'] === 'total_sales'
+				) {
+					add_filter('posts_orderby', function( $orderby ) {
+						return $orderby
+							? $orderby . ', wp_posts.ID DESC'
+							: $orderby;
+					} );
+				}
+			}
 
 			return $query_args;
 		}

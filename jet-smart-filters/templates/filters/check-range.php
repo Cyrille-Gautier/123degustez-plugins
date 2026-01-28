@@ -49,7 +49,7 @@ $current = $this->get_current_filter_value( $args );
 					class="jet-checkboxes-list__input"
 					name="<?php echo $query_var; ?>"
 					value="<?php echo $value; ?>"
-					data-label="<?php echo $label; ?>"
+					data-label="<?php echo htmlspecialchars( $label, ENT_QUOTES ); ?>"
 					aria-label="<?php echo $label; ?>"
 					<?php echo $checked; ?>
 				>

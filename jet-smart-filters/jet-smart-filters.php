@@ -3,7 +3,7 @@
  * Plugin Name: JetSmartFilters
  * Plugin URI:  https://crocoblock.com/plugins/jetsmartfilters/
  * Description: Adds easy-to-use AJAX filters to the pages built with Elementor which contain the dynamic listings.
- * Version:     3.6.10
+ * Version:     3.7.3
  * Author:      Crocoblock
  * Author URI:  https://crocoblock.com/
  * Text Domain: jet-smart-filters
@@ -27,7 +27,7 @@ if ( ! class_exists( 'Jet_Smart_Filters' ) ) {
 		/**
 		 * Plugin version
 		 */
-		private $version = '3.6.10';
+		private $version = '3.7.3';
 
 		/**
 		 * Holder for base plugin URL
@@ -140,6 +140,7 @@ if ( ! class_exists( 'Jet_Smart_Filters' ) ) {
 					$this->plugin_path( 'framework/jet-dashboard/jet-dashboard.php' ),
 					$this->plugin_path( 'framework/jet-elementor-extension/jet-elementor-extension.php' ),
 					$this->plugin_path( 'framework/admin-bar/jet-admin-bar.php' ),
+					$this->plugin_path( 'framework/blocks-style-manager/style-manager.php' ),
 				)
 			);
 		}
@@ -150,6 +151,8 @@ if ( ! class_exists( 'Jet_Smart_Filters' ) ) {
 		public function init() {
 
 			$this->load_files();
+
+			Jet_Smart_Filters\Listing\Controller::instance();
 
 			$this->services           = new Jet_Smart_Filters_Services();
 			$this->settings           = new Jet_Smart_Filters_Settings();
@@ -213,6 +216,7 @@ if ( ! class_exists( 'Jet_Smart_Filters' ) ) {
 			require $this->plugin_path( 'includes/utils.php' );
 			require $this->plugin_path( 'includes/tax-query/manager.php' );
 			require $this->plugin_path( 'includes/plain-query/manager.php' );
+			require $this->plugin_path( 'includes/listing/controller.php' );
 		}
 
 		/**

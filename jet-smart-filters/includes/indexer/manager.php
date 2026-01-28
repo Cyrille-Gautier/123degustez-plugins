@@ -518,7 +518,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			);
 
 			global $wpdb;
-			$wpdb->query( 'SET SESSION group_concat_max_len = 131072;' );
+
+			$max_len = intval( apply_filters( 'jet-smart-filters/indexer/group_concat_max_len', 262144 ) );
+
+			$wpdb->query( "SET SESSION group_concat_max_len = {$max_len};" );
 			$sql = "
 			SELECT $wpdb->posts.ID, $wpdb->posts.post_title, GROUP_CONCAT($wpdb->postmeta.meta_key SEPARATOR '<-nv->') as meta_key, GROUP_CONCAT($wpdb->postmeta.meta_value SEPARATOR '<-nv->') as meta_value
 				FROM $wpdb->posts, $wpdb->postmeta
@@ -669,7 +672,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 						$get_from_field_data = isset( $data['_source_get_from_field_data'] ) ? filter_var( $data['_source_get_from_field_data'], FILTER_VALIDATE_BOOLEAN ) : false;
 						$is_serialized_data  = filter_var( $data['_is_custom_checkbox'], FILTER_VALIDATE_BOOLEAN );
 						$data_type           = $is_serialized_data ? 'serialized' : 'normal';
-						$custom_field_source = $data['_custom_field_source_plugin'];
+						$custom_field_source = isset( $data['_custom_field_source_plugin'] ) ? $data['_custom_field_source_plugin'] : 'jet_engine';
 
 						if ( $get_from_field_data ) {
 							$custom_field_options = jet_smart_filters()->data->get_choices_from_field_data( array(

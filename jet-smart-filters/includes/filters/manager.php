@@ -317,9 +317,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Manager' ) ) {
 
 			if ( in_array( $type, ['date-range', 'date-period'] ) ) {
 				$date_type = get_post_meta( $filter, '_date_type', true );
-				$query_var_suffix[] = $date_type
-					? $date_type
-					: 'date';
+				if ( strpos( $query_var, '_plain_query::' ) === false ) {
+					$query_var_suffix[] = $date_type
+						? $date_type
+						: 'date';
+				}
+				
 			}
 
 			if ( $is_custom_checkbox ) {

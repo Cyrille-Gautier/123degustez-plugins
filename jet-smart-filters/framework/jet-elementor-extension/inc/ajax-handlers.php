@@ -77,7 +77,7 @@ class Ajax_Handlers {
 
 		if ( ! $secret_key ) {
 			$secret_key = wp_generate_password( 64, false );
-			update_option( 'jet-element-extension-secret-key', $secret_key );
+			update_option( 'jet-elementor-extension-secret-key', $secret_key );
 		}
 
 		return $secret_key;

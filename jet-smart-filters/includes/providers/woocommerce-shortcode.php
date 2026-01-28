@@ -14,6 +14,9 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_WooCommerce_Shortcode' ) ) {
 	 * Define Jet_Smart_Filters_Provider_WooCommerce_Shortcode class
 	 */
 	class Jet_Smart_Filters_Provider_WooCommerce_Shortcode extends Jet_Smart_Filters_Provider_Base {
+
+		private $query_id = 'default';
+
 		/**
 		 * Watch for default query
 		 */
@@ -29,20 +32,16 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_WooCommerce_Shortcode' ) ) {
 		 */
 		public function store_shortcode_query( $args, $attributes, $type ) {
 
-			if ( empty( $attributes['class'] ) ) {
-				$query_id = 'default';
-			} else {
-				$query_id = $attributes['class'];
-			}
+			$this->query_id = ! empty( $attributes['class'] ) ? $attributes['class'] : 'default';
 
 			$args['suppress_filters']  = false;
 			$args['no_found_rows']     = false;
 			$args['jet_smart_filters'] = jet_smart_filters()->query->encode_provider_data(
 				$this->get_id(),
-				$query_id
+				$this->query_id
 			);
 
-			jet_smart_filters()->query->store_provider_default_query( $this->get_id(), $args, $query_id );
+			jet_smart_filters()->query->store_provider_default_query( $this->get_id(), $args, $this->query_id );
 
 			if ( isset( $_REQUEST['paged'] ) ) {
 				$attributes['page'] = absint( $_REQUEST['paged'] );
@@ -52,7 +51,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_WooCommerce_Shortcode' ) ) {
 				'query_type'     => 'shortcode',
 				'shortcode_type' => $type,
 				'attributes'     => $attributes,
-			), $query_id );
+			), $this->query_id );
 
 			add_action( 'woocommerce_shortcode_before_' . $type . '_loop', array( $this, 'store_props' ) );
 
@@ -92,6 +91,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_WooCommerce_Shortcode' ) ) {
 			$type       = $settings['shortcode_type'];
 			$attributes = $settings['attributes'];
 
+			$this->query_id = ! empty( $attributes['class'] ) ? $attributes['class'] : 'default';
+
 			global $post;
 			$post = null;
 
@@ -114,7 +115,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_WooCommerce_Shortcode' ) ) {
 					'found_posts'   => $woocommerce_loop['total'],
 					'max_num_pages' => $woocommerce_loop['total_pages'],
 					'page'          => $woocommerce_loop['current_page'],
-				)
+				),
+				$this->query_id
 			);
 		}
 
@@ -129,7 +131,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_WooCommerce_Shortcode' ) ) {
 					'found_posts'   => 0,
 					'max_num_pages' => 0,
 					'page'          => 0
-				)
+				),
+				$this->query_id
 			);
 		}
 
@@ -229,6 +232,16 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_WooCommerce_Shortcode' ) ) {
 
 			if( isset( $filter_args['ignore_sticky_posts'] ) ){
 				$filter_args['ignore_sticky_posts'] = filter_var( $filter_args['ignore_sticky_posts'], FILTER_VALIDATE_BOOLEAN );
+			}
+
+			foreach ( array( 'orderby', 'order' ) as $key ) {
+				if ( isset( $filter_args[$key] ) && isset( $args[$key] ) ) {
+					if ( $filter_args[$key] !== $args[$key] ) {
+						$filter_args['suppress_filters'] = true;
+
+						break;
+					}
+				}
 			}
 
 			return jet_smart_filters()->utils->merge_query_args( $args, $filter_args );

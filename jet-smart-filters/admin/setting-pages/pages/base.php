@@ -56,34 +56,9 @@ abstract class Jet_Smart_Filters_Admin_Setting_Page_Base extends Page_Module_Bas
 	}
 
 	/**
-	 * Returns avaliable providers lists
-	 */
-	private $_avaliable_providers = array();
-	public function get_avaliable_providers() {
-
-		if ( $this->_avaliable_providers ) {
-			return $this->_avaliable_providers;
-		}
-
-		foreach ( glob( jet_smart_filters()->plugin_path( 'includes/providers/' ) . '*.php' ) as $file ) {
-			$data = get_file_data( $file, array( 'class'=>'Class', 'name' => 'Name', 'slug'=>'Slug' ) );
-
-			if ( $data['name'] ) {
-				$this->_avaliable_providers[ $data['class'] ] = $data['name'];
-			}
-		}
-
-		return $this->_avaliable_providers;
-	}
-
-	/**
 	 * Returns page config
 	 */
 	public function get_page_config() {
-
-		foreach ( $this->get_avaliable_providers() as $key => $value ) {
-			$default_avaliable_providers[ $key ] = 'true';
-		}
 
 		foreach ( $this->get_post_types_for_options() as $key => $value ) {
 			$default_avaliable_post_types[ $key ] = 'false';
@@ -105,7 +80,7 @@ abstract class Jet_Smart_Filters_Admin_Setting_Page_Base extends Page_Module_Bas
 			'ajaxurl'        => admin_url( 'admin-ajax.php' ),
 			'nonce'          => wp_create_nonce( 'wp_rest' ),
 			'settings'       => array(
-				'avaliable_providers'               => jet_smart_filters()->settings->get( 'avaliable_providers', $default_avaliable_providers ),
+				'avaliable_providers'               => jet_smart_filters()->data->get_avaliable_providers(),
 				'use_indexed_filters'               => jet_smart_filters()->settings->get( 'use_indexed_filters' ),
 				'avaliable_post_types'              => jet_smart_filters()->settings->get( 'avaliable_post_types', $default_avaliable_post_types ),
 				'use_auto_indexing'                 => jet_smart_filters()->settings->get( 'use_auto_indexing' ),
@@ -140,7 +115,7 @@ abstract class Jet_Smart_Filters_Admin_Setting_Page_Base extends Page_Module_Bas
 
 			),
 			'data'           => array(
-				'avaliable_providers_options'  => $this->get_avaliable_providers(),
+				'avaliable_providers_options'  => jet_smart_filters()->data->get_providers_list(),
 				'avaliable_post_types_options' => $this->get_post_types_for_options(),
 				'providers_list_options'       => $this->get_providers_list_options(),
 				'ajax_request_types_options'   => array(

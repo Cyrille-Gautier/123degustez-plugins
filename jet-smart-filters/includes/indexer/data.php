@@ -400,7 +400,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 						$custom_field        = $source['_source_custom_field'][0];
 						$custom_field_source = $source['_custom_field_source_plugin'][0];
 						$get_from_field_data = isset( $source['_source_get_from_field_data'][0] ) ? filter_var( $source['_source_get_from_field_data'][0], FILTER_VALIDATE_BOOLEAN ) : false;
-						
+
 						if ( $get_from_field_data ) {
 							$custom_field_options = jet_smart_filters()->data->get_choices_from_field_data( array(
 								'field_key' => $custom_field,

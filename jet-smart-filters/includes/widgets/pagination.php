@@ -106,6 +106,17 @@ class Jet_Smart_Filters_Pagination_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'query_id_wc_shortcode_notice',
+			array(
+				'type' => Controls_Manager::RAW_HTML,
+				'raw'  => __( '<b>Query ID</b> for <b>WooCommerce Shortcode</b> must be specified as attribute class: [products class="query_id"]', 'jet-smart-filters' ),
+				'condition' => array(
+					'content_provider' => array( 'woocommerce-shortcode' ),
+				),
+			)
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -583,8 +594,7 @@ class Jet_Smart_Filters_Pagination_Widget extends Widget_Base {
 					),
 				),
 				'selectors'   => array(
-					'{{WRAPPER}} ' . $css_scheme['pagination-item'] => 'margin-right: calc({{SIZE}}{{UNIT}}/2); margin-left: calc({{SIZE}}{{UNIT}}/2);',
-					'{{WRAPPER}} ' . $css_scheme['pagination']      => 'margin-right: calc(-{{SIZE}}{{UNIT}}/2); margin-left: calc(-{{SIZE}}{{UNIT}}/2);',
+					'{{WRAPPER}} ' . $css_scheme['pagination'] => 'column-gap: {{SIZE}}{{UNIT}};',
 				),
 			)
 		);
@@ -607,8 +617,7 @@ class Jet_Smart_Filters_Pagination_Widget extends Widget_Base {
 					),
 				),
 				'selectors'   => array(
-					'{{WRAPPER}} ' . $css_scheme['pagination-item'] => 'margin-top: calc({{SIZE}}{{UNIT}}/2); margin-bottom: calc({{SIZE}}{{UNIT}}/2)',
-					'{{WRAPPER}} ' . $css_scheme['pagination']      => 'margin-top: calc(-{{SIZE}}{{UNIT}}/2); margin-bottom: calc(-{{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} ' . $css_scheme['pagination'] => 'row-gap: {{SIZE}}{{UNIT}};',
 				),
 			)
 		);

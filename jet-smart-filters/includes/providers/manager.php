@@ -77,9 +77,9 @@ if ( ! class_exists( 'Jet_Smart_Filters_Providers_Manager' ) ) {
 		 */
 		public function register_providers() {
 
-			$base_path = jet_smart_filters()->plugin_path( 'includes/providers/' );
-			$default_providers = array();
-			$available_providers = jet_smart_filters()->settings->get( 'avaliable_providers' );
+			$base_path           = jet_smart_filters()->plugin_path( 'includes/providers/' );
+			$default_providers   = array();
+			$available_providers = jet_smart_filters()->data->get_avaliable_providers();
 
 			foreach ( glob( $base_path . '*.php' ) as $file ) {
 				$data = get_file_data( $file, array( 'class'=>'Class', 'name' => 'Name', 'slug'=>'Slug' ) );

@@ -564,6 +564,42 @@ if ( ! class_exists( 'Jet_Smart_Filters_Utils' ) ) {
 		}
 
 		/**
+		 * Check whether the given WP_Query (or the global query) is a WooCommerce products query.
+		 */
+		public function is_wc_products_query( $q = null ) {
+
+			if ( ! $q ) {
+				global $wp_query;
+				$q = $wp_query;
+			}
+
+			// explicit product post_type
+			if ( $q->get( 'post_type' ) === 'product' ) {
+				return true;
+			}
+
+			// any taxonomy attached to the product post type
+			if ( $q->is_tax() ) {
+				$tax = $q->get( 'taxonomy' );
+
+				if ( $tax ) {
+					$object_types = get_taxonomy( $tax )->object_type;
+
+					if ( in_array( 'product', $object_types, true ) ) {
+						return true;
+					}
+				}
+			}
+
+			// shop page
+			if ( function_exists( 'is_shop' ) && is_shop() ) {
+				return true;
+			}
+
+			return false;
+		}
+
+		/**
 		 * Function to merge arrays by the key of the first array and the value of the second
 		 */
 		function mergeArraysByKeyAndValue( $firstArray, $secondArray, $valueKey = 'value' ) {
@@ -589,6 +625,20 @@ if ( ! class_exists( 'Jet_Smart_Filters_Utils' ) ) {
 			}
 		
 			return $resultArray;
+		}
+
+		/**
+		 * Recursively strips slashes from strings or arrays.
+		 *
+		 * @param mixed $value Value to process.
+		 * @return mixed Cleaned value.
+		 */
+		public function stripslashes_deep( $value ) {
+			if (is_array( $value ) ) {
+				return array_map( 'stripslashes_deep', $value );
+			} else {
+				return is_string( $value ) ? stripslashes( $value ) : $value;
+			}
 		}
 	}
 }

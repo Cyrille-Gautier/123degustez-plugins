@@ -2,6 +2,55 @@
 
 # ChangeLog
 
+## 3.7.3
+- ADD: Allow to set dynamic default value for the filters;
+- FIX: Issue with styles for filters inside Bricks popup;
+- FIX: Compatibility Elementor filters widgets with WPML;
+- FIX: Minor issues with new blocks styles manager;
+- FIX: Search Filter. Issue with quotes in the search request when searching by custom fields;
+- FIX: Listing Builder. Correctly handle Additional CSS classes for the blocks.
+
+## 3.7.2
+- ADD: Admin URL Structure Settings URL Aliases warning text
+- FIX: WooCommerce Shortcode sorting
+- FIX: Sort filter with Products
+- FIX: Date Period filter reset with minDate & maxDate
+- FIX: Visual filter Behavior->Radio all option remove indexer count
+- FIX: filter Query Variable = _tax_query:: with Taxonomy term name type in URL = slug
+- FIX: JetProductTable Warnings
+- FIX: Query Variable: _plain_query Warning
+- FIX: WooCommerce Shortcode provider with Apply type Page reload/Mixed 
+- FIX: jet-elementor-extension framework
+
+
+## 3.7.1
+- ADD: compatibility with weglot
+- ADD: filter additional settings text controls to WMPL Advanced Translation Editor
+- ADD: indexer group_concat_max_len hook
+- FIX: rewrite rules for custom taxonomy subposts
+- FIX: Visual filter label XSS
+- FIX: removing tags in active items
+- FIX: WooCommerce Shortcode provider Pagination
+- FIX: Filter is hidden by Indexer after disabling Indexer
+- FIX: increase group_concat_max_len
+- FIX: admin filter wpml taxonomy terms translate
+- FIX: Woocommerce Attributes with JSF Permalinks
+- FIX: Remove custom loop marker logic after Bricks 2.0 update
+
+## 3.7.0
+- ADD: Listing Builder
+- ADD: New style manager
+
+## 3.6.11
+- FIX: Plain query for Date Period/Range
+- FIX: admin settings subtitle font weight
+- FIX: filter predefined value
+- FIX: Active Filters/Tags label with " symbol
+- FIX: If the parent element is excluded, preserve the hierarchy in its descendants
+- FIX: Products Loop with Listing Grid
+- FIX: woocommerce wpml multi currency current
+- FIX: plain_query data with suffix
+
 ## 3.6.10
 - UPD: indexer item_id change to BIGINT
 - FIX: for warning after activating the plugin
