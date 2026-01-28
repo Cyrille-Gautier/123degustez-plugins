@@ -72,7 +72,16 @@
 									>
 										<span slot="label"><?php _e( 'Edit Mega content', 'jet-menu' ); ?></span>
 									</cx-vui-button>
-								</div>
+
+                                    <cx-vui-button
+                                            button-style="accent"
+                                            size="mini"
+                                            @click="openEditorInNewTab"
+                                    >
+                                        <span slot="label"><?php _e( 'Edit in a new tab', 'jet-menu' ); ?></span>
+                                    </cx-vui-button>
+
+                                </div>
 							</div>
 
 							<cx-vui-select

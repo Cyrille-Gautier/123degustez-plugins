@@ -246,6 +246,14 @@
 						this.editorVisible = true;
 					},
 
+					openEditorInNewTab: function() {
+						const url = this.currentEditorUrl;
+
+						if ( url ) {
+							window.open( url, '_blank', 'noopener' );
+						}
+					},
+
 					navSettingPopupClose: function() {
 						this.itemSettingItem = true;
 

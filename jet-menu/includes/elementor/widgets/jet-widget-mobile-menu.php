@@ -143,14 +143,30 @@ class Jet_Widget_Mobile_Menu extends Widget_Base {
 		);
 
 		$this->add_control(
+			'sub-menu-event',
+			array(
+				'label'   => esc_html__( 'Sub Menu Trigger', 'jet-menu' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'click',
+				'options' => array(
+					'hover'  => esc_html__( 'Hover', 'jet-menu' ),
+					'click'  => esc_html__( 'Click', 'jet-menu' ),
+				),
+			)
+		);
+
+		$this->add_control(
 			'sub-menu-trigger',
 			array(
-				'label'   => esc_html__( 'Show Sub Menu Trigger', 'jet-menu' ),
+				'label'   => esc_html__( 'Trigger Element', 'jet-menu' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => 'item',
 				'options' => array(
 					'item'       => esc_html__( 'Menu Item', 'jet-menu' ),
 					'submarker'  => esc_html__( 'Sub Menu Icon', 'jet-menu' ),
+				),
+				'condition' => array (
+					'sub-menu-event' => array( 'click' ),
 				),
 			)
 		);
@@ -1727,6 +1743,7 @@ class Jet_Widget_Mobile_Menu extends Widget_Base {
 			'is-item-badge'             => filter_var( $settings[ 'is_item_badge' ], FILTER_VALIDATE_BOOLEAN ),
 			'is-item-desc'              => filter_var( $settings[ 'is_item_desc' ], FILTER_VALIDATE_BOOLEAN ),
 			'loader-color'              => $settings[ 'mobile_menu_loader_color' ],
+			'sub-menu-event'            => $settings[ 'sub-menu-event' ],
 			'sub-menu-trigger'          => $settings[ 'sub-menu-trigger' ],
 			'sub-open-layout'           => $settings[ 'sub-open-layout' ],
 			'close-after-navigate'      => filter_var( $settings[ 'close-after-navigate' ], FILTER_VALIDATE_BOOLEAN ),

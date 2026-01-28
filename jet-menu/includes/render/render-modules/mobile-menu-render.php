@@ -90,6 +90,7 @@ class Mobile_Menu_Render extends Base_Render {
 			'itemBadgeVisible'   => $this->get( 'is-item-badge', true ),
 			'itemDescVisible'    => $this->get( 'is-item-desc', true ),
 			'loaderColor'        => $this->get( 'loader-color', '#3a3a3a' ),
+			'subEvent'           => $this->get( 'sub-menu-event', 'click' ),
 			'subTrigger'         => $this->get( 'sub-menu-trigger', 'item' ),
 			'subOpenLayout'      => $this->get( 'sub-open-layout', 'slide-in' ),
 			'closeAfterNavigate' => $this->get( 'close-after-navigate', false ),

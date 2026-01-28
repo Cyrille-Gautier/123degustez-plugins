@@ -60,6 +60,10 @@ class Mobile_Menu extends Base {
 				'type'    => 'string',
 				'default' => 'left',
 			],
+			'subEvent'    => [
+				'type'    => 'string',
+				'default' => 'click',
+			],
 			'subMenuTrigger'     => [
 				'type'    => 'string',
 				'default' => 'item',
@@ -186,6 +190,7 @@ class Mobile_Menu extends Base {
 			'layout'                    => $settings[ 'layout' ],
 			'toggle-position'           => $settings[ 'togglePosition' ],
 			'container-position'        => $settings[ 'containerPosition' ],
+			'sub-menu-event'            => $settings[ 'subEvent' ],
 			'sub-menu-trigger'          => $settings[ 'subMenuTrigger' ],
 			'sub-open-layout'           => $settings[ 'subOpenLayout' ],
 			'ajax-loading'              => $settings[ 'megaAjaxLoad' ],
