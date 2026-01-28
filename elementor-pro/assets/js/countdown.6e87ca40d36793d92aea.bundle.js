@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.32.0 - 21-10-2025 */
+/*! elementor-pro - v3.34.0 - 26-01-2026 */
 "use strict";
 (self["webpackChunkelementor_pro"] = self["webpackChunkelementor_pro"] || []).push([["countdown"],{
 
