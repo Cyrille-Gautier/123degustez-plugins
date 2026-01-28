@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 2.4.8
+* Fixed: Removed CSS sourceMappingURL references from built JetBlog styles via gulp.
+
+## 2.4.7.1
+* Fixed: Broken Access Control vulnerability.
+* Fixed: Additional security hardening for user-supplied query parameters in Smart Listing and Text Ticker widgets.
+
 ## 2.4.7
 * ADD: PHPCS/WP Security Standards
 

@@ -4,10 +4,11 @@ let gulp            = require('gulp'),
 	rename          = require('gulp-rename'),
 	notify          = require('gulp-notify'),
 	autoprefixer    = require('gulp-autoprefixer'),
-	sass            = require('gulp-sass'),
+	sass 			= require('gulp-sass')(require('sass')),
 	uglify          = require('gulp-uglify'),
 	plumber         = require('gulp-plumber'),
-	checktextdomain = require('gulp-checktextdomain');
+	checktextdomain = require('gulp-checktextdomain'),
+	replace         = require('gulp-replace');
 
 //frontend
 gulp.task('jet-blog', () => {
@@ -27,6 +28,7 @@ gulp.task('jet-blog', () => {
 				cascade: false
 		}))
 
+		.pipe( replace(/\/\*# sourceMappingURL=.*?\*\//g, '') )
 		.pipe(rename('jet-blog.css'))
 		.pipe(gulp.dest('./assets/css/'))
 		.pipe(notify('Compile Sass Done!'));
@@ -49,6 +51,7 @@ gulp.task('jet-blog-editor', () => {
 			cascade: false
 		}))
 
+		.pipe( replace(/\/\*# sourceMappingURL=.*?\*\//g, '') )
 		.pipe(rename('editor.css'))
 		.pipe(gulp.dest('./assets/css/'))
 		.pipe(notify('Compile Sass Done!'));

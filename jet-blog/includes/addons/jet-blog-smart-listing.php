@@ -6659,6 +6659,8 @@ class Jet_Blog_Smart_Listing extends Jet_Blog_Base {
 		 */
 		$query_args = apply_filters( 'jet-blog/smart-listing/query-args', $query_args, $this );
 
+		$query_args = $this->sanitize_query_args( $query_args );
+
 		add_filter( 'found_posts', array( $this, 'fix_offset_pagination' ), 10, 2 );
 
 		$posts = apply_filters( 'jet-blog/pre-query', false, $settings, $query_args, $this );

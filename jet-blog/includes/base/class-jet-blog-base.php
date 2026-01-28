@@ -1279,4 +1279,48 @@ abstract class Jet_Blog_Base extends Widget_Base {
 
 		printf( $format, $icon_html ); // phpcs:ignore
 	}
+
+	/**
+	 * Sanitize WP_Query arguments to prevent unauthorized access
+	 * and ensure only safe, public query parameters are used.
+	 *
+	 * @param  array $args Raw query arguments before sanitization.
+	 *
+	 * @return array Sanitized arguments safe to pass into WP_Query.
+	 */
+	protected  function sanitize_query_args( $args ) {
+		$disallowed = [
+			'post_status'  => [ 'private', 'draft', 'trash', 'auto-draft', 'inherit', 'any' ],
+			'post_password'=> true,
+			'perm'         => true,
+			'has_password' => true,
+			'post_type'    => [ 'revision', 'nav_menu_item', 'custom_css', 'customize_changeset', 'oembed_cache', 'user_request' ],
+		];
+
+		foreach ( $disallowed as $key => $rule ) {
+			if ( ! isset( $args[ $key ] ) ) {
+				continue;
+			}
+
+			if ( true === $rule ) {
+				unset( $args[ $key ] );
+				continue;
+			}
+
+			$val = $args[ $key ];
+
+			if ( is_array( $val ) ) {
+				$args[ $key ] = array_diff( $val, $rule );
+				if ( empty( $args[ $key ] ) ) {
+					unset( $args[ $key ] );
+				}
+			} else {
+				if ( in_array( $val, $rule, true ) ) {
+					unset( $args[ $key ] );
+				}
+			}
+		}
+
+		return $args;
+	}
 }

@@ -2771,6 +2771,8 @@ class Jet_Blog_Smart_Tiles extends Jet_Blog_Base {
 		 */
 		$query_args = apply_filters( 'jet-blog/smart-tiles/query-args', $query_args, $this );
 
+		$query_args = $this->sanitize_query_args( $query_args );
+
 		$posts = apply_filters( 'jet-blog/pre-query', false, $settings, $query_args, $this );
 
 		if ( false === $posts ) {
